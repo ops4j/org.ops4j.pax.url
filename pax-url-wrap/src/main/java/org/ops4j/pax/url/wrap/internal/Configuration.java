@@ -15,11 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.runner.handler.wrap.internal;
-
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.List;
+package org.ops4j.pax.url.wrap.internal;
 
 /**
  * Handler configuration.

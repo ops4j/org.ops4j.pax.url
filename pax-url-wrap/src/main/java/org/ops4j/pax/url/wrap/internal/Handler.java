@@ -15,19 +15,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.runner.handler.wrap.internal;
+package org.ops4j.pax.url.wrap.internal;
 
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
-import org.ops4j.pax.runner.commons.resolver.Resolver;
 import org.osgi.service.url.AbstractURLStreamHandlerService;
+import org.ops4j.pax.runner.commons.resolver.Resolver;
 
 /**
  * OSGi URLStreamHandlerService implementation that handles wrap protocol.
  *
  * @author Alin Dreghiciu
- * @see org.ops4j.pax.runner.handler.wrap.internal.Connection
+ * @see Connection
  * @since September 09, 2007
  */
 public class Handler

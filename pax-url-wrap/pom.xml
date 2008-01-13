@@ -24,7 +24,7 @@
 
   <properties>
     <bundle.symbolicName>org.ops4j.pax.url.wrap</bundle.symbolicName>
-    <bundle.namespace>org.ops4j.pax.runner.handler.wrap</bundle.namespace>
+    <bundle.namespace>org.ops4j.pax.url.wrap</bundle.namespace>
   </properties>
 
   <build>

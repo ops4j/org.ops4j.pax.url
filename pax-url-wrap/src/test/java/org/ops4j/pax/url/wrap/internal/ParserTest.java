@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.runner.handler.wrap.internal;
+package org.ops4j.pax.url.wrap.internal;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -60,7 +60,7 @@ public class ParserTest
         throws MalformedURLException
     {
         Parser parser = new Parser( "file:toWrap.jar" );
-        assertEquals( "Wrapped Jar URL", new URL( "file:toWrap.jar" ), parser.getWrappedJarURL());
+        assertEquals( "Wrapped Jar URL", new URL( "file:toWrap.jar" ), parser.getWrappedJarURL() );
         assertNotNull( "Properties was not expected to be null", parser.getWrappedJarURL() );
     }
 

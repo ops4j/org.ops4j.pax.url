@@ -15,14 +15,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.runner.handler.wrap.internal;
+package org.ops4j.pax.url.wrap.internal;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ops4j.lang.NullArgumentException;
 import org.ops4j.pax.runner.commons.resolver.ConfigurationMap;
 import org.ops4j.pax.runner.commons.resolver.Resolver;
-import org.ops4j.pax.runner.handler.wrap.ServiceConstants;
+import org.ops4j.pax.url.wrap.ServiceConstants;
 
 /**
  * Service Configuration implementation.

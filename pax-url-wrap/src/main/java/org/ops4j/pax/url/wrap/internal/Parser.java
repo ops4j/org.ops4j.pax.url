@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.runner.handler.wrap.internal;
+package org.ops4j.pax.url.wrap.internal;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,7 +33,7 @@ import org.ops4j.pax.runner.commons.url.URLUtils;
  * Parser for wrap: protocol.<br/>
  *
  * @author Alin Dreghiciu
- * @see org.ops4j.pax.runner.handler.wrap.internal.Connection
+ * @see Connection
  * @since September 09, 2007
  */
 public class Parser

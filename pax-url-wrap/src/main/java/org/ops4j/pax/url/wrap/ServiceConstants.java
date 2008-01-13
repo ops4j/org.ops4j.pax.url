@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.runner.handler.wrap;
+package org.ops4j.pax.url.wrap;
 
 /**
  * An enumeration of constants related to wrap handler.
@@ -33,7 +33,7 @@ public interface ServiceConstants
     /**
      * Certificate check configuration property name.
      */
-    static final String PROPERTY_CERTIFICATE_CHECK = PID + ".certificateCheck";    
+    static final String PROPERTY_CERTIFICATE_CHECK = PID + ".certificateCheck";
     /**
      * The protocol name.
      */
