@@ -21,7 +21,6 @@ import java.net.MalformedURLException;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.ops4j.pax.runner.commons.file.FileUtils;
-import org.ops4j.pax.url.mvn.internal.SettingsImpl;
 
 public class SettingsImplTest
 {

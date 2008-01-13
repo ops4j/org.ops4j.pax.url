@@ -26,10 +26,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.xml.parsers.ParserConfigurationException;
-import org.ops4j.pax.runner.commons.xml.XmlUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
+import org.ops4j.pax.runner.commons.xml.XmlUtils;
 
 /**
  * Default implementation of Settings.
@@ -57,7 +57,8 @@ public class SettingsImpl
     /**
      * Maven Central repository.
      */
-    private static final String DEFAULT_REPOSITORIES = "http://repo1.maven.org/maven2,http://repository.ops4j.org/maven2";
+    private static final String DEFAULT_REPOSITORIES =
+        "http://repo1.maven.org/maven2,http://repository.ops4j.org/maven2";
 
     /**
      * The settings.xml DOM Document. Null if there is no settings.xml.

@@ -58,5 +58,5 @@ public interface Configuration
      * @return url of local repository. Can be null if there is no local repository.
      */
     URL getLocalRepository();
-    
+
 }

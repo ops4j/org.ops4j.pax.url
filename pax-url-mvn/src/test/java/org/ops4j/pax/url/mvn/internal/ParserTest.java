@@ -21,7 +21,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import static org.junit.Assert.*;
 import org.junit.Test;
-import org.ops4j.pax.url.mvn.internal.Parser;
 
 public class ParserTest
 {

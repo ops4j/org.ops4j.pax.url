@@ -20,8 +20,8 @@ package org.ops4j.pax.url.mvn.internal;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
-import org.ops4j.pax.runner.commons.resolver.Resolver;
 import org.osgi.service.url.AbstractURLStreamHandlerService;
+import org.ops4j.pax.runner.commons.resolver.Resolver;
 
 /**
  * OSGi URLStreamHandlerService implementation that handles mvn protocol.
@@ -37,7 +37,7 @@ public class Handler
     /**
      * Service configuration.
      */
-    private ConfigurationImpl m_configuration; 
+    private ConfigurationImpl m_configuration;
 
     /**
      * @see org.osgi.service.url.URLStreamHandlerService#openConnection(java.net.URL)

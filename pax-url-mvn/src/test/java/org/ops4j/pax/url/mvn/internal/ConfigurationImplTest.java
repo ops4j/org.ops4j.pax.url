@@ -26,9 +26,6 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import org.ops4j.pax.runner.commons.file.FileUtils;
 import org.ops4j.pax.runner.commons.resolver.Resolver;
-import org.ops4j.pax.url.mvn.internal.Configuration;
-import org.ops4j.pax.url.mvn.internal.ConfigurationImpl;
-import org.ops4j.pax.url.mvn.internal.Settings;
 
 public class ConfigurationImplTest
 {
@@ -285,6 +282,7 @@ public class ConfigurationImplTest
         assertEquals( "Local repository", new URL( "file:somewhere/localrepository/" ), config.getLocalRepository() );
         verify( resolver );
     }
+
     @Test
     public void getLocalRepositoryAsURLWithBackSlash()
         throws MalformedURLException
