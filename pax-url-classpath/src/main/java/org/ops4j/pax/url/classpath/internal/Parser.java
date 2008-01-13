@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.runner.handler.classpath.internal;
+package org.ops4j.pax.url.classpath.internal;
 
 import java.net.MalformedURLException;
 
@@ -23,7 +23,7 @@ import java.net.MalformedURLException;
  * Parser for classpath: protocol.
  *
  * @author Alin Dreghiciu
- * @see org.ops4j.pax.runner.handler.classpath.internal.Connection
+ * @see Connection
  * @since August 15, 2007
  */
 public class Parser

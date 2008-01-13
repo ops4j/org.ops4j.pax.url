@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.runner.handler.classpath.internal;
+package org.ops4j.pax.url.classpath.internal;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,9 +24,9 @@ import java.net.URL;
 import static org.easymock.EasyMock.*;
 import static org.junit.Assert.*;
 import org.junit.Test;
-import org.ops4j.pax.runner.commons.file.FileUtils;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.ops4j.pax.runner.commons.file.FileUtils;
 
 public class ConnectionTest
 {

@@ -24,7 +24,7 @@
 
   <properties>
     <bundle.symbolicName>org.ops4j.pax.url.classpath</bundle.symbolicName>
-    <bundle.namespace>org.ops4j.pax.runner.handler.classpath</bundle.namespace>
+    <bundle.namespace>org.ops4j.pax.url.classpath</bundle.namespace>
   </properties>
 
   <build>

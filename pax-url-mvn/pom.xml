@@ -24,7 +24,7 @@
 
   <properties>
     <bundle.symbolicName>org.ops4j.pax.url.mvn</bundle.symbolicName>
-    <bundle.namespace>org.ops4j.pax.runner.handler.mvn</bundle.namespace>
+    <bundle.namespace>org.ops4j.pax.url.mvn</bundle.namespace>
   </properties>
 
   <build>

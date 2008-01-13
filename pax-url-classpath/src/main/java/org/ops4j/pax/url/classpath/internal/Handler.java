@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.runner.handler.classpath.internal;
+package org.ops4j.pax.url.classpath.internal;
 
 import java.io.IOException;
 import java.net.URL;
@@ -27,7 +27,7 @@ import org.osgi.service.url.AbstractURLStreamHandlerService;
  * OSGi URLStreamHandlerService implementation that handles classpath protocol.
  *
  * @author Alin Dreghiciu
- * @see org.ops4j.pax.runner.handler.classpath.internal.Connection
+ * @see Connection
  * @since August 07, 2007
  */
 public class Handler
