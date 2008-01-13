@@ -17,9 +17,9 @@
  */
 package org.ops4j.pax.url.wrap.internal;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.MalformedURLException;
 import org.ops4j.pax.runner.commons.resolver.Resolver;
 import org.ops4j.pax.url.commons.ConnectionFactory;
 import org.ops4j.pax.url.commons.HandlerActivator;
@@ -48,7 +48,7 @@ public final class Activator
             {
 
                 /**
-                 * Creates a war url connection.
+                 * Creates a wrap url connection.
                  *
                  * @see ConnectionFactory#createConection(java.net.URL, Resolver)
                  */
