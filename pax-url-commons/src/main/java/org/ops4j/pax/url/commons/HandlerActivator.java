@@ -118,8 +118,8 @@ public class HandlerActivator
     {
         NullArgumentException.validateNotNull( bundleContext, "Bundle context" );
         m_bundleContext = bundleContext;
-        registerHandler();
         registerManagedService();
+        registerHandler();
         LOG.debug( "Handler for protocols [" + Arrays.deepToString( m_protocols ) + "] started" );
     }
 
@@ -166,38 +166,54 @@ public class HandlerActivator
      */
     private void registerManagedService()
     {
+        final ManagedService managedService = new ManagedService()
+        {
+            /**
+             * Sets the resolver on handler.
+             *
+             * @see org.osgi.service.cm.ManagedService#updated(java.util.Dictionary)
+             */
+            public void updated( final Dictionary config )
+                throws ConfigurationException
+            {
+                if( config == null )
+                {
+                    setResolver( new BundleContextResolver( m_bundleContext ) );
+                }
+                else
+                {
+                    setResolver(
+                        new CompositeResolver(
+                            new DictionaryResolver( config ),
+                            new BundleContextResolver( m_bundleContext )
+                        )
+                    );
+                }
+            }
+
+        };
         final Dictionary<String, String> props = new Hashtable<String, String>();
         props.put( Constants.SERVICE_PID, m_pid );
         m_managedServiceReg = m_bundleContext.registerService(
             ManagedService.class.getName(),
-            new ManagedService()
-            {
-                /**
-                 * Sets the resolver on handler.
-                 *
-                 * @see org.osgi.service.cm.ManagedService#updated(java.util.Dictionary)
-                 */
-                public void updated( final Dictionary config )
-                    throws ConfigurationException
-                {
-                    if( config == null )
-                    {
-                        setResolver( new BundleContextResolver( m_bundleContext ) );
-                    }
-                    else
-                    {
-                        setResolver(
-                            new CompositeResolver(
-                                new DictionaryResolver( config ),
-                                new BundleContextResolver( m_bundleContext )
-                            )
-                        );
-                    }
-                }
-
-            },
+            managedService,
             props
         );
+        synchronized( this )
+        {
+            if( m_resolver == null )
+            {
+                try
+                {
+                    managedService.updated( null );
+                }
+                catch( ConfigurationException ignore )
+                {
+                    // this should never happen
+                    LOG.error( "Internal error. Cannot set initial configuration resolver.", ignore );
+                }
+            }
+        }
     }
 
     /**

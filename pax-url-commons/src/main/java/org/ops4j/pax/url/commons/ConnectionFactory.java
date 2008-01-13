@@ -19,6 +19,7 @@ package org.ops4j.pax.url.commons;
 
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.MalformedURLException;
 import org.ops4j.pax.runner.commons.resolver.Resolver;
 
 /**
@@ -38,6 +39,7 @@ public interface ConnectionFactory
      *
      * @return URLConnection
      */
-    URLConnection createConection( URL url, Resolver resolver );
+    URLConnection createConection( URL url, Resolver resolver )
+        throws MalformedURLException;
 
 }

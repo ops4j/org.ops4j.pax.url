@@ -39,7 +39,6 @@ import org.ops4j.pax.runner.commons.url.URLUtils;
  * TODO add unit tests
  *
  * @author Alin Dreghiciu
- * @see Handler
  * @since September 09, 2007
  */
 public class Connection
