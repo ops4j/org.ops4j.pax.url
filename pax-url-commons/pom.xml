@@ -11,30 +11,16 @@
   </parent>
 
   <groupId>org.ops4j.pax.url</groupId>
-  <artifactId>pax-url-war</artifactId>
+  <artifactId>pax-url-commons</artifactId>
   <version>0.1.0-SNAPSHOT</version>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
 
-  <name>OPS4J Pax Url - War Handler</name>
+  <name>OPS4J Pax Url - Commons</name>
   <description>
-    OPS4J Pax Url - war: protocol handler. See details at http://wiki.ops4j.org/confluence/x/KoA6
+    OPS4J Pax Shared - Shared classes between protocol handlers.
   </description>
 
   <url>http://wiki.ops4j.org/confluence/x/KoA6</url>
-
-  <properties>
-    <bundle.symbolicName>org.ops4j.pax.url.war</bundle.symbolicName>
-    <bundle.namespace>org.ops4j.pax.url.war</bundle.namespace>
-  </properties>
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>${maven.bundle.plugin.groupId}</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-      </plugin>
-    </plugins>
-  </build>
 
   <dependencies>
     <dependency>
@@ -42,9 +28,9 @@
       <artifactId>commons-logging-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.ops4j.pax.url</groupId>
-      <artifactId>pax-url-commons</artifactId>
-      <version>0.1.0-SNAPSHOT</version>
+      <groupId>org.ops4j.pax.runner.pax-runner-internal</groupId>
+      <artifactId>pax-runner-commons</artifactId>
+      <version>0.5.7-SNAPSHOT</version>
     </dependency>
   </dependencies>
 

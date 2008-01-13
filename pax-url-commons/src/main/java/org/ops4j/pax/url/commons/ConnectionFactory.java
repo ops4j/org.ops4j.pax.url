@@ -15,23 +15,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.ops4j.pax.url.commons;
+
+import java.net.URL;
+import java.net.URLConnection;
+import org.ops4j.pax.runner.commons.resolver.Resolver;
 
 /**
- * An enumeration of constants related to war url handler.
+ * URL connection factory.
  *
  * @author Alin Dreghiciu
  * @since 0.1.0, January 13, 2008
  */
-public interface ServiceConstants
+public interface ConnectionFactory
 {
 
     /**
-     * Service PID used for configuration.
+     * Creates a handler specific conection.
+     *
+     * @param url      url to be handled
+     * @param resolver configuration resolver
+     *
+     * @return URLConnection
      */
-    static final String PID = "org.ops4j.pax.url.war";
-    /**
-     * The protocol name.
-     */
-    public static final String PROTOCOL = "war";
+    URLConnection createConection( URL url, Resolver resolver );
 
 }
