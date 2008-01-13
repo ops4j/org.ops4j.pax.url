@@ -15,12 +15,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.runner.handler.mvn.internal;
+package org.ops4j.pax.url.mvn.internal;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import static org.junit.Assert.*;
 import org.junit.Test;
+import org.ops4j.pax.url.mvn.internal.Parser;
 
 public class ParserTest
 {

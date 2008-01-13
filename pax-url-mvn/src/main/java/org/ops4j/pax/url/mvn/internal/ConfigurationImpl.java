@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.runner.handler.mvn.internal;
+package org.ops4j.pax.url.mvn.internal;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -27,7 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import org.ops4j.lang.NullArgumentException;
 import org.ops4j.pax.runner.commons.resolver.ConfigurationMap;
 import org.ops4j.pax.runner.commons.resolver.Resolver;
-import org.ops4j.pax.runner.handler.mvn.ServiceConstants;
+import org.ops4j.pax.url.mvn.ServiceConstants;
 
 /**
  * Service Configuration implementation.

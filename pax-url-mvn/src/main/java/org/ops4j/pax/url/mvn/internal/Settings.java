@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.runner.handler.mvn.internal;
+package org.ops4j.pax.url.mvn.internal;
 
 /**
  * Abstracts access to maven settings.xml.

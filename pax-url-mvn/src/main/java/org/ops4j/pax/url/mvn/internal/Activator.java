@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.runner.handler.mvn.internal;
+package org.ops4j.pax.url.mvn.internal;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -33,7 +33,7 @@ import org.ops4j.lang.NullArgumentException;
 import org.ops4j.pax.runner.commons.resolver.BundleContextResolver;
 import org.ops4j.pax.runner.commons.resolver.CompositeResolver;
 import org.ops4j.pax.runner.commons.resolver.DictionaryResolver;
-import org.ops4j.pax.runner.handler.mvn.ServiceConstants;
+import org.ops4j.pax.url.mvn.ServiceConstants;
 
 /**
  * Bundle activator for mvn: protocol handler.

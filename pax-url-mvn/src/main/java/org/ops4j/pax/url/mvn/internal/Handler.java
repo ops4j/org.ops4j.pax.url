@@ -15,12 +15,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.runner.handler.mvn.internal;
+package org.ops4j.pax.url.mvn.internal;
 
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.MalformedURLException;
 import org.ops4j.pax.runner.commons.resolver.Resolver;
 import org.osgi.service.url.AbstractURLStreamHandlerService;
 
@@ -28,7 +27,7 @@ import org.osgi.service.url.AbstractURLStreamHandlerService;
  * OSGi URLStreamHandlerService implementation that handles mvn protocol.
  *
  * @author Alin Dreghiciu
- * @see org.ops4j.pax.runner.handler.mvn.internal.Connection
+ * @see Connection
  * @since August 10, 2007
  */
 public class Handler

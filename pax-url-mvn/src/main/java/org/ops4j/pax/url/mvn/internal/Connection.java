@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.runner.handler.mvn.internal;
+package org.ops4j.pax.url.mvn.internal;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -63,7 +63,7 @@ import org.ops4j.pax.runner.commons.xml.XmlUtils;
  * Default false.
  *
  * @author Alin Dreghiciu
- * @see org.ops4j.pax.runner.handler.mvn.internal.Handler
+ * @see Handler
  * @since August 10, 2007
  */
 public class Connection
