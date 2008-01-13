@@ -47,6 +47,7 @@ public final class Activator
 
                 /**
                  * Creates a war url connection.
+                 *
                  * @see ConnectionFactory#createConection(java.net.URL, Resolver)
                  */
                 public URLConnection createConection( final URL url, final Resolver resolver )
@@ -58,4 +59,5 @@ public final class Activator
             }
         );
     }
+
 }
