@@ -1,0 +1,39 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <relativePath>../</relativePath>
+    <groupId>org.ops4j.pax</groupId>
+    <artifactId>url</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+  </parent>
+
+  <groupId>org.ops4j.pax.url</groupId>
+  <artifactId>pax-url-war</artifactId>
+  <version>0.1.0-SNAPSHOT</version>
+  <packaging>bundle</packaging>
+
+  <name>OPS4J Pax Url - War Handler</name>
+  <description>
+    OPS4J Pax Url - war: protocol handler. See details at http://wiki.ops4j.org/confluence/x/KoA6
+  </description>
+
+  <url>http://wiki.ops4j.org/confluence/x/KoA6</url>
+
+  <properties>
+    <bundle.symbolicName>org.ops4j.pax.url.war</bundle.symbolicName>
+    <bundle.namespace>org.ops4j.pax.url.war</bundle.namespace>
+  </properties>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>${maven.bundle.plugin.groupId}</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
