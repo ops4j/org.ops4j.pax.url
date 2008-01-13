@@ -120,7 +120,7 @@ public class HandlerActivator
         m_bundleContext = bundleContext;
         registerManagedService();
         registerHandler();
-        LOG.debug( "Handler for protocols [" + Arrays.deepToString( m_protocols ) + "] started" );
+        LOG.debug( "Handler for protocols " + Arrays.deepToString( m_protocols ) + " started" );
     }
 
     /**
@@ -143,7 +143,7 @@ public class HandlerActivator
             m_managedServiceReg.unregister();
         }
         m_bundleContext = null;
-        LOG.debug( "Handler for protocols [" + Arrays.deepToString( m_protocols ) + "] stopped" );
+        LOG.debug( "Handler for protocols " + Arrays.deepToString( m_protocols ) + " stopped" );
     }
 
     /**
@@ -233,7 +233,7 @@ public class HandlerActivator
         public URLConnection openConnection( final URL url )
             throws IOException
         {
-            return m_connectionFactory.createConection( url, getResolver() );
+            return m_connectionFactory.createConection( m_bundleContext, url, getResolver() );
         }
 
     }

@@ -17,13 +17,14 @@
  */
 package org.ops4j.pax.url.classpath.internal;
 
-import java.util.Dictionary;
-import java.util.Hashtable;
-import org.osgi.framework.BundleActivator;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import org.osgi.framework.BundleContext;
-import org.osgi.service.url.URLConstants;
-import org.osgi.service.url.URLStreamHandlerService;
-import org.ops4j.lang.NullArgumentException;
+import org.ops4j.pax.runner.commons.resolver.Resolver;
+import org.ops4j.pax.url.classpath.ServiceConstants;
+import org.ops4j.pax.url.commons.ConnectionFactory;
+import org.ops4j.pax.url.commons.HandlerActivator;
 
 /**
  * Bundle activator for classpath: protocol handler.
@@ -32,36 +33,35 @@ import org.ops4j.lang.NullArgumentException;
  * @since August 07, 2007
  */
 public final class Activator
-    implements BundleActivator
+    extends HandlerActivator
 {
 
     /**
-     * Registers Handler as a classpath: protocol stream handler service.
-     *
-     * @param bc the bundle context.
-     *
-     * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
+     * @see HandlerActivator#HandlerActivator(String[], String, org.ops4j.pax.url.commons.ConnectionFactory)
      */
-    public void start( final BundleContext bc )
-        throws Exception
+    public Activator()
     {
-        NullArgumentException.validateNotNull( bc, "Bundle context" );
-        Dictionary<String, Object> props = new Hashtable<String, Object>();
-        props.put( URLConstants.URL_HANDLER_PROTOCOL, new String[]{ Connection.PROTOCOL } );
-        bc.registerService( URLStreamHandlerService.class.getName(), new Handler( bc ), props );
-    }
+        super(
+            new String[]{ ServiceConstants.PROTOCOL },
+            ServiceConstants.PID,
+            new ConnectionFactory()
+            {
 
-    /**
-     * Does nothing.
-     *
-     * @param bc the bundle context
-     *
-     * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
-     */
-    public void stop( final BundleContext bc )
-        throws Exception
-    {
-        NullArgumentException.validateNotNull( bc, "Bundle context" );
+                /**
+                 * Creates a classpath url connection.
+                 *
+                 * @see ConnectionFactory#createConection(BundleContext, URL, Resolver)
+                 */
+                public URLConnection createConection( final BundleContext bundleContext,
+                                                      final URL url,
+                                                      final Resolver resolver )
+                    throws MalformedURLException
+                {
+                    return new Connection( url, bundleContext );
+                }
+
+            }
+        );
     }
 
 }

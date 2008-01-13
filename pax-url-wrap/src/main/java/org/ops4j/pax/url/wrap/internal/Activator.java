@@ -20,6 +20,7 @@ package org.ops4j.pax.url.wrap.internal;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import org.osgi.framework.BundleContext;
 import org.ops4j.pax.runner.commons.resolver.Resolver;
 import org.ops4j.pax.url.commons.ConnectionFactory;
 import org.ops4j.pax.url.commons.HandlerActivator;
@@ -50,12 +51,13 @@ public final class Activator
                 /**
                  * Creates a wrap url connection.
                  *
-                 * @see ConnectionFactory#createConection(java.net.URL, Resolver)
+                 * @see ConnectionFactory#createConection(BundleContext, URL, Resolver)
                  */
-                public URLConnection createConection( final URL url, final Resolver resolver )
+                public URLConnection createConection( final BundleContext bundleContext,
+                                                      final URL url,
+                                                      final Resolver resolver )
                     throws MalformedURLException
                 {
-                    // TODO implemnt connection creation
                     return new Connection( url, new ConfigurationImpl( resolver ) );
                 }
 

@@ -17,9 +17,10 @@
  */
 package org.ops4j.pax.url.commons;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.MalformedURLException;
+import org.osgi.framework.BundleContext;
 import org.ops4j.pax.runner.commons.resolver.Resolver;
 
 /**
@@ -34,12 +35,15 @@ public interface ConnectionFactory
     /**
      * Creates a handler specific conection.
      *
-     * @param url      url to be handled
-     * @param resolver configuration resolver
+     * @param bundleContext bundle context
+     * @param url           url to be handled
+     * @param resolver      configuration resolver
      *
-     * @return URLConnection
+     * @return URLConnection protocol specific connection
+     *
+     * @throws MalformedURLException if a malformed url is encountered. Protocol specific.
      */
-    URLConnection createConection( URL url, Resolver resolver )
+    URLConnection createConection( BundleContext bundleContext, URL url, Resolver resolver )
         throws MalformedURLException;
 
 }
