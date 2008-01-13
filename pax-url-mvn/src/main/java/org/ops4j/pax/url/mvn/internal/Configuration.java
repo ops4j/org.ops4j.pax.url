@@ -42,7 +42,7 @@ public interface Configuration
      *
      * @return the url to settings file
      */
-    URL getSettings();
+    URL getSettingsFileUrl();
 
     /**
      * Returns a list of repositories to be searched.

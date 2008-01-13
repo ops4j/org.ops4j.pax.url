@@ -34,7 +34,7 @@ import org.ops4j.pax.url.wrap.ServiceConstants;
  * @since September 09, 2007
  */
 public final class Activator
-    extends HandlerActivator
+    extends HandlerActivator<Configuration>
 {
 
     /**
@@ -45,20 +45,26 @@ public final class Activator
         super(
             new String[]{ ServiceConstants.PROTOCOL },
             ServiceConstants.PID,
-            new ConnectionFactory()
+            new ConnectionFactory<Configuration>()
             {
 
                 /**
-                 * Creates a wrap url connection.
-                 *
-                 * @see ConnectionFactory#createConection(BundleContext, URL, Resolver)
+                 * @see ConnectionFactory#createConection(BundleContext, URL, Object)
                  */
                 public URLConnection createConection( final BundleContext bundleContext,
                                                       final URL url,
-                                                      final Resolver resolver )
+                                                      final Configuration config )
                     throws MalformedURLException
                 {
-                    return new Connection( url, new ConfigurationImpl( resolver ) );
+                    return new Connection( url, config );
+                }
+
+                /**
+                 * @see ConnectionFactory#createConfiguration(Resolver)
+                 */
+                public Configuration createConfiguration( final Resolver resolver )
+                {
+                    return new ConfigurationImpl( resolver );
                 }
 
             }

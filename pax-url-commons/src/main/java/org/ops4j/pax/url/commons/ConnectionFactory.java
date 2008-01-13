@@ -29,7 +29,7 @@ import org.ops4j.pax.runner.commons.resolver.Resolver;
  * @author Alin Dreghiciu
  * @since 0.1.0, January 13, 2008
  */
-public interface ConnectionFactory
+public interface ConnectionFactory<T>
 {
 
     /**
@@ -37,13 +37,22 @@ public interface ConnectionFactory
      *
      * @param bundleContext bundle context
      * @param url           url to be handled
-     * @param resolver      configuration resolver
+     * @param config        protocol specific configuration
      *
      * @return URLConnection protocol specific connection
      *
      * @throws MalformedURLException if a malformed url is encountered. Protocol specific.
      */
-    URLConnection createConection( BundleContext bundleContext, URL url, Resolver resolver )
+    URLConnection createConection( BundleContext bundleContext, URL url, T config )
         throws MalformedURLException;
+
+    /**
+     * Creates a handler specific configuration.
+     *
+     * @param resolver configuration resolver
+     *
+     * @return T protocol specific configuration
+     */
+    T createConfiguration( Resolver resolver );
 
 }

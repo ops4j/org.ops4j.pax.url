@@ -46,7 +46,7 @@ import org.ops4j.pax.runner.commons.resolver.Resolver;
  * @author Alin Dreghiciu
  * @since 0.1.0, January 13, 2007
  */
-public class HandlerActivator
+public class HandlerActivator<T>
     implements BundleActivator
 {
 
@@ -64,9 +64,9 @@ public class HandlerActivator
      */
     private final String m_pid;
     /**
-     * Protocol specific conncetion factory.
+     * Protocol specific connection factory.
      */
-    private final ConnectionFactory m_connectionFactory;
+    private final ConnectionFactory<T> m_connectionFactory;
 
     /**
      * Bundle context in use.
@@ -76,6 +76,10 @@ public class HandlerActivator
      * Property resolver to be used on resolving properties.
      */
     private Resolver m_resolver;
+    /**
+     * Protocol handler specific configuration.
+     */
+    private T m_configuration;
     /**
      * Handler service registration. Usef for cleanup.
      */
@@ -96,7 +100,7 @@ public class HandlerActivator
      */
     protected HandlerActivator( final String[] protocols,
                                 final String pid,
-                                final ConnectionFactory connectionFactory )
+                                final ConnectionFactory<T> connectionFactory )
     {
         NullArgumentException.validateNotNull( protocols, "Protocols" );
         NullArgumentException.validateNotNull( pid, "PID" );
@@ -233,7 +237,7 @@ public class HandlerActivator
         public URLConnection openConnection( final URL url )
             throws IOException
         {
-            return m_connectionFactory.createConection( m_bundleContext, url, getResolver() );
+            return m_connectionFactory.createConection( m_bundleContext, url, m_configuration );
         }
 
     }
@@ -246,6 +250,7 @@ public class HandlerActivator
     public synchronized void setResolver( final Resolver resolver )
     {
         m_resolver = resolver;
+        m_configuration = m_connectionFactory.createConfiguration( resolver );
     }
 
 }

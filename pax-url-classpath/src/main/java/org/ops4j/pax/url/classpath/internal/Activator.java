@@ -33,7 +33,7 @@ import org.ops4j.pax.url.commons.HandlerActivator;
  * @since August 07, 2007
  */
 public final class Activator
-    extends HandlerActivator
+    extends HandlerActivator<Void>
 {
 
     /**
@@ -44,20 +44,28 @@ public final class Activator
         super(
             new String[]{ ServiceConstants.PROTOCOL },
             ServiceConstants.PID,
-            new ConnectionFactory()
+            new ConnectionFactory<Void>()
             {
 
                 /**
                  * Creates a classpath url connection.
                  *
-                 * @see ConnectionFactory#createConection(BundleContext, URL, Resolver)
+                 * @see ConnectionFactory#createConection(BundleContext, URL, Object)
                  */
                 public URLConnection createConection( final BundleContext bundleContext,
                                                       final URL url,
-                                                      final Resolver resolver )
+                                                      final Void notUsed )
                     throws MalformedURLException
                 {
                     return new Connection( url, bundleContext );
+                }
+
+                /**
+                 * @see ConnectionFactory#createConfiguration(org.ops4j.pax.runner.commons.resolver.Resolver)
+                 */
+                public Void createConfiguration( Resolver resolver )
+                {
+                    return null;
                 }
 
             }

@@ -17,22 +17,13 @@
  */
 package org.ops4j.pax.url.mvn.internal;
 
-import java.util.Dictionary;
-import java.util.Hashtable;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.osgi.framework.BundleActivator;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.Constants;
-import org.osgi.framework.ServiceRegistration;
-import org.osgi.service.cm.ConfigurationException;
-import org.osgi.service.cm.ManagedService;
-import org.osgi.service.url.URLConstants;
-import org.osgi.service.url.URLStreamHandlerService;
-import org.ops4j.lang.NullArgumentException;
-import org.ops4j.pax.runner.commons.resolver.BundleContextResolver;
-import org.ops4j.pax.runner.commons.resolver.CompositeResolver;
-import org.ops4j.pax.runner.commons.resolver.DictionaryResolver;
+import org.ops4j.pax.runner.commons.resolver.Resolver;
+import org.ops4j.pax.url.commons.ConnectionFactory;
+import org.ops4j.pax.url.commons.HandlerActivator;
 import org.ops4j.pax.url.mvn.ServiceConstants;
 
 /**
@@ -43,133 +34,44 @@ import org.ops4j.pax.url.mvn.ServiceConstants;
  * @since August 10, 2007
  */
 public final class Activator
-    implements BundleActivator
+    extends HandlerActivator<Configuration>
 {
 
     /**
-     * Logger.
+     * @see HandlerActivator#HandlerActivator(String[], String, ConnectionFactory)
      */
-    private static final Log LOG = LogFactory.getLog( Activator.class );
-    /**
-     * Bundle context in use.
-     */
-    private BundleContext m_bundleContext;
-    /**
-     * Registered handler.
-     */
-    private Handler m_handler;
-    /**
-     * Handler service registration. Usef for cleanup.
-     */
-    private ServiceRegistration m_handlerReg;
-    /**
-     * Managed service registration. Used for cleanup.
-     */
-    private ServiceRegistration m_managedServiceReg;
-
-    /**
-     * Registers Handler as a mvn: protocol stream handler service and as a configuration managed service if
-     * possible.
-     *
-     * @param bundleContext the bundle context.
-     *
-     * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
-     */
-    public void start( final BundleContext bundleContext )
+    public Activator()
     {
-        NullArgumentException.validateNotNull( bundleContext, "Bundle context" );
-        m_bundleContext = bundleContext;
-        registerHandler();
-        registerManagedService();
-        LOG.debug( "Protocol [" + ServiceConstants.PROTOCOL + "] handler started" );
-    }
-
-    /**
-     * Performs cleanup:<br/>
-     * * Unregister handler;<br/>
-     * * Unregister managed service;<br/>
-     * * Release bundle context.
-     *
-     * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
-     */
-    public void stop( final BundleContext bundleContext )
-    {
-        NullArgumentException.validateNotNull( bundleContext, "Bundle context" );
-        if( m_handlerReg != null )
-        {
-            m_handlerReg.unregister();
-        }
-        if( m_managedServiceReg != null )
-        {
-            m_managedServiceReg.unregister();
-        }
-        m_bundleContext = null;
-        LOG.debug( "Protocol [" + ServiceConstants.PROTOCOL + "] handler stopped" );
-    }
-
-    /**
-     * Register the handler service.
-     */
-    private void registerHandler()
-    {
-        final Dictionary<String, Object> props = new Hashtable<String, Object>();
-        props.put( URLConstants.URL_HANDLER_PROTOCOL, new String[]{ ServiceConstants.PROTOCOL } );
-        m_handler = createHandler();
-        m_handler.setResolver( new BundleContextResolver( m_bundleContext ) );
-        m_handlerReg = m_bundleContext.registerService(
-            URLStreamHandlerService.class.getName(),
-            m_handler,
-            props
-        );
-
-    }
-
-    /**
-     * Registers a managed service to listen on configuration updates.
-     */
-    private void registerManagedService()
-    {
-        final Dictionary<String, String> props = new Hashtable<String, String>();
-        props.put( Constants.SERVICE_PID, ServiceConstants.PID );
-        m_managedServiceReg = m_bundleContext.registerService(
-            ManagedService.class.getName(),
-            new ManagedService()
+        super(
+            new String[]{ ServiceConstants.PROTOCOL },
+            ServiceConstants.PID,
+            new ConnectionFactory<Configuration>()
             {
-                /**
-                 * Sets the resolver on handler.
-                 *
-                 * @see org.osgi.service.cm.ManagedService#updated(java.util.Dictionary)
-                 */
-                public void updated( final Dictionary config )
-                    throws ConfigurationException
-                {
-                    if( config == null )
-                    {
-                        m_handler.setResolver( new BundleContextResolver( m_bundleContext ) );
-                    }
-                    else
-                    {
-                        m_handler.setResolver(
-                            new CompositeResolver(
-                                new DictionaryResolver( config ),
-                                new BundleContextResolver( m_bundleContext )
-                            )
-                        );
-                    }
-                }
-            },
-            props
-        );
-    }
 
-    /**
-     * Handler factory method.
-     *
-     * @return a new handler
-     */
-    private Handler createHandler()
-    {
-        return new Handler();
+                /**
+                 * @see ConnectionFactory#createConection(BundleContext, URL, Object)
+                 */
+                public URLConnection createConection( final BundleContext bundleContext,
+                                                      final URL url,
+                                                      final Configuration config )
+                    throws MalformedURLException
+                {
+                    return new Connection( url, config );
+                }
+
+                /**
+                 * @see ConnectionFactory#createConfiguration(Resolver)
+                 */
+                public Configuration createConfiguration( final Resolver resolver )
+                {
+                    final ConfigurationImpl config = new ConfigurationImpl( resolver );
+                    config.setSettings( new SettingsImpl( config.getSettingsFileUrl() ) );
+                    return config;
+                }
+
+
+            }
+        );
     }
 
 }

@@ -32,7 +32,7 @@ import org.ops4j.pax.url.war.ServiceConstants;
  * @since 0.1.0, January 13, 2007
  */
 public final class Activator
-    extends HandlerActivator
+    extends HandlerActivator<Void>
 {
 
     /**
@@ -43,19 +43,27 @@ public final class Activator
         super(
             new String[]{ ServiceConstants.PROTOCOL },
             ServiceConstants.PID,
-            new ConnectionFactory()
+            new ConnectionFactory<Void>()
             {
 
                 /**
                  * Creates a war url connection.
                  *
-                 * @see ConnectionFactory#createConection(BundleContext , URL, Resolver)
+                 * @see ConnectionFactory#createConection(BundleContext , URL, Object)
                  */
                 public URLConnection createConection( final BundleContext bundleContext,
                                                       final URL url,
-                                                      final Resolver resolver )
+                                                      final Void notUsed )
                 {
                     // TODO implemnt connection creation
+                    return null;
+                }
+
+                /**
+                 * @see ConnectionFactory#createConfiguration(Resolver)
+                 */
+                public Void createConfiguration( Resolver resolver )
+                {
                     return null;
                 }
 

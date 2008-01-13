@@ -18,4 +18,5 @@ Private-Package:\
   org.ops4j.pax.runner.commons.*,\
   org.ops4j.pax.runner.commons.resolver.*,\
   org.ops4j.pax.runner.commons.url.*,\
-  org.ops4j.pax.runner.commons.xml.*
+  org.ops4j.pax.runner.commons.xml.*,\
+  org.ops4j.pax.url.commons.*

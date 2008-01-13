@@ -68,7 +68,7 @@ public class ConfigurationImplTest
         );
         replay( resolver );
         Configuration config = new ConfigurationImpl( resolver );
-        assertEquals( "Settings", new URL( "file:somewhere/settings.xml" ), config.getSettings() );
+        assertEquals( "Settings", new URL( "file:somewhere/settings.xml" ), config.getSettingsFileUrl() );
         verify( resolver );
     }
 
@@ -83,7 +83,7 @@ public class ConfigurationImplTest
         );
         replay( resolver );
         Configuration config = new ConfigurationImpl( resolver );
-        assertEquals( "Settings", validSettings.toURL(), config.getSettings() );
+        assertEquals( "Settings", validSettings.toURL(), config.getSettingsFileUrl() );
         verify( resolver );
     }
 
@@ -97,7 +97,7 @@ public class ConfigurationImplTest
         Resolver resolver = createMock( Resolver.class );
         expect( resolver.get( "org.ops4j.pax.runner.handler.mvn.settings" ) ).andReturn( "noprotocol:settings.xml" );
         replay( resolver );
-        new ConfigurationImpl( resolver ).getSettings();
+        new ConfigurationImpl( resolver ).getSettingsFileUrl();
     }
 
     @Test
@@ -108,7 +108,7 @@ public class ConfigurationImplTest
         expect( resolver.get( "org.ops4j.pax.runner.handler.mvn.settings" ) ).andReturn( null );
         replay( resolver );
         Configuration config = new ConfigurationImpl( resolver );
-        assertEquals( "Settings", null, config.getSettings() );
+        assertEquals( "Settings", null, config.getSettingsFileUrl() );
         verify( resolver );
     }
 

@@ -63,7 +63,6 @@ import org.ops4j.pax.runner.commons.xml.XmlUtils;
  * Default false.
  *
  * @author Alin Dreghiciu
- * @see Handler
  * @since August 10, 2007
  */
 public class Connection

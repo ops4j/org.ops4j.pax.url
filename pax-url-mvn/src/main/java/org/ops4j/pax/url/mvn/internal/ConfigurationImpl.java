@@ -104,9 +104,9 @@ public class ConfigurationImpl
      * Returns the URL of settings file. Will try first to use the url as is. If a malformed url encountered then will
      * try to use the url as a file path. If still not valid will throw the original Malformed URL exception.
      *
-     * @see Configuration#getSettings()
+     * @see Configuration#getSettingsFileUrl()
      */
-    public URL getSettings()
+    public URL getSettingsFileUrl()
     {
         if( !contains( ServiceConstants.PROPERTY_SETTINGS_FILE ) )
         {
