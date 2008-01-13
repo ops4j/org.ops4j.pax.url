@@ -45,6 +45,10 @@ public final class Activator
             new ConnectionFactory()
             {
 
+                /**
+                 * Creates a war url connection.
+                 * @see ConnectionFactory#createConection(java.net.URL, Resolver)
+                 */
                 public URLConnection createConection( final URL url, final Resolver resolver )
                 {
                     // TODO implemnt connection creation
