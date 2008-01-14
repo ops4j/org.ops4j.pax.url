@@ -64,6 +64,12 @@ class WarConnection
             "Export-Package",
             "!*"
         );
+        // remove unnecessary headers
+        instructions.setProperty(
+            "-removeheaders",
+            "Private-Package,"
+            + "Ignore-Package"
+        );
         return instructions;
     }
 
