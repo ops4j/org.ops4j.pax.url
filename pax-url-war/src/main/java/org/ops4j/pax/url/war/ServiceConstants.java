@@ -31,8 +31,29 @@ public interface ServiceConstants
      */
     static final String PID = "org.ops4j.pax.url.war";
     /**
-     * The protocol name.
+     * The war protocol name.
      */
-    public static final String PROTOCOL = "war";
+    public static final String PROTOCOL_WAR = "war";
+    /**
+     * The warfile protocol name.
+     */
+    public static final String PROTOCOL_WAR_FILE = "warfile";
+    /**
+     * The warmem protocol name.
+     */
+    public static final String PROTOCOL_WAR_MEM = "warmem";
+    /**
+     * Certificate check configuration property name.
+     */
+    static final String PROPERTY_CERTIFICATE_CHECK = PID + ".certificateCheck";
+
+    /**
+     * URI of the war file to be processed.
+     */
+    static final String INSTR_WAR_URI = "War-URI";
+    /**
+     * Bundle classpath.
+     */
+    static final String INSTR_BUNDLE_CLASSPATH = "Bundle-ClassPath";
 
 }

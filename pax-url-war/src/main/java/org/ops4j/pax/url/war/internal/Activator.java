@@ -17,6 +17,7 @@
  */
 package org.ops4j.pax.url.war.internal;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import org.osgi.framework.BundleContext;
@@ -26,14 +27,19 @@ import org.ops4j.pax.url.commons.HandlerActivator;
 import org.ops4j.pax.url.war.ServiceConstants;
 
 /**
- * Bundle activator for war: protocol handler.
+ * Bundle activator for war protocol handler.
  *
  * @author Alin Dreghiciu
  * @since 0.1.0, January 13, 2007
  */
 public final class Activator
-    extends HandlerActivator<Void>
+    extends HandlerActivator<Configuration>
 {
+
+    /**
+     * memory repository.
+     */
+    private static MemoryRepository m_memoryRepository;
 
     /**
      * @see HandlerActivator#HandlerActivator(String[], String, ConnectionFactory)
@@ -41,9 +47,13 @@ public final class Activator
     public Activator()
     {
         super(
-            new String[]{ ServiceConstants.PROTOCOL },
+            new String[]{
+                ServiceConstants.PROTOCOL_WAR,
+                ServiceConstants.PROTOCOL_WAR_FILE,
+                ServiceConstants.PROTOCOL_WAR_MEM
+            },
             ServiceConstants.PID,
-            new ConnectionFactory<Void>()
+            new ConnectionFactory<Configuration>()
             {
 
                 /**
@@ -53,18 +63,34 @@ public final class Activator
                  */
                 public URLConnection createConection( final BundleContext bundleContext,
                                                       final URL url,
-                                                      final Void notUsed )
+                                                      final Configuration config )
+                    throws MalformedURLException
                 {
-                    // TODO implemnt connection creation
-                    return null;
+                    synchronized( this )
+                    {
+                        if( m_memoryRepository == null )
+                        {
+                            m_memoryRepository = new MemoryRepository();
+                        }
+                    }
+                    final String protocol = url.getProtocol();
+                    if( ServiceConstants.PROTOCOL_WAR_FILE.equals( protocol ) )
+                    {
+                        return new WarFileConnection( url, m_memoryRepository );
+                    }
+                    else if( ServiceConstants.PROTOCOL_WAR_MEM.equals( protocol ) )
+                    {
+                        return new WarMemConnection( url, m_memoryRepository );
+                    }
+                    return new WarConnection( url, config, m_memoryRepository );
                 }
 
                 /**
                  * @see ConnectionFactory#createConfiguration(Resolver)
                  */
-                public Void createConfiguration( Resolver resolver )
+                public Configuration createConfiguration( final Resolver resolver )
                 {
-                    return null;
+                    return new ConfigurationImpl( resolver );
                 }
 
             }
