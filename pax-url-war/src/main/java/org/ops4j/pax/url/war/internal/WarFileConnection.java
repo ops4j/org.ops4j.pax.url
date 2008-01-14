@@ -25,7 +25,7 @@ import java.util.Properties;
 import org.ops4j.pax.runner.commons.url.URLUtils;
 
 /**
- * An URLConnection that implements war-file protocol.
+ * Url connection for war-file protocol handler.
  *
  * @author Alin Dreghiciu
  * @since 0.1.0, January 14, 2008
@@ -38,7 +38,7 @@ class WarFileConnection
      * @see AbstractConnection#AbstractConnection(URL, Configuration)
      */
     WarFileConnection( final URL url,
-                   final Configuration config )
+                       final Configuration config )
         throws MalformedURLException
     {
         super( url, config );
@@ -57,7 +57,8 @@ class WarFileConnection
         instructions.load(
             URLUtils.prepareInputStream( instructionsFleUrl, getConfiguration().getCertificateCheck() )
         );
-        instructions.store( System.out, null );
+        //the following line is for debugging purposes 
+        //instructions.store( System.out, null );
         return instructions;
     }
 
