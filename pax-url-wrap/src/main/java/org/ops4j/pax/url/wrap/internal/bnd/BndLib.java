@@ -167,7 +167,7 @@ public class BndLib
             analyzer.setProperty( Analyzer.EXPORT_PACKAGE, analyzer.calculateExportsFromContents( jar ) );
         }
         final String localSymbolicName = analyzer.getProperty( Analyzer.BUNDLE_SYMBOLICNAME, symbolicName );
-        analyzer.setProperty( Analyzer.BUNDLE_SYMBOLICNAME, generateSymbolicName( symbolicName ) );
+        analyzer.setProperty( Analyzer.BUNDLE_SYMBOLICNAME, generateSymbolicName( localSymbolicName ) );
     }
 
     /**
@@ -179,7 +179,7 @@ public class BndLib
      */
     private static String generateSymbolicName( final String symbolicName )
     {
-        return symbolicName.replaceAll( "[^a-zA-Z_0-9-]", "_" );
+        return symbolicName.replaceAll( "[^a-zA-Z_0-9.-]", "_" );
     }
 
 }
