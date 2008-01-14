@@ -17,107 +17,54 @@
  */
 package org.ops4j.pax.url.war.internal;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.Properties;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.ops4j.lang.NullArgumentException;
 import org.ops4j.pax.url.war.ServiceConstants;
 
 /**
- * An URLConnection that implements warfile protocol.
+ * Url connection for war-file protocol handler.
  *
  * @author Alin Dreghiciu
  * @since 0.1.0, January 14, 2008
  */
-public class WarFileConnection
-    extends URLConnection
+class WarFileConnection
+    extends AbstractConnection
 {
 
     /**
-     * Logger.
+     * @see AbstractConnection#AbstractConnection(URL, Configuration)
      */
-    private static final Log LOG = LogFactory.getLog( WarConnection.class );
-    /**
-     * Memory repository.
-     */
-    private final MemoryRepository m_memoryRepository;
-
-    /**
-     * Creates a new connection.
-     *
-     * @param url           the url; cannot be null.
-     * @param configuration service configuration; cannot be null
-     *
-     * @throws java.net.MalformedURLException in case of a malformed url
-     */
-    public WarFileConnection( final URL url, final MemoryRepository memoryRepository )
+    WarFileConnection( final URL url,
+                       final Configuration config )
         throws MalformedURLException
     {
-        super( url );
-        NullArgumentException.validateNotNull( url, "URL cannot be null" );
-        NullArgumentException.validateNotNull( memoryRepository, "Memory repository" );
-        final String path = getURL().getPath();
-        if( path == null || path.trim().length() == 0 )
-        {
-            throw new MalformedURLException( "War file URL must be specified" );
-        }
-        m_memoryRepository = memoryRepository;
+        super( url, config );
     }
 
     /**
-     * Does nothing.
+     * Creates a set of default instructions.
      *
-     * @see java.net.URLConnection#connect()
+     * @see AbstractConnection#getInstructions()
      */
-    @Override
-    public void connect()
+    protected Properties getInstructions()
     {
-        // do nothing
-    }
-
-    /**
-     * Returns the input stream denoted by the url.
-     *
-     * @return the input stream for the resource denoted by url
-     *
-     * @throws java.io.IOException in case of an exception during accessing the resource
-     * @see java.net.URLConnection#getInputStream()
-     */
-    @Override
-    public InputStream getInputStream()
-        throws IOException
-    {
-        connect();
-        // create a property file with the war file uri
-        final Properties properties = new Properties();
-        properties.setProperty( ServiceConstants.INSTR_WAR_URI, getURL().getPath() );
+        final Properties instructions = new Properties();
+        // war file to be processed
+        instructions.setProperty( ServiceConstants.INSTR_WAR_URI, getURL().getPath() );
         // default import packages
-        properties.setProperty(
+        instructions.setProperty(
             "Import-Package",
             "javax.*; resolution:=optional,"
             + "org.xml.*; resolution:=optional,"
             + "org.w3c.*; resolution:=optional"
         );
         // default no export packages
-        properties.setProperty(
+        instructions.setProperty(
             "Export-Package",
             "!*"
         );
-        // and store it into memory
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        properties.store( baos, null );
-        final MemoryRepository.Reference reference = m_memoryRepository.add( baos.toByteArray() );
-        // we have to wrap the input stream so we can remove the wrapping instructions file from memory
-        return new MemoryInputStream(
-            new URL( ServiceConstants.PROTOCOL_WAR + ":" + WarMemConnection.toExternalForm( reference ) ).openStream(),
-            reference
-        );
+        return instructions;
     }
 
 }

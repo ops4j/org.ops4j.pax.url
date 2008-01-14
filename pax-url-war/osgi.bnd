@@ -13,8 +13,10 @@ Export-Package:\
   
 Private-Package:\
   ${bundle.namespace}.internal.*,\
+  aQute.*,\
   org.apache.commons.logging.*,\
   org.ops4j.lang.*,\
   org.ops4j.pax.runner.commons.*,\
   org.ops4j.pax.runner.commons.resolver.*,\
-  org.ops4j.pax.url.commons.*
+  org.ops4j.pax.url.commons.*,\
+  org.ops4j.pax.url.wrap.internal.bnd.*

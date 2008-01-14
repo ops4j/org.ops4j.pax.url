@@ -37,11 +37,7 @@ public interface ServiceConstants
     /**
      * The warfile protocol name.
      */
-    public static final String PROTOCOL_WAR_FILE = "warfile";
-    /**
-     * The warmem protocol name.
-     */
-    public static final String PROTOCOL_WAR_MEM = "warmem";
+    public static final String PROTOCOL_WAR_FILE = "war-file";
     /**
      * Certificate check configuration property name.
      */

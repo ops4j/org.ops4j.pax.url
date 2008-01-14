@@ -37,11 +37,6 @@ public final class Activator
 {
 
     /**
-     * memory repository.
-     */
-    private static MemoryRepository m_memoryRepository;
-
-    /**
      * @see HandlerActivator#HandlerActivator(String[], String, ConnectionFactory)
      */
     public Activator()
@@ -49,8 +44,7 @@ public final class Activator
         super(
             new String[]{
                 ServiceConstants.PROTOCOL_WAR,
-                ServiceConstants.PROTOCOL_WAR_FILE,
-                ServiceConstants.PROTOCOL_WAR_MEM
+                ServiceConstants.PROTOCOL_WAR_FILE
             },
             ServiceConstants.PID,
             new ConnectionFactory<Configuration>()
@@ -66,23 +60,12 @@ public final class Activator
                                                       final Configuration config )
                     throws MalformedURLException
                 {
-                    synchronized( this )
-                    {
-                        if( m_memoryRepository == null )
-                        {
-                            m_memoryRepository = new MemoryRepository();
-                        }
-                    }
                     final String protocol = url.getProtocol();
                     if( ServiceConstants.PROTOCOL_WAR_FILE.equals( protocol ) )
                     {
-                        return new WarFileConnection( url, m_memoryRepository );
+                        return new WarFileConnection( url, config );
                     }
-                    else if( ServiceConstants.PROTOCOL_WAR_MEM.equals( protocol ) )
-                    {
-                        return new WarMemConnection( url, m_memoryRepository );
-                    }
-                    return new WarConnection( url, config, m_memoryRepository );
+                    return new WarConnection( url, config );
                 }
 
                 /**
