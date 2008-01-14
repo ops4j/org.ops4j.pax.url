@@ -61,11 +61,11 @@ public final class Activator
                     throws MalformedURLException
                 {
                     final String protocol = url.getProtocol();
-                    if( ServiceConstants.PROTOCOL_WAR_FILE.equals( protocol ) )
+                    if( ServiceConstants.PROTOCOL_WAR.equals( protocol ) )
                     {
-                        return new WarFileConnection( url, config );
+                        return new WarConnection( url, config );
                     }
-                    return new WarConnection( url, config );
+                    return new WarFileConnection( url, config );
                 }
 
                 /**

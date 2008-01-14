@@ -17,7 +17,6 @@
  */
 package org.ops4j.pax.url.war.internal;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.JarURLConnection;
@@ -35,6 +34,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import org.ops4j.lang.NullArgumentException;
 import org.ops4j.lang.PreConditionException;
+import org.ops4j.pax.runner.commons.url.URLUtils;
 import org.ops4j.pax.url.war.ServiceConstants;
 import org.ops4j.pax.url.wrap.internal.bnd.BndLib;
 
@@ -64,7 +64,7 @@ abstract class AbstractConnection
      * @throws NullArgumentException if url or configuration is null
      */
     protected AbstractConnection( final URL url,
-                               final Configuration configuration )
+                                  final Configuration configuration )
         throws MalformedURLException
     {
         super( url );
@@ -109,7 +109,7 @@ abstract class AbstractConnection
         generateClassPathInstruction( instructions );
 
         return BndLib.createBundle(
-            new URL( warUri ).openStream(),
+            URLUtils.prepareInputStream( new URL( warUri ), m_configuration.getCertificateCheck() ),
             instructions,
             warUri
         );
@@ -241,7 +241,7 @@ abstract class AbstractConnection
      *
      * @return list composed out of the string segments
      */
-    private static List<String> toList( final String separatedString, final String delimiter )
+    protected static List<String> toList( final String separatedString, final String delimiter )
     {
         final List<String> list = new ArrayList<String>();
         if( separatedString != null )
@@ -259,7 +259,7 @@ abstract class AbstractConnection
      *
      * @return string composed from the collection elements delimited by the delimiter
      */
-    private static String join( final Collection<String> strings, final String delimiter )
+    protected static String join( final Collection<String> strings, final String delimiter )
     {
         final StringBuffer buffer = new StringBuffer();
         final Iterator<String> iter = strings.iterator();

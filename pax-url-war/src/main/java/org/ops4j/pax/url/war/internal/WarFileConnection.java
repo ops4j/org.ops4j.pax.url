@@ -17,13 +17,15 @@
  */
 package org.ops4j.pax.url.war.internal;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
-import org.ops4j.pax.url.war.ServiceConstants;
+import org.ops4j.pax.runner.commons.url.URLUtils;
 
 /**
- * Url connection for war-file protocol handler.
+ * An URLConnection that implements war-file protocol.
  *
  * @author Alin Dreghiciu
  * @since 0.1.0, January 14, 2008
@@ -36,35 +38,56 @@ class WarFileConnection
      * @see AbstractConnection#AbstractConnection(URL, Configuration)
      */
     WarFileConnection( final URL url,
-                       final Configuration config )
+                   final Configuration config )
         throws MalformedURLException
     {
         super( url, config );
     }
 
     /**
-     * Creates a set of default instructions.
+     * Url must be a reference to an instructions file.
      *
      * @see AbstractConnection#getInstructions()
      */
     protected Properties getInstructions()
+        throws IOException
     {
         final Properties instructions = new Properties();
-        // war file to be processed
-        instructions.setProperty( ServiceConstants.INSTR_WAR_URI, getURL().getPath() );
-        // default import packages
-        instructions.setProperty(
-            "Import-Package",
-            "javax.*; resolution:=optional,"
-            + "org.xml.*; resolution:=optional,"
-            + "org.w3c.*; resolution:=optional"
+        final URL instructionsFleUrl = getInstructionsFileURL();
+        instructions.load(
+            URLUtils.prepareInputStream( instructionsFleUrl, getConfiguration().getCertificateCheck() )
         );
-        // default no export packages
-        instructions.setProperty(
-            "Export-Package",
-            "!*"
-        );
+        instructions.store( System.out, null );
         return instructions;
     }
+
+    /**
+     * Get the instructions file URL out of processed URL by trying first a direct url and if fails looking for a file
+     * with the specified path.
+     *
+     * @return instructions file URL out of processed URL.
+     *
+     * @throws IOException re-thrown
+     */
+    private URL getInstructionsFileURL()
+        throws IOException
+    {
+        // first try an url out of the path
+        try
+        {
+            return new URL( getURL().getPath() );
+        }
+        catch( MalformedURLException e )
+        {
+            // give one more try to file
+            final File instructionsFile = new File( getURL().getPath() );
+            if( instructionsFile.exists() && instructionsFile.isFile() )
+            {
+                return instructionsFile.toURL();
+            }
+            throw e;
+        }
+    }
+
 
 }
