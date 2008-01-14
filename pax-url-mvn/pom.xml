@@ -15,7 +15,7 @@
   <version>0.1.0-SNAPSHOT</version>
   <packaging>bundle</packaging>
 
-  <name>OPS4J Pax Url - Maven 2 Handler</name>
+  <name>OPS4J Pax Url - mvn:</name>
   <description>
     OPS4J Pax Url - mvn: protocol handler. See details at http://wiki.ops4j.org/confluence/x/CoA6
   </description>
