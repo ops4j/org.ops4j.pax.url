@@ -21,9 +21,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import org.osgi.framework.BundleContext;
-import org.ops4j.pax.runner.commons.resolver.Resolver;
-import org.ops4j.pax.url.commons.ConnectionFactory;
-import org.ops4j.pax.url.commons.HandlerActivator;
+import org.ops4j.pax.url.commons.resolver.Resolver;
+import org.ops4j.pax.url.commons.handler.ConnectionFactory;
+import org.ops4j.pax.url.commons.handler.HandlerActivator;
 import org.ops4j.pax.url.mvn.ServiceConstants;
 
 /**
@@ -38,7 +38,7 @@ public final class Activator
 {
 
     /**
-     * @see HandlerActivator#HandlerActivator(String[], String, ConnectionFactory)
+     * @see HandlerActivator#HandlerActivator(String[], String, org.ops4j.pax.url.commons.handler.ConnectionFactory)
      */
     public Activator()
     {

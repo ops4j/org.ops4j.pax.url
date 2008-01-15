@@ -15,6 +15,5 @@ Private-Package:\
   ${bundle.namespace}.internal.*,\
   org.apache.commons.logging.*,\
   org.ops4j.lang.*,\
-  org.ops4j.pax.runner.commons.*,\
-  org.ops4j.pax.runner.commons.resolver.*,\
-  org.ops4j.pax.url.commons.*  
+  org.ops4j.pax.url.commons.handler.*,\
+  org.ops4j.pax.url.commons.resolver.*

@@ -26,7 +26,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
-import org.ops4j.pax.runner.commons.file.FileUtils;
+import org.ops4j.pax.url.commons.file.FileUtils;
 
 public class ConnectionTest
 {

@@ -27,11 +27,6 @@
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging-api</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.ops4j.pax.runner.pax-runner-internal</groupId>
-      <artifactId>pax-runner-commons</artifactId>
-      <version>0.5.7-SNAPSHOT</version>
-    </dependency>
   </dependencies>
 
 </project>

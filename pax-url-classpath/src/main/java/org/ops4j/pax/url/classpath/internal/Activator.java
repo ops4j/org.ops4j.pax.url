@@ -21,10 +21,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import org.osgi.framework.BundleContext;
-import org.ops4j.pax.runner.commons.resolver.Resolver;
+import org.ops4j.pax.url.commons.resolver.Resolver;
 import org.ops4j.pax.url.classpath.ServiceConstants;
-import org.ops4j.pax.url.commons.ConnectionFactory;
-import org.ops4j.pax.url.commons.HandlerActivator;
+import org.ops4j.pax.url.commons.handler.ConnectionFactory;
+import org.ops4j.pax.url.commons.handler.HandlerActivator;
 
 /**
  * Bundle activator for classpath: protocol handler.
@@ -37,7 +37,7 @@ public final class Activator
 {
 
     /**
-     * @see HandlerActivator#HandlerActivator(String[], String, org.ops4j.pax.url.commons.ConnectionFactory)
+     * @see HandlerActivator#HandlerActivator(String[], String, org.ops4j.pax.url.commons.handler.ConnectionFactory)
      */
     public Activator()
     {
@@ -50,7 +50,7 @@ public final class Activator
                 /**
                  * Creates a classpath url connection.
                  *
-                 * @see ConnectionFactory#createConection(BundleContext, URL, Object)
+                 * @see org.ops4j.pax.url.commons.handler.ConnectionFactory#createConection(BundleContext, URL, Object)
                  */
                 public URLConnection createConection( final BundleContext bundleContext,
                                                       final URL url,
@@ -61,7 +61,7 @@ public final class Activator
                 }
 
                 /**
-                 * @see ConnectionFactory#createConfiguration(org.ops4j.pax.runner.commons.resolver.Resolver)
+                 * @see org.ops4j.pax.url.commons.handler.ConnectionFactory#createConfiguration(org.ops4j.pax.url.commons.resolver.Resolver)
                  */
                 public Void createConfiguration( Resolver resolver )
                 {

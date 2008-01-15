@@ -15,13 +15,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.url.commons;
+package org.ops4j.pax.url.commons.handler;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import org.osgi.framework.BundleContext;
-import org.ops4j.pax.runner.commons.resolver.Resolver;
+import org.ops4j.pax.url.commons.resolver.Resolver;
 
 /**
  * URL connection factory.

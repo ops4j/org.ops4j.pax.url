@@ -20,7 +20,7 @@ package org.ops4j.pax.url.mvn.internal;
 import java.net.MalformedURLException;
 import static org.junit.Assert.*;
 import org.junit.Test;
-import org.ops4j.pax.runner.commons.file.FileUtils;
+import org.ops4j.pax.url.commons.file.FileUtils;
 
 public class SettingsImplTest
 {

@@ -85,11 +85,6 @@
         <version>1.0.4</version>
         <optional>true</optional>
       </dependency>
-      <dependency>
-        <groupId>org.ops4j.pax.runner.pax-runner-internal</groupId>
-        <artifactId>pax-runner-commons</artifactId>
-        <version>0.5.7-SNAPSHOT</version>
-      </dependency>
     </dependencies>
   </dependencyManagement>
 

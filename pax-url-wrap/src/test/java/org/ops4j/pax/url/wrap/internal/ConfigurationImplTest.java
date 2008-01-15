@@ -20,7 +20,7 @@ package org.ops4j.pax.url.wrap.internal;
 import static org.easymock.EasyMock.*;
 import static org.junit.Assert.*;
 import org.junit.Test;
-import org.ops4j.pax.runner.commons.resolver.Resolver;
+import org.ops4j.pax.url.commons.resolver.Resolver;
 
 public class ConfigurationImplTest
 {

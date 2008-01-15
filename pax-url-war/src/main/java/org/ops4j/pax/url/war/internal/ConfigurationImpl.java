@@ -18,8 +18,8 @@
 package org.ops4j.pax.url.war.internal;
 
 import org.ops4j.lang.NullArgumentException;
-import org.ops4j.pax.runner.commons.resolver.ConfigurationMap;
-import org.ops4j.pax.runner.commons.resolver.Resolver;
+import org.ops4j.pax.url.commons.resolver.ConfigurationMap;
+import org.ops4j.pax.url.commons.resolver.Resolver;
 import org.ops4j.pax.url.war.ServiceConstants;
 
 /**

@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
-import org.ops4j.pax.runner.commons.url.URLUtils;
+import org.ops4j.pax.url.commons.url.URLUtils;
 
 /**
  * Url connection for war-file protocol handler.

@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.url.commons;
+package org.ops4j.pax.url.commons.handler;
 
 import java.io.IOException;
 import java.net.URL;
@@ -35,10 +35,10 @@ import org.osgi.service.url.AbstractURLStreamHandlerService;
 import org.osgi.service.url.URLConstants;
 import org.osgi.service.url.URLStreamHandlerService;
 import org.ops4j.lang.NullArgumentException;
-import org.ops4j.pax.runner.commons.resolver.BundleContextResolver;
-import org.ops4j.pax.runner.commons.resolver.CompositeResolver;
-import org.ops4j.pax.runner.commons.resolver.DictionaryResolver;
-import org.ops4j.pax.runner.commons.resolver.Resolver;
+import org.ops4j.pax.url.commons.resolver.BundleContextResolver;
+import org.ops4j.pax.url.commons.resolver.CompositeResolver;
+import org.ops4j.pax.url.commons.resolver.DictionaryResolver;
+import org.ops4j.pax.url.commons.resolver.Resolver;
 
 /**
  * Bundle activator for protocol handlers.

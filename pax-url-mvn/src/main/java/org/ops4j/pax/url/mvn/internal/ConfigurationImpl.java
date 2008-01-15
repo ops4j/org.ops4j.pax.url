@@ -25,8 +25,8 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ops4j.lang.NullArgumentException;
-import org.ops4j.pax.runner.commons.resolver.ConfigurationMap;
-import org.ops4j.pax.runner.commons.resolver.Resolver;
+import org.ops4j.pax.url.commons.resolver.ConfigurationMap;
+import org.ops4j.pax.url.commons.resolver.Resolver;
 import org.ops4j.pax.url.mvn.ServiceConstants;
 
 /**
