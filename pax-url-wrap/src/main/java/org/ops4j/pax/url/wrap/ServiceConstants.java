@@ -29,7 +29,7 @@ public interface ServiceConstants
     /**
      * Service PID used for configuration.
      */
-    static final String PID = "org.ops4j.pax.runner.handler.wrap";
+    static final String PID = "org.ops4j.pax.url.wrap";
     /**
      * Certificate check configuration property name.
      */
