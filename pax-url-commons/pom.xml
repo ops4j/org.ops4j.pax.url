@@ -26,6 +26,7 @@
     <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging-api</artifactId>
+      <optional>true</optional>
     </dependency>
   </dependencies>
 
