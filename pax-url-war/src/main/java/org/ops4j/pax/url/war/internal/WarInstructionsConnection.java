@@ -30,14 +30,14 @@ import org.ops4j.pax.runner.commons.url.URLUtils;
  * @author Alin Dreghiciu
  * @since 0.1.0, January 14, 2008
  */
-class WarFileConnection
+class WarInstructionsConnection
     extends AbstractConnection
 {
 
     /**
      * @see AbstractConnection#AbstractConnection(URL, Configuration)
      */
-    WarFileConnection( final URL url,
+    WarInstructionsConnection( final URL url,
                        final Configuration config )
         throws MalformedURLException
     {

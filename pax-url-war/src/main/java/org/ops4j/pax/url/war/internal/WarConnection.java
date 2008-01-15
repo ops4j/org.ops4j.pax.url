@@ -51,7 +51,7 @@ class WarConnection
     {
         final Properties instructions = new Properties();
         // war file to be processed
-        instructions.setProperty( ServiceConstants.INSTR_WAR_URI, getURL().getPath() );
+        instructions.setProperty( ServiceConstants.INSTR_WAR_URL, getURL().getPath() );
         // default import packages
         instructions.setProperty(
             "Import-Package",

@@ -44,7 +44,7 @@ public final class Activator
         super(
             new String[]{
                 ServiceConstants.PROTOCOL_WAR,
-                ServiceConstants.PROTOCOL_WAR_FILE
+                ServiceConstants.PROTOCOL_WAR_INSTRUCTIONS
             },
             ServiceConstants.PID,
             new ConnectionFactory<Configuration>()
@@ -65,7 +65,7 @@ public final class Activator
                     {
                         return new WarConnection( url, config );
                     }
-                    return new WarFileConnection( url, config );
+                    return new WarInstructionsConnection( url, config );
                 }
 
                 /**

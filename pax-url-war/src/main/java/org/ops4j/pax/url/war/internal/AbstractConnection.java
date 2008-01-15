@@ -98,11 +98,11 @@ abstract class AbstractConnection
         PreConditionException.validateNotNull( instructions, "Instructions" );
 
         // the instructions must always contain the war file
-        final String warUri = instructions.getProperty( ServiceConstants.INSTR_WAR_URI );
+        final String warUri = instructions.getProperty( ServiceConstants.INSTR_WAR_URL );
         if( warUri == null || warUri.trim().length() == 0 )
         {
             throw new IOException(
-                "Instructions file must contain a property named " + ServiceConstants.INSTR_WAR_URI
+                "Instructions file must contain a property named " + ServiceConstants.INSTR_WAR_URL
             );
         }
 
@@ -153,7 +153,7 @@ abstract class AbstractConnection
         // first take the bundle class path if present
         bundleClassPath.addAll( toList( instructions.getProperty( ServiceConstants.INSTR_BUNDLE_CLASSPATH ), "," ) );
         // then get the list of jars in WEB-INF/lib
-        bundleClassPath.addAll( extractJarListFromWar( instructions.getProperty( ServiceConstants.INSTR_WAR_URI ) ) );
+        bundleClassPath.addAll( extractJarListFromWar( instructions.getProperty( ServiceConstants.INSTR_WAR_URL ) ) );
         // check if we have a "WEB-INF/classpath" entry
         if( !bundleClassPath.contains( "WEB-INF/classes" ) )
         {

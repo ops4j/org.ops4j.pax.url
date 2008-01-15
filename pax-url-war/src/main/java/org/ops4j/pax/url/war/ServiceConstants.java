@@ -37,7 +37,7 @@ public interface ServiceConstants
     /**
      * The warfile protocol name.
      */
-    public static final String PROTOCOL_WAR_FILE = "war-file";
+    public static final String PROTOCOL_WAR_INSTRUCTIONS = "war-i";
     /**
      * Certificate check configuration property name.
      */
@@ -46,7 +46,7 @@ public interface ServiceConstants
     /**
      * URI of the war file to be processed.
      */
-    static final String INSTR_WAR_URI = "War-URI";
+    static final String INSTR_WAR_URL = "WAR-URL";
     /**
      * Bundle classpath.
      */
