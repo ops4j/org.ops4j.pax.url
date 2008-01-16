@@ -36,7 +36,7 @@ public class ConfigurationImplTest
     {
         Resolver resolver = createMock( Resolver.class );
 
-        expect( resolver.get( "org.ops4j.pax.runner.handler.wrap.certificateCheck" ) ).andReturn( "true" );
+        expect( resolver.get( "org.ops4j.pax.url.wrap.certificateCheck" ) ).andReturn( "true" );
 
         replay( resolver );
         Configuration config = new ConfigurationImpl( resolver );
@@ -49,7 +49,7 @@ public class ConfigurationImplTest
     {
         Resolver resolver = createMock( Resolver.class );
 
-        expect( resolver.get( "org.ops4j.pax.runner.handler.wrap.certificateCheck" ) ).andReturn( null );
+        expect( resolver.get( "org.ops4j.pax.url.wrap.certificateCheck" ) ).andReturn( null );
 
         replay( resolver );
         Configuration config = new ConfigurationImpl( resolver );

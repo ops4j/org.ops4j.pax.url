@@ -56,10 +56,10 @@ import org.ops4j.pax.url.commons.xml.XmlUtils;
  * The service can be configured in two ways: via configuration admin if available and via framework/system properties
  * where the configuration via config admin has priority.<br/>
  * Service configuration:<br/>
- * - org.ops4j.pax.runner.handler.mvn.settings = the path to settings.xml;<br/>
- * - org.ops4j.pax.runner.handler.mvn.localRepository = the path to local repository directory;<br>
- * - org.ops4j.pax.runner.handler.mvn.repository =  a comma separated list for repositories urls;<br/>
- * - org.ops4j.pax.runner.handler.mvn.certicateCheck = true/false if the SSL certificate check should be done.
+ * - org.ops4j.pax.url.mvn.settings = the path to settings.xml;<br/>
+ * - org.ops4j.pax.url.mvn.localRepository = the path to local repository directory;<br>
+ * - org.ops4j.pax.url.mvn.repository =  a comma separated list for repositories urls;<br/>
+ * - org.ops4j.pax.url.mvn.certicateCheck = true/false if the SSL certificate check should be done.
  * Default false.
  *
  * @author Alin Dreghiciu
