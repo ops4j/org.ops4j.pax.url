@@ -35,7 +35,7 @@ import org.osgi.service.url.AbstractURLStreamHandlerService;
 import org.osgi.service.url.URLConstants;
 import org.osgi.service.url.URLStreamHandlerService;
 import org.ops4j.lang.NullArgumentException;
-import org.ops4j.pax.url.commons.resolver.BundleContextPropertyResolver;
+import org.ops4j.pax.swissbox.property.BundleContextPropertyResolver;
 import org.ops4j.util.property.DictionaryPropertyResolver;
 import org.ops4j.util.property.PropertyResolver;
 
