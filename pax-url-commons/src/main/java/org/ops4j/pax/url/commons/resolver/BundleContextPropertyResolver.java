@@ -17,46 +17,41 @@
  */
 package org.ops4j.pax.url.commons.resolver;
 
-import java.util.Dictionary;
+import org.osgi.framework.BundleContext;
+import org.ops4j.lang.NullArgumentException;
+import org.ops4j.util.property.PropertyResolver;
 
 /**
- * Resolves properties from a Dictionary.
- * TODO add unit tests
+ * Resolves properties by first looking in an optional configured dictionary then if property not found looking in
+ * bundle context.
  *
  * @author Alin Dreghiciu
- * @since August 26, 2007
+ * @since August 11, 2007
  */
-public class DictionaryResolver
-    implements Resolver
+public class BundleContextPropertyResolver
+    implements PropertyResolver
 {
 
     /**
-     * Dictionary to resolve properties from. Can be null.
+     * Service bundle context.
      */
-    private Dictionary m_properties;
+    private final BundleContext m_bundleContext;
 
     /**
      * Creates a property resolver.
      *
-     * @param properties dictionary; optional
+     * @param bundleContext bundle context; mandatory
      */
-    public DictionaryResolver( final Dictionary properties )
+    public BundleContextPropertyResolver( final BundleContext bundleContext )
     {
-        m_properties = properties;
+        NullArgumentException.validateNotNull( bundleContext, "Bundle context" );
+        m_bundleContext = bundleContext;
     }
 
     /**
-     * Sets the properties in use.
-     *
-     * @param properties dictionary of properties
-     */
-    public void setProperties( final Dictionary properties )
-    {
-        m_properties = properties;
-    }
-
-    /**
-     * Resolves a property based on it's name .
+     * Resolves a property based on it's name by:<br/>
+     * 1. if there is a configuration available look for the property;<br/>
+     * 2. if property is not set or there is no configuration available look for a framework / system property.
      *
      * @param propertyName property name to be resolved
      *
@@ -64,11 +59,7 @@ public class DictionaryResolver
      */
     public String get( final String propertyName )
     {
-        String value = null;
-        if( m_properties != null )
-        {
-            value = (String) m_properties.get( propertyName );
-        }
+        String value = m_bundleContext.getProperty( propertyName );
         if( value != null && value.trim().length() == 0 )
         {
             value = null;

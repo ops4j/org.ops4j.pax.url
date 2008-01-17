@@ -21,7 +21,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import org.osgi.framework.BundleContext;
-import org.ops4j.pax.url.commons.resolver.Resolver;
+import org.ops4j.util.property.PropertyResolver;
 
 /**
  * URL connection factory.
@@ -49,10 +49,10 @@ public interface ConnectionFactory<T>
     /**
      * Creates a handler specific configuration.
      *
-     * @param resolver configuration resolver
+     * @param propertyResolver configuration propertyResolver
      *
      * @return T protocol specific configuration
      */
-    T createConfiguration( Resolver resolver );
+    T createConfiguration( PropertyResolver propertyResolver );
 
 }

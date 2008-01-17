@@ -24,7 +24,7 @@ import org.osgi.framework.BundleContext;
 import org.ops4j.pax.url.classpath.ServiceConstants;
 import org.ops4j.pax.url.commons.handler.ConnectionFactory;
 import org.ops4j.pax.url.commons.handler.HandlerActivator;
-import org.ops4j.pax.url.commons.resolver.Resolver;
+import org.ops4j.util.property.PropertyResolver;
 
 /**
  * Bundle activator for classpath: protocol handler.
@@ -61,9 +61,9 @@ public final class Activator
                 }
 
                 /**
-                 * @see org.ops4j.pax.url.commons.handler.ConnectionFactory#createConfiguration(org.ops4j.pax.url.commons.resolver.Resolver)
+                 * @see org.ops4j.pax.url.commons.handler.ConnectionFactory#createConfiguration(org.ops4j.util.property.PropertyResolver)
                  */
-                public Void createConfiguration( Resolver resolver )
+                public Void createConfiguration( PropertyResolver propertyResolver )
                 {
                     return null;
                 }

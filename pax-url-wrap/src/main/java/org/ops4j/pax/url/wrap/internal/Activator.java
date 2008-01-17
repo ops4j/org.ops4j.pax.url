@@ -23,8 +23,8 @@ import java.net.URLConnection;
 import org.osgi.framework.BundleContext;
 import org.ops4j.pax.url.commons.handler.ConnectionFactory;
 import org.ops4j.pax.url.commons.handler.HandlerActivator;
-import org.ops4j.pax.url.commons.resolver.Resolver;
 import org.ops4j.pax.url.wrap.ServiceConstants;
+import org.ops4j.util.property.PropertyResolver;
 
 /**
  * Bundle activator for wrap: protocol handler.
@@ -60,11 +60,11 @@ public final class Activator
                 }
 
                 /**
-                 * @see org.ops4j.pax.url.commons.handler.ConnectionFactory#createConfiguration(Resolver)
+                 * @see org.ops4j.pax.url.commons.handler.ConnectionFactory#createConfiguration(org.ops4j.util.property.PropertyResolver)
                  */
-                public Configuration createConfiguration( final Resolver resolver )
+                public Configuration createConfiguration( final PropertyResolver propertyResolver )
                 {
-                    return new ConfigurationImpl( resolver );
+                    return new ConfigurationImpl( propertyResolver );
                 }
 
             }

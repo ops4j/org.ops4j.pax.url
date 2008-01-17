@@ -21,8 +21,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ops4j.lang.NullArgumentException;
 import org.ops4j.pax.url.commons.resolver.ConfigurationMap;
-import org.ops4j.pax.url.commons.resolver.Resolver;
 import org.ops4j.pax.url.wrap.ServiceConstants;
+import org.ops4j.util.property.PropertyResolver;
 
 /**
  * Service Configuration implementation.
@@ -44,17 +44,17 @@ public class ConfigurationImpl
     /**
      * Property resolver. Cannot be null.
      */
-    private final Resolver m_resolver;
+    private final PropertyResolver m_propertyResolver;
 
     /**
      * Creates a new service configuration.
      *
-     * @param resolver resolver used to resolve properties; mandatory
+     * @param propertyResolver propertyResolver used to resolve properties; mandatory
      */
-    public ConfigurationImpl( final Resolver resolver )
+    public ConfigurationImpl( final PropertyResolver propertyResolver )
     {
-        NullArgumentException.validateNotNull( resolver, "Property resolver" );
-        m_resolver = resolver;
+        NullArgumentException.validateNotNull( propertyResolver, "Property propertyResolver" );
+        m_propertyResolver = propertyResolver;
     }
 
     /**
@@ -65,7 +65,7 @@ public class ConfigurationImpl
         if( !contains( ServiceConstants.PROPERTY_CERTIFICATE_CHECK ) )
         {
             return set( ServiceConstants.PROPERTY_CERTIFICATE_CHECK,
-                        Boolean.valueOf( m_resolver.get( ServiceConstants.PROPERTY_CERTIFICATE_CHECK ) )
+                        Boolean.valueOf( m_propertyResolver.get( ServiceConstants.PROPERTY_CERTIFICATE_CHECK ) )
             );
         }
         return get( ServiceConstants.PROPERTY_CERTIFICATE_CHECK );

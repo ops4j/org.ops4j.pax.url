@@ -35,10 +35,9 @@ import org.osgi.service.url.AbstractURLStreamHandlerService;
 import org.osgi.service.url.URLConstants;
 import org.osgi.service.url.URLStreamHandlerService;
 import org.ops4j.lang.NullArgumentException;
-import org.ops4j.pax.url.commons.resolver.BundleContextResolver;
-import org.ops4j.pax.url.commons.resolver.CompositeResolver;
-import org.ops4j.pax.url.commons.resolver.DictionaryResolver;
-import org.ops4j.pax.url.commons.resolver.Resolver;
+import org.ops4j.pax.url.commons.resolver.BundleContextPropertyResolver;
+import org.ops4j.util.property.DictionaryPropertyResolver;
+import org.ops4j.util.property.PropertyResolver;
 
 /**
  * Bundle activator for protocol handlers.
@@ -75,7 +74,7 @@ public class HandlerActivator<T>
     /**
      * Property resolver to be used on resolving properties.
      */
-    private Resolver m_resolver;
+    private PropertyResolver m_propertyResolver;
     /**
      * Protocol handler specific configuration.
      */
@@ -182,14 +181,14 @@ public class HandlerActivator<T>
             {
                 if( config == null )
                 {
-                    setResolver( new BundleContextResolver( m_bundleContext ) );
+                    setResolver( new BundleContextPropertyResolver( m_bundleContext ) );
                 }
                 else
                 {
                     setResolver(
-                        new CompositeResolver(
-                            new DictionaryResolver( config ),
-                            new BundleContextResolver( m_bundleContext )
+                        new DictionaryPropertyResolver(
+                            config,
+                            new BundleContextPropertyResolver( m_bundleContext )
                         )
                     );
                 }
@@ -205,7 +204,7 @@ public class HandlerActivator<T>
         );
         synchronized( this )
         {
-            if( m_resolver == null )
+            if( m_propertyResolver == null )
             {
                 try
                 {
@@ -242,15 +241,15 @@ public class HandlerActivator<T>
 
     }
 
-    public synchronized Resolver getResolver()
+    public synchronized PropertyResolver getResolver()
     {
-        return m_resolver;
+        return m_propertyResolver;
     }
 
-    public synchronized void setResolver( final Resolver resolver )
+    public synchronized void setResolver( final PropertyResolver propertyResolver )
     {
-        m_resolver = resolver;
-        m_configuration = m_connectionFactory.createConfiguration( resolver );
+        m_propertyResolver = propertyResolver;
+        m_configuration = m_connectionFactory.createConfiguration( propertyResolver );
     }
 
 }

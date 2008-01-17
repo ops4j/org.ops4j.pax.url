@@ -20,7 +20,7 @@ package org.ops4j.pax.url.wrap.internal;
 import static org.easymock.EasyMock.*;
 import static org.junit.Assert.*;
 import org.junit.Test;
-import org.ops4j.pax.url.commons.resolver.Resolver;
+import org.ops4j.util.property.PropertyResolver;
 
 public class ConfigurationImplTest
 {
@@ -34,27 +34,27 @@ public class ConfigurationImplTest
     @Test
     public void getCertificateCheck()
     {
-        Resolver resolver = createMock( Resolver.class );
+        PropertyResolver propertyResolver = createMock( PropertyResolver.class );
 
-        expect( resolver.get( "org.ops4j.pax.url.wrap.certificateCheck" ) ).andReturn( "true" );
+        expect( propertyResolver.get( "org.ops4j.pax.url.wrap.certificateCheck" ) ).andReturn( "true" );
 
-        replay( resolver );
-        Configuration config = new ConfigurationImpl( resolver );
+        replay( propertyResolver );
+        Configuration config = new ConfigurationImpl( propertyResolver );
         assertEquals( "Certificate check", true, config.getCertificateCheck() );
-        verify( resolver );
+        verify( propertyResolver );
     }
 
     @Test
     public void getDefaultCertificateCheck()
     {
-        Resolver resolver = createMock( Resolver.class );
+        PropertyResolver propertyResolver = createMock( PropertyResolver.class );
 
-        expect( resolver.get( "org.ops4j.pax.url.wrap.certificateCheck" ) ).andReturn( null );
+        expect( propertyResolver.get( "org.ops4j.pax.url.wrap.certificateCheck" ) ).andReturn( null );
 
-        replay( resolver );
-        Configuration config = new ConfigurationImpl( resolver );
+        replay( propertyResolver );
+        Configuration config = new ConfigurationImpl( propertyResolver );
         assertEquals( "Certificate check", false, config.getCertificateCheck() );
-        verify( resolver );
+        verify( propertyResolver );
     }
 
 }

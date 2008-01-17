@@ -26,8 +26,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ops4j.lang.NullArgumentException;
 import org.ops4j.pax.url.commons.resolver.ConfigurationMap;
-import org.ops4j.pax.url.commons.resolver.Resolver;
 import org.ops4j.pax.url.mvn.ServiceConstants;
+import org.ops4j.util.property.PropertyResolver;
 
 /**
  * Service Configuration implementation.
@@ -63,17 +63,17 @@ public class ConfigurationImpl
     /**
      * Property resolver. Cannot be null.
      */
-    private final Resolver m_resolver;
+    private final PropertyResolver m_propertyResolver;
 
     /**
      * Creates a new service configuration.
      *
-     * @param resolver resolver used to resolve properties; mandatory
+     * @param propertyResolver propertyResolver used to resolve properties; mandatory
      */
-    public ConfigurationImpl( final Resolver resolver )
+    public ConfigurationImpl( final PropertyResolver propertyResolver )
     {
-        NullArgumentException.validateNotNull( resolver, "Property resolver" );
-        m_resolver = resolver;
+        NullArgumentException.validateNotNull( propertyResolver, "Property propertyResolver" );
+        m_propertyResolver = propertyResolver;
     }
 
     /**
@@ -94,7 +94,7 @@ public class ConfigurationImpl
         if( !contains( ServiceConstants.PROPERTY_CERTIFICATE_CHECK ) )
         {
             return set( ServiceConstants.PROPERTY_CERTIFICATE_CHECK,
-                        Boolean.valueOf( m_resolver.get( ServiceConstants.PROPERTY_CERTIFICATE_CHECK ) )
+                        Boolean.valueOf( m_propertyResolver.get( ServiceConstants.PROPERTY_CERTIFICATE_CHECK ) )
             );
         }
         return get( ServiceConstants.PROPERTY_CERTIFICATE_CHECK );
@@ -110,7 +110,7 @@ public class ConfigurationImpl
     {
         if( !contains( ServiceConstants.PROPERTY_SETTINGS_FILE ) )
         {
-            String spec = m_resolver.get( ServiceConstants.PROPERTY_SETTINGS_FILE );
+            String spec = m_propertyResolver.get( ServiceConstants.PROPERTY_SETTINGS_FILE );
             if( spec != null )
             {
                 try
@@ -166,7 +166,7 @@ public class ConfigurationImpl
         if( !contains( ServiceConstants.PROPERTY_REPOSITORIES ) )
         {
             // look for repositories property
-            String repositoriesProp = m_resolver.get( ServiceConstants.PROPERTY_REPOSITORIES );
+            String repositoriesProp = m_propertyResolver.get( ServiceConstants.PROPERTY_REPOSITORIES );
             // if not set or starting with a plus (+) get repositories from settings xml
             if( ( repositoriesProp == null || repositoriesProp.startsWith( REPOSITORIES_APPEND_SIGN ) )
                 && m_settings != null )
@@ -224,7 +224,7 @@ public class ConfigurationImpl
         if( !contains( ServiceConstants.PROPERTY_LOCAL_REPOSITORY ) )
         {
             // look for a local repository property
-            String spec = m_resolver.get( ServiceConstants.PROPERTY_LOCAL_REPOSITORY );
+            String spec = m_propertyResolver.get( ServiceConstants.PROPERTY_LOCAL_REPOSITORY );
             // if not set get local repository from maven settings
             if( spec == null && m_settings != null )
             {
