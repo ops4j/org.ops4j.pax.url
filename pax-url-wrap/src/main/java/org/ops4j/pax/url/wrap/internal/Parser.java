@@ -27,7 +27,7 @@ import java.net.URLDecoder;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.ops4j.pax.url.commons.url.URLUtils;
+import org.ops4j.net.URLUtils;
 
 /**
  * Parser for wrap: protocol.<br/>

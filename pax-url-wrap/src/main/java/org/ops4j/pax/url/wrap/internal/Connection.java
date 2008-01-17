@@ -26,7 +26,7 @@ import java.net.URLConnection;
 import java.util.Properties;
 import org.ops4j.lang.NullArgumentException;
 import org.ops4j.pax.url.bnd.BndUtils;
-import org.ops4j.pax.url.commons.url.URLUtils;
+import org.ops4j.net.URLUtils;
 
 /**
  * Url connection for wrap protocol handler.

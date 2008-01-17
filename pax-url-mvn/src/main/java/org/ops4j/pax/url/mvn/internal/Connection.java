@@ -29,7 +29,7 @@ import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import org.ops4j.lang.NullArgumentException;
-import org.ops4j.pax.url.commons.url.URLUtils;
+import org.ops4j.net.URLUtils;
 import org.ops4j.pax.url.commons.xml.XmlUtils;
 
 /**
@@ -294,7 +294,7 @@ public class Connection
      * @return prepared input stream
      *
      * @throws IOException re-thrown
-     * @see org.ops4j.pax.url.commons.url.URLUtils#prepareInputStream(java.net.URL,boolean)
+     * @see org.ops4j.net.URLUtils#prepareInputStream(java.net.URL,boolean)
      */
     private InputStream prepareInputStream( URL repositoryURL, final String path )
         throws IOException
