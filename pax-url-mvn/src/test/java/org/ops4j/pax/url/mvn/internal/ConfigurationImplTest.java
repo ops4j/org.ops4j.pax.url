@@ -18,13 +18,14 @@
 package org.ops4j.pax.url.mvn.internal;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import static org.easymock.EasyMock.*;
 import static org.junit.Assert.*;
 import org.junit.Test;
-import org.ops4j.pax.url.commons.file.FileUtils;
+import org.ops4j.io.FileUtils;
 import org.ops4j.pax.url.commons.resolver.Resolver;
 
 public class ConfigurationImplTest
@@ -74,7 +75,7 @@ public class ConfigurationImplTest
 
     @Test
     public void getSettingsAsFilePath()
-        throws MalformedURLException
+        throws MalformedURLException, FileNotFoundException
     {
         Resolver resolver = createMock( Resolver.class );
         File validSettings = FileUtils.getFileFromClasspath( "configuration/settings.xml" );
@@ -299,7 +300,7 @@ public class ConfigurationImplTest
 
     @Test
     public void getLocalRepositoryAsFilePath()
-        throws MalformedURLException
+        throws MalformedURLException, FileNotFoundException
     {
         Resolver resolver = createMock( Resolver.class );
         File valid = FileUtils.getFileFromClasspath( "configuration/localrepository" );
@@ -314,7 +315,7 @@ public class ConfigurationImplTest
 
     @Test
     public void getLocalRepositoryAsFilePathWithoutSlash()
-        throws MalformedURLException
+        throws MalformedURLException, FileNotFoundException
     {
         Resolver resolver = createMock( Resolver.class );
         File valid = FileUtils.getFileFromClasspath( "configuration/localrepository" );

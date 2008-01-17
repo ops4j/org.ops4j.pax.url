@@ -17,12 +17,13 @@
  */
 package org.ops4j.pax.url.wrap.internal;
 
+import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
 import static org.junit.Assert.*;
 import org.junit.Test;
-import org.ops4j.pax.url.commons.file.FileUtils;
+import org.ops4j.io.FileUtils;
 
 public class ParserTest
 {
@@ -138,7 +139,7 @@ public class ParserTest
 
     @Test
     public void validWrappedJarURLAndValidInstructionsURL()
-        throws MalformedURLException
+        throws MalformedURLException, FileNotFoundException
     {
         Parser parser = new Parser(
             "file:toWrap.jar,"
@@ -153,7 +154,7 @@ public class ParserTest
 
     @Test
     public void validWrappedJarURLAndValidInstructionsURLFromJar()
-        throws MalformedURLException
+        throws MalformedURLException, FileNotFoundException
     {
         Parser parser = new Parser(
             "file:toWrap.jar,jar:"
@@ -169,7 +170,7 @@ public class ParserTest
 
     @Test
     public void validWrappedJarURLAndValidInstructionsURLAndInstructions()
-        throws MalformedURLException
+        throws MalformedURLException, FileNotFoundException
     {
         Parser parser = new Parser(
             "file:toWrap.jar,"

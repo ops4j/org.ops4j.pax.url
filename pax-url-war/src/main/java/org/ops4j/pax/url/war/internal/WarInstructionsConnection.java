@@ -38,7 +38,7 @@ class WarInstructionsConnection
      * @see AbstractConnection#AbstractConnection(URL, Configuration)
      */
     WarInstructionsConnection( final URL url,
-                       final Configuration config )
+                               final Configuration config )
         throws MalformedURLException
     {
         super( url, config );

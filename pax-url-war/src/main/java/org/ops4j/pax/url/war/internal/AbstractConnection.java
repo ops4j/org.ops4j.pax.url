@@ -34,9 +34,9 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import org.ops4j.lang.NullArgumentException;
 import org.ops4j.lang.PreConditionException;
+import org.ops4j.pax.url.bnd.BndUtils;
 import org.ops4j.pax.url.commons.url.URLUtils;
 import org.ops4j.pax.url.war.ServiceConstants;
-import org.ops4j.pax.url.wrap.internal.bnd.BndLib;
 
 /**
  * Abstract url connection for wrap protocol handler.
@@ -108,7 +108,7 @@ abstract class AbstractConnection
 
         generateClassPathInstruction( instructions );
 
-        return BndLib.createBundle(
+        return BndUtils.createBundle(
             URLUtils.prepareInputStream( new URL( warUri ), m_configuration.getCertificateCheck() ),
             instructions,
             warUri

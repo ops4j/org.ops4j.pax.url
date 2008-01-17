@@ -25,8 +25,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Properties;
 import org.ops4j.lang.NullArgumentException;
+import org.ops4j.pax.url.bnd.BndUtils;
 import org.ops4j.pax.url.commons.url.URLUtils;
-import org.ops4j.pax.url.wrap.internal.bnd.BndLib;
 
 /**
  * Url connection for wrap protocol handler.
@@ -73,14 +73,14 @@ public class Connection
      * @return the input stream for the bundle created from the jar
      *
      * @throws IOException re-thrown brom BndLib.createBundle
-     * @see BndLib#createBundle(InputStream, Properties, String)
+     * @see BndUtils#createBundle(InputStream, Properties, String)
      */
     @Override
     public InputStream getInputStream()
         throws IOException
     {
         connect();
-        return BndLib.createBundle(
+        return BndUtils.createBundle(
             URLUtils.prepareInputStream(
                 m_parser.getWrappedJarURL(),
                 !m_configuration.getCertificateCheck()

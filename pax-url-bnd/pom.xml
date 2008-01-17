@@ -11,13 +11,13 @@
   </parent>
 
   <groupId>org.ops4j.pax.url</groupId>
-  <artifactId>pax-url-commons</artifactId>
+  <artifactId>pax-url-bnd</artifactId>
   <version>0.1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
-  <name>OPS4J Pax Url - Commons</name>
+  <name>OPS4J Pax Url - Bnd</name>
   <description>
-    OPS4J Pax Shared - Shared classes between protocol handlers.
+    OPS4J Pax Shared - BND utilities.
   </description>
 
   <url>http://wiki.ops4j.org/confluence/x/KoA6</url>
@@ -26,28 +26,15 @@
     <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>biz.aQute</groupId>
+      <artifactId>bndlib</artifactId>
     </dependency>
     <dependency>
       <groupId>org.ops4j.base</groupId>
       <artifactId>ops4j-base</artifactId>
-    </dependency>
-    <!-- Provided dependencies -->
-    <dependency>
-      <groupId>org.osgi</groupId>
-      <artifactId>osgi_R4_core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.osgi</groupId>
-      <artifactId>osgi_R4_compendium</artifactId>
-    </dependency>
-    <!-- Testing dependencies -->
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.easymock</groupId>
-      <artifactId>easymock</artifactId>
     </dependency>
   </dependencies>
 

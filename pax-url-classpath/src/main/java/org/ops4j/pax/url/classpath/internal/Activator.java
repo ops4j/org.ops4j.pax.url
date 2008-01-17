@@ -21,10 +21,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import org.osgi.framework.BundleContext;
-import org.ops4j.pax.url.commons.resolver.Resolver;
 import org.ops4j.pax.url.classpath.ServiceConstants;
 import org.ops4j.pax.url.commons.handler.ConnectionFactory;
 import org.ops4j.pax.url.commons.handler.HandlerActivator;
+import org.ops4j.pax.url.commons.resolver.Resolver;
 
 /**
  * Bundle activator for classpath: protocol handler.

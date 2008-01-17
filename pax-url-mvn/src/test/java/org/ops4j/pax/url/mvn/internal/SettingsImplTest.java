@@ -17,10 +17,11 @@
  */
 package org.ops4j.pax.url.mvn.internal;
 
+import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import static org.junit.Assert.*;
 import org.junit.Test;
-import org.ops4j.pax.url.commons.file.FileUtils;
+import org.ops4j.io.FileUtils;
 
 public class SettingsImplTest
 {
@@ -33,14 +34,14 @@ public class SettingsImplTest
 
     @Test
     public void validSettingsFile()
-        throws MalformedURLException
+        throws MalformedURLException, FileNotFoundException
     {
         new SettingsImpl( FileUtils.getFileFromClasspath( "settings/settingsWithLocalRepository.xml" ).toURL() );
     }
 
     @Test
     public void getExistingLocalRepository()
-        throws MalformedURLException
+        throws MalformedURLException, FileNotFoundException
     {
         SettingsImpl settings =
             new SettingsImpl( FileUtils.getFileFromClasspath( "settings/settingsWithLocalRepository.xml" ).toURL() );
@@ -49,7 +50,7 @@ public class SettingsImplTest
 
     @Test
     public void getInexistingLocalRepository()
-        throws MalformedURLException
+        throws MalformedURLException, FileNotFoundException
     {
         SettingsImpl settings =
             new SettingsImpl( FileUtils.getFileFromClasspath( "settings/settingsEmpty.xml" ).toURL() );
@@ -61,7 +62,7 @@ public class SettingsImplTest
 
     @Test
     public void getInexistingRepositories()
-        throws MalformedURLException
+        throws MalformedURLException, FileNotFoundException
     {
         SettingsImpl settings =
             new SettingsImpl( FileUtils.getFileFromClasspath( "settings/settingsEmpty.xml" ).toURL() );
@@ -72,7 +73,7 @@ public class SettingsImplTest
 
     @Test
     public void getExistingRepositories()
-        throws MalformedURLException
+        throws MalformedURLException, FileNotFoundException
     {
         SettingsImpl settings =
             new SettingsImpl(

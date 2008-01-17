@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.url.wrap.internal.bnd;
+package org.ops4j.pax.url.bnd;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,18 +36,18 @@ import org.ops4j.lang.NullArgumentException;
  * @author Alin Dreghiciu
  * @since 0.1.0, January 14, 2008
  */
-public class BndLib
+public class BndUtils
 {
 
     /**
      * Logger.
      */
-    private static final Log LOG = LogFactory.getLog( BndLib.class );
+    private static final Log LOG = LogFactory.getLog( BndUtils.class );
 
     /**
      * Utility class. Ment to be used using static methods
      */
-    private BndLib()
+    private BndUtils()
     {
         // utility class
     }

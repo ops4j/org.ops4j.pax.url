@@ -3,19 +3,30 @@ Bundle-Activator:\
 
 Bundle-Version>:\
   ${pom.version}
+
+Bundle-SymbolicName:\
+  ${bundle.symbolicName}; singleton:=true  
   
 Import-Package:\
   org.apache.commons.logging; version="1.0.4"; resolution:=optional,\
+  org.osgi.framework; version="[1.0.0,2.0.0)",\
+  org.osgi.service.cm; version="[1.0.0,2.0.0)",\
+  org.osgi.service.url; version="[1.0.0,2.0.0)",\
   *
 
 Export-Package:\
   ${bundle.namespace}; version="${pom.version}"
   
 Private-Package:\
-  ${bundle.namespace}.internal.*,\
-  org.apache.commons.logging.*,\
-  org.ops4j.lang.*,\
-  org.ops4j.pax.url.commons.handler.*,\
-  org.ops4j.pax.url.commons.resolver.*,\
-  org.ops4j.pax.url.commons.url.*,\
-  org.ops4j.pax.url.commons.xml.*
+  ${bundle.namespace}.internal.*
+
+Embed-Dependency:\
+  *; scope=compile; type=!pom; inline=true
+
+Embed-Transitive: true
+
+-removeheaders:\
+  Include-Resource,\
+  Private-Package,\
+  Embed-Dependency,\
+  Embed-Transitive
