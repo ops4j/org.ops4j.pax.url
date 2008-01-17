@@ -17,10 +17,10 @@
 
   <name>OPS4J Pax Url - war:, war-file:</name>
   <description>
-    OPS4J Pax Url - war: protocol handler. See details at http://wiki.ops4j.org/confluence/x/KoA6
+    OPS4J Pax Url - war: protocol handler. See details at http://wiki.ops4j.org/confluence/x/XwJN.
   </description>
 
-  <url>http://wiki.ops4j.org/confluence/x/KoA6</url>
+  <url>http://wiki.ops4j.org/confluence/x/XwJN</url>
 
   <properties>
     <bundle.symbolicName>org.ops4j.pax.url.war</bundle.symbolicName>
