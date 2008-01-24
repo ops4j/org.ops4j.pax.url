@@ -25,9 +25,9 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ops4j.lang.NullArgumentException;
-import org.ops4j.pax.url.commons.resolver.ConfigurationMap;
 import org.ops4j.pax.url.mvn.ServiceConstants;
 import org.ops4j.util.property.PropertyResolver;
+import org.ops4j.util.property.PropertyStore;
 
 /**
  * Service Configuration implementation.
@@ -37,7 +37,7 @@ import org.ops4j.util.property.PropertyResolver;
  * @since August 11, 2007
  */
 public class ConfigurationImpl
-    extends ConfigurationMap
+    extends PropertyStore
     implements Configuration
 {
 
@@ -72,7 +72,7 @@ public class ConfigurationImpl
      */
     public ConfigurationImpl( final PropertyResolver propertyResolver )
     {
-        NullArgumentException.validateNotNull( propertyResolver, "Property propertyResolver" );
+        NullArgumentException.validateNotNull( propertyResolver, "Property resolver" );
         m_propertyResolver = propertyResolver;
     }
 

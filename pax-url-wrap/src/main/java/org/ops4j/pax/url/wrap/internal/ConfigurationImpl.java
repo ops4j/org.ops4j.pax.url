@@ -17,12 +17,10 @@
  */
 package org.ops4j.pax.url.wrap.internal;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.ops4j.lang.NullArgumentException;
-import org.ops4j.pax.url.commons.resolver.ConfigurationMap;
 import org.ops4j.pax.url.wrap.ServiceConstants;
 import org.ops4j.util.property.PropertyResolver;
+import org.ops4j.util.property.PropertyStore;
 
 /**
  * Service Configuration implementation.
@@ -32,14 +30,9 @@ import org.ops4j.util.property.PropertyResolver;
  * @since September 09, 2007
  */
 public class ConfigurationImpl
-    extends ConfigurationMap
+    extends PropertyStore
     implements Configuration
 {
-
-    /**
-     * Logger.
-     */
-    private static final Log LOGGER = LogFactory.getLog( ConfigurationImpl.class );
 
     /**
      * Property resolver. Cannot be null.
@@ -53,7 +46,7 @@ public class ConfigurationImpl
      */
     public ConfigurationImpl( final PropertyResolver propertyResolver )
     {
-        NullArgumentException.validateNotNull( propertyResolver, "Property propertyResolver" );
+        NullArgumentException.validateNotNull( propertyResolver, "Property resolver" );
         m_propertyResolver = propertyResolver;
     }
 

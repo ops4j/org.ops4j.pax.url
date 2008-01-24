@@ -18,9 +18,9 @@
 package org.ops4j.pax.url.war.internal;
 
 import org.ops4j.lang.NullArgumentException;
-import org.ops4j.pax.url.commons.resolver.ConfigurationMap;
 import org.ops4j.pax.url.war.ServiceConstants;
 import org.ops4j.util.property.PropertyResolver;
+import org.ops4j.util.property.PropertyStore;
 
 /**
  * War protocol configuration implementation.
@@ -29,7 +29,7 @@ import org.ops4j.util.property.PropertyResolver;
  * @since 0.1.0, January 14, 2008
  */
 public class ConfigurationImpl
-    extends ConfigurationMap
+    extends PropertyStore
     implements Configuration
 {
 
@@ -45,7 +45,7 @@ public class ConfigurationImpl
      */
     public ConfigurationImpl( final PropertyResolver propertyResolver )
     {
-        NullArgumentException.validateNotNull( propertyResolver, "Property propertyResolver" );
+        NullArgumentException.validateNotNull( propertyResolver, "Property resolver" );
         m_propertyResolver = propertyResolver;
     }
 
