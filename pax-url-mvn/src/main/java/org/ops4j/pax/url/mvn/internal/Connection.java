@@ -30,7 +30,7 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import org.ops4j.lang.NullArgumentException;
 import org.ops4j.net.URLUtils;
-import org.ops4j.pax.url.commons.xml.XmlUtils;
+import org.ops4j.util.xml.XmlUtils;
 
 /**
  * An URLConnextion that supports mvn: protocol.<br/>

@@ -8,11 +8,14 @@ Bundle-SymbolicName:\
   ${bundle.symbolicName}; singleton:=true
   
 Import-Package:\
+  ${bundle.namespace}; version="${pom.version}",\
+  javax.net.ssl,\
+  javax.xml.transform; resolution:=optional,\
+  javax.xml.transform.stream; resolution:=optional,\
   org.apache.commons.logging; version="1.0.4"; resolution:=optional,\
   org.osgi.framework; version="[1.0.0,2.0.0)",\
   org.osgi.service.cm; version="[1.0.0,2.0.0)",\
-  org.osgi.service.url; version="[1.0.0,2.0.0)",\
-  *
+  org.osgi.service.url; version="[1.0.0,2.0.0)"
   
 Export-Package:\
   ${bundle.namespace}; version="${pom.version}"

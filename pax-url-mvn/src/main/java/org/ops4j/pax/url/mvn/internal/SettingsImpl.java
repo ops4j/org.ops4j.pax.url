@@ -29,7 +29,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
-import org.ops4j.pax.url.commons.xml.XmlUtils;
+import org.ops4j.util.xml.XmlUtils;
 
 /**
  * Default implementation of Settings.
