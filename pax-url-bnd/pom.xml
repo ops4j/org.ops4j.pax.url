@@ -20,8 +20,6 @@
     OPS4J Pax Shared - BND utilities.
   </description>
 
-  <url>http://wiki.ops4j.org/confluence/x/KoA6</url>
-
   <dependencies>
     <dependency>
       <groupId>biz.aQute</groupId>

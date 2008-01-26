@@ -17,10 +17,9 @@
 
   <name>OPS4J Pax Url - war:, war-i:</name>
   <description>
-    OPS4J Pax Url - war: protocol handler. See details at http://wiki.ops4j.org/confluence/x/XwJN.
+    OPS4J Pax Url - war: protocol handler.
+    Detailed information to be found at  http://wiki.ops4j.org/confluence/x/XwJN.
   </description>
-
-  <url>http://wiki.ops4j.org/confluence/x/XwJN</url>
 
   <properties>
     <bundle.symbolicName>org.ops4j.pax.url.war</bundle.symbolicName>

@@ -20,8 +20,6 @@
     OPS4J Pax Shared - Shared classes between protocol handlers.
   </description>
 
-  <url>http://wiki.ops4j.org/confluence/x/KoA6</url>
-
   <dependencies>
     <dependency>
       <groupId>org.ops4j.base</groupId>
