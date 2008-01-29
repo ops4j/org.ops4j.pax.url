@@ -20,6 +20,7 @@ package org.ops4j.pax.url.war.internal;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
+import org.ops4j.pax.url.bnd.BndUtils;
 import org.ops4j.pax.url.war.ServiceConstants;
 
 /**
@@ -48,28 +49,38 @@ class WarConnection
      * @see AbstractConnection#getInstructions()
      */
     protected Properties getInstructions()
+        throws MalformedURLException
     {
-        final Properties instructions = new Properties();
+        final Properties instructions = BndUtils.parseInstructions( getURL().getQuery() );
         // war file to be processed
         instructions.setProperty( ServiceConstants.INSTR_WAR_URL, getURL().getPath() );
         // default import packages
-        instructions.setProperty(
-            "Import-Package",
-            "javax.*; resolution:=optional,"
-            + "org.xml.*; resolution:=optional,"
-            + "org.w3c.*; resolution:=optional"
-        );
+        if( !instructions.containsKey( "Import-Package" ) )
+        {
+            instructions.setProperty(
+                "Import-Package",
+                "javax.*; resolution:=optional,"
+                + "org.xml.*; resolution:=optional,"
+                + "org.w3c.*; resolution:=optional"
+            );
+        }
         // default no export packages
-        instructions.setProperty(
-            "Export-Package",
-            "!*"
-        );
+        if( !instructions.containsKey( "Export-Package" ) )
+        {
+            instructions.setProperty(
+                "Export-Package",
+                "!*"
+            );
+        }
         // remove unnecessary headers
-        instructions.setProperty(
-            "-removeheaders",
-            "Private-Package,"
-            + "Ignore-Package"
-        );
+        if( !instructions.containsKey( "-removeheaders" ) )
+        {
+            instructions.setProperty(
+                "-removeheaders",
+                "Private-Package,"
+                + "Ignore-Package"
+            );
+        }
         return instructions;
     }
 

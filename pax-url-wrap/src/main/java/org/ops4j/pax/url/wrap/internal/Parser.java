@@ -20,14 +20,13 @@ package org.ops4j.pax.url.wrap.internal;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLDecoder;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.ops4j.net.URLUtils;
+import org.ops4j.pax.url.bnd.BndUtils;
 
 /**
  * Parser for wrap: protocol.<br/>
@@ -66,11 +65,6 @@ public class Parser
      */
     private static final Pattern SYNTAX_JAR_BND =
         Pattern.compile( "(.+?)" + INSTRUCTIONS_FILE_SEPARATOR + "(.+?)" );
-    /**
-     * Regex pattern for matching instructions when specified in url.
-     */
-    private static final Pattern INSTRUCTIONS_PATTERN =
-        Pattern.compile( "([a-zA-Z_0-9-]+)=([-!\"'()*+,.0-9A-Z_a-z%]+)" );
 
     /**
      * Wrapped jar URL.
@@ -108,13 +102,13 @@ public class Parser
             // we have all the parts
             m_wrappedJarURL = new URL( matcher.group( 1 ) );
             parseInstructionsFile( new URL( matcher.group( 2 ) ) );
-            parseInstructions( matcher.group( 3 ) );
+            m_wrappingProperties.putAll( BndUtils.parseInstructions( matcher.group( 3 ) ) );
         }
         else if( ( matcher = SYNTAX_JAR_INSTR.matcher( path ) ).matches() )
         {
             // we have a wrapped jar and instructions
             m_wrappedJarURL = new URL( matcher.group( 1 ) );
-            parseInstructions( matcher.group( 2 ) );
+            m_wrappingProperties.putAll( BndUtils.parseInstructions( matcher.group( 2 ) ) );
         }
         else if( ( matcher = SYNTAX_JAR_BND.matcher( path ) ).matches() )
         {
@@ -158,46 +152,7 @@ public class Parser
         }
         catch( IOException e )
         {
-            throw initMalformedURLException( "Could not retrieve the instructions from [" + bndFileURL + "]", e );
-        }
-    }
-
-    /**
-     * Parses bnd instrcutions and adds them as properties..
-     *
-     * @param spec url part without protocol and wrapped jar url.
-     *
-     * @throws MalformedURLException if provided path does not comply to syntax.
-     */
-    private void parseInstructions( final String spec )
-        throws MalformedURLException
-    {
-        try
-        {
-            // just ignore for the moment and try out if we have valid properties separated by "&"
-            final String segments[] = spec.split( "&" );
-            for( String segment : segments )
-            {
-                final Matcher matcher = INSTRUCTIONS_PATTERN.matcher( segment );
-                if( matcher.matches() )
-                {
-                    m_wrappingProperties.setProperty(
-                        matcher.group( 1 ),
-                        URLDecoder.decode( matcher.group( 2 ), "UTF-8" )
-                    );
-                }
-                else
-                {
-                    throw new MalformedURLException( "Invalid syntax for instruction [" + segment
-                                                     + "]. Take a look at http://www.aqute.biz/Code/Bnd."
-                    );
-                }
-            }
-        }
-        catch( UnsupportedEncodingException e )
-        {
-            // thrown by URLDecoder but it should never happen
-            throw initMalformedURLException( "Could not retrieve the instructions from [" + spec + "]", e );
+            throwAsMalformedURLException( "Could not retrieve the instructions from [" + bndFileURL + "]", e );
         }
     }
 
@@ -227,13 +182,14 @@ public class Parser
      * @param message exception message
      * @param cause   exception cause
      *
-     * @return the created MalformedURLException
+     * @throws MalformedURLException the created MalformedURLException
      */
-    private MalformedURLException initMalformedURLException( final String message, final Exception cause )
+    private static void throwAsMalformedURLException( final String message, final Exception cause )
+        throws MalformedURLException
     {
         final MalformedURLException exception = new MalformedURLException( message );
         exception.initCause( cause );
-        return exception;
+        throw  exception;
     }
 
 }

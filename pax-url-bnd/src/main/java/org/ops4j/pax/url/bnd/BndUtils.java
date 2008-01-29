@@ -22,8 +22,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URLDecoder;
 import java.util.Properties;
 import java.util.jar.Manifest;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import aQute.lib.osgi.Analyzer;
 import aQute.lib.osgi.Jar;
 import org.apache.commons.logging.Log;
@@ -43,6 +48,12 @@ public class BndUtils
      * Logger.
      */
     private static final Log LOG = LogFactory.getLog( BndUtils.class );
+
+    /**
+     * Regex pattern for matching instructions when specified in url.
+     */
+    private static final Pattern INSTRUCTIONS_PATTERN =
+        Pattern.compile( "([a-zA-Z_0-9-]+)=([-!\"'()*+,.0-9A-Z_a-z%]+)" );
 
     /**
      * Utility class. Ment to be used using static methods
@@ -180,6 +191,65 @@ public class BndUtils
     private static String generateSymbolicName( final String symbolicName )
     {
         return symbolicName.replaceAll( "[^a-zA-Z_0-9.-]", "_" );
+    }
+
+    /**
+     * Parses bnd instructions out of an url query string.
+     *
+     * @param query query part of an url.
+     *
+     * @return parsed instructions as properties
+     *
+     * @throws java.net.MalformedURLException if provided path does not comply to syntax.
+     */
+    public static Properties parseInstructions( final String query )
+        throws MalformedURLException
+    {
+        final Properties instructions = new Properties();
+        try
+        {
+            // just ignore for the moment and try out if we have valid properties separated by "&"
+            final String segments[] = query.split( "&" );
+            for( String segment : segments )
+            {
+                final Matcher matcher = INSTRUCTIONS_PATTERN.matcher( segment );
+                if( matcher.matches() )
+                {
+                    instructions.setProperty(
+                        matcher.group( 1 ),
+                        URLDecoder.decode( matcher.group( 2 ), "UTF-8" )
+                    );
+                }
+                else
+                {
+                    throw new MalformedURLException( "Invalid syntax for instruction [" + segment
+                                                     + "]. Take a look at http://www.aqute.biz/Code/Bnd."
+                    );
+                }
+            }
+        }
+        catch( UnsupportedEncodingException e )
+        {
+            // thrown by URLDecoder but it should never happen
+            throwAsMalformedURLException( "Could not retrieve the instructions from [" + query + "]", e );
+        }
+        return instructions;
+    }
+
+    /**
+     * Creates an MalformedURLException with a message and a cause.
+     *
+     * @param message exception message
+     * @param cause   exception cause
+     *
+     * @throws MalformedURLException the created MalformedURLException
+     */
+    private static void throwAsMalformedURLException( final String message, final Exception cause )
+        throws MalformedURLException
+    {
+        final MalformedURLException exception = new MalformedURLException( message );
+        exception.initCause( cause );
+        throw exception;
     }
 
 }
