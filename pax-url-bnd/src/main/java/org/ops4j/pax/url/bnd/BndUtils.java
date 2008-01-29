@@ -206,32 +206,39 @@ public class BndUtils
         throws MalformedURLException
     {
         final Properties instructions = new Properties();
-        try
+        if( query != null )
         {
-            // just ignore for the moment and try out if we have valid properties separated by "&"
-            final String segments[] = query.split( "&" );
-            for( String segment : segments )
+            try
             {
-                final Matcher matcher = INSTRUCTIONS_PATTERN.matcher( segment );
-                if( matcher.matches() )
+                // just ignore for the moment and try out if we have valid properties separated by "&"
+                final String segments[] = query.split( "&" );
+                for( String segment : segments )
                 {
-                    instructions.setProperty(
-                        matcher.group( 1 ),
-                        URLDecoder.decode( matcher.group( 2 ), "UTF-8" )
-                    );
-                }
-                else
-                {
-                    throw new MalformedURLException( "Invalid syntax for instruction [" + segment
-                                                     + "]. Take a look at http://www.aqute.biz/Code/Bnd."
-                    );
+                    // do not parse empty strings
+                    if( segment.trim().length() > 0 )
+                    {
+                        final Matcher matcher = INSTRUCTIONS_PATTERN.matcher( segment );
+                        if( matcher.matches() )
+                        {
+                            instructions.setProperty(
+                                matcher.group( 1 ),
+                                URLDecoder.decode( matcher.group( 2 ), "UTF-8" )
+                            );
+                        }
+                        else
+                        {
+                            throw new MalformedURLException( "Invalid syntax for instruction [" + segment
+                                                             + "]. Take a look at http://www.aqute.biz/Code/Bnd."
+                            );
+                        }
+                    }
                 }
             }
-        }
-        catch( UnsupportedEncodingException e )
-        {
-            // thrown by URLDecoder but it should never happen
-            throwAsMalformedURLException( "Could not retrieve the instructions from [" + query + "]", e );
+            catch( UnsupportedEncodingException e )
+            {
+                // thrown by URLDecoder but it should never happen
+                throwAsMalformedURLException( "Could not retrieve the instructions from [" + query + "]", e );
+            }
         }
         return instructions;
     }
