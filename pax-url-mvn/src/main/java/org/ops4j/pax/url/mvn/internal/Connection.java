@@ -131,7 +131,7 @@ public class Connection
     {
         connect();
         final Set<DownloadableArtifact> downloadables = collectPossibleDownloads();
-        if( true || LOG.isTraceEnabled() )
+        if( LOG.isTraceEnabled() )
         {
             LOG.trace( "Possible download locations for [" + url.toExternalForm() + "]" );
             for( DownloadableArtifact artifact : downloadables )
