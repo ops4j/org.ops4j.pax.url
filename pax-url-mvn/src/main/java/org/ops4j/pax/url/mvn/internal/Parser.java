@@ -260,6 +260,20 @@ public class Parser
     }
 
     /**
+     * Returns the version for an artifact for a snapshot version.
+     *
+     * @param version     The version of the snapshot.
+     * @param timestamp   The timestamp of the snapshot.
+     * @param buildnumber The buildnumber of the snapshot.
+     *
+     * @return artifact path
+     */
+    public String getSnapshotVersion( final String version, final String timestamp, final String buildnumber )
+    {
+        return version.replace( VERSION_SNAPSHOT, timestamp ) + VERSION_SEPARATOR + buildnumber;
+    }
+
+    /**
      * Returns the complete path to artifact for a snapshot file.
      *
      * @param version     The version of the snapshot.
@@ -270,7 +284,6 @@ public class Parser
      */
     public String getSnapshotPath( final String version, final String timestamp, final String buildnumber )
     {
-        String finalVersion = version.replace( VERSION_SNAPSHOT, timestamp ) + VERSION_SEPARATOR + buildnumber;
         return new StringBuilder()
             .append( m_group.replaceAll( GROUP_SEPARATOR, FILE_SEPARATOR ) )
             .append( FILE_SEPARATOR )
@@ -280,14 +293,14 @@ public class Parser
             .append( FILE_SEPARATOR )
             .append( m_artifact )
             .append( VERSION_SEPARATOR )
-            .append( finalVersion )
+            .append( getSnapshotVersion( version, timestamp, buildnumber ) )
             .append( TYPE_SEPARATOR )
             .append( m_type )
             .toString();
     }
 
     /**
-     * Returns the path to metdata file corresponding to this artifact.
+     * Returns the path to metdata file corresponding to this artifact version.
      *
      * @param version The version of the the metadata.
      *
@@ -303,6 +316,26 @@ public class Parser
             .append( version )
             .append( FILE_SEPARATOR )
             .append( METADATA_FILE )
+            .toString();
+    }
+
+    /**
+     * Returns the path to local metdata file corresponding to this artifact version.
+     *
+     * @param version The version of the the metadata.
+     *
+     * @return metadata file path
+     */
+    public String getVersionLocalMetadataPath( final String version )
+    {
+        return new StringBuilder()
+            .append( m_group.replaceAll( GROUP_SEPARATOR, FILE_SEPARATOR ) )
+            .append( FILE_SEPARATOR )
+            .append( m_artifact )
+            .append( FILE_SEPARATOR )
+            .append( version )
+            .append( FILE_SEPARATOR )
+            .append( METADATA_FILE_LOCAL )
             .toString();
     }
 

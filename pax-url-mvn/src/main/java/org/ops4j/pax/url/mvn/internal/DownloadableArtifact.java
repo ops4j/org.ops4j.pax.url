@@ -30,6 +30,7 @@ import org.ops4j.net.URLUtils;
  * @since 0.2.0, January 30, 2008
  */
 public class DownloadableArtifact
+    implements Comparable<DownloadableArtifact>
 {
 
     /**
@@ -101,6 +102,26 @@ public class DownloadableArtifact
         return m_version;
     }
 
+    /**
+     * Getter.
+     *
+     * @return artifact URL
+     */
+    public URL getArtifactURL()
+    {
+        return m_artifactURL;
+    }
+
+    /**
+     * Comparator based on descending version.
+     *
+     * @param downloadableArtifact downloadable artifact to compare with
+     */
+    public int compareTo( final DownloadableArtifact downloadableArtifact )
+    {
+        return -1 * m_version.compareTo( downloadableArtifact.m_version );
+    }
+
     @Override
     public boolean equals( Object o )
     {
@@ -121,5 +142,14 @@ public class DownloadableArtifact
     public int hashCode()
     {
         return m_version.hashCode();
+    }
+
+    @Override
+    public String toString()
+    {
+        return new StringBuilder()
+            .append( "Version [" ).append( m_version ).append( "]" )
+            .append( " from URL [" ).append( m_artifactURL ).append( "]" )
+            .toString();
     }
 }

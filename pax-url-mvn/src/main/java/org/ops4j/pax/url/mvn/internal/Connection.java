@@ -22,7 +22,10 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -72,7 +75,7 @@ public class Connection
     /**
      * Logger.
      */
-    private static final Log LOGGER = LogFactory.getLog( Connection.class );
+    private static final Log LOG = LogFactory.getLog( Connection.class );
 
     /**
      * Parsed url.
@@ -127,164 +130,293 @@ public class Connection
         throws IOException
     {
         connect();
-        List<URL> repositories = m_configuration.getRepositories();
-        // if url does not have a repository
-        if( m_parser.getRepositoryURL() == null && repositories != null )
+        final Set<DownloadableArtifact> downloadables = collectPossibleDownloads();
+        if( true || LOG.isTraceEnabled() )
         {
-            for( URL repositoryURL : repositories )
+            LOG.trace( "Possible download locations for [" + url.toExternalForm() + "]" );
+            for( DownloadableArtifact artifact : downloadables )
             {
-                try
-                {
-                    return resolveFromRepository( repositoryURL );
-                }
-                catch( IOException ignore )
-                {
-                    // go on with next repository
-                    LOGGER.debug( "Could not locate in [" + repositoryURL + "]" );
-                    LOGGER.trace( "Reason: [" + ignore.getMessage() + "]" );
-                }
+                LOG.trace( "  " + artifact );
             }
-            // no artifact found 
-            throw new RuntimeException( "URL [" + url.toExternalForm() + "] could not be resolved." );
         }
-        // if url has a repository
-        return resolveFromRepository( m_parser.getRepositoryURL() );
-    }
-
-    /**
-     * Resolves the artifact by resolving an eventual latest or snapshot version.
-     *
-     * @param repositoryURL the url of the repository to download from.
-     *
-     * @return an input stream to the artifact
-     *
-     * @throws IOException if the artifact could not be resolved
-     */
-    private InputStream resolveFromRepository( final URL repositoryURL )
-        throws IOException
-    {
-        if( m_parser.getVersion().contains( "LATEST" ) )
+        for( DownloadableArtifact artifact : downloadables )
         {
-            return resolveLatestVersion( repositoryURL );
-        }
-        else if( m_parser.getVersion().endsWith( "SNAPSHOT" ) )
-        {
-            return resolveSnapshotVersion( repositoryURL, m_parser.getVersion() );
-        }
-        else
-        {
-            return prepareInputStream( repositoryURL, m_parser.getArtifactPath() );
-        }
-    }
-
-    /**
-     * Resolves the latest version of the artifact. First try to get the local metadata and then remote metadata.
-     *
-     * @param repositoryURL the url of the repository to download from.
-     *
-     * @return an input stream to the artifact
-     *
-     * @throws IOException if the artifact could not be resolved
-     */
-    private InputStream resolveLatestVersion( final URL repositoryURL )
-        throws IOException
-    {
-        InputStream inputStream;
-        try
-        {
-            // first try to get the artifact local metadata
-            inputStream = prepareInputStream( repositoryURL, m_parser.getArtifactLocalMetdataPath() );
-        }
-        catch( IOException ignore )
-        {
-            // if not found then try to get the artifact metadata
-            inputStream = prepareInputStream( repositoryURL, m_parser.getArtifactMetdataPath() );
-        }
-        try
-        {
-            final Document doc = XmlUtils.parseDoc( inputStream );
-            final String version = XmlUtils.getTextContentOfElement( doc, "versioning/versions/version[last]" );
-            if( version != null )
+            LOG.trace( "Downloading [" + artifact + "]" );
+            try
             {
-                if( version.endsWith( "SNAPSHOT" ) )
+                return artifact.getInputStream();
+            }
+            catch( IOException ignore )
+            {
+                // go on with next repository
+                LOG.debug( "Could not download [" + artifact + "]" );
+                LOG.trace( "Reason: [" + ignore.getMessage() + "]" );
+            }
+        }
+        // no artifact found
+        throw new RuntimeException( "URL [" + url.toExternalForm() + "] could not be resolved." );
+    }
+
+    /**
+     * Searches all available repositories for possible artifacts to download. The returned set of downloadable
+     * artifacts (never null, but maybe empty) will be sorted descending by version of the artifact and by positon of
+     * repository in the list of repositories to be searched.
+     *
+     * @return a non null sorted set of artifacts
+     *
+     * @throws java.net.MalformedURLException re-thrown
+     */
+    private Set<DownloadableArtifact> collectPossibleDownloads()
+        throws MalformedURLException
+    {
+        final List<URL> repositories = new ArrayList<URL>();
+        repositories.addAll( m_configuration.getRepositories() );
+        // if the url contains a prefered repository add that repository as the first repository to be searched
+        if( m_parser.getRepositoryURL() != null )
+        {
+            repositories.add( 0, m_parser.getRepositoryURL() );
+        }
+        final Set<DownloadableArtifact> downloadables = new TreeSet<DownloadableArtifact>();
+        final boolean isLatest = m_parser.getVersion().contains( "LATEST" );
+        final boolean isSnapshot = m_parser.getVersion().endsWith( "SNAPSHOT" );
+        VersionRange versionRange = null;
+        if( !isLatest && !isSnapshot )
+        {
+            try
+            {
+                versionRange = new VersionRange( m_parser.getVersion() );
+            }
+            catch( Exception ignore )
+            {
+                // well, we do not have a range of versions
+            }
+        }
+        for( URL repositoryURL : repositories )
+        {
+            try
+            {
+                final Document doc = getMetadata( repositoryURL,
+                                                  new String[]
+                                                      {
+                                                          m_parser.getArtifactLocalMetdataPath(),
+                                                          m_parser.getArtifactMetdataPath()
+                                                      }
+                );
+                if( doc == null )
                 {
-                    return resolveSnapshotVersion( repositoryURL, version );
+                    continue;
+                }
+                if( isLatest )
+                {
+                    downloadables.add( resolveLatestVersion( doc, repositoryURL ) );
+                }
+                else if( isSnapshot )
+                {
+                    downloadables.add( resolveSnapshotVersion( repositoryURL, m_parser.getVersion() ) );
+                }
+                else if( versionRange != null )
+                {
+                    downloadables.addAll( resolveRangeVersions( doc, repositoryURL, versionRange ) );
                 }
                 else
                 {
-                    return prepareInputStream( repositoryURL, m_parser.getArtifactPath( version ) );
+                    downloadables.add( resolveExactVersion( repositoryURL ) );
                 }
             }
+            catch( IOException ignore )
+            {
+                // if metadata cannot be found we go on with the next repository. Maybe we have better luck.
+                LOG.trace( "Skipping repository [" + repositoryURL + "], reason: " + ignore.getMessage() );
+            }
+        }
+        return downloadables;
+    }
+
+    /**
+     * Returns maven metadata by looking first for a local metatdata xml file and then for a remote one.
+     * If no metadata file is found or cannot be used an IOException is thrown.
+     *
+     * @param repositoryURL url of the repository from where the metadata should be parsed
+     *
+     * @return parsed xml document for the metadata file
+     *
+     * @throws java.io.IOException if:
+     *                             metadata file cannot be located
+     */
+    private Document getMetadata( final URL repositoryURL,
+                                  final String[] metadataLocations )
+        throws IOException
+    {
+        LOG.debug( "Resolving metadata from repository [" + repositoryURL + "]" );
+        InputStream inputStream = null;
+        String foundLocation = null;
+        for( String location : metadataLocations )
+        {
+            try
+            {
+                // first try to get the artifact local metadata
+                inputStream = prepareInputStream( repositoryURL, location );
+                // get out at first found location
+                foundLocation = location;
+                LOG.trace( "Metadata found at [" + location + "]" );
+                break;
+            }
+            catch( IOException ignore )
+            {
+                LOG.trace( "Metadata not found at [" + location + "]" );
+            }
+        }
+        if( inputStream == null )
+        {
+            throw new IOException( "Metadata not found in repository [" + repositoryURL + "]" );
+        }
+        try
+        {
+            return XmlUtils.parseDoc( inputStream );
         }
         catch( ParserConfigurationException e )
         {
-            throw initIOException( "Maven metadata [" + url.toExternalForm() + "] could not be parsed.", e );
+            throw initIOException( "Metadata [" + foundLocation + "] could not be parsed.", e );
         }
         catch( SAXException e )
         {
-            throw initIOException( "Maven metadata [" + url.toExternalForm() + "] could not be parsed.", e );
+            throw initIOException( "Metadata [" + foundLocation + "] could not be parsed.", e );
+        }
+    }
+
+    /**
+     * Returns a downloadable artifact where the version is fully specified.
+     *
+     * @param repositoryURL the url of the repository to download from
+     *
+     * @return a downloadable artifact
+     *
+     * @throws IOException re-thrown
+     */
+    private DownloadableArtifact resolveExactVersion( final URL repositoryURL )
+        throws IOException
+    {
+        LOG.debug( "Resolving exact version from repository [" + repositoryURL + "]" );
+        return new DownloadableArtifact(
+            m_parser.getVersion(),
+            repositoryURL,
+            m_parser.getArtifactPath(),
+            m_configuration.getCertificateCheck()
+        );
+    }
+
+    /**
+     * Resolves the latest version of the artifact.
+     *
+     * @param metadata      parsed metadata xml
+     * @param repositoryURL the url of the repository to download from
+     *
+     * @return a downloadable artifact or throw an IOException if latest version cannot be determined.
+     *
+     * @throws IOException if the artifact could not be resolved
+     */
+    private DownloadableArtifact resolveLatestVersion( final Document metadata,
+                                                       final URL repositoryURL )
+        throws IOException
+    {
+        LOG.debug( "Resolving latest version from repository [" + repositoryURL + "]" );
+        final String version = XmlUtils.getTextContentOfElement( metadata, "versioning/versions/version[last]" );
+        if( version != null )
+        {
+            if( version.endsWith( "SNAPSHOT" ) )
+            {
+                return resolveSnapshotVersion( repositoryURL, version );
+            }
+            else
+            {
+                return new DownloadableArtifact(
+                    version,
+                    repositoryURL,
+                    m_parser.getArtifactPath( version ),
+                    m_configuration.getCertificateCheck()
+                );
+            }
         }
         throw new IOException( "LATEST version could not be resolved." );
     }
 
     /**
-     * Resolves snapshot version of the artifact by trying first to get the artifact as is (with SNAPSHOT in name) and
-     * then by reading the actual version from maven-metadata.xml. Accesing first directly is suitable for a local
-     * repository but could happen to have this also in a remote or custom repository as for example a zipped local
-     * repository.
+     * Resolves snapshot version of the artifact.
+     * Snapshot versions are resolved by parsing the metadata within the directory that contains the version as:
+     * 1. if the metadata containes entries like "versioning/snapshot/timestamp (most likely on remote repos) it will
+     * use the timestamp and buildnumber to point the real version
+     * 2. if the metatdata does not contain the above (most likely a local repo) it will use as version the
+     * versioning/lastUpdated
      *
-     * @param repositoryURL the url of the repository to download from.
+     * @param repositoryURL the url of the repository to download from
      * @param version       snapshot version to resolve
      *
      * @return an input stream to the artifact
      *
      * @throws IOException if the artifact could not be resolved
      */
-    private InputStream resolveSnapshotVersion( final URL repositoryURL, final String version )
+    private DownloadableArtifact resolveSnapshotVersion( final URL repositoryURL,
+                                                         final String version )
         throws IOException
     {
-        // first try direct access
-        try
+        LOG.debug( "Resolving snapshot version [" + version + "] from repository [" + repositoryURL + "]" );
+        final Document snapshotMetadata = getMetadata( repositoryURL,
+                                                       new String[]
+                                                           {
+                                                               m_parser.getVersionLocalMetadataPath( version ),
+                                                               m_parser.getVersionMetadataPath( version )
+                                                           }
+        );
+        final String timestamp =
+            XmlUtils.getTextContentOfElement( snapshotMetadata, "versioning/snapshot/timestamp" );
+        final String buildNumber =
+            XmlUtils.getTextContentOfElement( snapshotMetadata, "versioning/snapshot/buildNumber" );
+        if( timestamp != null && buildNumber != null )
         {
-            return prepareInputStream( repositoryURL, m_parser.getArtifactPath( version ) );
+            return new DownloadableArtifact(
+                m_parser.getSnapshotVersion( version, timestamp, buildNumber ),
+                repositoryURL,
+                m_parser.getSnapshotPath( version, timestamp, buildNumber ),
+                m_configuration.getCertificateCheck()
+            );
         }
-        catch( IOException ignore )
+        else
         {
-            // lets try then to download maven-metadata.xml that contains the snapshot version information
-            Document doc;
-            final String metadataPath = m_parser.getVersionMetadataPath( version );
-            try
+            String lastUpdated = XmlUtils.getTextContentOfElement( snapshotMetadata, "versioning/lastUpdated" );
+            if( lastUpdated != null )
             {
-                doc = XmlUtils.parseDoc(
-                    prepareInputStream( repositoryURL, metadataPath )
-                );
+                // last updated should contain in the first 8 chars the date and then the time,
+                // fact that is not compatible with timeStamp from remote repos which has a "." after date
+                if( lastUpdated.length() > 8 )
+                {
+                    lastUpdated = lastUpdated.substring( 0, 8 ) + "." + lastUpdated.substring( 8 );
+                    return new DownloadableArtifact(
+                        m_parser.getSnapshotVersion( version, lastUpdated, "0" ),
+                        repositoryURL,
+                        m_parser.getArtifactPath( version ),
+                        m_configuration.getCertificateCheck()
+                    );
+                }
             }
-            catch( ParserConfigurationException e )
-            {
-                throw initIOException( "Maven metadata [" + metadataPath + "] from repository [" + repositoryURL
-                                       + "] could not be parsed.", e
-                );
-            }
-            catch( SAXException e )
-            {
-                throw initIOException( "Maven metadata [" + metadataPath + "] from repository [" + repositoryURL
-                                       + "] could not be parsed.", e
-                );
-            }
-            catch( IOException e )
-            {
-                throw initIOException( "Maven metadata [" + metadataPath + "] from repository [" + repositoryURL
-                                       + "] could not be downloaded.", e
-                );
-            }
-            String timestamp = XmlUtils.getTextContentOfElement( doc, "versioning/snapshot/timestamp" );
-            String buildNumber = XmlUtils.getTextContentOfElement( doc, "versioning/snapshot/buildNumber" );
-            if( timestamp != null && buildNumber != null )
-            {
-                return prepareInputStream( repositoryURL, m_parser.getSnapshotPath( version, timestamp, buildNumber ) );
-            }
-            throw new IOException( "SNAPSHOT version could not be resolved." );
         }
+        throw new IOException( "SNAPSHOT version could not be resolved." );
+    }
+
+    /**
+     * Resolves all versions that fits the provided range.
+     *
+     * @param metadata      parsed metadata xml
+     * @param repositoryURL the url of the repository to download from
+     * @param versionRange  version range to fulfill
+     *
+     * @return list of downloadable artifacts that match the range
+     */
+    private List<DownloadableArtifact> resolveRangeVersions( final Document metadata,
+                                                             final URL repositoryURL,
+                                                             final VersionRange versionRange )
+    {
+        LOG.debug( "Resolving versions from repository [" + repositoryURL + "] in range [" + versionRange + "]" );
+        return null;  //To change body of created methods use File | Settings | File Templates.
     }
 
     /**
