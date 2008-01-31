@@ -31,6 +31,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 import org.ops4j.lang.NullArgumentException;
 import org.ops4j.net.URLUtils;
@@ -239,7 +240,8 @@ public class Connection
      * Returns maven metadata by looking first for a local metatdata xml file and then for a remote one.
      * If no metadata file is found or cannot be used an IOException is thrown.
      *
-     * @param repositoryURL url of the repository from where the metadata should be parsed
+     * @param repositoryURL     url of the repository from where the metadata should be parsed
+     * @param metadataLocations array of location paths to try as metadata
      *
      * @return parsed xml document for the metadata file
      *
@@ -424,14 +426,51 @@ public class Connection
      * @param versionRange  version range to fulfill
      *
      * @return list of downloadable artifacts that match the range
+     *
+     * @throws IOException re-thrown
      */
     private List<DownloadableArtifact> resolveRangeVersions( final Document metadata,
                                                              final URL repositoryURL,
                                                              final int priority,
                                                              final VersionRange versionRange )
+        throws IOException
     {
         LOG.debug( "Resolving versions from repository [" + repositoryURL + "] in range [" + versionRange + "]" );
-        return null;  //To change body of created methods use File | Settings | File Templates.
+        final List<DownloadableArtifact> downladables = new ArrayList<DownloadableArtifact>();
+        final List<Element> elements = XmlUtils.getElements( metadata, "versioning/versions/version" );
+        if( elements != null && elements.size() > 0 )
+        {
+            for( Element element : elements )
+            {
+                final String versionString = XmlUtils.getTextContent( element );
+                if( versionString != null )
+                {
+                    final Version version = new Version( versionString );
+                    if( versionRange.includes( version ) )
+                    {
+                        if( versionString.endsWith( "SNAPSHOT" ) )
+                        {
+                            downladables.add(
+                                resolveSnapshotVersion( repositoryURL, priority, versionString )
+                            );
+                        }
+                        else
+                        {
+                            downladables.add(
+                                new DownloadableArtifact(
+                                    versionString,
+                                    priority,
+                                    repositoryURL,
+                                    m_parser.getArtifactPath( versionString ),
+                                    m_configuration.getCertificateCheck()
+                                )
+                            );
+                        }
+                    }
+                }
+            }
+        }
+        return downladables;
     }
 
     /**
