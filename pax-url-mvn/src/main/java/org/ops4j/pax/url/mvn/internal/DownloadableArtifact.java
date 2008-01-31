@@ -30,7 +30,6 @@ import org.ops4j.net.URLUtils;
  * @since 0.2.0, January 30, 2008
  */
 public class DownloadableArtifact
-    implements Comparable<DownloadableArtifact>
 {
 
     /**
@@ -38,11 +37,15 @@ public class DownloadableArtifact
      */
     private final Version m_version;
     /**
+     * Priority order.
+     */
+    private final int m_priority;
+    /**
      * The full url from where the artifact can be downloaded.
      */
     private final URL m_artifactURL;
     /**
-     * true if the certificate should be checked on SSL connection, false otherwise.
+     * True if the certificate should be checked on SSL connection, false otherwise.
      */
     private final Boolean m_checkCertificate;
 
@@ -50,6 +53,7 @@ public class DownloadableArtifact
      * Creates a new downloadable artifact.
      *
      * @param version          artifact version. Cannot be null or empty
+     * @param priority         priority
      * @param repositoryURL    url to reporsitory. Cannot be null
      * @param path             a path to the artifact jar file. Cannot be null
      * @param checkCertificate if the certificate should be checked on an SSL connection. Cannot be null
@@ -58,11 +62,13 @@ public class DownloadableArtifact
      * @throws NullArgumentException if any of the parameters is null or version is empty
      */
     DownloadableArtifact( final String version,
+                          final int priority,
                           final URL repositoryURL,
                           final String path,
                           final Boolean checkCertificate )
         throws IOException
     {
+        m_priority = priority;
         NullArgumentException.validateNotEmpty( version, "Version" );
         NullArgumentException.validateNotNull( repositoryURL, "Repository URL" );
         NullArgumentException.validateNotNull( path, "Path" );
@@ -105,21 +111,21 @@ public class DownloadableArtifact
     /**
      * Getter.
      *
+     * @return repository priority
+     */
+    public int getPriority()
+    {
+        return m_priority;
+    }
+
+    /**
+     * Getter.
+     *
      * @return artifact URL
      */
     public URL getArtifactURL()
     {
         return m_artifactURL;
-    }
-
-    /**
-     * Comparator based on descending version.
-     *
-     * @param downloadableArtifact downloadable artifact to compare with
-     */
-    public int compareTo( final DownloadableArtifact downloadableArtifact )
-    {
-        return -1 * m_version.compareTo( downloadableArtifact.m_version );
     }
 
     @Override

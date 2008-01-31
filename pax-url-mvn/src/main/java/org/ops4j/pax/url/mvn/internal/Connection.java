@@ -23,6 +23,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -176,7 +177,7 @@ public class Connection
         {
             repositories.add( 0, m_parser.getRepositoryURL() );
         }
-        final Set<DownloadableArtifact> downloadables = new TreeSet<DownloadableArtifact>();
+        final Set<DownloadableArtifact> downloadables = new TreeSet<DownloadableArtifact>( new DownloadComparator() );
         final boolean isLatest = m_parser.getVersion().contains( "LATEST" );
         final boolean isSnapshot = m_parser.getVersion().endsWith( "SNAPSHOT" );
         VersionRange versionRange = null;
@@ -191,8 +192,10 @@ public class Connection
                 // well, we do not have a range of versions
             }
         }
+        int priority = 0;
         for( URL repositoryURL : repositories )
         {
+            priority++;
             try
             {
                 final Document doc = getMetadata( repositoryURL,
@@ -208,19 +211,19 @@ public class Connection
                 }
                 if( isLatest )
                 {
-                    downloadables.add( resolveLatestVersion( doc, repositoryURL ) );
+                    downloadables.add( resolveLatestVersion( doc, repositoryURL, priority ) );
                 }
                 else if( isSnapshot )
                 {
-                    downloadables.add( resolveSnapshotVersion( repositoryURL, m_parser.getVersion() ) );
+                    downloadables.add( resolveSnapshotVersion( repositoryURL, priority, m_parser.getVersion() ) );
                 }
                 else if( versionRange != null )
                 {
-                    downloadables.addAll( resolveRangeVersions( doc, repositoryURL, versionRange ) );
+                    downloadables.addAll( resolveRangeVersions( doc, repositoryURL, priority, versionRange ) );
                 }
                 else
                 {
-                    downloadables.add( resolveExactVersion( repositoryURL ) );
+                    downloadables.add( resolveExactVersion( repositoryURL, priority ) );
                 }
             }
             catch( IOException ignore )
@@ -288,17 +291,20 @@ public class Connection
      * Returns a downloadable artifact where the version is fully specified.
      *
      * @param repositoryURL the url of the repository to download from
+     * @param priority      repository priority
      *
      * @return a downloadable artifact
      *
      * @throws IOException re-thrown
      */
-    private DownloadableArtifact resolveExactVersion( final URL repositoryURL )
+    private DownloadableArtifact resolveExactVersion( final URL repositoryURL,
+                                                      final int priority )
         throws IOException
     {
         LOG.debug( "Resolving exact version from repository [" + repositoryURL + "]" );
         return new DownloadableArtifact(
             m_parser.getVersion(),
+            priority,
             repositoryURL,
             m_parser.getArtifactPath(),
             m_configuration.getCertificateCheck()
@@ -310,13 +316,15 @@ public class Connection
      *
      * @param metadata      parsed metadata xml
      * @param repositoryURL the url of the repository to download from
+     * @param priority      repository priority
      *
      * @return a downloadable artifact or throw an IOException if latest version cannot be determined.
      *
      * @throws IOException if the artifact could not be resolved
      */
     private DownloadableArtifact resolveLatestVersion( final Document metadata,
-                                                       final URL repositoryURL )
+                                                       final URL repositoryURL,
+                                                       final int priority )
         throws IOException
     {
         LOG.debug( "Resolving latest version from repository [" + repositoryURL + "]" );
@@ -325,12 +333,13 @@ public class Connection
         {
             if( version.endsWith( "SNAPSHOT" ) )
             {
-                return resolveSnapshotVersion( repositoryURL, version );
+                return resolveSnapshotVersion( repositoryURL, priority, version );
             }
             else
             {
                 return new DownloadableArtifact(
                     version,
+                    priority,
                     repositoryURL,
                     m_parser.getArtifactPath( version ),
                     m_configuration.getCertificateCheck()
@@ -349,6 +358,7 @@ public class Connection
      * versioning/lastUpdated
      *
      * @param repositoryURL the url of the repository to download from
+     * @param priority      repository priority
      * @param version       snapshot version to resolve
      *
      * @return an input stream to the artifact
@@ -356,6 +366,7 @@ public class Connection
      * @throws IOException if the artifact could not be resolved
      */
     private DownloadableArtifact resolveSnapshotVersion( final URL repositoryURL,
+                                                         final int priority,
                                                          final String version )
         throws IOException
     {
@@ -375,6 +386,7 @@ public class Connection
         {
             return new DownloadableArtifact(
                 m_parser.getSnapshotVersion( version, timestamp, buildNumber ),
+                priority,
                 repositoryURL,
                 m_parser.getSnapshotPath( version, timestamp, buildNumber ),
                 m_configuration.getCertificateCheck()
@@ -392,6 +404,7 @@ public class Connection
                     lastUpdated = lastUpdated.substring( 0, 8 ) + "." + lastUpdated.substring( 8 );
                     return new DownloadableArtifact(
                         m_parser.getSnapshotVersion( version, lastUpdated, "0" ),
+                        priority,
                         repositoryURL,
                         m_parser.getArtifactPath( version ),
                         m_configuration.getCertificateCheck()
@@ -407,12 +420,14 @@ public class Connection
      *
      * @param metadata      parsed metadata xml
      * @param repositoryURL the url of the repository to download from
+     * @param priority      repository priority
      * @param versionRange  version range to fulfill
      *
      * @return list of downloadable artifacts that match the range
      */
     private List<DownloadableArtifact> resolveRangeVersions( final Document metadata,
                                                              final URL repositoryURL,
+                                                             final int priority,
                                                              final VersionRange versionRange )
     {
         LOG.debug( "Resolving versions from repository [" + repositoryURL + "] in range [" + versionRange + "]" );
@@ -454,4 +469,35 @@ public class Connection
         return exception;
     }
 
+    /**
+     * Sorting comparator for downladable artifacts.
+     * The sorting is done by:
+     * 1. descending version
+     * 2. ascending priority.
+     */
+    private static class DownloadComparator
+        implements Comparator<DownloadableArtifact>
+    {
+
+        public int compare( final DownloadableArtifact first,
+                            final DownloadableArtifact second )
+        {
+            // first descending by version
+            int result = -1 * first.getVersion().compareTo( second.getVersion() );
+            if( result == 0 )
+            {
+                // then ascending by priority
+                if( first.getPriority() < second.getPriority() )
+                {
+                    result = -1;
+                }
+                else if( first.getPriority() > second.getPriority() )
+                {
+                    result = 1;
+                }
+            }
+            return result;
+        }
+
+    }
 }
