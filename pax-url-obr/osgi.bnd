@@ -10,7 +10,7 @@ Bundle-SymbolicName:\
 Import-Package:\
   ${bundle.namespace}; version="${pom.version}",\
   javax.net.ssl,\
-  org.osgi.service.obr; version="0.0.0"; resolution:=optional,\
+  org.osgi.service.obr; version="0.0.0",\
   org.apache.commons.logging; version="1.0.4"; resolution:=optional,\
   org.osgi.framework; version="[1.0.0,2.0.0)",\
   org.osgi.service.cm; version="[1.0.0,2.0.0)",\
