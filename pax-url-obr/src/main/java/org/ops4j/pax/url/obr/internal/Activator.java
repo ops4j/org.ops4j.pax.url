@@ -22,6 +22,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.service.obr.RepositoryAdmin;
 import org.ops4j.pax.swissbox.tracker.ReplaceableService;
 import org.ops4j.pax.url.commons.handler.ConnectionFactory;
@@ -40,13 +41,17 @@ public final class Activator
 {
 
     /**
-     * OBR Repository Admin in use.
+     * Delegate.
+     */
+    private HandlerActivator<Configuration> m_activatorDelegate;
+    /**
+     * OBR Repository Admin in use. Valid only after start method has been called.
      */
     private RepositoryAdmin m_repositoryAdmin;
     /**
-     * Delegate.
+     * Bundle context. Valid only after start method has been called.
      */
-    private final HandlerActivator<Configuration> m_activatorDelegate;
+    private BundleContext m_bundleContext;
 
     /**
      * @see HandlerActivator#HandlerActivator(String[], String, ConnectionFactory)
@@ -67,7 +72,29 @@ public final class Activator
                                                       final Configuration config )
                     throws MalformedURLException
                 {
-                    return new Connection( url, config, m_repositoryAdmin );
+                    return new Connection( url,
+                                           config,
+                                           m_repositoryAdmin,
+                                           new FilterValidator()
+                                           {
+                                               /**
+                                                * Validates filter syntax by creating an OSGi filter. If an
+                                                * @see FilterValidator#validate(String)
+                                                */
+                                               public boolean validate( final String filter )
+                                               {
+                                                   try
+                                                   {
+                                                       m_bundleContext.createFilter( filter );
+                                                       return true;
+                                                   }
+                                                   catch( InvalidSyntaxException e )
+                                                   {
+                                                       return false;
+                                                   }
+                                               }
+                                           }
+                    );
                 }
 
                 /**
@@ -90,6 +117,7 @@ public final class Activator
     public void start( final BundleContext bundleContext )
         throws Exception
     {
+        m_bundleContext = bundleContext;
         final ReplaceableService<RepositoryAdmin> replaceableService =
             new ReplaceableService<RepositoryAdmin>( bundleContext, RepositoryAdmin.class );
         replaceableService.start();
@@ -105,7 +133,12 @@ public final class Activator
     public void stop( final BundleContext bundleContext )
         throws Exception
     {
-        m_activatorDelegate.stop( bundleContext );
+        if( m_activatorDelegate != null )
+        {
+            m_activatorDelegate.stop( bundleContext );
+            m_activatorDelegate = null;
+        }
+        m_bundleContext = null;
     }
 
 }

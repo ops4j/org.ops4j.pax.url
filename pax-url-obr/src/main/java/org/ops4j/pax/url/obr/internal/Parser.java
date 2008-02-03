@@ -18,6 +18,7 @@
 package org.ops4j.pax.url.obr.internal;
 
 import java.net.MalformedURLException;
+import org.ops4j.lang.NullArgumentException;
 
 /**
  * Parser for obr: protocol url.
@@ -43,10 +44,15 @@ class Parser
      * @param path the path part of the url (without starting wrap:)
      *
      * @throws java.net.MalformedURLException if provided path does not comply to expected syntax or has malformed urls
+     *                                        or contains values that doe not pass an OSGi filter validation
+     * @throws NullArgumentException          if filter validator is null
      */
-    public Parser( final String path )
+    public Parser( final String path,
+                   final FilterValidator filterValidator )
         throws MalformedURLException
     {
+        NullArgumentException.validateNotNull( filterValidator, "Filter validator" );
+
         if( path == null || path.trim().length() == 0 )
         {
             throw new MalformedURLException( "Path cannot be null or empty. Syntax " + SYNTAX );
@@ -59,10 +65,18 @@ class Parser
         final StringBuilder builder = new StringBuilder();
         // add bundle symbolic name filter
         builder.append( "(symbolicname=" ).append( segments[ 0 ] ).append( ")" );
+        if( !filterValidator.validate( builder.toString() ) )
+        {
+            throw new MalformedURLException( "Invalid symbolic name value." );
+        }
         // add bundle version filter
         if( segments.length > 1 )
         {
             builder.insert( 0, "(&" ).append( "(version=" ).append( segments[ 1 ] ).append( "))" );
+            if( !filterValidator.validate( builder.toString() ) )
+            {
+                throw new MalformedURLException( "Invalid version value." );
+            }
         }
         m_filter = builder.toString();
     }

@@ -63,12 +63,15 @@ class Connection
      * @param url             the url; cannot be null.
      * @param configuration   service configuration; cannot be null
      * @param repositoryAdmin obr repository admin to use
+     * @param filterValidator filter syntax validator
      *
      * @throws java.net.MalformedURLException in case of a malformed url
+     * @throws NullArgumentException          if any of the arguments is null
      */
     public Connection( final URL url,
                        final Configuration configuration,
-                       final RepositoryAdmin repositoryAdmin )
+                       final RepositoryAdmin repositoryAdmin,
+                       final FilterValidator filterValidator )
         throws MalformedURLException
     {
         super( url );
@@ -80,7 +83,7 @@ class Connection
         m_configuration = configuration;
         m_repositoryAdmin = repositoryAdmin;
 
-        m_parser = new Parser( url.getPath() );
+        m_parser = new Parser( url.getPath(), filterValidator );
     }
 
     /**
