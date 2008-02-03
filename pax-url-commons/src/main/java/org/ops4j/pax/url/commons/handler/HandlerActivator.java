@@ -97,7 +97,7 @@ public class HandlerActivator<T>
      *
      * @throws NullArgumentException if any of the paramters is null
      */
-    protected HandlerActivator( final String[] protocols,
+    public HandlerActivator( final String[] protocols,
                                 final String pid,
                                 final ConnectionFactory<T> connectionFactory )
     {

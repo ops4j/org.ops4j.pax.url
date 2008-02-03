@@ -1,5 +1,6 @@
 <?xml version='1.0' encoding='UTF-8' ?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
@@ -36,6 +37,7 @@
     <module>pax-url-classpath</module>
     <module>pax-url-commons</module>
     <module>pax-url-mvn</module>
+    <module>pax-url-obr</module>
     <module>pax-url-war</module>
     <module>pax-url-wrap</module>
   </modules>
@@ -139,11 +141,41 @@
         <optional>true</optional>
       </dependency>
       <dependency>
+        <groupId>org.ops4j.pax.swissbox</groupId>
+        <artifactId>pax-swissbox-tracker</artifactId>
+        <version>${dependency.swissbox.version}</version>
+        <optional>true</optional>
+      </dependency>
+      <dependency>
         <groupId>biz.aQute</groupId>
         <artifactId>bndlib</artifactId>
         <version>0.0.227</version>
       </dependency>
       <!-- Provided dependencies -->
+      <dependency>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>org.apache.felix.bundlerepository</artifactId>
+        <version>1.0.0</version>
+        <scope>provided</scope>
+        <exclusions>
+          <exclusion>
+            <groupId>net.sf.kxml</groupId>
+            <artifactId>kxml2</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>xmlpull</groupId>
+            <artifactId>xmlpull</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.shell</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.osgi.core</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
       <dependency>
         <groupId>org.osgi</groupId>
         <artifactId>osgi_R4_core</artifactId>
