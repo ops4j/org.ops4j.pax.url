@@ -206,24 +206,21 @@ public class Connection
                                                           m_parser.getArtifactMetdataPath()
                                                       }
                 );
-                if( doc == null )
-                {
-                    continue;
-                }
-                if( isLatest )
+                if( doc != null && isLatest )
                 {
                     downloadables.add( resolveLatestVersion( doc, repositoryURL, priority ) );
                 }
-                else if( isSnapshot )
+                else if( doc != null && isSnapshot )
                 {
                     downloadables.add( resolveSnapshotVersion( repositoryURL, priority, m_parser.getVersion() ) );
                 }
-                else if( versionRange != null )
+                else if( doc != null && versionRange != null )
                 {
                     downloadables.addAll( resolveRangeVersions( doc, repositoryURL, priority, versionRange ) );
                 }
                 else
                 {
+                    // if metadata is not present or we have an exact version
                     downloadables.add( resolveExactVersion( repositoryURL, priority ) );
                 }
             }
