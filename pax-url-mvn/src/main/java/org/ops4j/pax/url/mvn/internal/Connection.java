@@ -199,13 +199,22 @@ public class Connection
             priority++;
             try
             {
-                final Document doc = getMetadata( repositoryURL,
-                                                  new String[]
-                                                      {
-                                                          m_parser.getArtifactLocalMetdataPath(),
-                                                          m_parser.getArtifactMetdataPath()
-                                                      }
-                );
+                Document doc = null;
+                try
+                {
+                    doc = getMetadata( repositoryURL,
+                                       new String[]
+                                           {
+                                               m_parser.getArtifactLocalMetdataPath(),
+                                               m_parser.getArtifactMetdataPath()
+                                           }
+                    );
+                }
+                catch( IOException ignore )
+                {
+                    // ignore, so we have the chance (bellow) to try an exact version
+                    LOG.trace( ignore.getMessage() );
+                }
                 if( doc != null && isLatest )
                 {
                     downloadables.add( resolveLatestVersion( doc, repositoryURL, priority ) );
