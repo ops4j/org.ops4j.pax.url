@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
@@ -20,18 +21,26 @@
   </description>
 
   <dependencies>
+
+    <!-- Compile dependencies (transitive) -->
     <dependency>
       <groupId>biz.aQute</groupId>
       <artifactId>bndlib</artifactId>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.ops4j.base</groupId>
       <artifactId>ops4j-base-lang</artifactId>
+      <scope>compile</scope>
     </dependency>
+
+    <!-- Provided dependencies (not transitive) -->
     <dependency>
       <groupId>org.ops4j.pax.swissbox</groupId>
       <artifactId>pax-swissbox-optional-jcl</artifactId>
+      <scope>provided</scope>
     </dependency>
+
   </dependencies>
 
 </project>

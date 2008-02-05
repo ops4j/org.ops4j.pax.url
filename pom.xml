@@ -97,103 +97,70 @@
 
   <dependencyManagement>
     <dependencies>
-      <!-- Compile dependencies -->
+      <!-- Peter Kriens BND -->
+      <dependency>
+        <groupId>biz.aQute</groupId>
+        <artifactId>bndlib</artifactId>
+        <version>0.0.227</version>
+      </dependency>
+      <!-- Felix -->
+      <dependency>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>org.osgi.service.obr</artifactId>
+        <version>1.0.0</version>
+      </dependency>
+      <!-- OPS4J Base -->
       <dependency>
         <groupId>org.ops4j.base</groupId>
         <artifactId>ops4j-base-lang</artifactId>
         <version>${dependency.base.version}</version>
-        <optional>true</optional>
       </dependency>
       <dependency>
         <groupId>org.ops4j.base</groupId>
         <artifactId>ops4j-base-io</artifactId>
         <version>${dependency.base.version}</version>
-        <optional>true</optional>
       </dependency>
       <dependency>
         <groupId>org.ops4j.base</groupId>
         <artifactId>ops4j-base-net</artifactId>
         <version>${dependency.base.version}</version>
-        <optional>true</optional>
       </dependency>
       <dependency>
         <groupId>org.ops4j.base</groupId>
         <artifactId>ops4j-base-util-property</artifactId>
         <version>${dependency.base.version}</version>
-        <optional>true</optional>
       </dependency>
       <dependency>
         <groupId>org.ops4j.base</groupId>
         <artifactId>ops4j-base-util-xml</artifactId>
         <version>${dependency.base.version}</version>
-        <optional>true</optional>
       </dependency>
+      <!-- OPS4J Pax Swissbox -->
       <dependency>
         <groupId>org.ops4j.pax.swissbox</groupId>
         <artifactId>pax-swissbox-optional-jcl</artifactId>
         <version>${dependency.swissbox.version}</version>
-        <optional>true</optional>
       </dependency>
       <dependency>
         <groupId>org.ops4j.pax.swissbox</groupId>
         <artifactId>pax-swissbox-property</artifactId>
         <version>${dependency.swissbox.version}</version>
-        <optional>true</optional>
       </dependency>
       <dependency>
         <groupId>org.ops4j.pax.swissbox</groupId>
         <artifactId>pax-swissbox-tracker</artifactId>
         <version>${dependency.swissbox.version}</version>
-        <optional>true</optional>
       </dependency>
+      <!-- OSGi Alliance -->
       <dependency>
-        <groupId>biz.aQute</groupId>
-        <artifactId>bndlib</artifactId>
-        <version>0.0.236</version>
-      </dependency>
-      <!-- Provided dependencies -->
-      <dependency>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>org.apache.felix.bundlerepository</artifactId>
-        <version>1.0.0</version>
-        <scope>provided</scope>
-        <exclusions>
-          <exclusion>
-            <groupId>net.sf.kxml</groupId>
-            <artifactId>kxml2</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>xmlpull</groupId>
-            <artifactId>xmlpull</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.shell</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.felix</groupId>
-            <artifactId>org.osgi.core</artifactId>
-          </exclusion>
-        </exclusions>
+        <groupId>org.osgi</groupId>
+        <artifactId>org.osgi.core</artifactId>
+        <version>4.0.1</version>
       </dependency>
       <dependency>
         <groupId>org.osgi</groupId>
-        <artifactId>osgi_R4_core</artifactId>
-        <version>1.0</version>
-        <scope>provided</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.osgi</groupId>
-        <artifactId>osgi_R4_compendium</artifactId>
-        <version>1.0</version>
-        <scope>provided</scope>
-      </dependency>
-      <!-- Testing dependencies -->
-      <dependency>
-        <groupId>org.ops4j.base</groupId>
-        <artifactId>ops4j-base-io</artifactId>
-        <version>${dependency.base.version}</version>
-        <scope>test</scope>
+        <artifactId>org.osgi.compendium</artifactId>
+        <version>4.0.1</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
