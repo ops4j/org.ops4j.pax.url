@@ -149,7 +149,7 @@
       <dependency>
         <groupId>biz.aQute</groupId>
         <artifactId>bndlib</artifactId>
-        <version>0.0.227</version>
+        <version>0.0.236</version>
       </dependency>
       <!-- Provided dependencies -->
       <dependency>
