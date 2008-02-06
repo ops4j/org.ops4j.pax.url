@@ -179,6 +179,8 @@ public class Connection
             repositories.add( 0, m_parser.getRepositoryURL() );
         }
         final Set<DownloadableArtifact> downloadables = new TreeSet<DownloadableArtifact>( new DownloadComparator() );
+
+        // find artifact type
         final boolean isLatest = m_parser.getVersion().contains( "LATEST" );
         final boolean isSnapshot = m_parser.getVersion().endsWith( "SNAPSHOT" );
         VersionRange versionRange = null;
@@ -193,6 +195,9 @@ public class Connection
                 // well, we do not have a range of versions
             }
         }
+        final boolean isVersionRange = versionRange != null;
+        final boolean isExactVersion = !( isLatest || isSnapshot || isVersionRange );
+
         int priority = 0;
         for( URL repositoryURL : repositories )
         {
@@ -200,21 +205,24 @@ public class Connection
             try
             {
                 Document doc = null;
-                try
+                if( !isExactVersion )
                 {
-                    doc = getMetadata( repositoryURL,
-                                       new String[]
-                                           {
-                                               m_parser.getArtifactLocalMetdataPath(),
-                                               m_parser.getArtifactMetdataPath()
-                                           }
-                    );
-                }
-                catch( IOException ignore )
-                {
-                    // ignore, so we have the chance (bellow) to try an exact version
-                    LOG.trace( ignore.getMessage() );
-                }
+                    try
+                    {
+                        doc = getMetadata( repositoryURL,
+                                           new String[]
+                                               {
+                                                   m_parser.getArtifactLocalMetdataPath(),
+                                                   m_parser.getArtifactMetdataPath()
+                                               }
+                        );
+                    }
+                    catch( IOException ignore )
+                    {
+                        // ignore, so we have the chance (bellow) to try an exact version
+                        LOG.trace( ignore.getMessage() );
+                    }
+                } 
                 if( doc != null && isLatest )
                 {
                     downloadables.add( resolveLatestVersion( doc, repositoryURL, priority ) );
@@ -223,7 +231,7 @@ public class Connection
                 {
                     downloadables.add( resolveSnapshotVersion( repositoryURL, priority, m_parser.getVersion() ) );
                 }
-                else if( doc != null && versionRange != null )
+                else if( doc != null && isVersionRange )
                 {
                     downloadables.addAll( resolveRangeVersions( doc, repositoryURL, priority, versionRange ) );
                 }
