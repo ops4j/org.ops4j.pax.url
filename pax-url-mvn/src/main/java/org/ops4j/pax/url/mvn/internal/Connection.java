@@ -232,7 +232,10 @@ public class Connection
                     {
                         downloadables.add( resolveLatestVersion( metadata, repositoryURL, priority ) );
                     }
-                    downloadables.addAll( resolveRangeVersions( metadata, repositoryURL, priority, versionRange ) );
+                    else
+                    {
+                        downloadables.addAll( resolveRangeVersions( metadata, repositoryURL, priority, versionRange ) );
+                    }
                 }
             }
             catch( IOException ignore )
@@ -271,12 +274,12 @@ public class Connection
                 inputStream = prepareInputStream( repositoryURL, location );
                 // get out at first found location
                 foundLocation = location;
-                LOG.trace( "Metadata found at [" + location + "]" );
+                LOG.trace( "Metadata found: [" + location + "]" );
                 break;
             }
             catch( IOException ignore )
             {
-                LOG.trace( "Metadata not found at [" + location + "]" );
+                LOG.trace( "Metadata not found: [" + location + "]" );
             }
         }
         if( inputStream == null )
@@ -383,52 +386,59 @@ public class Connection
         throws IOException
     {
         LOG.debug( "Resolving snapshot version [" + version + "] from repository [" + repositoryURL + "]" );
-        final Document snapshotMetadata = getMetadata( repositoryURL,
-                                                       new String[]
-                                                           {
-                                                               m_parser.getVersionLocalMetadataPath( version ),
-                                                               m_parser.getVersionMetadataPath( version )
-                                                           }
-        );
-        final String timestamp =
-            XmlUtils.getTextContentOfElement( snapshotMetadata, "versioning/snapshot/timestamp" );
-        final String buildNumber =
-            XmlUtils.getTextContentOfElement( snapshotMetadata, "versioning/snapshot/buildNumber" );
-        final String localSnapshot =
-            XmlUtils.getTextContentOfElement( snapshotMetadata, "versioning/snapshot/localCopy" );
-        if( timestamp != null && buildNumber != null )
+        try
         {
-            return new DownloadableArtifact(
-                m_parser.getSnapshotVersion( version, timestamp, buildNumber ),
-                priority,
-                repositoryURL,
-                m_parser.getSnapshotPath( version, timestamp, buildNumber ),
-                localSnapshot != null,
-                m_configuration.getCertificateCheck()
+            final Document snapshotMetadata = getMetadata( repositoryURL,
+                                                           new String[]
+                                                               {
+                                                                   m_parser.getVersionLocalMetadataPath( version ),
+                                                                   m_parser.getVersionMetadataPath( version )
+                                                               }
             );
-        }
-        else
-        {
-            String lastUpdated = XmlUtils.getTextContentOfElement( snapshotMetadata, "versioning/lastUpdated" );
-            if( lastUpdated != null )
+            final String timestamp =
+                XmlUtils.getTextContentOfElement( snapshotMetadata, "versioning/snapshot/timestamp" );
+            final String buildNumber =
+                XmlUtils.getTextContentOfElement( snapshotMetadata, "versioning/snapshot/buildNumber" );
+            final String localSnapshot =
+                XmlUtils.getTextContentOfElement( snapshotMetadata, "versioning/snapshot/localCopy" );
+            if( timestamp != null && buildNumber != null )
             {
-                // last updated should contain in the first 8 chars the date and then the time,
-                // fact that is not compatible with timeStamp from remote repos which has a "." after date
-                if( lastUpdated.length() > 8 )
+                return new DownloadableArtifact(
+                    m_parser.getSnapshotVersion( version, timestamp, buildNumber ),
+                    priority,
+                    repositoryURL,
+                    m_parser.getSnapshotPath( version, timestamp, buildNumber ),
+                    localSnapshot != null,
+                    m_configuration.getCertificateCheck()
+                );
+            }
+            else
+            {
+                String lastUpdated = XmlUtils.getTextContentOfElement( snapshotMetadata, "versioning/lastUpdated" );
+                if( lastUpdated != null )
                 {
-                    lastUpdated = lastUpdated.substring( 0, 8 ) + "." + lastUpdated.substring( 8 );
-                    return new DownloadableArtifact(
-                        m_parser.getSnapshotVersion( version, lastUpdated, "0" ),
-                        priority,
-                        repositoryURL,
-                        m_parser.getArtifactPath( version ),
-                        localSnapshot != null,
-                        m_configuration.getCertificateCheck()
-                    );
+                    // last updated should contain in the first 8 chars the date and then the time,
+                    // fact that is not compatible with timeStamp from remote repos which has a "." after date
+                    if( lastUpdated.length() > 8 )
+                    {
+                        lastUpdated = lastUpdated.substring( 0, 8 ) + "." + lastUpdated.substring( 8 );
+                        return new DownloadableArtifact(
+                            m_parser.getSnapshotVersion( version, lastUpdated, "0" ),
+                            priority,
+                            repositoryURL,
+                            m_parser.getArtifactPath( version ),
+                            localSnapshot != null,
+                            m_configuration.getCertificateCheck()
+                        );
+                    }
                 }
             }
         }
-        throw new IOException( "SNAPSHOT version could not be resolved." );
+        catch( IOException ignore )
+        {
+            // in this case we could not find any metadata so try to get the *-SNAPSHOT file directly
+        }
+        return resolveExactVersion( repositoryURL, priority );
     }
 
     /**
