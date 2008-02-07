@@ -48,15 +48,20 @@ public class DownloadableArtifact
      * True if the certificate should be checked on SSL connection, false otherwise.
      */
     private final Boolean m_checkCertificate;
+    /**
+     * True if the snapshot is a local built snapshot artifact.
+     */
+    private final boolean m_localSnapshotBuild;
 
     /**
      * Creates a new downloadable artifact.
      *
-     * @param version          artifact version. Cannot be null or empty
-     * @param priority         priority
-     * @param repositoryURL    url to reporsitory. Cannot be null
-     * @param path             a path to the artifact jar file. Cannot be null
-     * @param checkCertificate if the certificate should be checked on an SSL connection. Cannot be null
+     * @param version            artifact version. Cannot be null or empty
+     * @param priority           priority
+     * @param repositoryURL      url to reporsitory. Cannot be null
+     * @param path               a path to the artifact jar file. Cannot be null
+     * @param localSnapshotBuild if the artifact is a local built snapshot
+     * @param checkCertificate   if the certificate should be checked on an SSL connection. Cannot be null
      *
      * @throws java.io.IOException   re-thrown
      * @throws NullArgumentException if any of the parameters is null or version is empty
@@ -65,6 +70,7 @@ public class DownloadableArtifact
                           final int priority,
                           final URL repositoryURL,
                           final String path,
+                          final boolean localSnapshotBuild,
                           final Boolean checkCertificate )
         throws IOException
     {
@@ -72,6 +78,7 @@ public class DownloadableArtifact
         NullArgumentException.validateNotEmpty( version, "Version" );
         NullArgumentException.validateNotNull( repositoryURL, "Repository URL" );
         NullArgumentException.validateNotNull( path, "Path" );
+        NullArgumentException.validateNotNull( localSnapshotBuild, "Local snapshot build" );
         NullArgumentException.validateNotNull( checkCertificate, "Certificate check" );
 
         m_version = new Version( version );
@@ -81,6 +88,7 @@ public class DownloadableArtifact
             repository = repository + Parser.FILE_SEPARATOR;
         }
         m_artifactURL = new URL( repository + path );
+        m_localSnapshotBuild = localSnapshotBuild;
         m_checkCertificate = checkCertificate;
     }
 
@@ -126,6 +134,16 @@ public class DownloadableArtifact
     public URL getArtifactURL()
     {
         return m_artifactURL;
+    }
+
+    /**
+     * Getter.
+     *
+     * @return true if the artifacts is  local built snapshot
+     */
+    public boolean isLocalSnapshotBuild()
+    {
+        return m_localSnapshotBuild;
     }
 
     @Override

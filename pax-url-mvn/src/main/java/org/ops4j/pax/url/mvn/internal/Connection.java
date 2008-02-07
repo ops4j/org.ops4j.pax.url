@@ -204,41 +204,35 @@ public class Connection
             priority++;
             try
             {
-                Document doc = null;
-                if( !isExactVersion )
+                if( isExactVersion )
                 {
-                    try
-                    {
-                        doc = getMetadata( repositoryURL,
-                                           new String[]
-                                               {
-                                                   m_parser.getArtifactLocalMetdataPath(),
-                                                   m_parser.getArtifactMetdataPath()
-                                               }
-                        );
-                    }
-                    catch( IOException ignore )
-                    {
-                        // ignore, so we have the chance (bellow) to try an exact version
-                        LOG.trace( ignore.getMessage() );
-                    }
-                } 
-                if( doc != null && isLatest )
-                {
-                    downloadables.add( resolveLatestVersion( doc, repositoryURL, priority ) );
+                    downloadables.add( resolveExactVersion( repositoryURL, priority ) );
                 }
-                else if( doc != null && isSnapshot )
+                else if( isSnapshot )
                 {
-                    downloadables.add( resolveSnapshotVersion( repositoryURL, priority, m_parser.getVersion() ) );
-                }
-                else if( doc != null && isVersionRange )
-                {
-                    downloadables.addAll( resolveRangeVersions( doc, repositoryURL, priority, versionRange ) );
+                    final DownloadableArtifact snapshot =
+                        resolveSnapshotVersion( repositoryURL, priority, m_parser.getVersion() );
+                    downloadables.add( snapshot );
+                    // if we have a local built snapshot we skip the rest of repositories
+                    if( snapshot.isLocalSnapshotBuild() )
+                    {
+                        break;
+                    }
                 }
                 else
                 {
-                    // if metadata is not present or we have an exact version
-                    downloadables.add( resolveExactVersion( repositoryURL, priority ) );
+                    final Document metadata = getMetadata( repositoryURL,
+                                                           new String[]
+                                                               {
+                                                                   m_parser.getArtifactLocalMetdataPath(),
+                                                                   m_parser.getArtifactMetdataPath()
+                                                               }
+                    );
+                    if( isLatest )
+                    {
+                        downloadables.add( resolveLatestVersion( metadata, repositoryURL, priority ) );
+                    }
+                    downloadables.addAll( resolveRangeVersions( metadata, repositoryURL, priority, versionRange ) );
                 }
             }
             catch( IOException ignore )
@@ -323,6 +317,7 @@ public class Connection
             priority,
             repositoryURL,
             m_parser.getArtifactPath(),
+            false, // no local built snapshot
             m_configuration.getCertificateCheck()
         );
     }
@@ -358,6 +353,7 @@ public class Connection
                     priority,
                     repositoryURL,
                     m_parser.getArtifactPath( version ),
+                    false, // no local built snapshot
                     m_configuration.getCertificateCheck()
                 );
             }
@@ -398,6 +394,8 @@ public class Connection
             XmlUtils.getTextContentOfElement( snapshotMetadata, "versioning/snapshot/timestamp" );
         final String buildNumber =
             XmlUtils.getTextContentOfElement( snapshotMetadata, "versioning/snapshot/buildNumber" );
+        final String localSnapshot =
+            XmlUtils.getTextContentOfElement( snapshotMetadata, "versioning/snapshot/localCopy" );
         if( timestamp != null && buildNumber != null )
         {
             return new DownloadableArtifact(
@@ -405,6 +403,7 @@ public class Connection
                 priority,
                 repositoryURL,
                 m_parser.getSnapshotPath( version, timestamp, buildNumber ),
+                localSnapshot != null,
                 m_configuration.getCertificateCheck()
             );
         }
@@ -423,6 +422,7 @@ public class Connection
                         priority,
                         repositoryURL,
                         m_parser.getArtifactPath( version ),
+                        localSnapshot != null,
                         m_configuration.getCertificateCheck()
                     );
                 }
@@ -476,6 +476,7 @@ public class Connection
                                     priority,
                                     repositoryURL,
                                     m_parser.getArtifactPath( versionString ),
+                                    false, // no local built snapshot
                                     m_configuration.getCertificateCheck()
                                 )
                             );
