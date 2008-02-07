@@ -23,10 +23,16 @@
     <repository>
       <id>repository2</id>
       <url>http://repository2</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
     </repository>
     <repository>
       <id>repository3</id>
       <url>http://repository3</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
     </repository>
     <repository>
       <id>repository4</id>
@@ -36,10 +42,22 @@
     <repository>
       <id>repository5</id>
       <url>jar:http://repository5/jar!</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
     </repository>
     <repository>
       <id>repository6</id>
       <url>http://user:password@repository6</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
     </repository>
   </repositories>
 </settings>

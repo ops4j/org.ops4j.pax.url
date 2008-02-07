@@ -45,7 +45,7 @@ public class SettingsImplTest
     {
         SettingsImpl settings =
             new SettingsImpl( FileUtils.getFileFromClasspath( "settings/settingsWithLocalRepository.xml" ).toURL() );
-        assertEquals( "Local repository", "repository", settings.getLocalRepository() );
+        assertEquals( "Local repository", "repository@snapshots", settings.getLocalRepository() );
     }
 
     @Test
@@ -55,7 +55,7 @@ public class SettingsImplTest
         SettingsImpl settings =
             new SettingsImpl( FileUtils.getFileFromClasspath( "settings/settingsEmpty.xml" ).toURL() );
         assertEquals( "Local repository",
-                      System.getProperty( "user.home" ) + "/.m2/repository",
+                      System.getProperty( "user.home" ) + "/.m2/repository@snapshots",
                       settings.getLocalRepository()
         );
     }
@@ -66,7 +66,8 @@ public class SettingsImplTest
     {
         SettingsImpl settings =
             new SettingsImpl( FileUtils.getFileFromClasspath( "settings/settingsEmpty.xml" ).toURL() );
-        assertEquals( "Repositories", "http://repo1.maven.org/maven2,http://repository.ops4j.org/maven2",
+        assertEquals( "Repositories",
+                      "http://repo1.maven.org/maven2,http://repository.ops4j.org/maven2",
                       settings.getRepositories()
         );
     }
@@ -83,13 +84,35 @@ public class SettingsImplTest
         assertNotNull( "Repositories", repositories );
         String[] segments = repositories.split( "," );
         assertEquals( "Number of repositories", 7, segments.length );
-        assertEquals( "Repository 1", "http://repository1", segments[ 0 ] );
-        assertEquals( "Repository 2", "http://user@repository2", segments[ 1 ] );
-        assertEquals( "Repository 3", "http://user:password@repository3", segments[ 2 ] );
-        assertEquals( "Repository 4", "jar:http://user:password@repository5/jar!", segments[ 3 ] );
-        assertEquals( "Repository 5", "http://user:password@repository6", segments[ 4 ] );
-        assertEquals( "Repository 6", "http://repo1.maven.org/maven2", segments[ 5 ] );
-        assertEquals( "Repository 7", "http://repository.ops4j.org/maven2", segments[ 6 ] );
+
+        assertEquals( "Repository 1",
+                      "http://repository1",
+                      segments[ 0 ]
+        );
+        assertEquals( "Repository 2",
+                      "http://user@repository2@snapshots",
+                      segments[ 1 ]
+        );
+        assertEquals( "Repository 3",
+                      "http://user:password@repository3@noreleases",
+                      segments[ 2 ]
+        );
+        assertEquals( "Repository 5",
+                      "jar:http://user:password@repository5/jar!@noreleases",
+                      segments[ 3 ]
+        );
+        assertEquals( "Repository 6",
+                      "http://user:password@repository6@snapshots@noreleases",
+                      segments[ 4 ]
+        );
+        assertEquals( "Repository 7",
+                      "http://repo1.maven.org/maven2",
+                      segments[ 5 ]
+        );
+        assertEquals( "Repository 8",
+                      "http://repository.ops4j.org/maven2",
+                      segments[ 6 ]
+        );
     }
 
 

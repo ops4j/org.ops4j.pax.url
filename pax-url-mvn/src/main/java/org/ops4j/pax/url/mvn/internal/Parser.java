@@ -18,7 +18,6 @@
 package org.ops4j.pax.url.mvn.internal;
 
 import java.net.MalformedURLException;
-import java.net.URL;
 
 /**
  * Parser for mvn: protocol.<br/>
@@ -84,7 +83,7 @@ public class Parser
     /**
      * Repository URL. Null if not present.
      */
-    private URL m_repositoryURL;
+    private RepositoryURL m_repositoryURL;
     /**
      * Artifact group id.
      */
@@ -126,7 +125,7 @@ public class Parser
         {
             int pos = path.lastIndexOf( REPOSITORY_SEPARATOR );
             parseArtifactPart( path.substring( pos + 1 ) );
-            m_repositoryURL = new URL( path.substring( 0, pos ) );
+            m_repositoryURL = new RepositoryURL( path.substring( 0, pos ) );
         }
         else
         {
@@ -180,7 +179,7 @@ public class Parser
      *
      * @return repository URL
      */
-    public URL getRepositoryURL()
+    public RepositoryURL getRepositoryURL()
     {
         return m_repositoryURL;
     }

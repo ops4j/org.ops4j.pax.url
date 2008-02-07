@@ -49,7 +49,7 @@ public interface Configuration
      *
      * @return a list of repositories. List can be null or empty if there are no repositories to be searched.
      */
-    List<URL> getRepositories()
+    List<RepositoryURL> getRepositories()
         throws MalformedURLException;
 
     /**
@@ -57,6 +57,6 @@ public interface Configuration
      *
      * @return url of local repository. Can be null if there is no local repository.
      */
-    URL getLocalRepository();
+    RepositoryURL getLocalRepository();
 
 }

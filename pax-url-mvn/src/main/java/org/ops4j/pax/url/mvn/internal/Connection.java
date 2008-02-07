@@ -78,6 +78,14 @@ public class Connection
      * Logger.
      */
     private static final Log LOG = LogFactory.getLog( Connection.class );
+    /**
+     * 2 spacess indent;
+     */
+    private static final String Ix2 = "  ";
+    /**
+     * 4 spacess indent;
+     */
+    private static final String Ix4 = "    ";
 
     /**
      * Parsed url.
@@ -151,8 +159,8 @@ public class Connection
             catch( IOException ignore )
             {
                 // go on with next repository
-                LOG.debug( "Could not download [" + artifact + "]" );
-                LOG.trace( "Reason: [" + ignore.getMessage() + "]" );
+                LOG.debug( Ix2 + "Could not download [" + artifact + "]" );
+                LOG.trace( Ix2 + "Reason: [" + ignore.getMessage() + "]" );
             }
         }
         // no artifact found
@@ -171,7 +179,7 @@ public class Connection
     private Set<DownloadableArtifact> collectPossibleDownloads()
         throws MalformedURLException
     {
-        final List<URL> repositories = new ArrayList<URL>();
+        final List<RepositoryURL> repositories = new ArrayList<RepositoryURL>();
         repositories.addAll( m_configuration.getRepositories() );
         // if the url contains a prefered repository add that repository as the first repository to be searched
         if( m_parser.getRepositoryURL() != null )
@@ -199,8 +207,9 @@ public class Connection
         final boolean isExactVersion = !( isLatest || isSnapshot || isVersionRange );
 
         int priority = 0;
-        for( URL repositoryURL : repositories )
+        for( RepositoryURL repositoryURL : repositories )
         {
+            LOG.debug( "Collecting versions from repostory [" + repositoryURL + "]" );
             priority++;
             try
             {
@@ -221,7 +230,7 @@ public class Connection
                 }
                 else
                 {
-                    final Document metadata = getMetadata( repositoryURL,
+                    final Document metadata = getMetadata( repositoryURL.toURL(),
                                                            new String[]
                                                                {
                                                                    m_parser.getArtifactLocalMetdataPath(),
@@ -241,7 +250,7 @@ public class Connection
             catch( IOException ignore )
             {
                 // if metadata cannot be found we go on with the next repository. Maybe we have better luck.
-                LOG.trace( "Skipping repository [" + repositoryURL + "], reason: " + ignore.getMessage() );
+                LOG.trace( Ix2 + "Skipping repository [" + repositoryURL + "], reason: " + ignore.getMessage() );
             }
         }
         return downloadables;
@@ -263,7 +272,7 @@ public class Connection
                                   final String[] metadataLocations )
         throws IOException
     {
-        LOG.debug( "Resolving metadata from repository [" + repositoryURL + "]" );
+        LOG.debug( Ix2 + "Resolving metadata" );
         InputStream inputStream = null;
         String foundLocation = null;
         for( String location : metadataLocations )
@@ -274,12 +283,12 @@ public class Connection
                 inputStream = prepareInputStream( repositoryURL, location );
                 // get out at first found location
                 foundLocation = location;
-                LOG.trace( "Metadata found: [" + location + "]" );
+                LOG.trace( Ix4 + "Metadata found: [" + location + "]" );
                 break;
             }
             catch( IOException ignore )
             {
-                LOG.trace( "Metadata not found: [" + location + "]" );
+                LOG.trace( Ix4 + "Metadata not found: [" + location + "]" );
             }
         }
         if( inputStream == null )
@@ -310,15 +319,19 @@ public class Connection
      *
      * @throws IOException re-thrown
      */
-    private DownloadableArtifact resolveExactVersion( final URL repositoryURL,
+    private DownloadableArtifact resolveExactVersion( final RepositoryURL repositoryURL,
                                                       final int priority )
         throws IOException
     {
-        LOG.debug( "Resolving exact version from repository [" + repositoryURL + "]" );
+        if( !repositoryURL.isReleasesEnabled() )
+        {
+            throw new IOException( "Releases not enabled" );
+        }
+        LOG.debug( Ix2 + "Resolving exact version" );
         return new DownloadableArtifact(
             m_parser.getVersion(),
             priority,
-            repositoryURL,
+            repositoryURL.toURL(),
             m_parser.getArtifactPath(),
             false, // no local built snapshot
             m_configuration.getCertificateCheck()
@@ -337,11 +350,11 @@ public class Connection
      * @throws IOException if the artifact could not be resolved
      */
     private DownloadableArtifact resolveLatestVersion( final Document metadata,
-                                                       final URL repositoryURL,
+                                                       final RepositoryURL repositoryURL,
                                                        final int priority )
         throws IOException
     {
-        LOG.debug( "Resolving latest version from repository [" + repositoryURL + "]" );
+        LOG.debug( Ix2 + "Resolving latest version" );
         final String version = XmlUtils.getTextContentOfElement( metadata, "versioning/versions/version[last]" );
         if( version != null )
         {
@@ -354,7 +367,7 @@ public class Connection
                 return new DownloadableArtifact(
                     version,
                     priority,
-                    repositoryURL,
+                    repositoryURL.toURL(),
                     m_parser.getArtifactPath( version ),
                     false, // no local built snapshot
                     m_configuration.getCertificateCheck()
@@ -380,15 +393,19 @@ public class Connection
      *
      * @throws IOException if the artifact could not be resolved
      */
-    private DownloadableArtifact resolveSnapshotVersion( final URL repositoryURL,
+    private DownloadableArtifact resolveSnapshotVersion( final RepositoryURL repositoryURL,
                                                          final int priority,
                                                          final String version )
         throws IOException
     {
-        LOG.debug( "Resolving snapshot version [" + version + "] from repository [" + repositoryURL + "]" );
+        if( !repositoryURL.isSnapshotsEnabled() )
+        {
+            throw new IOException( "Snapshots not enabled" );
+        }
+        LOG.debug( Ix2 + "Resolving snapshot version [" + version + "]" );
         try
         {
-            final Document snapshotMetadata = getMetadata( repositoryURL,
+            final Document snapshotMetadata = getMetadata( repositoryURL.toURL(),
                                                            new String[]
                                                                {
                                                                    m_parser.getVersionLocalMetadataPath( version ),
@@ -406,7 +423,7 @@ public class Connection
                 return new DownloadableArtifact(
                     m_parser.getSnapshotVersion( version, timestamp, buildNumber ),
                     priority,
-                    repositoryURL,
+                    repositoryURL.toURL(),
                     m_parser.getSnapshotPath( version, timestamp, buildNumber ),
                     localSnapshot != null,
                     m_configuration.getCertificateCheck()
@@ -425,7 +442,7 @@ public class Connection
                         return new DownloadableArtifact(
                             m_parser.getSnapshotVersion( version, lastUpdated, "0" ),
                             priority,
-                            repositoryURL,
+                            repositoryURL.toURL(),
                             m_parser.getArtifactPath( version ),
                             localSnapshot != null,
                             m_configuration.getCertificateCheck()
@@ -454,12 +471,12 @@ public class Connection
      * @throws IOException re-thrown
      */
     private List<DownloadableArtifact> resolveRangeVersions( final Document metadata,
-                                                             final URL repositoryURL,
+                                                             final RepositoryURL repositoryURL,
                                                              final int priority,
                                                              final VersionRange versionRange )
         throws IOException
     {
-        LOG.debug( "Resolving versions from repository [" + repositoryURL + "] in range [" + versionRange + "]" );
+        LOG.debug( Ix2 + "Resolving versions in range [" + versionRange + "]" );
         final List<DownloadableArtifact> downladables = new ArrayList<DownloadableArtifact>();
         final List<Element> elements = XmlUtils.getElements( metadata, "versioning/versions/version" );
         if( elements != null && elements.size() > 0 )
@@ -484,7 +501,7 @@ public class Connection
                                 new DownloadableArtifact(
                                     versionString,
                                     priority,
-                                    repositoryURL,
+                                    repositoryURL.toURL(),
                                     m_parser.getArtifactPath( versionString ),
                                     false, // no local built snapshot
                                     m_configuration.getCertificateCheck()

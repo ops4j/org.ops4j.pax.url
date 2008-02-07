@@ -90,6 +90,8 @@ public class ConfigurationImplTest
 
     /**
      * Test that a malformed url will not trigger an exception ( will be skipped)
+     *
+     * @throws MalformedURLException not expected
      */
     @Test
     public void getSettingsAsMalformedURL()
@@ -122,10 +124,10 @@ public class ConfigurationImplTest
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null );
         replay( propertyResolver );
         Configuration config = new ConfigurationImpl( propertyResolver );
-        List<URL> repositories = config.getRepositories();
+        List<RepositoryURL> repositories = config.getRepositories();
         assertNotNull( "Repositories is null", repositories );
         assertEquals( "Repositories size", 1, repositories.size() );
-        assertEquals( "Repository", new URL( "file:repository1/" ), repositories.get( 0 ) );
+        assertEquals( "Repository", new URL( "file:repository1/" ), repositories.get( 0 ).toURL() );
         verify( propertyResolver );
     }
 
@@ -138,10 +140,10 @@ public class ConfigurationImplTest
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null );
         replay( propertyResolver );
         Configuration config = new ConfigurationImpl( propertyResolver );
-        List<URL> repositories = config.getRepositories();
+        List<RepositoryURL> repositories = config.getRepositories();
         assertNotNull( "Repositories is null", repositories );
         assertEquals( "Repositories size", 1, repositories.size() );
-        assertEquals( "Repository", new URL( "file:repository1/" ), repositories.get( 0 ) );
+        assertEquals( "Repository", new URL( "file:repository1/" ), repositories.get( 0 ).toURL() );
         verify( propertyResolver );
     }
 
@@ -154,10 +156,10 @@ public class ConfigurationImplTest
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null );
         replay( propertyResolver );
         Configuration config = new ConfigurationImpl( propertyResolver );
-        List<URL> repositories = config.getRepositories();
+        List<RepositoryURL> repositories = config.getRepositories();
         assertNotNull( "Repositories is null", repositories );
         assertEquals( "Repositories size", 1, repositories.size() );
-        assertEquals( "Repository", new URL( "file:repository1/" ), repositories.get( 0 ) );
+        assertEquals( "Repository", new URL( "file:repository1/" ), repositories.get( 0 ).toURL() );
         verify( propertyResolver );
     }
 
@@ -170,10 +172,10 @@ public class ConfigurationImplTest
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null );
         replay( propertyResolver );
         Configuration config = new ConfigurationImpl( propertyResolver );
-        List<URL> repositories = config.getRepositories();
+        List<RepositoryURL> repositories = config.getRepositories();
         assertNotNull( "Repositories is null", repositories );
         assertEquals( "Repositories size", 1, repositories.size() );
-        assertEquals( "Repository", new URL( "file:repository1\\" ), repositories.get( 0 ) );
+        assertEquals( "Repository", new URL( "file:repository1\\" ), repositories.get( 0 ).toURL() );
         verify( propertyResolver );
     }
 
@@ -188,11 +190,11 @@ public class ConfigurationImplTest
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null );
         replay( propertyResolver );
         Configuration config = new ConfigurationImpl( propertyResolver );
-        List<URL> repositories = config.getRepositories();
+        List<RepositoryURL> repositories = config.getRepositories();
         assertNotNull( "Repositories is null", repositories );
         assertEquals( "Repositories size", 2, repositories.size() );
-        assertEquals( "Repository 1", new URL( "file:repository1/" ), repositories.get( 0 ) );
-        assertEquals( "Repository 2", new URL( "file:repository2/" ), repositories.get( 1 ) );
+        assertEquals( "Repository 1", new URL( "file:repository1/" ), repositories.get( 0 ).toURL() );
+        assertEquals( "Repository 2", new URL( "file:repository2/" ), repositories.get( 1 ).toURL() );
         verify( propertyResolver );
     }
 
@@ -209,10 +211,10 @@ public class ConfigurationImplTest
         replay( propertyResolver, settings );
         ConfigurationImpl config = new ConfigurationImpl( propertyResolver );
         config.setSettings( settings );
-        List<URL> repositories = config.getRepositories();
+        List<RepositoryURL> repositories = config.getRepositories();
         assertNotNull( "Repositories is null", repositories );
         assertEquals( "Repositories size", 1, repositories.size() );
-        assertEquals( "Repository", new URL( "file:repository1/" ), repositories.get( 0 ) );
+        assertEquals( "Repository", new URL( "file:repository1/" ), repositories.get( 0 ).toURL() );
         verify( propertyResolver );
     }
 
@@ -229,11 +231,11 @@ public class ConfigurationImplTest
         replay( propertyResolver, settings );
         ConfigurationImpl config = new ConfigurationImpl( propertyResolver );
         config.setSettings( settings );
-        List<URL> repositories = config.getRepositories();
+        List<RepositoryURL> repositories = config.getRepositories();
         assertNotNull( "Repositories is null", repositories );
         assertEquals( "Repositories size", 2, repositories.size() );
-        assertEquals( "Repository 1", new URL( "file:repository1/" ), repositories.get( 0 ) );
-        assertEquals( "Repository 2", new URL( "file:repository2/" ), repositories.get( 1 ) );
+        assertEquals( "Repository 1", new URL( "file:repository1/" ), repositories.get( 0 ).toURL() );
+        assertEquals( "Repository 2", new URL( "file:repository2/" ), repositories.get( 1 ).toURL() );
         verify( propertyResolver );
     }
 
@@ -248,11 +250,12 @@ public class ConfigurationImplTest
         );
         replay( propertyResolver );
         Configuration config = new ConfigurationImpl( propertyResolver );
-        List<URL> repositories = config.getRepositories();
+        List<RepositoryURL> repositories = config.getRepositories();
         assertNotNull( "Repositories is null", repositories );
         assertEquals( "Repositories size", 2, repositories.size() );
-        assertEquals( "Local repository", new URL( "file:localRepository/" ), repositories.get( 0 ) );
-        assertEquals( "Repository", new URL( "file:repository1/" ), repositories.get( 1 ) );
+        assertEquals( "Local repository", new URL( "file:localRepository/" ), repositories.get( 0 ).toURL()
+        );
+        assertEquals( "Repository", new URL( "file:repository1/" ), repositories.get( 1 ).toURL() );
         verify( propertyResolver );
     }
 
@@ -266,7 +269,10 @@ public class ConfigurationImplTest
         );
         replay( propertyResolver );
         Configuration config = new ConfigurationImpl( propertyResolver );
-        assertEquals( "Local repository", new URL( "file:somewhere/localrepository/" ), config.getLocalRepository() );
+        assertEquals( "Local repository",
+                      new URL( "file:somewhere/localrepository/" ),
+                      config.getLocalRepository().toURL()
+        );
         verify( propertyResolver );
     }
 
@@ -280,7 +286,10 @@ public class ConfigurationImplTest
         );
         replay( propertyResolver );
         Configuration config = new ConfigurationImpl( propertyResolver );
-        assertEquals( "Local repository", new URL( "file:somewhere/localrepository/" ), config.getLocalRepository() );
+        assertEquals( "Local repository",
+                      new URL( "file:somewhere/localrepository/" ),
+                      config.getLocalRepository().toURL()
+        );
         verify( propertyResolver );
     }
 
@@ -294,7 +303,10 @@ public class ConfigurationImplTest
         );
         replay( propertyResolver );
         Configuration config = new ConfigurationImpl( propertyResolver );
-        assertEquals( "Local repository", new URL( "file:somewhere/localrepository\\" ), config.getLocalRepository() );
+        assertEquals( "Local repository",
+                      new URL( "file:somewhere/localrepository\\" ),
+                      config.getLocalRepository().toURL()
+        );
         verify( propertyResolver );
     }
 
@@ -309,7 +321,10 @@ public class ConfigurationImplTest
         );
         replay( propertyResolver );
         Configuration config = new ConfigurationImpl( propertyResolver );
-        assertEquals( "Local repository", valid.toURL(), config.getLocalRepository() );
+        assertEquals( "Local repository",
+                      valid.toURL(),
+                      config.getLocalRepository().toURL()
+        );
         verify( propertyResolver );
     }
 
@@ -325,12 +340,17 @@ public class ConfigurationImplTest
         );
         replay( propertyResolver );
         Configuration config = new ConfigurationImpl( propertyResolver );
-        assertEquals( "Local repository", validWithSlash.toURL(), config.getLocalRepository() );
+        assertEquals( "Local repository",
+                      validWithSlash.toURL(),
+                      config.getLocalRepository().toURL()
+        );
         verify( propertyResolver );
     }
 
     /**
-     * Test that an url that is malformed will not trigger an execption.
+     * Test that an url that is malformed will not trigger an exception.
+     *
+     * @throws MalformedURLException never
      */
     @Test
     public void getLocalRepositoryAsMalformedURL()
@@ -346,6 +366,7 @@ public class ConfigurationImplTest
 
     /**
      * Test that a path to a file that does not exist will not trigger an exception.
+     * @throws MalformedURLException never
      */
     @Test
     public void getLocalRepositoryToAnInexistentDirectory()
@@ -382,7 +403,9 @@ public class ConfigurationImplTest
         replay( propertyResolver, settings );
         ConfigurationImpl config = new ConfigurationImpl( propertyResolver );
         config.setSettings( settings );
-        assertEquals( "Local repository", new URL( "file:somewhere/localrepository/" ), config.getLocalRepository() );
+        assertEquals( "Local repository",
+                      new URL( "file:somewhere/localrepository/" ),
+                      config.getLocalRepository().toURL() );
         verify( propertyResolver, settings );
     }
 

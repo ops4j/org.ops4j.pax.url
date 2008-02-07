@@ -160,7 +160,7 @@ public class ConfigurationImpl
      * @see Configuration#getRepositories()
      * @see Configuration#getLocalRepository()
      */
-    public List<URL> getRepositories()
+    public List<RepositoryURL> getRepositories()
         throws MalformedURLException
     {
         if( !contains( ServiceConstants.PROPERTY_REPOSITORIES ) )
@@ -186,8 +186,8 @@ public class ConfigurationImpl
                 }
             }
             // build repositories list
-            final List<URL> repositoriesProperty = new ArrayList<URL>();
-            URL localRepository = getLocalRepository();
+            final List<RepositoryURL> repositoriesProperty = new ArrayList<RepositoryURL>();
+            RepositoryURL localRepository = getLocalRepository();
             if( localRepository != null )
             {
                 repositoriesProperty.add( localRepository );
@@ -197,11 +197,7 @@ public class ConfigurationImpl
                 String[] repositories = repositoriesProp.split( REPOSITORIES_SEPARATOR );
                 for( String repositoryURL : repositories )
                 {
-                    if( !repositoryURL.endsWith( "\\" ) && !repositoryURL.endsWith( "/" ) )
-                    {
-                        repositoryURL = repositoryURL + "/";
-                    }
-                    repositoriesProperty.add( new URL( repositoryURL ) );
+                    repositoriesProperty.add( new RepositoryURL( repositoryURL ) );
                 }
             }
             LOGGER.trace( "Using repositories [" + repositoriesProperty + "]" );
@@ -219,7 +215,7 @@ public class ConfigurationImpl
      *
      * @see Configuration#getLocalRepository()
      */
-    public URL getLocalRepository()
+    public RepositoryURL getLocalRepository()
     {
         if( !contains( ServiceConstants.PROPERTY_LOCAL_REPOSITORY ) )
         {
@@ -232,37 +228,26 @@ public class ConfigurationImpl
             }
             if( spec != null )
             {
-                if( !spec.endsWith( "\\" ) && !spec.endsWith( "/" ) )
-                {
-                    spec = spec + "/";
-                }
                 // check if we have a valid url
                 try
                 {
-                    set( ServiceConstants.PROPERTY_LOCAL_REPOSITORY, new URL( spec ) );
+                    return set( ServiceConstants.PROPERTY_LOCAL_REPOSITORY, new RepositoryURL( spec ) );
                 }
                 catch( MalformedURLException e )
                 {
                     // maybe is just a file?
-                    File file = new File( spec );
-                    if( file.exists() )
+                    try
                     {
-                        try
-                        {
-                            set( ServiceConstants.PROPERTY_LOCAL_REPOSITORY, file.toURL() );
-                        }
-                        catch( MalformedURLException ignore )
-                        {
-                            // ignore as it usually should not happen since we already have a file
-                        }
-                    }
-                    else
-                    {
-                        LOGGER.warn( "Local repository [" + spec
-                                     + "] cannot be used and will be skipped (malformed url or directory does not exist)"
+                        return set( ServiceConstants.PROPERTY_LOCAL_REPOSITORY,
+                                    new RepositoryURL( "file:" + spec )
                         );
-                        set( ServiceConstants.PROPERTY_LOCAL_REPOSITORY, null );
                     }
+                    catch( MalformedURLException ignore )
+                    {
+                        LOGGER.warn( "Local repository [" + spec + "] cannot be used and will be skipped" );
+                        return set( ServiceConstants.PROPERTY_LOCAL_REPOSITORY, null );
+                    }
+
                 }
             }
         }

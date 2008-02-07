@@ -134,6 +134,7 @@ public class SettingsImpl
             {
                 m_localRepository = System.getProperty( "user.home" ) + "/.m2/repository";
             }
+            m_localRepository += "@snapshots";
         }
         return m_localRepository;
     }
@@ -177,6 +178,8 @@ public class SettingsImpl
                                 // take only repositories with a default layout (skip legacy ones)
                                 if( layout == null || "default".equals( layout ) )
                                 {
+                                    String snapshots = XmlUtils.getTextContentOfElement( repo, "snapshots/enabled" );
+                                    String releases = XmlUtils.getTextContentOfElement( repo, "releases/enabled" );
                                     element = XmlUtils.getElement( repo, "url" );
                                     if( element != null )
                                     {
@@ -187,6 +190,14 @@ public class SettingsImpl
                                             {
                                                 repositories = new HashMap<String, String>();
                                                 order = new ArrayList<String>();
+                                            }
+                                            if( snapshots != null && Boolean.valueOf( snapshots ) )
+                                            {
+                                                url += "@snapshots";
+                                            }
+                                            if( releases != null && !Boolean.valueOf( releases ) )
+                                            {
+                                                url += "@noreleases";
                                             }
                                             repositories.put( id, url );
                                             order.add( id );
