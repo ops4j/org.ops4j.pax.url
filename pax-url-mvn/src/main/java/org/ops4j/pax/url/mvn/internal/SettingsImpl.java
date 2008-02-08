@@ -133,8 +133,7 @@ public class SettingsImpl
             if( m_localRepository == null )
             {
                 m_localRepository = System.getProperty( "user.home" ) + "/.m2/repository";
-            }
-            m_localRepository += "@snapshots";
+            };
         }
         return m_localRepository;
     }

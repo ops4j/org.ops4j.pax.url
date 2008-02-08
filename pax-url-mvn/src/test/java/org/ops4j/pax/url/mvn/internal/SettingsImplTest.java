@@ -45,7 +45,7 @@ public class SettingsImplTest
     {
         SettingsImpl settings =
             new SettingsImpl( FileUtils.getFileFromClasspath( "settings/settingsWithLocalRepository.xml" ).toURL() );
-        assertEquals( "Local repository", "repository@snapshots", settings.getLocalRepository() );
+        assertEquals( "Local repository", "repository", settings.getLocalRepository() );
     }
 
     @Test
@@ -55,7 +55,7 @@ public class SettingsImplTest
         SettingsImpl settings =
             new SettingsImpl( FileUtils.getFileFromClasspath( "settings/settingsEmpty.xml" ).toURL() );
         assertEquals( "Local repository",
-                      System.getProperty( "user.home" ) + "/.m2/repository@snapshots",
+                      System.getProperty( "user.home" ) + "/.m2/repository",
                       settings.getLocalRepository()
         );
     }

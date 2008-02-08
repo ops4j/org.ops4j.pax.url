@@ -228,6 +228,10 @@ public class ConfigurationImpl
             }
             if( spec != null )
             {
+                if( !spec.toLowerCase().contains( "@snapshots" ) )
+                {
+                    spec += "@snapshots";
+                }
                 // check if we have a valid url
                 try
                 {
