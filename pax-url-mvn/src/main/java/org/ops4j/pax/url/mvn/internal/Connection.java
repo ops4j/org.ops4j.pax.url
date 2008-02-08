@@ -250,7 +250,7 @@ public class Connection
             catch( IOException ignore )
             {
                 // if metadata cannot be found we go on with the next repository. Maybe we have better luck.
-                LOG.trace( Ix2 + "Skipping repository [" + repositoryURL + "], reason: " + ignore.getMessage() );
+                LOG.debug( Ix2 + "Skipping repository [" + repositoryURL + "], reason: " + ignore.getMessage() );
             }
         }
         return downloadables;
