@@ -83,6 +83,7 @@ public class ParserTest
         assertEquals( "Artifact", "artifact", parser.getArtifact() );
         assertEquals( "Version", "LATEST", parser.getVersion() );
         assertEquals( "Type", "jar", parser.getType() );
+        assertEquals( "Classifier", null, parser.getClassifier() );
         assertEquals( "Artifact path", "group/artifact/LATEST/artifact-LATEST.jar", parser.getArtifactPath() );
         assertEquals( "repository", new URL( "http://repository/" ), parser.getRepositoryURL().toURL() );
     }
@@ -96,6 +97,7 @@ public class ParserTest
         assertEquals( "Artifact", "artifact", parser.getArtifact() );
         assertEquals( "Version", "LATEST", parser.getVersion() );
         assertEquals( "Type", "jar", parser.getType() );
+        assertEquals( "Classifier", null, parser.getClassifier() );
         assertEquals( "Artifact path", "group/artifact/LATEST/artifact-LATEST.jar", parser.getArtifactPath() );
         assertEquals( "repository", null, parser.getRepositoryURL() );
     }
@@ -109,7 +111,24 @@ public class ParserTest
         assertEquals( "Artifact", "artifact", parser.getArtifact() );
         assertEquals( "Version", "version", parser.getVersion() );
         assertEquals( "Type", "type", parser.getType() );
+        assertEquals( "Classifier", null, parser.getClassifier() );
         assertEquals( "Artifact path", "group/artifact/version/artifact-version.type", parser.getArtifactPath() );
+        assertEquals( "repository", new URL( "http://repository/" ), parser.getRepositoryURL().toURL() );
+    }
+
+    @Test
+    public void urlWithRepositoryAndGroupArtifactVersionTypeClassifier()
+        throws MalformedURLException
+    {
+        Parser parser = new Parser( "http://repository!group/artifact/version/type/classifier" );
+        assertEquals( "Group", "group", parser.getGroup() );
+        assertEquals( "Artifact", "artifact", parser.getArtifact() );
+        assertEquals( "Version", "version", parser.getVersion() );
+        assertEquals( "Type", "type", parser.getType() );
+        assertEquals( "Classifier", "classifier", parser.getClassifier() );
+        assertEquals( "Artifact path", "group/artifact/version/artifact-version-classifier.type",
+                      parser.getArtifactPath()
+        );
         assertEquals( "repository", new URL( "http://repository/" ), parser.getRepositoryURL().toURL() );
     }
 
@@ -122,7 +141,72 @@ public class ParserTest
         assertEquals( "Artifact", "artifact", parser.getArtifact() );
         assertEquals( "Version", "version", parser.getVersion() );
         assertEquals( "Type", "type", parser.getType() );
+        assertEquals( "Classifier", null, parser.getClassifier() );
         assertEquals( "Artifact path", "group/artifact/version/artifact-version.type", parser.getArtifactPath() );
+        assertEquals( "repository", null, parser.getRepositoryURL() );
+    }
+
+    @Test
+    public void urlWithoutRepositoryAndGroupArtifactVersionTypeClassifier()
+        throws MalformedURLException
+    {
+        Parser parser = new Parser( "group/artifact/version/type/classifier" );
+        assertEquals( "Group", "group", parser.getGroup() );
+        assertEquals( "Artifact", "artifact", parser.getArtifact() );
+        assertEquals( "Version", "version", parser.getVersion() );
+        assertEquals( "Type", "type", parser.getType() );
+        assertEquals( "Classifier", "classifier", parser.getClassifier() );
+        assertEquals( "Artifact path", "group/artifact/version/artifact-version-classifier.type",
+                      parser.getArtifactPath()
+        );
+        assertEquals( "repository", null, parser.getRepositoryURL() );
+    }
+
+    @Test
+    public void urlWithoutRepositoryAndGroupArtifactVersionClassifier()
+        throws MalformedURLException
+    {
+        Parser parser = new Parser( "group/artifact/version//classifier" );
+        assertEquals( "Group", "group", parser.getGroup() );
+        assertEquals( "Artifact", "artifact", parser.getArtifact() );
+        assertEquals( "Version", "version", parser.getVersion() );
+        assertEquals( "Type", "jar", parser.getType() );
+        assertEquals( "Classifier", "classifier", parser.getClassifier() );
+        assertEquals( "Artifact path", "group/artifact/version/artifact-version-classifier.jar",
+                      parser.getArtifactPath()
+        );
+        assertEquals( "repository", null, parser.getRepositoryURL() );
+    }
+
+    @Test
+    public void urlWithoutRepositoryAndGroupArtifactTypeClassifier()
+        throws MalformedURLException
+    {
+        Parser parser = new Parser( "group/artifact//type/classifier" );
+        assertEquals( "Group", "group", parser.getGroup() );
+        assertEquals( "Artifact", "artifact", parser.getArtifact() );
+        assertEquals( "Version", "LATEST", parser.getVersion() );
+        assertEquals( "Type", "type", parser.getType() );
+        assertEquals( "Classifier", "classifier", parser.getClassifier() );
+        assertEquals( "Artifact path", "group/artifact/LATEST/artifact-LATEST-classifier.type",
+                      parser.getArtifactPath()
+        );
+        assertEquals( "repository", null, parser.getRepositoryURL() );
+    }
+
+    @Test
+    public void urlWithoutRepositoryAndGroupArtifactClassifier()
+        throws MalformedURLException
+    {
+        Parser parser = new Parser( "group/artifact///classifier" );
+        assertEquals( "Group", "group", parser.getGroup() );
+        assertEquals( "Artifact", "artifact", parser.getArtifact() );
+        assertEquals( "Version", "LATEST", parser.getVersion() );
+        assertEquals( "Type", "jar", parser.getType() );
+        assertEquals( "Classifier", "classifier", parser.getClassifier() );
+        assertEquals( "Artifact path", "group/artifact/LATEST/artifact-LATEST-classifier.jar",
+                      parser.getArtifactPath()
+        );
         assertEquals( "repository", null, parser.getRepositoryURL() );
     }
 

@@ -72,6 +72,10 @@ public class Parser
      */
     private static final String TYPE_SEPARATOR = ".";
     /**
+     * Separator used to separate classifier in artifact name.
+     */
+    private static final String CLASSIFIER_SEPARATOR = "-";
+    /**
      * Maven metadata file.
      */
     private static final String METADATA_FILE = "maven-metadata.xml";
@@ -100,6 +104,14 @@ public class Parser
      * Artifact type.
      */
     private String m_type;
+    /**
+     * Artifact classifier.
+     */
+    private String m_classifier;
+    /**
+     * Artifact classifier to use to build artifact name.
+     */
+    private String m_fullClassifier;
 
     /**
      * Creates a new protocol parser.
@@ -172,6 +184,13 @@ public class Parser
         {
             m_type = segments[ 3 ];
         }
+        // classifier is optional (if not pressent or empty we will have a null classsifier
+        m_fullClassifier = "";
+        if( segments.length >= 5 && segments[ 4 ].trim().length() > 0 )
+        {
+            m_classifier = segments[ 4 ];
+            m_fullClassifier = CLASSIFIER_SEPARATOR + m_classifier;
+        }
     }
 
     /**
@@ -225,6 +244,16 @@ public class Parser
     }
 
     /**
+     * Returns the artifact classifier.
+     *
+     * @return classifier
+     */
+    public String getClassifier()
+    {
+        return m_classifier;
+    }
+
+    /**
      * Returns the complete path to artifact as stated by Maven 2 repository layout.
      *
      * @return artifact path
@@ -253,6 +282,7 @@ public class Parser
             .append( m_artifact )
             .append( VERSION_SEPARATOR )
             .append( version )
+            .append( m_fullClassifier )
             .append( TYPE_SEPARATOR )
             .append( m_type )
             .toString();
@@ -293,6 +323,7 @@ public class Parser
             .append( m_artifact )
             .append( VERSION_SEPARATOR )
             .append( getSnapshotVersion( version, timestamp, buildnumber ) )
+            .append( m_fullClassifier )
             .append( TYPE_SEPARATOR )
             .append( m_type )
             .toString();
