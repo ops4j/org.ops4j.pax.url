@@ -58,7 +58,10 @@ public class SettingsImpl
      * Maven Central repository.
      */
     private static final String DEFAULT_REPOSITORIES =
-        "http://repo1.maven.org/maven2,http://repository.ops4j.org/maven2";
+        "http://repo1.maven.org/maven2,"
+        + "http://repository.ops4j.org/maven2,"
+        + "http://repository.springsource.com/maven/bundles/release,"
+        + "http://repository.springsource.com/maven/bundles/external";
 
     /**
      * The settings.xml DOM Document. Null if there is no settings.xml.
