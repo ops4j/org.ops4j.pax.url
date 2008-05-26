@@ -15,15 +15,15 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library" exported="">
-      <library name="biz.aQute:bndlib:0.0.253">
+      <library name="biz.aQute:bndlib:0.0.255">
         <CLASSES>
-          <root url="jar://$M2_REPO$/biz/aQute/bndlib/0.0.253/bndlib-0.0.253.jar!/" />
+          <root url="jar://$M2_REPO$/biz/aQute/bndlib/0.0.255/bndlib-0.0.255.jar!/" />
         </CLASSES>
         <JAVADOC>
-          <root url="jar://$M2_REPO$/biz/aQute/bndlib/0.0.253/bndlib-0.0.253-javadoc.jar!/" />
+          <root url="jar://$M2_REPO$/biz/aQute/bndlib/0.0.255/bndlib-0.0.255-javadoc.jar!/" />
         </JAVADOC>
         <SOURCES>
-          <root url="jar://$M2_REPO$/biz/aQute/bndlib/0.0.253/bndlib-0.0.253-sources.jar!/" />
+          <root url="jar://$M2_REPO$/biz/aQute/bndlib/0.0.255/bndlib-0.0.255-sources.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>
