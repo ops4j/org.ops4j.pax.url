@@ -115,8 +115,9 @@ public class SettingsImpl
     }
 
     /**
-     * Returns the local repository directory from settings.xml. If there is no settings.xml file it will return the
-     * hardcoded standard location: ${user.home}/.m2/repository
+     * Returns the local repository directory from settings.xml. If there is no settings.xml file, or the settings.xml
+     * does not caontain an <localRepository> tag or the value of that tag is empty it will return the hardcoded
+     * standard location: ${user.home}/.m2/repository
      *
      * @return the local repository directory
      */
@@ -133,10 +134,10 @@ public class SettingsImpl
                     m_localRepository = XmlUtils.getTextContent( settingsElement );
                 }
             }
-            if( m_localRepository == null )
+            if( m_localRepository == null || m_localRepository.trim().length() == 0)
             {
                 m_localRepository = System.getProperty( "user.home" ) + "/.m2/repository";
-            };
+            }
         }
         return m_localRepository;
     }

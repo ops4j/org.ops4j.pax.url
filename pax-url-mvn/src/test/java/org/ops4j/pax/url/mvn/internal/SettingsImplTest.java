@@ -61,6 +61,18 @@ public class SettingsImplTest
     }
 
     @Test
+    public void getEmptyTagLocalRepository()
+        throws MalformedURLException, FileNotFoundException
+    {
+        SettingsImpl settings =
+            new SettingsImpl( FileUtils.getFileFromClasspath( "settings/settingsEmptyTags.xml" ).toURL() );
+        assertEquals( "Local repository",
+                      System.getProperty( "user.home" ) + "/.m2/repository",
+                      settings.getLocalRepository()
+        );
+    }
+
+    @Test
     public void getInexistingRepositories()
         throws MalformedURLException, FileNotFoundException
     {
