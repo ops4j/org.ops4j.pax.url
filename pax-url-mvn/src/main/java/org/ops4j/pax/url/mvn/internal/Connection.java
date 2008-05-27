@@ -140,6 +140,7 @@ public class Connection
         throws IOException
     {
         connect();
+        LOG.debug( "Resolving [" + url.toExternalForm() + "]" );
         final Set<DownloadableArtifact> downloadables = collectPossibleDownloads();
         if( LOG.isTraceEnabled() )
         {
@@ -160,7 +161,7 @@ public class Connection
             {
                 // go on with next repository
                 LOG.debug( Ix2 + "Could not download [" + artifact + "]" );
-                LOG.trace( Ix2 + "Reason: [" + ignore.getMessage() + "]" );
+                LOG.trace( Ix2 + "Reason [" + ignore.getMessage() + "]" );
             }
         }
         // no artifact found
@@ -209,7 +210,7 @@ public class Connection
         int priority = 0;
         for( RepositoryURL repositoryURL : repositories )
         {
-            LOG.debug( "Collecting versions from repostory [" + repositoryURL + "]" );
+            LOG.debug( "Collecting versions from repository [" + repositoryURL + "]" );
             priority++;
             try
             {
