@@ -161,11 +161,13 @@ public class Connection
             {
                 // go on with next repository
                 LOG.debug( Ix2 + "Could not download [" + artifact + "]" );
-                LOG.trace( Ix2 + "Reason [" + ignore.getMessage() + "]" );
+                LOG.trace( Ix2 + "Reason [" + ignore.getClass().getName() + ": " + ignore.getMessage() + "]" );
             }
         }
         // no artifact found
-        throw new RuntimeException( "URL [" + url.toExternalForm() + "] could not be resolved." );
+        throw new RuntimeException(
+            "URL [" + url.toExternalForm() + "] could not be resolved. (enable TRACE logging for details)"
+        );
     }
 
     /**
