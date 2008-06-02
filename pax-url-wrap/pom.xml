@@ -6,12 +6,12 @@
     <relativePath>../</relativePath>
     <groupId>org.ops4j.pax</groupId>
     <artifactId>url</artifactId>
-    <version>0.3.1</version>
+    <version>0.3.2-SNAPSHOT</version>
   </parent>
 
   <groupId>org.ops4j.pax.url</groupId>
   <artifactId>pax-url-wrap</artifactId>
-  <version>0.3.1</version>
+  <version>0.3.2-SNAPSHOT</version>
   <packaging>bundle</packaging>
 
   <name>OPS4J Pax Url - wrap:</name>
@@ -52,14 +52,14 @@
     <dependency>
       <groupId>org.ops4j.pax.url</groupId>
       <artifactId>pax-url-bnd</artifactId>
-      <version>0.3.1</version>
+      <version>0.3.2-SNAPSHOT</version>
       <scope>compile</scope>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.ops4j.pax.url</groupId>
       <artifactId>pax-url-commons</artifactId>
-      <version>0.3.1</version>
+      <version>0.3.2-SNAPSHOT</version>
       <scope>compile</scope>
       <optional>true</optional>
     </dependency>
