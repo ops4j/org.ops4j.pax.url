@@ -243,7 +243,7 @@ public class ConfigurationImpl
                     try
                     {
                         return set( ServiceConstants.PROPERTY_LOCAL_REPOSITORY,
-                                    new RepositoryURL( "file:" + spec )
+                                    new RepositoryURL( new File( spec ).toURI().toASCIIString() )
                         );
                     }
                     catch( MalformedURLException ignore )
