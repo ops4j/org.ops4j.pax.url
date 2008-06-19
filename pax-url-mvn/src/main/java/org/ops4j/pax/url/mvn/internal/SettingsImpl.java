@@ -375,12 +375,12 @@ public class SettingsImpl
                         if( !m_proxySettings.containsKey( protocol ) || "true".equalsIgnoreCase( active ) ) {
                             Map<String,String> proxyDetails = new HashMap<String, String>();
 
-                            proxyDetails.put( "user", getSetting( proxy, "username", null ) );
-                            proxyDetails.put( "pass", getSetting( proxy, "password", null ) );
-                            proxyDetails.put( "host", getSetting( proxy, "host", null ) );
+                            proxyDetails.put( "user", getSetting( proxy, "username", "" ) );
+                            proxyDetails.put( "pass", getSetting( proxy, "password", "" ) );
+                            proxyDetails.put( "host", getSetting( proxy, "host", "127.0.0.1" ) );
                             proxyDetails.put( "port", getSetting( proxy, "port", "8080" ) );
 
-                            proxyDetails.put( "nonProxyHosts", getSetting( proxy, "nonProxyHosts", null ) );
+                            proxyDetails.put( "nonProxyHosts", getSetting( proxy, "nonProxyHosts", "" ) );
 
                             m_proxySettings.put( protocol, proxyDetails );
                         }

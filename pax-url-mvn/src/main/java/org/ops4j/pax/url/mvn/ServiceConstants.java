@@ -47,6 +47,10 @@ public interface ServiceConstants
      */
     static final String PROPERTY_REPOSITORIES = PID + ".repositories";
     /**
+     * Proxy support configuration property name.
+     */
+    static final String PROPERTY_PROXY_SUPPORT = PID + ".proxySupport";
+    /**
      * The protocol name.
      */
     public static final String PROTOCOL = "mvn";

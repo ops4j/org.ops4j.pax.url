@@ -20,6 +20,7 @@ package org.ops4j.pax.url.mvn.internal;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Handler configuration.
@@ -59,4 +60,8 @@ public interface Configuration
      */
     RepositoryURL getLocalRepository();
 
+    /**
+     * Enables the proxy server for a given URL.
+     */
+    void enableProxy( URL url );
 }

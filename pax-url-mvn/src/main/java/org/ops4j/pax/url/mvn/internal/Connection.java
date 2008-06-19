@@ -155,6 +155,7 @@ public class Connection
             LOG.trace( "Downloading [" + artifact + "]" );
             try
             {
+                m_configuration.enableProxy( artifact.getArtifactURL() );
                 return artifact.getInputStream();
             }
             catch( IOException ignore )

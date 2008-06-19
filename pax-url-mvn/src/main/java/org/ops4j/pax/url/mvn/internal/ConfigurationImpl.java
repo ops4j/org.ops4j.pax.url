@@ -18,10 +18,14 @@
 package org.ops4j.pax.url.mvn.internal;
 
 import java.io.File;
+import java.net.Authenticator;
 import java.net.MalformedURLException;
+import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ops4j.lang.NullArgumentException;
@@ -258,4 +262,46 @@ public class ConfigurationImpl
         return get( ServiceConstants.PROPERTY_LOCAL_REPOSITORY );
     }
 
+    /**
+     * Enables the proxy server for a given URL.
+     */
+    public void enableProxy( URL url )
+    {
+        final String proxySupport = m_propertyResolver.get( ServiceConstants.PROPERTY_PROXY_SUPPORT );
+        if( "false".equalsIgnoreCase( proxySupport ) )
+        {
+            return; // automatic proxy support disabled
+        }
+
+        final String protocol = url.getProtocol();
+        if( protocol == null || protocol.equals( get( ServiceConstants.PROPERTY_PROXY_SUPPORT ) ) )
+        {
+            return; // already have this proxy enabled
+        }
+
+        Map<String,String> proxyDetails = m_settings.getProxySettings().get( protocol );
+        if( proxyDetails != null )
+        {
+            LOGGER.trace( "Enabling proxy [" + proxyDetails + "]" );
+
+            final String user = proxyDetails.get( "user" );
+            final String pass = proxyDetails.get( "pass" );
+
+            Authenticator.setDefault( new Authenticator()
+            {
+                @Override
+                protected PasswordAuthentication getPasswordAuthentication()
+                {
+                    return new PasswordAuthentication( user, pass.toCharArray() );
+                }
+            } );
+
+            System.setProperty( "http.proxyHost", proxyDetails.get( "host" ) );
+            System.setProperty( "http.proxyPort", proxyDetails.get( "port" ) );
+
+            System.setProperty( "http.nonProxyHosts", proxyDetails.get( "nonProxyHosts" ) );
+
+            set( ServiceConstants.PROPERTY_PROXY_SUPPORT, protocol );
+        }
+    }
 }
