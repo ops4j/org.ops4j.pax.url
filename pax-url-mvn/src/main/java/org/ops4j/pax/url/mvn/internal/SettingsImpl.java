@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +56,10 @@ public class SettingsImpl
      */
     private static final String REPOSITORY_TAG = "repositories/repository";
     /**
+     * Path to proxy tag.
+     */
+    private static final String PROXY_TAG = "proxies/proxy";
+    /**
      * Maven Central repository.
      */
     private static final String DEFAULT_REPOSITORIES =
@@ -80,6 +85,10 @@ public class SettingsImpl
      * repositories.
      */
     private String m_repositories;
+    /**
+     * Map of known proxies for various protocols
+     */
+    private Map<String,Map<String,String>> m_proxySettings;
 
     /**
      * Creates new settings with the following resolution:<br/>
@@ -332,4 +341,54 @@ public class SettingsImpl
         return null;
     }
 
+    private String getSetting( Element element, String settingName, String defaultSetting )
+    {
+        final String setting = XmlUtils.getTextContentOfElement( element, settingName );
+        if( setting == null ) {
+            return defaultSetting;
+        }
+        return setting;
+    }
+
+    /**
+     * Returns the active proxy settings from settings.xml
+     * 
+     * @return the active proxy settings
+     */
+    public Map<String,Map<String,String>> getProxySettings()
+    {
+        if( m_proxySettings == null )
+        {
+            m_proxySettings = new HashMap<String, Map<String,String>>();
+
+            readSettings();
+            if( m_document != null )
+            {
+                List<Element> proxies = XmlUtils.getElements( m_document, PROXY_TAG );
+                if( proxies != null )
+                {
+                    for( Element proxy : proxies )
+                    {
+                        String active = getSetting( proxy, "active", "false" );
+                        String protocol = getSetting( proxy, "protocol", "http" );
+
+                        if( !m_proxySettings.containsKey( protocol ) || "true".equalsIgnoreCase( active ) ) {
+                            Map<String,String> proxyDetails = new HashMap<String, String>();
+
+                            proxyDetails.put( "user", getSetting( proxy, "username", null ) );
+                            proxyDetails.put( "pass", getSetting( proxy, "password", null ) );
+                            proxyDetails.put( "host", getSetting( proxy, "host", null ) );
+                            proxyDetails.put( "port", getSetting( proxy, "port", "8080" ) );
+
+                            proxyDetails.put( "nonProxyHosts", getSetting( proxy, "nonProxyHosts", null ) );
+
+                            m_proxySettings.put( protocol, proxyDetails );
+                        }
+                    }
+                }
+            }
+        }
+
+        return Collections.unmodifiableMap( m_proxySettings );
+    }
 }

@@ -17,6 +17,8 @@
  */
 package org.ops4j.pax.url.mvn.internal;
 
+import java.util.Map;
+
 /**
  * Abstracts access to maven settings.xml.
  *
@@ -41,4 +43,10 @@ public interface Settings
      */
     String getLocalRepository();
 
+    /**
+     * Returns the active proxy settings from settings.xml
+     * 
+     * @return the active proxy settings
+     */
+    Map<String,Map<String,String>> getProxySettings();
 }
