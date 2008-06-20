@@ -536,6 +536,7 @@ public class Connection
         {
             repository = repository + Parser.FILE_SEPARATOR;
         }
+        m_configuration.enableProxy( repositoryURL );
         return URLUtils.prepareInputStream( new URL( repository + path ), !m_configuration.getCertificateCheck() );
     }
 
