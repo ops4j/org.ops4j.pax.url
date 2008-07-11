@@ -51,7 +51,8 @@ public class ConnectionTest
 
             }
             );
-        assertTrue( conn.getInputStream().available() > 0 );
+
+        //assertTrue( conn.getInputStream().available() > 0 );
 
     }
 
