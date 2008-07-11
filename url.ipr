@@ -343,6 +343,7 @@
       <module fileurl="file://$PROJECT_DIR$/pax-url-classpath/pax-url-classpath.iml" filepath="$PROJECT_DIR$/pax-url-classpath/pax-url-classpath.iml" />
       <module fileurl="file://$PROJECT_DIR$/pax-url-commons/pax-url-commons.iml" filepath="$PROJECT_DIR$/pax-url-commons/pax-url-commons.iml" />
       <module fileurl="file://$PROJECT_DIR$/pax-url-mvn/pax-url-mvn.iml" filepath="$PROJECT_DIR$/pax-url-mvn/pax-url-mvn.iml" />
+      <module fileurl="file://$PROJECT_DIR$/pax-url-mvnlive/pax-url-mvnlive.iml" filepath="$PROJECT_DIR$/pax-url-mvnlive/pax-url-mvnlive.iml" />
       <module fileurl="file://$PROJECT_DIR$/pax-url-obr/pax-url-obr.iml" filepath="$PROJECT_DIR$/pax-url-obr/pax-url-obr.iml" />
       <module fileurl="file://$PROJECT_DIR$/pax-url-war/pax-url-war.iml" filepath="$PROJECT_DIR$/pax-url-war/pax-url-war.iml" />
       <module fileurl="file://$PROJECT_DIR$/pax-url-wrap/pax-url-wrap.iml" filepath="$PROJECT_DIR$/pax-url-wrap/pax-url-wrap.iml" />
