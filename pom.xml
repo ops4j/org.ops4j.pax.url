@@ -39,9 +39,7 @@
     <module>pax-url-obr</module>
     <module>pax-url-war</module>
     <module>pax-url-wrap</module>
-<!--
     <module>pax-url-mvnlive</module>
--->
   </modules>
 
   <developers>
