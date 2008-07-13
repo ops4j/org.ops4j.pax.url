@@ -31,6 +31,22 @@ import java.net.URL;
 import java.net.URLConnection;
 
 /**
+ * This impplements the mvnlive handler as follows:
+ * if the path is a valid local file (new File().isDirectory()) the handler
+ * will execute mvn clean install inside that folder prior handing out the target/*.jar artifact.
+ *
+ * Otherwise the path is treatened as groupId/artifactId.
+ * The implementation will try to find a project folder next to <currentfolder> as follows:
+ * 1. walk up the folders as long as pom.xml files are being found.
+ * 2. the last found folder is concidered the top level.
+ * 3. now from here we walk down the folder structure, examine pom.xml and try to find groupId/artifact matching.
+ * The matching folder is concidered to be the projects root where the mvn clean install call will be run.
+ *
+ * With exception of the search strategy for the project root, both situations will end in executing the
+ * local maven binary using a System.exec process.
+ * It is required to have the local property M2_REPO set. (either via System Property or Environment Variable).
+ * 
+ *
  * @author Toni Menzel (tonit)
  * @since Jul 10, 2008
  */

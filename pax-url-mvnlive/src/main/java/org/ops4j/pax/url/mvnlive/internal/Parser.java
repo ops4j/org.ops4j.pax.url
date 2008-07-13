@@ -84,8 +84,6 @@ public class Parser {
         if (deeper.exists() && deeper.canRead()) {
             return digUpPomPath(deeper.getParentFile());
         }
-        // return current file
-        //    System.out.println( "Project base is " + file.getCanonicalPath() );
         return file;
     }
 

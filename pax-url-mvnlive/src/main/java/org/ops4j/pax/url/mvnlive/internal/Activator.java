@@ -27,6 +27,10 @@ import org.ops4j.pax.url.mvnlive.ServiceConstants;
 import org.ops4j.util.property.PropertyResolver;
 
 /**
+ *
+ * This registers the mvnlive onnector to the osgi framework.
+ * If deployed the new url scheme (mvnlive) is available immediately.
+ * 
  * @author Toni Menzel (tonit)
  * @since Jul 10, 2008
  */

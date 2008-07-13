@@ -27,10 +27,11 @@ public class ConfigurationImpl implements Configuration
 {
 
     private Object m_settingsFileUrl;
+    private PropertyResolver m_propertyResolver;
 
     public ConfigurationImpl( PropertyResolver propertyResolver )
     {
-        
+        m_propertyResolver = propertyResolver;
     }
 
     public Object getSettingsFileUrl()
@@ -40,5 +41,6 @@ public class ConfigurationImpl implements Configuration
 
     public void setSettings( Settings settings )
     {
+        
     }
 }

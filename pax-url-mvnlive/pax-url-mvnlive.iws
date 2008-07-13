@@ -17,15 +17,11 @@
   <component name="ChangeListManager">
     <list default="true" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/ops4j/pax/url/mvnlive/internal/Connection.java" afterPath="$PROJECT_DIR$/src/main/java/org/ops4j/pax/url/mvnlive/internal/Connection.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/ops4j/pax/url/mvnlive/internal/Settings.java" afterPath="$PROJECT_DIR$/src/main/java/org/ops4j/pax/url/mvnlive/internal/Settings.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/ops4j/pax/url/mvnlive/ServiceConstants.java" afterPath="$PROJECT_DIR$/src/main/java/org/ops4j/pax/url/mvnlive/ServiceConstants.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pax-url-mvnlive.iws" afterPath="$PROJECT_DIR$/pax-url-mvnlive.iws" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/ops4j/pax/url/mvnlive/internal/SettingsImpl.java" afterPath="$PROJECT_DIR$/src/main/java/org/ops4j/pax/url/mvnlive/internal/SettingsImpl.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/ops4j/pax/url/mvnlive/internal/Parser.java" afterPath="$PROJECT_DIR$/src/main/java/org/ops4j/pax/url/mvnlive/internal/Parser.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/ops4j/pax/url/mvnlive/internal/Configuration.java" afterPath="$PROJECT_DIR$/src/main/java/org/ops4j/pax/url/mvnlive/internal/Configuration.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/ops4j/pax/url/mvnlive/internal/Activator.java" afterPath="$PROJECT_DIR$/src/main/java/org/ops4j/pax/url/mvnlive/internal/Activator.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/ops4j/pax/url/mvnlive/internal/ConfigurationImpl.java" afterPath="$PROJECT_DIR$/src/main/java/org/ops4j/pax/url/mvnlive/internal/ConfigurationImpl.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/test/java/org/ops4j/pax/url/mvnlive/ConnectionTest.java" afterPath="$PROJECT_DIR$/src/test/java/org/ops4j/pax/url/mvnlive/ConnectionTest.java" />
     </list>
     <ignored path="pax-url-mvnlive.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -87,7 +83,77 @@
     <favorites_list name="pax-url-mvnlive" />
   </component>
   <component name="FileEditorManager">
-    <leaf />
+    <leaf>
+      <file leaf-file-name="Activator.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/ops4j/pax/url/mvnlive/internal/Activator.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="32" column="3" selection-start="1152" selection-end="1152" vertical-scroll-proportion="0.29953197">
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Configuration.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/ops4j/pax/url/mvnlive/internal/Configuration.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="23" column="17" selection-start="736" selection-end="736" vertical-scroll-proportion="0.13104524">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ConfigurationImpl.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/ops4j/pax/url/mvnlive/internal/ConfigurationImpl.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="33" column="46" selection-start="1035" selection-end="1035" vertical-scroll-proportion="0.31825274">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Connection.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/ops4j/pax/url/mvnlive/internal/Connection.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="47" column="3" selection-start="2062" selection-end="2062" vertical-scroll-proportion="-0.4680187">
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Parser.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/ops4j/pax/url/mvnlive/internal/Parser.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="35" column="7" selection-start="989" selection-end="989" vertical-scroll-proportion="0.05928237">
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SettingsImpl.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/ops4j/pax/url/mvnlive/internal/SettingsImpl.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="23" column="13" selection-start="733" selection-end="733" vertical-scroll-proportion="0.13104524">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ServiceConstants.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/ops4j/pax/url/mvnlive/ServiceConstants.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="29" column="7" selection-start="873" selection-end="873" vertical-scroll-proportion="0.24336973">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="FindManager">
     <FindUsagesManager>
@@ -430,14 +496,14 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-18" y="40" width="1443" height="785" extended-state="0" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" order="-1" />
       <window_info id="CheckStyle" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" order="-1" />
       <window_info id="SVN Properties" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3299566" order="-1" />
       <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" order="-1" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" order="7" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24946237" order="0" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24946237" order="0" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" order="1" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" order="1" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" order="-1" />
@@ -548,62 +614,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/ops4j/pax/url/mvnlive/internal/Connection.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="1" column="17" selection-start="20" selection-end="20" vertical-scroll-proportion="0.018720748">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/ops4j/pax/url/mvnlive/internal/Activator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="1" column="17" selection-start="16" selection-end="20" vertical-scroll-proportion="0.018720748">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/ops4j/pax/url/mvnlive/internal/ConfigurationImpl.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="1" column="17" selection-start="20" selection-end="20" vertical-scroll-proportion="0.018720748">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/ops4j/pax/url/mvnlive/internal/Configuration.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="1" column="17" selection-start="20" selection-end="20" vertical-scroll-proportion="0.018720748">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/ops4j/pax/url/mvnlive/internal/Parser.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="1" column="17" selection-start="20" selection-end="20" vertical-scroll-proportion="0.018720748">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/org/ops4j/pax/url/mvnlive/internal/Settings.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="1" column="17" selection-start="20" selection-end="20" vertical-scroll-proportion="0.018720748">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/ops4j/pax/url/mvnlive/internal/SettingsImpl.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="1" column="17" selection-start="20" selection-end="20" vertical-scroll-proportion="0.018720748">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/ops4j/pax/url/mvnlive/ServiceConstants.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="1" column="17" selection-start="20" selection-end="20" vertical-scroll-proportion="0.018720748">
           <folding />
@@ -623,6 +634,61 @@
       <provider selected="true" editor-type-id="text-editor">
         <state line="14" column="35" selection-start="420" selection-end="536" vertical-scroll-proportion="0.2496">
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/ops4j/pax/url/mvnlive/internal/Parser.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="35" column="7" selection-start="989" selection-end="989" vertical-scroll-proportion="0.05928237">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/ops4j/pax/url/mvnlive/internal/SettingsImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="23" column="13" selection-start="733" selection-end="733" vertical-scroll-proportion="0.13104524">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/ops4j/pax/url/mvnlive/ServiceConstants.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="29" column="7" selection-start="873" selection-end="873" vertical-scroll-proportion="0.24336973">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/ops4j/pax/url/mvnlive/internal/Activator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="32" column="3" selection-start="1152" selection-end="1152" vertical-scroll-proportion="0.29953197">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/ops4j/pax/url/mvnlive/internal/Configuration.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="23" column="17" selection-start="736" selection-end="736" vertical-scroll-proportion="0.13104524">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/ops4j/pax/url/mvnlive/internal/ConfigurationImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="33" column="46" selection-start="1035" selection-end="1035" vertical-scroll-proportion="0.31825274">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/ops4j/pax/url/mvnlive/internal/Connection.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="47" column="3" selection-start="2062" selection-end="2062" vertical-scroll-proportion="-0.4680187">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
