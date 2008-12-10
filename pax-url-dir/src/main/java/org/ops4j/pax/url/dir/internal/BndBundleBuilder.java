@@ -7,6 +7,7 @@ import java.io.PipedOutputStream;
 import java.util.Properties;
 import java.util.jar.JarOutputStream;
 import org.ops4j.lang.NullArgumentException;
+import org.ops4j.pax.url.bnd.BndUtils;
 
 /**
  * Responsible for creating the on-the fly testing probe.
@@ -31,9 +32,8 @@ public class BndBundleBuilder
     /**
      * Constructor.
      *
-     * @param ref        name of test class
-     * @param testMethod name of the test method
-     * @param finder     locator that gathers all resources that have to be inside the test probe
+     * @param ref    name of test class
+     * @param finder locator that gathers all resources that have to be inside the test probe
      */
     public BndBundleBuilder( final Properties ref,
                              final ResourceLocator finder )

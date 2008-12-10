@@ -64,15 +64,17 @@
     </dependency>
     <dependency>
       <groupId>org.ops4j.pax.url</groupId>
-      <artifactId>pax-url-commons</artifactId>
+      <artifactId>pax-url-bnd</artifactId>
       <version>0.3.3-SNAPSHOT</version>
       <scope>compile</scope>
       <optional>true</optional>
     </dependency>
     <dependency>
-      <groupId>biz.aQute</groupId>
-      <artifactId>bndlib</artifactId>
-      <version>0.0.255</version>
+      <groupId>org.ops4j.pax.url</groupId>
+      <artifactId>pax-url-commons</artifactId>
+      <version>0.3.3-SNAPSHOT</version>
+      <scope>compile</scope>
+      <optional>true</optional>
     </dependency>
 
     <!-- Provided dependencies (not transitive) -->
