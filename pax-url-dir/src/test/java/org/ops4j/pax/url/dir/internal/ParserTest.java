@@ -13,18 +13,6 @@ import static org.junit.Assert.*;
 public class ParserTest
 {
 
-    @Test
-    public void parseValidURL()
-        throws MalformedURLException
-    {
-        File f = new File (System.getProperty("java.io.tmpdir") );
-        // Parser needs it as url
-        String ext = f.toURL().toExternalForm();
-
-        // use dummy protocol for testing
-        assertEquals( f.getPath(), new Parser( "http:" + ext ).getDirectory().getAbsolutePath() );
-    }
-
     @Test( expected = IllegalArgumentException.class )
     public void parseNotExisting()
         throws MalformedURLException
@@ -43,4 +31,30 @@ public class ParserTest
         String ext = f.toURL().toExternalForm();
         new Parser( "http:" + ext );
     }
+
+    @Test
+    public void parseValidURL()
+        throws MalformedURLException
+    {
+        File f = new File( System.getProperty( "java.io.tmpdir" ) );
+        // Parser needs it as url
+        String ext = f.toURL().toExternalForm();
+
+        // use dummy protocol for testing
+        assertEquals( f.getPath(), new Parser( "http:" + ext ).getDirectory().getAbsolutePath() );
+    }
+
+    @Test
+    public void parseWithMarker()
+        throws MalformedURLException, URISyntaxException
+    {
+        File f = new File( System.getProperty( "java.io.tmpdir" ) );
+        // Parser needs it as url
+        String ext = f.toURL().toExternalForm();
+        Parser parser = new Parser( "http:" + ext + "$mark=org/ops4j/pax/url/dir/internal/Activator.class" );
+        // use dummy protocol for testing
+        assertEquals( f.getPath(), parser.getDirectory().getAbsolutePath() );
+        assertEquals( "org/ops4j/pax/url/dir/internal/Activator.class", parser.getMarker() );
+    }
+
 }

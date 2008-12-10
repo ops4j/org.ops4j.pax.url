@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
+import java.util.Properties;
 import org.ops4j.pax.url.dir.Configuration;
 import org.ops4j.lang.NullArgumentException;
 
@@ -42,11 +43,10 @@ public class Connection extends URLConnection
     public InputStream getInputStream()
         throws IOException
     {
-        PipedInputStream pin = new PipedInputStream();
-        PipedOutputStream pout = new PipedOutputStream(pin);
+        Properties p = new Properties();
+        return new BndBundleBuilder( p, new IntelliResourceLocator( m_parser.getDirectory(),m_parser.getMarker() ) ).build();
 
-        
-        return pin;
+
     }
 
     public void connect()
