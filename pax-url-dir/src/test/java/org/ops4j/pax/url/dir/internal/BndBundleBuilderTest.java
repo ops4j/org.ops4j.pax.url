@@ -41,47 +41,26 @@ public class BndBundleBuilderTest
         // we know its a jar
         //dumpToFile( in );
 
-        dumpToConsole( in );
-
-
+        FunctionalTest.dumpToConsole( in, 0 );
     }
 
-    private void dumpToFile( InputStream in )
+    @Test( expected = IllegalArgumentException.class )
+    public void failing()
         throws IOException
     {
-        FileOutputStream fos = new FileOutputStream( new File( "testout.jar" ) );
-        StreamUtils.copyStream( in, fos, true );
+        ResourceLocator loc = createMock( ResourceLocator.class );
+        BndBundleBuilder b = new BndBundleBuilder( null, loc );
     }
 
-    private void dumpToConsole( InputStream in )
+    @Test( expected = IllegalArgumentException.class )
+    public void failingWithoutLocator()
         throws IOException
     {
-        JarInputStream jin = new JarInputStream( in );
-        String[] s = readToc( jin );
-        assertEquals( 0, s.length );
-        Manifest man = jin.getManifest();
-        assertNotNull( man );
-        Attributes attributes = man.getMainAttributes();
-        for( Object key : attributes.keySet() )
-        {
-            String v = attributes.getValue( (Attributes.Name) key );
-            assertNotNull( key );//,v)
-            assertNotNull( v );
-        }
+        BndBundleBuilder b = new BndBundleBuilder( new Properties(), null );
     }
 
-    private String[] readToc( JarInputStream jin )
-        throws IOException
-    {
-        ArrayList<String> list = new ArrayList<String>();
-        JarEntry entry = null;
-        while( ( entry = jin.getNextJarEntry() ) != null )
-        {
-            System.out.println( "Entry" );
-            list.add( entry.getName() );
-        }
-        return list.toArray( new String[list.size()] );
-    }
+   
+   
 
     private void foo( InputStream in )
         throws IOException

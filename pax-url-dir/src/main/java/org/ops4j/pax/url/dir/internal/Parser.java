@@ -3,7 +3,6 @@ package org.ops4j.pax.url.dir.internal;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.net.MalformedURLException;
 import java.util.Properties;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
@@ -47,27 +46,40 @@ public class Parser
     public Parser( String url )
     {
         NullArgumentException.validateNotNull( url, "url should be provided" );
+        System.out.println( "In " + url );
         try
         {
             URL u = new URL( url );
-            URL originalURL = new URL( u.getPath() );
-
+            URL originalURL = u; //new URL( u.getPath() );
             Matcher matcher = SYNTAX_JAR_INSTR.matcher( originalURL.getPath() );
             if( matcher.matches() )
             {
                 // we have a local file uri and m_options
-                m_directory = new File( matcher.group( 1 ) );
+                m_directory = toLocalFile( matcher.group( 1 )
+                ); //new File( new URL( matcher.group( 1 ) ).getPath() ); // new File( matcher.group( 1 ) );
+
                 parseOptions( matcher.group( 2 ) );
             }
             else
             {
-                m_directory = new File( originalURL.getPath() );
+                m_directory = toLocalFile( originalURL.getPath() );
+                //  m_directory = new File( new URL( originalURL.getPath() ).getPath() );
+
             }
             verifyDirectory();
-        } catch( MalformedURLException e )
+        } catch( IOException e )
         {
             throw new IllegalArgumentException( "path is not nice.", e );
         }
+    }
+
+    File toLocalFile( String s )
+        throws IOException
+    {
+        // looks like file protocol cannot be relative, so we have to support local path instead of urls for now:
+        return new File( s );
+        // return new File( new URL( s ).getPath() );
+
     }
 
     private void verifyDirectory()
@@ -79,7 +91,7 @@ public class Parser
             {
 
                 throw new IllegalArgumentException(
-                    "Folder " + m_directory.getCanonicalPath() + " does not exist on local filesystem"
+                    "Folder " + m_directory.getAbsolutePath() + " does not exist on local filesystem"
                 );
             }
             if( !m_directory.isDirectory() )
@@ -100,15 +112,15 @@ public class Parser
         return m_directory;
     }
 
-  
-
     private void parseOptions( String s )
     {
         StringTokenizer tk = new StringTokenizer( s, OPTION_SEPARATOR );
         while( tk.hasMoreTokens() )
         {
-            String key = tk.nextToken( "=" );
-            String value = tk.nextToken();
+            StringTokenizer inner = new StringTokenizer(tk.nextToken(),"=");
+            String key = inner.nextToken();
+           
+            String value = inner.nextToken();
             m_options.put( key, value );
         }
     }

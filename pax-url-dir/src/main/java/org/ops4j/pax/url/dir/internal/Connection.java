@@ -12,6 +12,17 @@ import org.ops4j.pax.url.dir.Configuration;
 import org.ops4j.lang.NullArgumentException;
 
 /**
+ * Accepts URLs like
+ * dir:/Users/tonit/devel/pax/testing/$anchor=com.foo.Boo
+ * dir:/Users/tonit/devel/pax/testing/$anchor=com.foo.Boo,Bundle-SymbolicName=HelloWorld
+
+ * And even
+ * * dir:mytest
+ * which uses the relative dir mytest (from current one) without an acnhor.
+ *
+ * Why anchors ?
+ * Sometimes, you don't know the real class folder
+ *
  * @author Toni Menzel (tonit)
  * @since Dec 10, 2008
  */
@@ -30,7 +41,7 @@ public class Connection extends URLConnection
         m_config = config;
         try
         {
-            m_parser = new Parser( url.getPath() );
+            m_parser = new Parser( url.toExternalForm() );
         }
         catch( Exception e )
         {
@@ -44,7 +55,10 @@ public class Connection extends URLConnection
         throws IOException
     {
         Properties p = new Properties();
-        return new BndBundleBuilder( p, new IntelliResourceLocator( m_parser.getDirectory(),m_parser.getAnchor() ) ).build();
+        p.put( "Dynamic-Import", "*" );
+
+        return new BndBundleBuilder( p, new IntelliResourceLocator( m_parser.getDirectory(), m_parser.getAnchor() )
+        ).build();
 
 
     }

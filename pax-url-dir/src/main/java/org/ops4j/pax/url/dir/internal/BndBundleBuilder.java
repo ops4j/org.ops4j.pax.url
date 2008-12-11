@@ -22,11 +22,6 @@ public class BndBundleBuilder
     private ResourceLocator m_finder;
 
 
-    /**
-     * This is where additional info from builing this can be place and used lated from inside osgi.
-     * Will be put into manifest of this bundle.
-     */
-    private static final String REFERENCE_INFORMATION = "PAX-URL-DIR-REFERENCE";
     private Properties m_refs;
 
     /**
@@ -38,7 +33,7 @@ public class BndBundleBuilder
     public BndBundleBuilder( final Properties ref,
                              final ResourceLocator finder )
     {
-        NullArgumentException.validateNotNull( ref, "recipeHost" );
+        NullArgumentException.validateNotNull( ref, "ref" );
         NullArgumentException.validateNotNull( finder, "finder" );
 
         m_finder = finder;
@@ -87,9 +82,12 @@ public class BndBundleBuilder
                 }
             }.start();
 
-           
             // TODO set args on BndUtils
-            InputStream result = BndUtils.createBundle( fis, m_refs, "TOBESET" );
+            String sym = m_refs.getProperty( "Bundle-SymbolicName" );
+            if (sym == null) {
+                sym = "BuildByDirUrlHandler";
+            }
+            InputStream result = BndUtils.createBundle( fis, m_refs,sym );
             fis.close();
             pout.close();
             return result;

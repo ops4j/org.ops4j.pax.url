@@ -3,6 +3,7 @@ package org.ops4j.pax.url.dir.internal;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.io.File;
+import java.io.IOException;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -34,27 +35,41 @@ public class ParserTest
 
     @Test
     public void parseValidURL()
-        throws MalformedURLException
+        throws IOException
     {
         File f = new File( System.getProperty( "java.io.tmpdir" ) );
         // Parser needs it as url
         String ext = f.toURL().toExternalForm();
 
         // use dummy protocol for testing
-        assertEquals( f.getPath(), new Parser( "http:" + ext ).getDirectory().getAbsolutePath() );
+        assertEquals( f.getCanonicalPath(),
+                      new Parser( "http:" + f.getCanonicalPath() ).getDirectory().getAbsolutePath()
+        );
     }
 
     @Test
     public void parseWithMarker()
-        throws MalformedURLException, URISyntaxException
+        throws IOException, URISyntaxException
     {
         File f = new File( System.getProperty( "java.io.tmpdir" ) );
         // Parser needs it as url
         String ext = f.toURL().toExternalForm();
-        Parser parser = new Parser( "http:" + ext + "$anchor=org/ops4j/pax/url/dir/internal/Activator.class" );
+        Parser parser =
+            new Parser( "http:" + f.getCanonicalPath() + "$anchor=org/ops4j/pax/url/dir/internal/Activator.class" );
         // use dummy protocol for testing
-        assertEquals( f.getPath(), parser.getDirectory().getAbsolutePath() );
+        assertEquals( f.getCanonicalPath(), parser.getDirectory().getAbsolutePath() );
         assertEquals( "org/ops4j/pax/url/dir/internal/Activator.class", parser.getAnchor() );
     }
 
+    @Test
+    public void parseWithMoreParams()
+        throws IOException, URISyntaxException
+    {
+        Parser parser = new Parser( "http:." + "$a=1,b=2" );
+        // use dummy protocol for testing
+
+        assertEquals( "1", parser.getOptions().get( "a" ) );
+        assertEquals( "2", parser.getOptions().get( "b" ) );
+        assertEquals( 2, parser.getOptions().size() );
+    }
 }
