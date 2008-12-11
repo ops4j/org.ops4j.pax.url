@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
+import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ops4j.lang.NullArgumentException;
@@ -23,12 +24,12 @@ public class IntelliResourceLocator implements ResourceLocator
     public static final Log logger = LogFactory.getLog( IntelliResourceLocator.class );
 
     private File m_topLevelDir;
-    private String m_targetClassName;
+    private String m_anchor;
 
-    public IntelliResourceLocator( File topLevelDir, String targetClassName )
+    public IntelliResourceLocator( File topLevelDir, String anchor )
     {
         NullArgumentException.validateNotNull( topLevelDir, "topLevelDir" );
-        NullArgumentException.validateNotEmpty( targetClassName, "targetClassName" );
+        NullArgumentException.validateNotEmpty( anchor, "anchor" );
         if( !topLevelDir.exists() || !topLevelDir.canRead() || !topLevelDir.isDirectory() )
         {
             throw new IllegalArgumentException(
@@ -36,7 +37,7 @@ public class IntelliResourceLocator implements ResourceLocator
             );
         }
         m_topLevelDir = topLevelDir;
-        m_targetClassName = targetClassName;
+        m_anchor = anchor;
     }
 
     public IntelliResourceLocator( String targetClassName )
@@ -54,8 +55,9 @@ public class IntelliResourceLocator implements ResourceLocator
     {
 
         // determine the real base
-        m_targetClassName = m_targetClassName.replace( '.', File.separatorChar ) + ".class";
-        File root = findRoot( m_topLevelDir, m_targetClassName );
+
+        //String anchorfile =(String) m_anchor.get(""); //m_targetClassName.replace( '.', File.separatorChar ) + ".class";
+        File root = findRoot( m_topLevelDir, m_anchor );
         findClasspathResources( target, root, root );
         if( root != null )
         {
@@ -65,7 +67,10 @@ public class IntelliResourceLocator implements ResourceLocator
         }
         else
         {
-            throw new IllegalArgumentException( "Class " + m_targetClassName + " has not been found!" );
+            throw new IllegalArgumentException(
+                "Anchor " + m_anchor + " (which must be a file located under (" + m_topLevelDir.getAbsolutePath()
+                + ") has not been found!"
+            );
         }
 
 

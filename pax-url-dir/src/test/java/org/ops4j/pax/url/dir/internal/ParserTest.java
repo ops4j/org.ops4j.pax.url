@@ -51,10 +51,10 @@ public class ParserTest
         File f = new File( System.getProperty( "java.io.tmpdir" ) );
         // Parser needs it as url
         String ext = f.toURL().toExternalForm();
-        Parser parser = new Parser( "http:" + ext + "$mark=org/ops4j/pax/url/dir/internal/Activator.class" );
+        Parser parser = new Parser( "http:" + ext + "$anchor=org/ops4j/pax/url/dir/internal/Activator.class" );
         // use dummy protocol for testing
         assertEquals( f.getPath(), parser.getDirectory().getAbsolutePath() );
-        assertEquals( "org/ops4j/pax/url/dir/internal/Activator.class", parser.getMarker() );
+        assertEquals( "org/ops4j/pax/url/dir/internal/Activator.class", parser.getAnchor() );
     }
 
 }

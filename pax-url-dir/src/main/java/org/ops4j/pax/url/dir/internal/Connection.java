@@ -44,7 +44,7 @@ public class Connection extends URLConnection
         throws IOException
     {
         Properties p = new Properties();
-        return new BndBundleBuilder( p, new IntelliResourceLocator( m_parser.getDirectory(),m_parser.getMarker() ) ).build();
+        return new BndBundleBuilder( p, new IntelliResourceLocator( m_parser.getDirectory(),m_parser.getAnchor() ) ).build();
 
 
     }
