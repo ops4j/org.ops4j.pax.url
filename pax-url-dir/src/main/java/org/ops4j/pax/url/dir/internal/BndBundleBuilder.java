@@ -20,7 +20,7 @@ public class BndBundleBuilder
 {
 
     private ResourceLocator m_finder;
-    private Properties m_ref;
+
 
     /**
      * This is where additional info from builing this can be place and used lated from inside osgi.
@@ -42,7 +42,7 @@ public class BndBundleBuilder
         NullArgumentException.validateNotNull( finder, "finder" );
 
         m_finder = finder;
-        m_ref = ref;
+        m_refs = ref;
 
     }
 
@@ -87,11 +87,9 @@ public class BndBundleBuilder
                 }
             }.start();
 
-            Properties props = new Properties();
-            props.putAll( m_refs );
-
+           
             // TODO set args on BndUtils
-            InputStream result = BndUtils.createBundle( fis, props, "TOBESET" );
+            InputStream result = BndUtils.createBundle( fis, m_refs, "TOBESET" );
             fis.close();
             pout.close();
             return result;
