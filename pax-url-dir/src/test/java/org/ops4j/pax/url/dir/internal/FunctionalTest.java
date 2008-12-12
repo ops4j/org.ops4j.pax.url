@@ -13,8 +13,8 @@ import java.util.jar.Manifest;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.ops4j.io.StreamUtils;
-import org.ops4j.pax.url.dir.bundle.BundleBuilder;
-import org.ops4j.pax.url.dir.bundle.ResourceLocator;
+import org.ops4j.pax.url.dir.internal.bundle.BundleBuilder;
+import org.ops4j.pax.url.dir.internal.bundle.ResourceLocatorImpl;
 
 /**
  * @author Toni Menzel (tonit)
@@ -29,7 +29,7 @@ public class FunctionalTest
     {
         // construct a locator
         String clazz = this.getClass().getName().replaceAll( "\\.", "/" ) + ".class";
-        org.ops4j.pax.url.dir.ResourceLocator loc = new ResourceLocator( new File( "." ), clazz );
+        ResourceLocator loc = new ResourceLocatorImpl( new File( "." ), clazz );
 
         // construct the builder
         Properties p = new Properties();

@@ -1,11 +1,11 @@
 package org.ops4j.pax.url.dir.internal;
 
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.io.File;
 import java.io.IOException;
-import org.junit.Test;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import static org.junit.Assert.*;
+import org.junit.Test;
 
 /**
  * @author Toni Menzel (tonit)

@@ -1,7 +1,7 @@
-package org.ops4j.pax.url.dir;
+package org.ops4j.pax.url.dir.internal;
 
-import java.util.jar.JarOutputStream;
 import java.io.IOException;
+import java.util.jar.JarOutputStream;
 
 /**
  * @author Toni Menzel (tonit)

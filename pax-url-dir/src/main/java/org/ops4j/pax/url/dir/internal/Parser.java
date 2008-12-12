@@ -4,10 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Properties;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
-import org.ops4j.lang.NullArgumentException;
 import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import org.ops4j.lang.NullArgumentException;
 
 /**
  * Expects a url like dir:file:///Users/foo/myroot

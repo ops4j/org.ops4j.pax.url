@@ -1,4 +1,4 @@
-package org.ops4j.pax.url.dir;
+package org.ops4j.pax.url.dir.internal;
 
 /**
  * @author Toni Menzel (tonit)

@@ -1,13 +1,10 @@
 package org.ops4j.pax.url.dir.internal;
 
-import java.net.URL;
-import java.net.MalformedURLException;
-import java.io.InputStream;
 import java.io.IOException;
-import java.io.File;
-import org.junit.Test;
+import java.io.InputStream;
+import java.net.URL;
 import static org.easymock.EasyMock.*;
-import org.ops4j.pax.url.dir.Configuration;
+import org.junit.Test;
 
 /**
  * @author Toni Menzel (tonit)
@@ -18,15 +15,15 @@ public class ConnectionTest
 
     @Test
     public void simple()
-        throws IOException 
+        throws IOException
     {
         String clazz = this.getClass().getName().replaceAll( "\\.", "/" ) + ".class";
-        URL url = new URL( "http:.$anchor=" + clazz + ",Foo=bar");
+        URL url = new URL( "http:.$anchor=" + clazz + ",Foo=bar" );
         Configuration config = createMock( Configuration.class );
 
         Connection con = new Connection( url, config );
         InputStream inp = con.getInputStream();
-        FunctionalTest.dumpToConsole( inp ,15);
+        FunctionalTest.dumpToConsole( inp, 15 );
     }
 
     // @Test
@@ -38,6 +35,6 @@ public class ConnectionTest
 
         Connection con = new Connection( url, config );
         InputStream inp = con.getInputStream();
-        FunctionalTest.dumpToConsole( inp ,14);
+        FunctionalTest.dumpToConsole( inp, 14 );
     }
 }

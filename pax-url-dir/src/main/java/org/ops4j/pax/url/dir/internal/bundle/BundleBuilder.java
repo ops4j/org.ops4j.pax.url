@@ -1,4 +1,4 @@
-package org.ops4j.pax.url.dir.bundle;
+package org.ops4j.pax.url.dir.internal.bundle;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,8 +8,7 @@ import java.util.Properties;
 import java.util.jar.JarOutputStream;
 import org.ops4j.lang.NullArgumentException;
 import org.ops4j.pax.url.bnd.BndUtils;
-import org.ops4j.pax.url.dir.ResourceLocator;
-import org.ops4j.pax.url.dir.bundle.DuplicateAwareJarOutputStream;
+import org.ops4j.pax.url.dir.internal.ResourceLocator;
 
 /**
  * Responsible for creating the on-the fly testing probe.
@@ -83,7 +82,6 @@ public class BundleBuilder
                 }
             }.start();
 
-          
             // TODO set args on BndUtils
             String sym = m_refs.getProperty( "Bundle-SymbolicName" );
             if( sym == null )

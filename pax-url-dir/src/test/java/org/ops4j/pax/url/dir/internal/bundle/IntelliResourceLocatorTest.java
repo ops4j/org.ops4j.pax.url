@@ -1,13 +1,13 @@
-package org.ops4j.pax.url.dir.bundle;
+package org.ops4j.pax.url.dir.internal.bundle;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.jar.JarOutputStream;
 import java.util.zip.ZipEntry;
-import org.junit.Test;
 import static junit.framework.Assert.*;
-import org.ops4j.pax.url.dir.bundle.ResourceLocator;
+import org.junit.Test;
 import org.ops4j.pax.url.dir.internal.NullOutputStream;
+import org.ops4j.pax.url.dir.internal.bundle.ResourceLocatorImpl;
 
 /**
  * @author Toni Menzel (tonit)
@@ -20,14 +20,14 @@ public class IntelliResourceLocatorTest
     public void simpleFailingAtConstruct()
         throws IOException
     {
-        ResourceLocator loc = new ResourceLocator( null,"" );
+        ResourceLocatorImpl loc = new ResourceLocatorImpl( null, "" );
     }
 
     @Test( expected = IllegalArgumentException.class )
     public void simpleFailingAtWriteToNull()
         throws IOException
     {
-        ResourceLocator loc = new ResourceLocator( new File( "." ), "" );
+        ResourceLocatorImpl loc = new ResourceLocatorImpl( new File( "." ), "" );
         loc.write( null );
     }
 
@@ -36,7 +36,7 @@ public class IntelliResourceLocatorTest
         throws IOException
     {
         String clazz = this.getClass().getName().replaceAll( "\\.", "/" ) + ".class";
-        ResourceLocator loc = new ResourceLocator( new File( "." ), clazz );
+        ResourceLocatorImpl loc = new ResourceLocatorImpl( new File( "." ), clazz );
         final int[] countOfEntries = new int[]{ 0 };
 
         JarOutputStream out = new JarOutputStream( new NullOutputStream() )

@@ -1,13 +1,12 @@
 package org.ops4j.pax.url.dir.internal;
 
-import java.net.URLConnection;
-import java.net.URL;
 import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import org.osgi.framework.BundleContext;
-import org.ops4j.pax.url.commons.handler.HandlerActivator;
 import org.ops4j.pax.url.commons.handler.ConnectionFactory;
+import org.ops4j.pax.url.commons.handler.HandlerActivator;
 import org.ops4j.pax.url.dir.ServiceConstants;
-import org.ops4j.pax.url.dir.Configuration;
 import org.ops4j.util.property.PropertyResolver;
 
 /**
@@ -33,7 +32,7 @@ public class Activator extends HandlerActivator<Configuration>
                                                       final Configuration config )
                     throws MalformedURLException
                 {
-                    return new Connection( url, config);
+                    return new Connection( url, config );
                 }
 
                 /**

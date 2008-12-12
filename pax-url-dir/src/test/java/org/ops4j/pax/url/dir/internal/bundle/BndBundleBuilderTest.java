@@ -1,18 +1,18 @@
-package org.ops4j.pax.url.dir.bundle;
+package org.ops4j.pax.url.dir.internal.bundle;
 
-import java.util.Properties;
-import java.util.jar.JarOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import java.util.Properties;
+import java.util.jar.JarOutputStream;
 import static org.easymock.EasyMock.*;
+import static org.junit.Assert.*;
+import org.junit.Test;
 import org.ops4j.io.StreamUtils;
-import org.ops4j.pax.url.dir.bundle.BundleBuilder;
-import org.ops4j.pax.url.dir.ResourceLocator;
 import org.ops4j.pax.url.dir.internal.FunctionalTest;
+import org.ops4j.pax.url.dir.internal.ResourceLocator;
+import org.ops4j.pax.url.dir.internal.bundle.BundleBuilder;
 
 /**
  * @author Toni Menzel (tonit)
@@ -54,9 +54,6 @@ public class BndBundleBuilderTest
     {
         BundleBuilder b = new BundleBuilder( new Properties(), null );
     }
-
-   
-   
 
     private void foo( InputStream in )
         throws IOException

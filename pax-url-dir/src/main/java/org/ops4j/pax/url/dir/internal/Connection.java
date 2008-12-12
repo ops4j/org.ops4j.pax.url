@@ -1,14 +1,13 @@
 package org.ops4j.pax.url.dir.internal;
 
-import java.net.URL;
-import java.net.URLConnection;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.Properties;
-import org.ops4j.pax.url.dir.Configuration;
-import org.ops4j.pax.url.dir.bundle.BundleBuilder;
-import org.ops4j.pax.url.dir.bundle.ResourceLocator;
 import org.ops4j.lang.NullArgumentException;
+import org.ops4j.pax.url.dir.internal.bundle.BundleBuilder;
+import org.ops4j.pax.url.dir.internal.bundle.ResourceLocatorImpl;
 
 /**
  * Accepts URLs like
@@ -56,7 +55,7 @@ public class Connection extends URLConnection
         Properties p = m_parser.getOptions();
         p.put( "Dynamic-Import", "*" );
 
-        return new BundleBuilder( p, new ResourceLocator( m_parser.getDirectory(), m_parser.getAnchor() )
+        return new BundleBuilder( p, new ResourceLocatorImpl( m_parser.getDirectory(), m_parser.getAnchor() )
         ).build();
 
 

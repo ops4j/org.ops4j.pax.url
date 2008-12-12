@@ -1,4 +1,4 @@
-package org.ops4j.pax.url.dir.bundle;
+package org.ops4j.pax.url.dir.internal.bundle;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -8,8 +8,9 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ops4j.lang.NullArgumentException;
 import org.ops4j.io.StreamUtils;
+import org.ops4j.lang.NullArgumentException;
+import org.ops4j.pax.url.dir.internal.ResourceLocator;
 
 /**
  * Finds resources of the current module under test just by given top-level parent (whatever that is)
@@ -18,16 +19,17 @@ import org.ops4j.io.StreamUtils;
  * @author Toni Menzel (tonit)
  * @since May 30, 2008
  */
-public class ResourceLocator implements org.ops4j.pax.url.dir.ResourceLocator
+public class ResourceLocatorImpl
+    implements ResourceLocator
 {
 
-    public static final Log logger = LogFactory.getLog( ResourceLocator.class );
+    public static final Log logger = LogFactory.getLog( ResourceLocatorImpl.class );
 
     private File m_topLevelDir;
     private String m_anchor;
     private File m_root;
 
-    public ResourceLocator( File topLevelDir, String anchor )
+    public ResourceLocatorImpl( File topLevelDir, String anchor )
         throws IOException
     {
         NullArgumentException.validateNotNull( topLevelDir, "topLevelDir" );
@@ -42,7 +44,7 @@ public class ResourceLocator implements org.ops4j.pax.url.dir.ResourceLocator
         m_root = findRoot( m_topLevelDir, m_anchor );
     }
 
-    public ResourceLocator( String targetClassName )
+    public ResourceLocatorImpl( String targetClassName )
         throws IOException
     {
         this( new File( "." ), targetClassName );
