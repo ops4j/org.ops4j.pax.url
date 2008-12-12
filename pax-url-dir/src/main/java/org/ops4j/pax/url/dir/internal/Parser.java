@@ -117,10 +117,13 @@ public class Parser
         StringTokenizer tk = new StringTokenizer( s, OPTION_SEPARATOR );
         while( tk.hasMoreTokens() )
         {
-            StringTokenizer inner = new StringTokenizer(tk.nextToken(),"=");
+            StringTokenizer inner = new StringTokenizer( tk.nextToken(), "=" );
             String key = inner.nextToken();
-           
-            String value = inner.nextToken();
+            String value = "";
+            if( inner.hasMoreTokens() )
+            {
+                value = inner.nextToken();
+            }
             m_options.put( key, value );
         }
     }

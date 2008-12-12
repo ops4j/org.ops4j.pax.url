@@ -14,7 +14,7 @@ import org.ops4j.lang.NullArgumentException;
  * Accepts URLs like
  * dir:/Users/tonit/devel/pax/testing/$anchor=com.foo.Boo
  * dir:/Users/tonit/devel/pax/testing/$anchor=com.foo.Boo,Bundle-SymbolicName=HelloWorld
-
+ *
  * And even
  * * dir:mytest
  * which uses the relative dir mytest (from current one) without an acnhor.
@@ -53,7 +53,7 @@ public class Connection extends URLConnection
     public InputStream getInputStream()
         throws IOException
     {
-        Properties p = new Properties();
+        Properties p = m_parser.getOptions();
         p.put( "Dynamic-Import", "*" );
 
         return new BundleBuilder( p, new ResourceLocator( m_parser.getDirectory(), m_parser.getAnchor() )

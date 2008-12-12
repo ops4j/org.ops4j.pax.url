@@ -23,7 +23,6 @@ public class BundleBuilder
 
     private ResourceLocator m_finder;
 
-
     private Properties m_refs;
 
     /**
@@ -33,7 +32,7 @@ public class BundleBuilder
      * @param finder locator that gathers all resources that have to be inside the test probe
      */
     public BundleBuilder( final Properties ref,
-                             final ResourceLocator finder )
+                          final ResourceLocator finder )
     {
         NullArgumentException.validateNotNull( ref, "ref" );
         NullArgumentException.validateNotNull( finder, "finder" );
@@ -84,12 +83,14 @@ public class BundleBuilder
                 }
             }.start();
 
+          
             // TODO set args on BndUtils
             String sym = m_refs.getProperty( "Bundle-SymbolicName" );
-            if (sym == null) {
+            if( sym == null )
+            {
                 sym = "BuildByDirUrlHandler";
             }
-            InputStream result = BndUtils.createBundle( fis, m_refs,sym );
+            InputStream result = BndUtils.createBundle( fis, m_refs, sym );
             fis.close();
             pout.close();
             return result;
@@ -99,4 +100,6 @@ public class BundleBuilder
             throw new RuntimeException( e );
         }
     }
+
+
 }
