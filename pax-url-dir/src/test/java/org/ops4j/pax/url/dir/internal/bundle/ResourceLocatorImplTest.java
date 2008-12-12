@@ -13,7 +13,7 @@ import org.ops4j.pax.url.dir.internal.bundle.ResourceLocatorImpl;
  * @author Toni Menzel (tonit)
  * @since Dec 11, 2008
  */
-public class IntelliResourceLocatorTest
+public class ResourceLocatorImplTest
 {
 
     @Test( expected = IllegalArgumentException.class )
