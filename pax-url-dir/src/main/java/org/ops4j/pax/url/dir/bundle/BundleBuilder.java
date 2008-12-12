@@ -1,4 +1,4 @@
-package org.ops4j.pax.url.dir.internal;
+package org.ops4j.pax.url.dir.bundle;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,6 +8,8 @@ import java.util.Properties;
 import java.util.jar.JarOutputStream;
 import org.ops4j.lang.NullArgumentException;
 import org.ops4j.pax.url.bnd.BndUtils;
+import org.ops4j.pax.url.dir.ResourceLocator;
+import org.ops4j.pax.url.dir.bundle.DuplicateAwareJarOutputStream;
 
 /**
  * Responsible for creating the on-the fly testing probe.
@@ -16,7 +18,7 @@ import org.ops4j.pax.url.bnd.BndUtils;
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since May 29, 2008
  */
-public class BndBundleBuilder
+public class BundleBuilder
 {
 
     private ResourceLocator m_finder;
@@ -30,7 +32,7 @@ public class BndBundleBuilder
      * @param ref    name of test class
      * @param finder locator that gathers all resources that have to be inside the test probe
      */
-    public BndBundleBuilder( final Properties ref,
+    public BundleBuilder( final Properties ref,
                              final ResourceLocator finder )
     {
         NullArgumentException.validateNotNull( ref, "ref" );

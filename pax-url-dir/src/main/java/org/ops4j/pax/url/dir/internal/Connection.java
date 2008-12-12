@@ -2,13 +2,12 @@ package org.ops4j.pax.url.dir.internal;
 
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.MalformedURLException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
 import java.util.Properties;
 import org.ops4j.pax.url.dir.Configuration;
+import org.ops4j.pax.url.dir.bundle.BundleBuilder;
+import org.ops4j.pax.url.dir.bundle.IntelliResourceLocator;
 import org.ops4j.lang.NullArgumentException;
 
 /**
@@ -57,7 +56,7 @@ public class Connection extends URLConnection
         Properties p = new Properties();
         p.put( "Dynamic-Import", "*" );
 
-        return new BndBundleBuilder( p, new IntelliResourceLocator( m_parser.getDirectory(), m_parser.getAnchor() )
+        return new BundleBuilder( p, new IntelliResourceLocator( m_parser.getDirectory(), m_parser.getAnchor() )
         ).build();
 
 

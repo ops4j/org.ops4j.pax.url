@@ -1,4 +1,4 @@
-package org.ops4j.pax.url.dir.internal;
+package org.ops4j.pax.url.dir;
 
 import java.util.jar.JarOutputStream;
 import java.io.IOException;

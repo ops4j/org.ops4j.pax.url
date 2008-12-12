@@ -13,6 +13,9 @@ import java.util.jar.Manifest;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.ops4j.io.StreamUtils;
+import org.ops4j.pax.url.dir.bundle.BundleBuilder;
+import org.ops4j.pax.url.dir.bundle.IntelliResourceLocator;
+import org.ops4j.pax.url.dir.ResourceLocator;
 
 /**
  * @author Toni Menzel (tonit)
@@ -32,7 +35,7 @@ public class FunctionalTest
         // construct the builder
         Properties p = new Properties();
         p.put( "Dynamic-Import", "*" );
-        BndBundleBuilder b = new BndBundleBuilder( p, loc );
+        BundleBuilder b = new BundleBuilder( p, loc );
 
         // execute
         InputStream in = b.build();

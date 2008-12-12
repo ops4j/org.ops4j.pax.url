@@ -1,16 +1,16 @@
-package org.ops4j.pax.url.dir.internal;
+package org.ops4j.pax.url.dir.bundle;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ops4j.lang.NullArgumentException;
 import org.ops4j.io.StreamUtils;
+import org.ops4j.pax.url.dir.ResourceLocator;
 
 /**
  * Finds resources of the current module under test just by given top-level parent (whatever that is)

@@ -1,13 +1,13 @@
-package org.ops4j.pax.url.dir.internal;
+package org.ops4j.pax.url.dir.bundle;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.jar.JarOutputStream;
 import java.util.zip.ZipEntry;
 import org.junit.Test;
-import static org.easymock.EasyMock.*;
 import static junit.framework.Assert.*;
+import org.ops4j.pax.url.dir.bundle.IntelliResourceLocator;
+import org.ops4j.pax.url.dir.internal.NullOutputStream;
 
 /**
  * @author Toni Menzel (tonit)

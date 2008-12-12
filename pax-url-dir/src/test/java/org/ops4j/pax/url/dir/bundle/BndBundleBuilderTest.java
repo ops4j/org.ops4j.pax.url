@@ -1,22 +1,18 @@
-package org.ops4j.pax.url.dir.internal;
+package org.ops4j.pax.url.dir.bundle;
 
 import java.util.Properties;
-import java.util.ArrayList;
 import java.util.jar.JarOutputStream;
-import java.util.jar.JarInputStream;
-import java.util.jar.JarEntry;
-import java.util.jar.Manifest;
-import java.util.jar.Attributes;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
-import java.io.FileOutputStream;
-import java.io.File;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.easymock.EasyMock.*;
 import org.ops4j.io.StreamUtils;
+import org.ops4j.pax.url.dir.bundle.BundleBuilder;
+import org.ops4j.pax.url.dir.ResourceLocator;
+import org.ops4j.pax.url.dir.internal.FunctionalTest;
 
 /**
  * @author Toni Menzel (tonit)
@@ -33,7 +29,7 @@ public class BndBundleBuilderTest
         loc.write( (JarOutputStream) ( notNull() ) );
         replay( loc );
         Properties p = new Properties();
-        BndBundleBuilder b = new BndBundleBuilder( p, loc );
+        BundleBuilder b = new BundleBuilder( p, loc );
         InputStream in = b.build();
         assertNotNull( in );
         verify( loc );
@@ -49,14 +45,14 @@ public class BndBundleBuilderTest
         throws IOException
     {
         ResourceLocator loc = createMock( ResourceLocator.class );
-        BndBundleBuilder b = new BndBundleBuilder( null, loc );
+        BundleBuilder b = new BundleBuilder( null, loc );
     }
 
     @Test( expected = IllegalArgumentException.class )
     public void failingWithoutLocator()
         throws IOException
     {
-        BndBundleBuilder b = new BndBundleBuilder( new Properties(), null );
+        BundleBuilder b = new BundleBuilder( new Properties(), null );
     }
 
    
