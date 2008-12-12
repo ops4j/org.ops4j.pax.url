@@ -43,7 +43,7 @@ public class Connection extends URLConnection
         }
         catch( Exception e )
         {
-            throw new IllegalArgumentException( "URL " + url.getPath() + " is invalid", e );
+            throw new IllegalArgumentException( "Given URL [" + url.getPath() + "] is invalid", e );
         }
 
     }
