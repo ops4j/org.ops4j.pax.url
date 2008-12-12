@@ -41,7 +41,7 @@ public class FunctionalTest
         assertNotNull( in );
 
         // stream is filled lazily, so a complete read is important to verify
-        dumpToConsole( in, 14 );
+        dumpToConsole( in, 15 );
     }
 
     public static void dumpToConsole( InputStream in, int expecedEntries )
