@@ -10,7 +10,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ops4j.lang.NullArgumentException;
 import org.ops4j.io.StreamUtils;
-import org.ops4j.pax.url.dir.ResourceLocator;
 
 /**
  * Finds resources of the current module under test just by given top-level parent (whatever that is)
@@ -19,16 +18,16 @@ import org.ops4j.pax.url.dir.ResourceLocator;
  * @author Toni Menzel (tonit)
  * @since May 30, 2008
  */
-public class IntelliResourceLocator implements ResourceLocator
+public class ResourceLocator implements org.ops4j.pax.url.dir.ResourceLocator
 {
 
-    public static final Log logger = LogFactory.getLog( IntelliResourceLocator.class );
+    public static final Log logger = LogFactory.getLog( ResourceLocator.class );
 
     private File m_topLevelDir;
     private String m_anchor;
     private File m_root;
 
-    public IntelliResourceLocator( File topLevelDir, String anchor )
+    public ResourceLocator( File topLevelDir, String anchor )
         throws IOException
     {
         NullArgumentException.validateNotNull( topLevelDir, "topLevelDir" );
@@ -43,7 +42,7 @@ public class IntelliResourceLocator implements ResourceLocator
         m_root = findRoot( m_topLevelDir, m_anchor );
     }
 
-    public IntelliResourceLocator( String targetClassName )
+    public ResourceLocator( String targetClassName )
         throws IOException
     {
         this( new File( "." ), targetClassName );

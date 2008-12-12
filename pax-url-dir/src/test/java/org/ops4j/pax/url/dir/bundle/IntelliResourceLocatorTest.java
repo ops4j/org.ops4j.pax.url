@@ -6,7 +6,7 @@ import java.util.jar.JarOutputStream;
 import java.util.zip.ZipEntry;
 import org.junit.Test;
 import static junit.framework.Assert.*;
-import org.ops4j.pax.url.dir.bundle.IntelliResourceLocator;
+import org.ops4j.pax.url.dir.bundle.ResourceLocator;
 import org.ops4j.pax.url.dir.internal.NullOutputStream;
 
 /**
@@ -20,14 +20,14 @@ public class IntelliResourceLocatorTest
     public void simpleFailingAtConstruct()
         throws IOException
     {
-        IntelliResourceLocator loc = new IntelliResourceLocator( null,"" );
+        ResourceLocator loc = new ResourceLocator( null,"" );
     }
 
     @Test( expected = IllegalArgumentException.class )
     public void simpleFailingAtWriteToNull()
         throws IOException
     {
-        IntelliResourceLocator loc = new IntelliResourceLocator( new File( "." ), "" );
+        ResourceLocator loc = new ResourceLocator( new File( "." ), "" );
         loc.write( null );
     }
 
@@ -36,7 +36,7 @@ public class IntelliResourceLocatorTest
         throws IOException
     {
         String clazz = this.getClass().getName().replaceAll( "\\.", "/" ) + ".class";
-        IntelliResourceLocator loc = new IntelliResourceLocator( new File( "." ), clazz );
+        ResourceLocator loc = new ResourceLocator( new File( "." ), clazz );
         final int[] countOfEntries = new int[]{ 0 };
 
         JarOutputStream out = new JarOutputStream( new NullOutputStream() )
