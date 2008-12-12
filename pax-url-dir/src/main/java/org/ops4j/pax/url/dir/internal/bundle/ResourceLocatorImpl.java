@@ -163,4 +163,14 @@ public class ResourceLocatorImpl
         target.putNextEntry( new JarEntry( name ) );
         StreamUtils.copyStream( fileIn, target, false );
     }
+
+    @Override
+    public String toString()
+    {
+        return "ResourceLocatorImpl{" +
+               "m_topLevelDir=" + m_topLevelDir +
+               ", m_anchor=" + m_anchor +
+               '}';
+    }
+
 }
