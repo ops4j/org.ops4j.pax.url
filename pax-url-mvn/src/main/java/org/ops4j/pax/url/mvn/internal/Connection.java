@@ -141,6 +141,30 @@ public class Connection
     {
         connect();
         LOG.debug( "Resolving [" + url.toExternalForm() + "]" );
+        final Set<DownloadableArtifact> defaultDownloadables = collectDefaultPossibleDownloads();
+        if( LOG.isTraceEnabled() )
+        {
+            LOG.trace( "Possible default download locations for [" + url.toExternalForm() + "]" );
+            for( DownloadableArtifact artifact : defaultDownloadables )
+            {
+                LOG.trace( "  " + artifact );
+            }
+        }
+        for( DownloadableArtifact artifact : defaultDownloadables )
+        {
+            LOG.trace( "Downloading [" + artifact + "]" );
+            try
+            {
+                m_configuration.enableProxy( artifact.getArtifactURL() );
+                return artifact.getInputStream();
+            }
+            catch( IOException ignore )
+            {
+                // go on with next repository
+                LOG.debug( Ix2 + "Could not download [" + artifact + "]" );
+                LOG.trace( Ix2 + "Reason [" + ignore.getClass().getName() + ": " + ignore.getMessage() + "]" );
+            }
+        }
         final Set<DownloadableArtifact> downloadables = collectPossibleDownloads();
         if( LOG.isTraceEnabled() )
         {
@@ -190,6 +214,23 @@ public class Connection
         {
             repositories.add( 0, m_parser.getRepositoryURL() );
         }
+        return doCollectPossibleDownloads(repositories);
+    }
+
+    /**
+     * Search the default repositories for possible artifacts to download.
+     * @return
+     * @throws MalformedURLException
+     */
+    private Set<DownloadableArtifact> collectDefaultPossibleDownloads()
+        throws MalformedURLException
+    {
+        return doCollectPossibleDownloads(m_configuration.getDefaultRepositories());
+    }
+
+    private Set<DownloadableArtifact> doCollectPossibleDownloads(final List<RepositoryURL> repositories)
+        throws MalformedURLException
+    {
         final Set<DownloadableArtifact> downloadables = new TreeSet<DownloadableArtifact>( new DownloadComparator() );
 
         // find artifact type

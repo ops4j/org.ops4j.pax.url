@@ -43,6 +43,10 @@ public interface ServiceConstants
      */
     static final String PROPERTY_LOCAL_REPOSITORY = PID + ".localRepository";
     /**
+     * DefaultRepositories configuration property name
+     */
+    static final String PROPERTY_DEFAULT_REPOSITORIES = PID + ".defaultRepositories";
+    /**
      * Repositories configuration property name.
      */
     static final String PROPERTY_REPOSITORIES = PID + ".repositories";
