@@ -164,6 +164,46 @@ public class ConfigurationImpl
      * @see Configuration#getRepositories()
      * @see Configuration#getLocalRepository()
      */
+    public List<RepositoryURL> getDefaultRepositories()
+        throws MalformedURLException
+    {
+        if( !contains( ServiceConstants.PROPERTY_DEFAULT_REPOSITORIES ) )
+        {
+            // look for repositories property
+            String defaultRepositoriesProp = m_propertyResolver.get( ServiceConstants.PROPERTY_DEFAULT_REPOSITORIES );
+            // build repositories list
+            final List<RepositoryURL> defaultRepositoriesProperty = new ArrayList<RepositoryURL>();
+            RepositoryURL localRepository = getLocalRepository();
+            if( defaultRepositoriesProp != null && defaultRepositoriesProp.trim().length() > 0 )
+            {
+                String[] repositories = defaultRepositoriesProp.split( REPOSITORIES_SEPARATOR );
+                for( String repositoryURL : repositories )
+                {
+                    defaultRepositoriesProperty.add( new RepositoryURL( repositoryURL ) );
+                }
+            }
+            LOGGER.trace( "Using repositories [" + defaultRepositoriesProperty + "]" );
+            return set( ServiceConstants.PROPERTY_DEFAULT_REPOSITORIES, defaultRepositoriesProperty );
+        }
+        return get( ServiceConstants.PROPERTY_DEFAULT_REPOSITORIES );
+    }
+
+    /**
+     * Repository is a comma separated list of repositories to be used. If repository acces requests authentication
+     * the user name and password must be specified in the repository url as for example
+     * http://user:password@repository.ops4j.org/maven2.<br/>
+     * If the repository from 1/2 bellow starts with a plus (+) the option 3 is also used and the repositories from
+     * settings.xml will be cummulated.<br/>
+     * Repository resolution:<br/>
+     * 1. looks for a configuration property named repository;<br/>
+     * 2. looks for a framework property/system setting repository;<br/>
+     * 3. looks in settings.xml (see settings.xml resolution). in this case all configured repositories will be used
+     * including configured user/password. In this case the central repository is also added.
+     * Note that the local repository is added as the first repository if exists.
+     *
+     * @see Configuration#getRepositories()
+     * @see Configuration#getLocalRepository()
+     */
     public List<RepositoryURL> getRepositories()
         throws MalformedURLException
     {
