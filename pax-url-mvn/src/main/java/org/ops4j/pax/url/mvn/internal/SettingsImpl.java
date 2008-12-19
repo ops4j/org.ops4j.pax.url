@@ -30,6 +30,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
+import static org.ops4j.pax.url.mvn.ServiceConstants.*;
 import org.ops4j.util.xml.XmlUtils;
 
 /**
@@ -88,7 +89,7 @@ public class SettingsImpl
     /**
      * Map of known proxies for various protocols
      */
-    private Map<String,Map<String,String>> m_proxySettings;
+    private Map<String, Map<String, String>> m_proxySettings;
 
     /**
      * Creates new settings with the following resolution:<br/>
@@ -143,7 +144,7 @@ public class SettingsImpl
                     m_localRepository = XmlUtils.getTextContent( settingsElement );
                 }
             }
-            if( m_localRepository == null || m_localRepository.trim().length() == 0)
+            if( m_localRepository == null || m_localRepository.trim().length() == 0 )
             {
                 m_localRepository = System.getProperty( "user.home" ) + "/.m2/repository";
             }
@@ -205,11 +206,11 @@ public class SettingsImpl
                                             }
                                             if( snapshots != null && Boolean.valueOf( snapshots ) )
                                             {
-                                                url += "@snapshots";
+                                                url += SEPARATOR_OPTIONS + OPTION_ALLOW_SNAPSHOTS;
                                             }
                                             if( releases != null && !Boolean.valueOf( releases ) )
                                             {
-                                                url += "@noreleases";
+                                                url += SEPARATOR_OPTIONS + OPTION_DISALLOW_RELEASES;
                                             }
                                             repositories.put( id, url );
                                             order.add( id );
@@ -344,7 +345,8 @@ public class SettingsImpl
     private String getSetting( Element element, String settingName, String defaultSetting )
     {
         final String setting = XmlUtils.getTextContentOfElement( element, settingName );
-        if( setting == null ) {
+        if( setting == null )
+        {
             return defaultSetting;
         }
         return setting;
@@ -352,14 +354,14 @@ public class SettingsImpl
 
     /**
      * Returns the active proxy settings from settings.xml
-     * 
+     *
      * @return the active proxy settings
      */
-    public Map<String,Map<String,String>> getProxySettings()
+    public Map<String, Map<String, String>> getProxySettings()
     {
         if( m_proxySettings == null )
         {
-            m_proxySettings = new HashMap<String, Map<String,String>>();
+            m_proxySettings = new HashMap<String, Map<String, String>>();
 
             readSettings();
             if( m_document != null )
@@ -372,8 +374,9 @@ public class SettingsImpl
                         String active = getSetting( proxy, "active", "false" );
                         String protocol = getSetting( proxy, "protocol", "http" );
 
-                        if( !m_proxySettings.containsKey( protocol ) || "true".equalsIgnoreCase( active ) ) {
-                            Map<String,String> proxyDetails = new HashMap<String, String>();
+                        if( !m_proxySettings.containsKey( protocol ) || "true".equalsIgnoreCase( active ) )
+                        {
+                            Map<String, String> proxyDetails = new HashMap<String, String>();
 
                             proxyDetails.put( "user", getSetting( proxy, "username", "" ) );
                             proxyDetails.put( "pass", getSetting( proxy, "password", "" ) );
