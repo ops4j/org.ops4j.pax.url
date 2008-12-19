@@ -20,6 +20,8 @@ package org.ops4j.pax.url.mvn.internal;
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.ops4j.lang.NullArgumentException;
+import org.ops4j.pax.url.mvn.ServiceConstants;
+import static org.ops4j.pax.url.mvn.ServiceConstants.*;
 
 /**
  * An URL of Maven repository that knows if it contains SNAPSHOT versions and/or releases.
@@ -44,8 +46,8 @@ class RepositoryURL
     private final boolean m_releasesEnabled;
 
     /**
-     * Creates a maven repository URL bases on a string spec. The path can be marked with @nosnapshots
-     * and/or @noreleases (not case sensitive).
+     * Creates a maven repository URL bases on a string spec. The path can be marked with @snapshots and/or @noreleases
+     * (not case sensitive).
      *
      * @param repositorySpec url spec of repository
      *
@@ -57,17 +59,17 @@ class RepositoryURL
     {
         NullArgumentException.validateNotEmpty( repositorySpec, true, "Repository spec" );
 
-        final String[] segments = repositorySpec.split( "@" );
+        final String[] segments = repositorySpec.split( SEPARATOR_OPTIONS );
         final StringBuilder urlBuilder = new StringBuilder();
         boolean snapshotEnabled = false;
         boolean releasesEnabled = true;
         for( int i = 0; i < segments.length; i++ )
         {
-            if( segments[ i ].trim().equalsIgnoreCase( "snapshots" ) )
+            if( segments[ i ].trim().equalsIgnoreCase( OPTION_ALLOW_SNAPSHOTS ) )
             {
                 snapshotEnabled = true;
             }
-            else if( segments[ i ].trim().equalsIgnoreCase( "noreleases" ) )
+            else if( segments[ i ].trim().equalsIgnoreCase( OPTION_DISALLOW_RELEASES ) )
             {
                 releasesEnabled = false;
             }
@@ -75,7 +77,7 @@ class RepositoryURL
             {
                 if( i > 0 )
                 {
-                    urlBuilder.append( "@" );
+                    urlBuilder.append( SEPARATOR_OPTIONS );
                 }
                 urlBuilder.append( segments[ i ] );
             }

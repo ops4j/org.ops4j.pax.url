@@ -57,6 +57,17 @@ public interface ServiceConstants
     /**
      * The protocol name.
      */
-    public static final String PROTOCOL = "mvn";
-
+    static final String PROTOCOL = "mvn";
+    /**
+     * Option to mark repository as allowing snapshots.
+     */
+    String OPTION_ALLOW_SNAPSHOTS = "snapshots";
+    /**
+     * Option to mark repository as not allowing releases.
+     */
+    String OPTION_DISALLOW_RELEASES = "noreleases";
+    /**
+     * Options separator in repository url.
+     */
+    String SEPARATOR_OPTIONS = "@";
 }
