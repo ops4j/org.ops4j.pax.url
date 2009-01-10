@@ -16,12 +16,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/ops4j/pax/url/mvnlive/internal/Connection.java" afterPath="$PROJECT_DIR$/src/main/java/org/ops4j/pax/url/mvnlive/internal/Connection.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/ops4j/pax/url/mvnlive/ServiceConstants.java" afterPath="$PROJECT_DIR$/src/main/java/org/ops4j/pax/url/mvnlive/ServiceConstants.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pax-url-mvnlive.iws" afterPath="$PROJECT_DIR$/pax-url-mvnlive.iws" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/ops4j/pax/url/mvnlive/internal/Parser.java" afterPath="$PROJECT_DIR$/src/main/java/org/ops4j/pax/url/mvnlive/internal/Parser.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/ops4j/pax/url/mvnlive/internal/Activator.java" afterPath="$PROJECT_DIR$/src/main/java/org/ops4j/pax/url/mvnlive/internal/Activator.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/ops4j/pax/url/mvnlive/internal/ConfigurationImpl.java" afterPath="$PROJECT_DIR$/src/main/java/org/ops4j/pax/url/mvnlive/internal/ConfigurationImpl.java" />
     </list>
     <ignored path="pax-url-mvnlive.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -495,7 +490,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-18" y="40" width="1443" height="785" extended-state="0" />
+    <frame x="-7" y="40" width="1443" height="785" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" order="-1" />
