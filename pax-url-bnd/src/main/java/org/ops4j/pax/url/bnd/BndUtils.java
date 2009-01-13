@@ -53,7 +53,7 @@ public class BndUtils
      * Regex pattern for matching instructions when specified in url.
      */
     private static final Pattern INSTRUCTIONS_PATTERN =
-        Pattern.compile( "([a-zA-Z_0-9-]+)=([-!\"'()*+,.0-9A-Z_a-z%]+)" );
+        Pattern.compile( "([a-zA-Z_0-9-]+)=([-!\"'()*+,.0-9A-Z_a-z%;=]+)" );
 
     /**
      * Utility class. Ment to be used using static methods
