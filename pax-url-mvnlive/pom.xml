@@ -44,26 +44,7 @@
       <scope>compile</scope>
       <optional>true</optional>
     </dependency>
-    <!--
-    <dependency>
-      <groupId>org.ops4j.base</groupId>
-      <artifactId>ops4j-base-net</artifactId>
-      <scope>compile</scope>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>org.ops4j.base</groupId>
-      <artifactId>ops4j-base-io</artifactId>
-      <scope>compile</scope>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>org.ops4j.base</groupId>
-      <artifactId>ops4j-base-util-property</artifactId>
-      <scope>compile</scope>
-      <optional>true</optional>
-    </dependency>
-    -->
+  
 
     <dependency>
       <groupId>org.ops4j.pax.swissbox</groupId>
@@ -78,18 +59,10 @@
       <scope>compile</scope>
       <optional>true</optional>
     </dependency>
-
     <dependency>
-      <groupId>org.ops4j.pax.runner</groupId>
-      <artifactId>pax-runner-handler</artifactId>
-      <version>0.12.0</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.ops4j.pax.runner</groupId>
-      <artifactId>pax-runner-platform</artifactId>
-      <version>0.12.0</version>
+      <groupId>org.ops4j.base</groupId>
+      <artifactId>ops4j-base-io</artifactId>
+      <version>0.5.3</version>
     </dependency>
 
     <dependency>
