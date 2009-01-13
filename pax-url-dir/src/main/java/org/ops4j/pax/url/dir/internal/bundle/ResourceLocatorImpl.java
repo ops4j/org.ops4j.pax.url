@@ -85,12 +85,14 @@ public class ResourceLocatorImpl
                     return r;
                 }
             }
-            else if( !f.isHidden() && f.getCanonicalPath().endsWith( targetClassName ) )
-            {
+            else if( !f.isHidden()) {
+                String p = f.getCanonicalPath().replaceAll( "\\\\","/" );
+                if (p.endsWith( targetClassName ) ) {
                 return new File(
                     f.getCanonicalPath().substring( 0, f.getCanonicalPath().length() - targetClassName.length() )
                 );
             }
+           }
         }
         // nothing found / must be wrong topevel dir
         return null;
