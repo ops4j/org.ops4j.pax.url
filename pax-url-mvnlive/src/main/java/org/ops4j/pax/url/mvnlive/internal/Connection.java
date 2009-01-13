@@ -17,18 +17,16 @@
  */
 package org.ops4j.pax.url.mvnlive.internal;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.ops4j.lang.NullArgumentException;
-import org.ops4j.pax.runner.platform.PlatformException;
-import org.ops4j.pax.runner.platform.internal.Pipe;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.ops4j.io.Pipe;
+import org.ops4j.lang.NullArgumentException;
 
 /**
  * This impplements the mvnlive handler as follows:
@@ -57,7 +55,6 @@ public class Connection extends URLConnection {
      */
     private static final Log LOG = LogFactory.getLog(Connection.class);
 
-    private Configuration m_configuration;
     private Parser m_parser;
     private static final int MAVEN_TIMEOUT = 60000;
 
@@ -65,7 +62,6 @@ public class Connection extends URLConnection {
         super(url);
         NullArgumentException.validateNotNull(url, "URL cannot be null");
         NullArgumentException.validateNotNull(config, "Service configuration");
-        m_configuration = config;
         m_parser = new Parser(url.getPath());
 
     }
@@ -144,21 +140,21 @@ public class Connection extends URLConnection {
     }
 
     private String getMavenExecutable()
-            throws PlatformException {
+            {
         String home = System.getProperty("M2_HOME");
         if (home == null) {
             home = System.getenv("M2_HOME");
         }
 
         if (home == null) {
-            throw new PlatformException("M2_HOME is not set.");
+            throw new RuntimeException("M2_HOME is not set.");
         } else {
             String res = home + "/bin/mvn";
             File exec = new File(res);
             if (exec.canRead()) {
                 return res;
             } else {
-                throw new PlatformException(("Maven is not reachable using " + res + "!"));
+                throw new RuntimeException(("Maven is not reachable using " + res + "!"));
             }
         }
     }
