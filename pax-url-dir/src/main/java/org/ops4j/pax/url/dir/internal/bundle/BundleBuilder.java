@@ -1,5 +1,6 @@
 /*
- * Copyright 2008 Toni Menzel.
+ * Copyright 2008,2009 Toni Menzel.
+ * Copyright 2008 Alin Dreghiciu.
  *
  * Licensed  under the  Apache License,  Version 2.0  (the "License");
  * you may not use  this file  except in  compliance with the License.
@@ -29,16 +30,16 @@ import org.ops4j.pax.url.bnd.BndUtils;
 import org.ops4j.pax.url.dir.internal.ResourceLocator;
 
 /**
- * Responsible for creating the on-the fly testing probe.
+ * Responsible for creating the on-the fly bundle.
  *
- * @author Toni Menzel (tonit)
+ * @author Toni Menzel (toni@okidokiteam.com)
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since May 29, 2008
  */
 public class BundleBuilder
 {
 
-    private ResourceLocator m_finder;
+    private ResourceLocator m_resourceLocator;
 
     private Properties m_refs;
 
@@ -46,21 +47,24 @@ public class BundleBuilder
      * Constructor.
      *
      * @param ref    name of test class
-     * @param finder locator that gathers all resources that have to be inside the test probe
+     * @param resourceLocator locator that gathers all resources that have to be inside the test probe
      */
     public BundleBuilder( final Properties ref,
-                          final ResourceLocator finder )
+                          final ResourceLocator resourceLocator )
     {
         NullArgumentException.validateNotNull( ref, "ref" );
-        NullArgumentException.validateNotNull( finder, "finder" );
+        NullArgumentException.validateNotNull( resourceLocator, "resourceLocator" );
 
-        m_finder = finder;
+        m_resourceLocator = resourceLocator;
         m_refs = ref;
 
     }
 
     /**
-     * {@inheritDoc}
+     * Builds an osgi bundle out of settings given while creating this instance.
+     * Output is being asynchronously in a new thread when reading from the InputStream returned by this method.
+     * 
+     * @return an inputstream that must be flushed in order to actually invoke the bundle build process.
      */
     public InputStream build()
     {
@@ -78,7 +82,7 @@ public class BundleBuilder
                     try
                     {
                         jos = new DuplicateAwareJarOutputStream( pout );
-                        m_finder.write( jos );
+                        m_resourceLocator.write( jos );
                         jos.close();
                     }
 
@@ -105,7 +109,7 @@ public class BundleBuilder
             {
                 m_refs.setProperty( Constants.BUNDLE_SYMBOLICNAME, "BuiltByDirUrlHandler" );
             }
-            InputStream result = BndUtils.createBundle( fis, m_refs, m_finder.toString() );
+            InputStream result = BndUtils.createBundle( fis, m_refs, m_resourceLocator.toString() );
             fis.close();
             pout.close();
             return result;

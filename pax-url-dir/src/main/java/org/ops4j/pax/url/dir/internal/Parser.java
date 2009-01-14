@@ -40,9 +40,9 @@ public class Parser
      */
     private static final String SYNTAX = "dir:local-file-uri[$building-m_options]";
 
-    private static final String OPTION_SEPARATOR = ",";
+    private static final String OPTION_SEPARATOR = "&";
 
-    private static final String ANCHOR = "anchor";
+    private static final String TAIL = "tail";
 
     /**
      * Separator between wrapped jar url and instructions.
@@ -149,8 +149,8 @@ public class Parser
         return m_options;
     }
 
-    public String getAnchor()
+    public String getTailExpr()
     {
-        return (String) m_options.get( ANCHOR );
+        return (String) m_options.get( TAIL );
     }
 }

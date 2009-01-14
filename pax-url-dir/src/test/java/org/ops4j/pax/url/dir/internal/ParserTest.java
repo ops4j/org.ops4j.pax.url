@@ -55,17 +55,17 @@ public class ParserTest
         // Parser needs it as url
         String ext = f.toURL().toExternalForm();
         Parser parser =
-            new Parser( "http:" + f.getCanonicalPath() + "$anchor=org/ops4j/pax/url/dir/internal/Activator.class" );
+            new Parser( "http:" + f.getCanonicalPath() + "$tail=org/ops4j/pax/url/dir/internal/Activator.class" );
         // use dummy protocol for testing
         assertEquals( f.getCanonicalPath(), parser.getDirectory().getAbsolutePath() );
-        assertEquals( "org/ops4j/pax/url/dir/internal/Activator.class", parser.getAnchor() );
+        assertEquals( "org/ops4j/pax/url/dir/internal/Activator.class", parser.getTailExpr() );
     }
 
     @Test
     public void parseWithMoreParams()
         throws IOException, URISyntaxException
     {
-        Parser parser = new Parser( "http:." + "$a=1,b=2" );
+        Parser parser = new Parser( "http:." + "$a=1&b=2" );
         // use dummy protocol for testing
 
         assertEquals( "1", parser.getOptions().get( "a" ) );

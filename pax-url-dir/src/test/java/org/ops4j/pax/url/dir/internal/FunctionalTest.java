@@ -14,7 +14,8 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import org.ops4j.io.StreamUtils;
 import org.ops4j.pax.url.dir.internal.bundle.BundleBuilder;
-import org.ops4j.pax.url.dir.internal.bundle.ResourceLocatorImpl;
+import org.ops4j.pax.url.dir.internal.bundle.FileTail;
+import org.ops4j.pax.url.dir.internal.bundle.ResourceWriter;
 
 /**
  * @author Toni Menzel (tonit)
@@ -29,19 +30,19 @@ public class FunctionalTest
     {
         // construct a locator
         String clazz = this.getClass().getName().replaceAll( "\\.", "/" ) + ".class";
-        ResourceLocator loc = new ResourceLocatorImpl( new File( "." ), clazz );
+        FileTail loc = new FileTail( new File( "." ), clazz );
 
         // construct the builder
         Properties p = new Properties();
         p.put( "Dynamic-Import", "*" );
-        BundleBuilder b = new BundleBuilder( p, loc );
+        BundleBuilder b = new BundleBuilder( p, new ResourceWriter( loc.getParentOfTail() ) );
 
         // execute
         InputStream in = b.build();
         assertNotNull( in );
 
         // stream is filled lazily, so a complete read is important to verify
-        dumpToConsole( in, 15 );
+        dumpToConsole( in, 14 );
     }
 
     public static void dumpToConsole( InputStream in, int expecedEntries )
