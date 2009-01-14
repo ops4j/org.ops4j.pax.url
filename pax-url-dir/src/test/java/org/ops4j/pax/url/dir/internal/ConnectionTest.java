@@ -18,12 +18,12 @@ public class ConnectionTest
         throws IOException
     {
         String clazz = this.getClass().getName().replaceAll( "\\.", "/" ) + ".class";
-        URL url = new URL( "http:.$anchor=" + clazz + ",Foo=bar" );
+        URL url = new URL( "http:.$tail=" + clazz + "&Foo=bar" );
         Configuration config = createMock( Configuration.class );
 
         Connection con = new Connection( url, config );
         InputStream inp = con.getInputStream();
-        FunctionalTest.dumpToConsole( inp, 15 );
+        FunctionalTest.dumpToConsole( inp, 14 );
     }
 
     // @Test

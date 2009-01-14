@@ -24,7 +24,8 @@ import java.net.URLConnection;
 import java.util.Properties;
 import org.ops4j.lang.NullArgumentException;
 import org.ops4j.pax.url.dir.internal.bundle.BundleBuilder;
-import org.ops4j.pax.url.dir.internal.bundle.ResourceLocatorImpl;
+import org.ops4j.pax.url.dir.internal.bundle.FileTail;
+import org.ops4j.pax.url.dir.internal.bundle.ResourceWriter;
 
 /**
  * Accepts URLs like
@@ -35,10 +36,13 @@ import org.ops4j.pax.url.dir.internal.bundle.ResourceLocatorImpl;
  *
  * And even
  * * dir:mytest
- * which uses the relative dir mytest (from current one) without an acnhor.
+ * which uses the relative dir mytest (from current one) without an anchor.
  *
  * Why anchors ?
- * Sometimes, you don't know the real class folder
+ * Sometimes you don't know the real class folder.
+ * So you want to let the url handler discover it.
+ * for example:
+ * dir:org/ops4j/pax/Foo.class::
  *
  * @author Toni Menzel (tonit)
  * @since Dec 10, 2008
@@ -74,8 +78,13 @@ public class Connection extends URLConnection
         Properties p = m_parser.getOptions();
         p.put( "Dynamic-Import", "*" );
 
-        return new BundleBuilder( p, new ResourceLocatorImpl( m_parser.getDirectory(), m_parser.getAnchor() )
-        ).build();
+        return new BundleBuilder( p,
+                                  new ResourceWriter(
+                                      new FileTail( m_parser.getDirectory(), m_parser.getTailExpr() )
+                                          .getParentOfTail()
+                                  )
+        )
+            .build();
 
 
     }
