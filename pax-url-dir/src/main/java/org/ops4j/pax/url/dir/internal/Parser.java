@@ -27,8 +27,34 @@ import java.util.regex.Pattern;
 import org.ops4j.lang.NullArgumentException;
 
 /**
- * Expects a url like dir:file:///Users/foo/myroot
+ * Expects a url like dir:/Users/foo/myroot
  *
+ * New format suggestion:
+ *
+ * This is if you don't know the exact folders but examples of contents
+ * dir:/Users/tonit/foo;org/ops4j/pax/Paxer.class&/Users/tonit/foo;org/ops4j/pax/PaxerTest.class$props=foo&other=bar
+ *
+ * If you want to just include certain files:
+ * (give them a filename pattern)
+ * dir:/Users/tonit/foo;org/ops4j/pax/Paxer.class;.*class&/Users/tonit/foo;org/ops4j/pax/PaxerTest.class$props=foo&other=bar
+ *
+ * If you know exact folders, this is the version without tail:
+ * dir:/Users/tonit/foo/classes&/Users/tonit/foo/test-classes$props=foo&other=bar
+ *
+ * This would be the full format:
+ * dir:<Dir>;<tail>;<filenamepattern>$<param>=<v>
+ *
+ * While tail and filenamepattern are optional.
+ * 
+ * On a higher level:
+ * dir:<contentselection>$<paramters>
+ *
+ * paramters is optional
+ * 
+ * Where contentsection and parameters can be "chained" by & (like you see above in the samples)
+ *
+ * This supports multiple (different) roots, each one with teir own (optional) tail.
+ * 
  * @author Toni Menzel (tonit)
  * @since Dec 10, 2008
  */
