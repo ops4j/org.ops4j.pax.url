@@ -19,7 +19,8 @@
     <orderEntry type="library" name="Maven: org.ops4j.base:ops4j-base-util-xml:0.5.0" level="project" />
     <orderEntry type="library" exported="" name="Maven: org.ops4j.base:ops4j-base-util-collections:0.5.0" level="project" />
     <orderEntry type="library" name="Maven: org.ops4j.pax.swissbox:pax-swissbox-optional-jcl:0.2.0" level="project" />
-    <orderEntry type="library" name="Maven: org.ops4j.pax.url:pax-url-commons:0.3.3-SNAPSHOT" level="project" />
+    <orderEntry type="module" module-name="pax-url-commons" />
+    <orderEntry type="library" exported="" name="Maven: org.ops4j.pax.swissbox:pax-swissbox-property:0.2.0" level="project" />
     <orderEntry type="library" name="Maven: org.osgi:org.osgi.core:4.0.1" level="project" />
     <orderEntry type="library" name="Maven: org.osgi:org.osgi.compendium:4.0.1" level="project" />
     <orderEntry type="library" name="Maven: junit:junit:4.4" level="project" />
