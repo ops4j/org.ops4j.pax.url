@@ -119,7 +119,7 @@
       <dependency>
         <groupId>org.apache.felix</groupId>
         <artifactId>org.osgi.service.obr</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.2</version>
       </dependency>
       <!-- OPS4J Base -->
       <dependency>
