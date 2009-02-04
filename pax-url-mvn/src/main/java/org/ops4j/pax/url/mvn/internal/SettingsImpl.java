@@ -26,10 +26,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.HashSet;
 import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import static org.ops4j.pax.url.mvn.ServiceConstants.*;
 import org.ops4j.util.xml.XmlUtils;
 
@@ -45,6 +49,10 @@ public class SettingsImpl
 {
 
     /**
+     * Logger.
+     */
+    private static final Log LOGGER = LogFactory.getLog( SettingsImpl.class );
+    /**
      * Path of local repository tag.
      */
     private static final String LOCAL_REPOSITORY_TAG = "localRepository";
@@ -52,10 +60,22 @@ public class SettingsImpl
      * Path to server tag.
      */
     private static final String SERVER_TAG = "servers/server";
+
+    /**
+     * Path to profiles tag.
+     */
+    private static final String PROFILE_TAG = "profiles/profile";
+
     /**
      * Path to repository tag.
      */
     private static final String REPOSITORY_TAG = "repositories/repository";
+
+    /**
+     * Path to activeProfiles tag.
+     */
+    private static final String ACTIVE_PROFILES_TAG = "activeProfiles/activeProfile";
+
     /**
      * Path to proxy tag.
      */
@@ -159,6 +179,9 @@ public class SettingsImpl
      * If there are repositories in settings.xml and those repositories have user and password the user and password
      * will be included in the repository url as for example http://user:password@repository.ops4j.org/maven2.
      *
+     * Repositories are organized in profiles.
+     * Active profiles are selected by looking at activeProfiles tag (just under <settings>)
+     *
      * @return a comma separated list of repositories from settings.xml
      */
     public String getRepositories()
@@ -168,94 +191,115 @@ public class SettingsImpl
             readSettings();
             if( m_document != null )
             {
+                Set<String> activeProfiles = getActiveProfiles();
                 Map<String, String> repositories = null;
                 List<String> order = null;
-                List<Element> repos = XmlUtils.getElements( m_document, REPOSITORY_TAG );
-                // first look for repositories
-                if( repos != null )
+                List<Element> profiles = XmlUtils.getElements( m_document, PROFILE_TAG );
+                // first look for profiles
+                if( profiles != null )
                 {
-                    for( Element repo : repos )
+                    for( Element profile : profiles )
                     {
-                        Element element = XmlUtils.getElement( repo, "id" );
-                        if( element != null )
+                        Element profileIdElement = XmlUtils.getElement( profile, "id" );
+                        if( profileIdElement != null )
                         {
-                            String id = XmlUtils.getTextContent( element );
-                            if( id != null )
+                            String profileId = XmlUtils.getTextContent( profileIdElement );
+                            if( profileId != null )
                             {
-                                element = XmlUtils.getElement( repo, "layout" );
-                                String layout = null;
-                                if( element != null )
+                                if( activeProfiles.contains( profileId ) )
                                 {
-                                    layout = XmlUtils.getTextContent( element );
-                                }
-                                // take only repositories with a default layout (skip legacy ones)
-                                if( layout == null || "default".equals( layout ) )
-                                {
-                                    String snapshots = XmlUtils.getTextContentOfElement( repo, "snapshots/enabled" );
-                                    String releases = XmlUtils.getTextContentOfElement( repo, "releases/enabled" );
-                                    element = XmlUtils.getElement( repo, "url" );
-                                    if( element != null )
+                                    List<Element> repos = XmlUtils.getElements( profile, REPOSITORY_TAG );
+                                    for( Element repo : repos )
                                     {
-                                        String url = XmlUtils.getTextContent( element );
-                                        if( url != null )
+                                        Element element = XmlUtils.getElement( repo, "id" );
+                                        if( element != null )
                                         {
-                                            if( repositories == null )
+                                            String id = XmlUtils.getTextContent( element );
+                                            element = XmlUtils.getElement( repo, "layout" );
+                                            String layout = null;
+                                            if( element != null )
                                             {
-                                                repositories = new HashMap<String, String>();
-                                                order = new ArrayList<String>();
+                                                layout = XmlUtils.getTextContent( element );
                                             }
-                                            if( snapshots != null && Boolean.valueOf( snapshots ) )
+                                            // take only repositories with a default layout (skip legacy ones)
+                                            if( layout == null || "default".equals( layout ) )
                                             {
-                                                url += SEPARATOR_OPTIONS + OPTION_ALLOW_SNAPSHOTS;
+                                                String snapshots =
+                                                    XmlUtils.getTextContentOfElement( repo, "snapshots/enabled" );
+                                                String releases =
+                                                    XmlUtils.getTextContentOfElement( repo, "releases/enabled" );
+                                                element = XmlUtils.getElement( repo, "url" );
+                                                if( element != null )
+                                                {
+                                                    String url = XmlUtils.getTextContent( element );
+                                                    if( url != null )
+                                                    {
+                                                        if( repositories == null )
+                                                        {
+                                                            repositories = new HashMap<String, String>();
+                                                            order = new ArrayList<String>();
+                                                        }
+                                                        if( snapshots != null && Boolean.valueOf( snapshots ) )
+                                                        {
+                                                            url += SEPARATOR_OPTIONS + OPTION_ALLOW_SNAPSHOTS;
+                                                        }
+                                                        if( releases != null && !Boolean.valueOf( releases ) )
+                                                        {
+                                                            url += SEPARATOR_OPTIONS + OPTION_DISALLOW_RELEASES;
+                                                        }
+                                                        repositories.put( id, url );
+                                                        order.add( id );
+                                                    }
+                                                }
                                             }
-                                            if( releases != null && !Boolean.valueOf( releases ) )
-                                            {
-                                                url += SEPARATOR_OPTIONS + OPTION_DISALLOW_RELEASES;
-                                            }
-                                            repositories.put( id, url );
-                                            order.add( id );
                                         }
                                     }
+                                }
+                                else
+                                {
+                                    LOGGER.debug( "Profile " + "[" + profileId + "] is inactive (ignored)." );
                                 }
                             }
                         }
                     }
-                }
-                // then look for user / passwords but only if we have repositories
-                if( repositories != null )
-                {
-                    List<Element> servers = XmlUtils.getElements( m_document, SERVER_TAG );
-                    if( servers != null )
+
+                    // then look for user / passwords but only if we have repositories
+                    if( repositories != null )
                     {
-                        for( Element server : servers )
+                        List<Element> servers = XmlUtils.getElements( m_document, SERVER_TAG );
+                        if( servers != null )
                         {
-                            Element element = XmlUtils.getElement( server, "id" );
-                            if( element != null )
+                            for( Element server : servers )
                             {
-                                String id = XmlUtils.getTextContent( element );
-                                // if we do not find a corresponding repository don't go furter
-                                String repository = repositories.get( id );
-                                if( repository != null && repository.contains( "://" ) )
+                                Element element = XmlUtils.getElement( server, "id" );
+                                if( element != null )
                                 {
-                                    element = XmlUtils.getElement( server, "username" );
-                                    if( element != null )
+                                    String id = XmlUtils.getTextContent( element );
+                                    // if we do not find a corresponding repository don't go furter
+                                    String repository = repositories.get( id );
+                                    if( repository != null && repository.contains( "://" ) )
                                     {
-                                        String username = XmlUtils.getTextContent( element );
-                                        // if there is no username stop the search
-                                        if( username != null )
+                                        element = XmlUtils.getElement( server, "username" );
+                                        if( element != null )
                                         {
-                                            element = XmlUtils.getElement( server, "password" );
-                                            if( element != null )
+                                            String username = XmlUtils.getTextContent( element );
+                                            // if there is no username stop the search
+                                            if( username != null )
                                             {
-                                                String password = XmlUtils.getTextContent( element );
-                                                if( password != null )
+                                                element = XmlUtils.getElement( server, "password" );
+                                                if( element != null )
                                                 {
-                                                    username = username + ":" + password;
+                                                    String password = XmlUtils.getTextContent( element );
+                                                    if( password != null )
+                                                    {
+                                                        username = username + ":" + password;
+                                                    }
                                                 }
+                                                repositories.put( id,
+                                                                  repository.replaceFirst( "://", "://" + username + "@"
+                                                                  )
+                                                );
                                             }
-                                            repositories.put( id,
-                                                              repository.replaceFirst( "://", "://" + username + "@" )
-                                            );
                                         }
                                     }
                                 }
@@ -264,18 +308,21 @@ public class SettingsImpl
                     }
                     // build the list of repositories
                     final StringBuilder builder = new StringBuilder();
-                    for( String repositoryId : order )
+                    if( order != null )
                     {
-                        if( builder.length() > 0 )
+                        for( String repositoryId : order )
                         {
-                            builder.append( "," );
+                            if( builder.length() > 0 )
+                            {
+                                builder.append( "," );
+                            }
+                            builder.append( repositories.get( repositoryId ) );
                         }
-                        builder.append( repositories.get( repositoryId ) );
                     }
                     m_repositories = builder.toString();
                 }
             }
-            if( m_repositories == null )
+            if( m_repositories == null || m_repositories.length() == 0 )
             {
                 m_repositories = DEFAULT_REPOSITORIES;
             }
@@ -287,9 +334,25 @@ public class SettingsImpl
         return m_repositories;
     }
 
+    private Set<String> getActiveProfiles()
+    {
+        Set<String> ret = new HashSet<String>();
+        List<Element> activeProfiles = XmlUtils.getElements( m_document, ACTIVE_PROFILES_TAG );
+        if( activeProfiles != null )
+        {
+            for( Element active : activeProfiles )
+            {
+                ret.add( XmlUtils.getTextContent( active ) );
+            }
+        }
+
+        return ret;
+    }
+
     /**
      * Reads the settings.xml file. All exceptions raised during acces or parsing are rethrown as RuntimeException.
      */
+
     private void readSettings()
     {
         if( m_document == null && m_settingsURL != null )
