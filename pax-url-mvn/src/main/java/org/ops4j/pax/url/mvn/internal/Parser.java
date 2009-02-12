@@ -137,7 +137,7 @@ public class Parser
         {
             int pos = path.lastIndexOf( REPOSITORY_SEPARATOR );
             parseArtifactPart( path.substring( pos + 1 ) );
-            m_repositoryURL = new RepositoryURL( path.substring( 0, pos ) );
+            m_repositoryURL = new RepositoryURL( path.substring( 0, pos ) + "@snapshots" );
         }
         else
         {

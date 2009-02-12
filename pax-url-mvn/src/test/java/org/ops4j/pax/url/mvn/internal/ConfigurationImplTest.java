@@ -180,6 +180,57 @@ public class ConfigurationImplTest
     }
 
     @Test
+    public void getRepositoriesWithAtSnapshotsAndAtNoReleases() 
+    	throws MalformedURLException
+    {    	
+        PropertyResolver propertyResolver = createMock( PropertyResolver.class );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.repositories" ) ).andReturn(
+            "http:repository1@snapshots@noreleases"
+        );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null );
+        replay( propertyResolver );
+        Configuration config = new ConfigurationImpl( propertyResolver );
+        List<RepositoryURL> repositories = config.getRepositories();
+        assertTrue( "Repository as snapshot enabled:", repositories.get( 0 ).isSnapshotsEnabled() );
+        assertFalse( "Repository as release enabled:", repositories.get( 0 ).isReleasesEnabled() );
+        verify( propertyResolver );
+    }    
+    
+    @Test
+    public void getRepositoriesWithAtSnapshots() 
+    	throws MalformedURLException
+    {
+        PropertyResolver propertyResolver = createMock( PropertyResolver.class );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.repositories" ) ).andReturn(
+            "http:repository1@snapshots"
+        );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null );
+        replay( propertyResolver );
+        Configuration config = new ConfigurationImpl( propertyResolver );
+        List<RepositoryURL> repositories = config.getRepositories();
+        assertTrue( "Repository as snapshot enabled:", repositories.get( 0 ).isSnapshotsEnabled() );
+        assertTrue( "Repository as release enabled:", repositories.get( 0 ).isReleasesEnabled() );
+        verify( propertyResolver );
+    }
+
+    @Test
+    public void getRepositoriesWithAtNoReleases()
+    	throws MalformedURLException
+    {
+        PropertyResolver propertyResolver = createMock( PropertyResolver.class );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.repositories" ) ).andReturn(
+            "http:repository1@noreleases"
+        );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null );
+        replay( propertyResolver );
+        Configuration config = new ConfigurationImpl( propertyResolver );
+        List<RepositoryURL> repositories = config.getRepositories();
+        assertFalse( "Repository as snapshot not enabled:", repositories.get( 0 ).isSnapshotsEnabled() );
+        assertFalse( "Repository as release not enabled:", repositories.get( 0 ).isReleasesEnabled() );
+        verify( propertyResolver );
+    }        
+    
+    @Test
     public void getRepositoriesWithMoreRepositories()
         throws MalformedURLException
     {

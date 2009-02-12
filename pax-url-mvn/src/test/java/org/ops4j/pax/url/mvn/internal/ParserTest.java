@@ -75,6 +75,16 @@ public class ParserTest
     }
 
     @Test
+    public void behaviorSnapshotEnbled()
+        throws MalformedURLException
+    {
+        Parser parser;
+        parser = new Parser( "http://repository!group/artifact" );
+        assertTrue(parser.getRepositoryURL().isSnapshotsEnabled());
+        assertTrue(parser.getRepositoryURL().isReleasesEnabled());
+    }
+    
+    @Test
     public void urlWithRepositoryAndGroupArtifact()
         throws MalformedURLException
     {
