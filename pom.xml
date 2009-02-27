@@ -27,8 +27,8 @@
   </issueManagement>
 
   <scm>
-    <connection>scm:svn:https://scm.ops4j.org/repos/ops4j/qa/pax/url-0.4.0</connection>
-    <developerConnection>scm:svn:https://scm.ops4j.org/repos/ops4j/qa/pax/url-0.4.0</developerConnection>
+    <connection>scm:svn:https://scm.ops4j.org/repos/ops4j/projects/pax/url</connection>
+    <developerConnection>scm:svn:https://scm.ops4j.org/repos/ops4j/projects/pax/url</developerConnection>
   </scm>
 
   <modules>
