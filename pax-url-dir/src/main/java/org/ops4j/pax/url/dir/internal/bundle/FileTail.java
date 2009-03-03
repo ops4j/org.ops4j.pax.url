@@ -31,8 +31,9 @@ import org.ops4j.lang.NullArgumentException;
  * @since May 30, 2008
  */
 public class FileTail
-    
+
 {
+
     public static final Log logger = LogFactory.getLog( FileTail.class );
 
     private File m_topLevelDir;
@@ -66,6 +67,7 @@ public class FileTail
                 "topLevelDir " + m_topLevelDir.getAbsolutePath() + " is not a readable folder"
             );
         }
+        logger.debug( "Top level dir " + m_topLevelDir + " has been verified." );
     }
 
     private void findParentOfTail()
@@ -84,6 +86,10 @@ public class FileTail
                 throw new IllegalArgumentException(
                     "topLevelDir " + m_topLevelDir.getAbsolutePath() + "  does not contain a tail " + m_tail
                 );
+            }
+            else
+            {
+                logger.debug( "Parent of tail is: " + m_parentOfTail.getAbsolutePath() );
             }
         }
     }
@@ -104,7 +110,7 @@ public class FileTail
     protected File findParentOfTail( File folder )
         throws IOException
     {
-
+        logger.debug( "findParentOfTail " + folder.getAbsolutePath() );
         for( File f : folder.listFiles() )
         {
             if( !f.isHidden() && f.isDirectory() )
