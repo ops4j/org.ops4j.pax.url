@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 import org.ops4j.lang.NullArgumentException;
 
 /**
+ * Current format (as of paxurl 0.3.3)
  * Expects a url like dir:/Users/foo/myroot
  *
  * New format suggestion:
@@ -36,7 +37,7 @@ import org.ops4j.lang.NullArgumentException;
  *
  * If you want to just include certain files:
  * (give them a filename pattern)
- * dir:/Users/tonit/foo;org/ops4j/pax/Paxer.class;.*class&/Users/tonit/foo;org/ops4j/pax/PaxerTest.class$props=foo&other=bar
+ * dir:tail;/Users/tonit/foo;org/ops4j/pax/Paxer.class;.*class&/Users/tonit/foo;org/ops4j/pax/PaxerTest.class$props=foo&other=bar
  *
  * If you know exact folders, this is the version without tail:
  * dir:/Users/tonit/foo/classes&/Users/tonit/foo/test-classes$props=foo&other=bar
