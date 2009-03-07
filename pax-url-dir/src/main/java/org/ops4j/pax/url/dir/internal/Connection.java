@@ -24,7 +24,7 @@ import java.net.URLConnection;
 import java.util.Properties;
 import org.ops4j.lang.NullArgumentException;
 import org.ops4j.pax.url.dir.internal.bundle.BundleBuilder;
-import org.ops4j.pax.url.dir.internal.bundle.FileTail;
+import org.ops4j.pax.url.dir.workspace.FileTailImpl;
 import org.ops4j.pax.url.dir.internal.bundle.ResourceWriter;
 
 /**
@@ -80,7 +80,7 @@ public class Connection extends URLConnection
 
         return new BundleBuilder( p,
                                   new ResourceWriter(
-                                      new FileTail( m_parser.getDirectory(), m_parser.getTailExpr() )
+                                      new FileTailImpl( m_parser.getDirectory(), m_parser.getTailExpr() )
                                           .getParentOfTail()
                                   )
         )

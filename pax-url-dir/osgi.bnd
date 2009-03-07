@@ -9,6 +9,7 @@ Bundle-SymbolicName:\
   
 Import-Package:\
   ${bundle.namespace}; version="${pom.version}",\
+  ${bundle.namespace}.workspace; version="${pom.version}",\
   org.apache.commons.logging; version="1.0.4"; resolution:=optional,\
   org.osgi.framework; version="[1.0.0,2.0.0)",\
   org.osgi.service.cm; version="[1.0.0,2.0.0)",\
@@ -17,7 +18,9 @@ Import-Package:\
   javax.xml.transform.stream
   
 Export-Package:\
-  ${bundle.namespace}; version="${pom.version}"
+  ${bundle.namespace}; version="${pom.version}",\
+  ${bundle.namespace}.workspace; version="${pom.version}"
+
 
 Private-Package:\
   ${bundle.namespace}.internal.*

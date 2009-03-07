@@ -92,8 +92,7 @@ public class Parser
         NullArgumentException.validateNotNull( url, "url should be provided" );
         try
         {
-            URL u = new URL( url );
-            URL originalURL = u; //new URL( u.getPath() );
+            URL originalURL = new URL( url );
             Matcher matcher = SYNTAX_JAR_INSTR.matcher( originalURL.getPath() );
             if( matcher.matches() )
             {
