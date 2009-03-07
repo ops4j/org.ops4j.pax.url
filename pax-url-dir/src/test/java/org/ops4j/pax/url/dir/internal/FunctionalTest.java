@@ -14,7 +14,8 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import org.ops4j.io.StreamUtils;
 import org.ops4j.pax.url.dir.internal.bundle.BundleBuilder;
-import org.ops4j.pax.url.dir.internal.bundle.FileTail;
+import org.ops4j.pax.url.dir.workspace.FileTailImpl;
+import org.ops4j.pax.url.dir.workspace.FileTail;
 import org.ops4j.pax.url.dir.internal.bundle.ResourceWriter;
 
 /**
@@ -30,7 +31,7 @@ public class FunctionalTest
     {
         // construct a locator
         String clazz = this.getClass().getName().replaceAll( "\\.", "/" ) + ".class";
-        FileTail loc = new FileTail( new File( "." ), clazz );
+        FileTail loc = new FileTailImpl( new File( "." ), clazz );
 
         // construct the builder
         Properties p = new Properties();
@@ -42,7 +43,7 @@ public class FunctionalTest
         assertNotNull( in );
 
         // stream is filled lazily, so a complete read is important to verify
-        dumpToConsole( in, 14 );
+        dumpToConsole( in, 16 );
     }
 
     public static void dumpToConsole( InputStream in, int expecedEntries )

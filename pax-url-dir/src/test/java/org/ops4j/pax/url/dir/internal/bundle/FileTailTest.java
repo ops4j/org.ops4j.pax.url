@@ -2,12 +2,10 @@ package org.ops4j.pax.url.dir.internal.bundle;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.jar.JarOutputStream;
-import java.util.zip.ZipEntry;
 import static junit.framework.Assert.*;
 import org.junit.Test;
-import org.ops4j.pax.url.dir.internal.NullOutputStream;
-import org.ops4j.pax.url.dir.internal.bundle.FileTail;
+import org.ops4j.pax.url.dir.workspace.FileTailImpl;
+import org.ops4j.pax.url.dir.workspace.FileTail;
 
 /**
  * @author Toni Menzel (tonit)
@@ -20,7 +18,7 @@ public class FileTailTest
     public void simpleFailingAtConstruct()
         throws IOException
     {
-        FileTail loc = new FileTail( null, "" );
+        FileTail loc = new FileTailImpl( null, "" );
     }
 
     @Test
@@ -28,7 +26,7 @@ public class FileTailTest
         throws IOException
     {
         String clazz = this.getClass().getName().replaceAll( "\\.", "/" ) + ".class";
-        FileTail loc = new FileTail( new File( "." ), clazz );
+        FileTail loc = new FileTailImpl( new File( "." ), clazz );
       
         
         assertEquals( "test-classes", loc.getParentOfTail().getName() );

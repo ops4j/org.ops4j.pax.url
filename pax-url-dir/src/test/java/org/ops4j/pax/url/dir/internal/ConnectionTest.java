@@ -23,18 +23,7 @@ public class ConnectionTest
 
         Connection con = new Connection( url, config );
         InputStream inp = con.getInputStream();
-        FunctionalTest.dumpToConsole( inp, 14 );
+        FunctionalTest.dumpToConsole( inp, 16 );
     }
 
-    // @Test
-    public void simpleWithoutAnchor()
-        throws IOException
-    {
-        URL url = new URL( "http:pax-url-dir/target/test-classes" );
-        Configuration config = createMock( Configuration.class );
-
-        Connection con = new Connection( url, config );
-        InputStream inp = con.getInputStream();
-        FunctionalTest.dumpToConsole( inp, 14 );
-    }
 }

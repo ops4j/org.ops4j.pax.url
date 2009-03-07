@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.url.dir.internal.bundle;
+package org.ops4j.pax.url.dir.workspace;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,11 +30,11 @@ import org.ops4j.lang.NullArgumentException;
  * @author Toni Menzel (tonit)
  * @since May 30, 2008
  */
-public class FileTail
+public class FileTailImpl implements FileTail
 
 {
 
-    public static final Log logger = LogFactory.getLog( FileTail.class );
+    public static final Log logger = LogFactory.getLog( FileTailImpl.class );
 
     private File m_topLevelDir;
 
@@ -47,7 +47,7 @@ public class FileTail
      *
      * @throws java.io.IOException if a problem while crawling occurs.
      */
-    public FileTail( final File topLevelDir, final String tailExpr )
+    public FileTailImpl( final File topLevelDir, final String tailExpr )
         throws IOException
     {
         NullArgumentException.validateNotNull( topLevelDir, "topLevelDir" );
@@ -146,7 +146,7 @@ public class FileTail
     @Override
     public String toString()
     {
-        return "FileTail{" +
+        return "FileTailImpl{" +
                "m_topLevelDir=" + m_topLevelDir +
                ", m_tail=" + m_tail +
                '}';
