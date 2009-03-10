@@ -37,7 +37,7 @@ public class Parser
     /**
      * Parsed URL.
      */
-    private URL m_referencedUrl;
+    private URL m_url;
 
     /**
      * Creates a new protocol parser.
@@ -51,13 +51,13 @@ public class Parser
     {
         if( url == null )
         {
-            throw new MalformedURLException( "Referenced url cannot be null. Syntax " + SYNTAX );
+            throw new MalformedURLException( "Url cannot be null. Syntax " + SYNTAX );
         }
         if( "".equals( url.trim() ) || "/".equals( url.trim() ) )
         {
-            throw new MalformedURLException( "Referenced cannot be empty. Syntax " + SYNTAX );
+            throw new MalformedURLException( "Url cannot be empty. Syntax " + SYNTAX );
         }
-        m_referencedUrl = new URL( url );
+        m_url = new URL( url );
     }
 
     /**
@@ -65,9 +65,9 @@ public class Parser
      *
      * @return parsed url
      */
-    public URL getReferencedUrl()
+    public URL getUrl()
     {
-        return m_referencedUrl;
+        return m_url;
     }
 
 }

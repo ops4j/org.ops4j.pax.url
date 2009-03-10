@@ -17,9 +17,13 @@
  */
 package org.ops4j.pax.url.link.internal;
 
-import java.net.MalformedURLException;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import org.osgi.framework.BundleContext;
 import org.ops4j.pax.url.commons.handler.ConnectionFactory;
 import org.ops4j.pax.url.commons.handler.HandlerActivator;
@@ -33,7 +37,7 @@ import org.ops4j.util.property.PropertyResolver;
  * @since 0.5.0, March 10, 2009
  */
 public final class Activator
-    extends HandlerActivator<Configuration>
+    extends HandlerActivator<Void>
 {
 
     /**
@@ -44,7 +48,7 @@ public final class Activator
         super(
             new String[]{ ServiceConstants.PROTOCOL },
             ServiceConstants.PID,
-            new ConnectionFactory<Configuration>()
+            new ConnectionFactory<Void>()
             {
 
                 /**
@@ -54,22 +58,67 @@ public final class Activator
                  */
                 public URLConnection createConection( final BundleContext bundleContext,
                                                       final URL url,
-                                                      final Configuration config )
-                    throws MalformedURLException
+                                                      final Void notUsed )
+                    throws IOException
                 {
-                    return new Connection( url, config );
+                    final String[] content = readLinkFile( new Parser( url.getPath() ).getUrl() );
+                    for( final String line : content )
+                    {
+                        if( line == null
+                            || line.trim().length() == 0
+                            || line.trim().startsWith( "#" ) )
+                        {
+                            continue;
+                        }
+                        return new URL( line ).openConnection();
+                    }
+                    throw new IOException( "Linked file could not be parsed into an URL" );
                 }
 
                 /**
                  * @see ConnectionFactory#createConfiguration(PropertyResolver)
                  */
-                public Configuration createConfiguration( final PropertyResolver propertyResolver )
+                public Void createConfiguration( final PropertyResolver propertyResolver )
                 {
-                    return new ConfigurationImpl( propertyResolver );
+                    return null;
                 }
 
             }
         );
+    }
+
+    /**
+     * Read a file and return the list of lines in an array of strings.
+     *
+     * @param listFile the url to read from
+     *
+     * @return the lines
+     *
+     * @throws java.io.IOException if a read error occurs
+     */
+    private static String[] readLinkFile( final URL listFile )
+        throws IOException
+    {
+        ArrayList<String> list = new ArrayList<String>();
+        InputStream stream = listFile.openStream();
+        try
+        {
+            InputStreamReader isr = new InputStreamReader( stream, "UTF-8" );
+            BufferedReader reader = new BufferedReader( isr );
+            String line = reader.readLine();
+            while( line != null )
+            {
+                list.add( line );
+                line = reader.readLine();
+            }
+            String[] items = new String[list.size()];
+            list.toArray( items );
+            return items;
+        }
+        finally
+        {
+            stream.close();
+        }
     }
 
 }
