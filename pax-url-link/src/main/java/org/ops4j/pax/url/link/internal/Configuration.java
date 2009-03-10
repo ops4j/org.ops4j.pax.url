@@ -15,28 +15,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.url.link;
+package org.ops4j.pax.url.link.internal;
 
 /**
- * An enumeration of constants related to "link" url handler.
+ * "link" protocol configuration.
  *
  * @author Alin Dreghiciu
  * @since 0.5.0, March 10, 2009
  */
-public interface ServiceConstants
+public interface Configuration
 {
 
     /**
-     * Service PID used for configuration.
+     * Returns true if the certificate should be checked on SSL connection, false otherwise.
+     *
+     * @return true if the certificate should be checked
      */
-    static final String PID = "org.ops4j.pax.url.link";
-    /**
-     * The protocol name.
-     */
-    public static final String PROTOCOL = "link";
-    /**
-     * Certificate check configuration property name.
-     */
-    static final String PROPERTY_CERTIFICATE_CHECK = PID + ".certificateCheck";    
+    Boolean getCertificateCheck();
 
 }

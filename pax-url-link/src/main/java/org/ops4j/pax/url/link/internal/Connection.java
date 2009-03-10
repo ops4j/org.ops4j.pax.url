@@ -43,20 +43,28 @@ public class Connection
      * URL path parser.
      */
     private URL m_referencedURL;
+    /**
+     * Service configuration.
+     */
+    private final Configuration m_configuration;
 
     /**
      * Creates a new connection.
      *
      * @param url the url; cannot be null
      *
-     * @throws java.net.MalformedURLException in case of a malformed url
+     * @throws java.net.MalformedURLException - In case of a malformed url
      */
-    public Connection( final URL url )
+    public Connection( final URL url,
+                       final Configuration configuration )
         throws MalformedURLException
     {
         super( url );
         NullArgumentException.validateNotNull( url, "URL" );
+        NullArgumentException.validateNotNull( configuration, "Configuration" );
+        
         m_referencedURL = new Parser( url.getPath() ).getReferencedUrl();
+        m_configuration = configuration;
     }
 
     /**
