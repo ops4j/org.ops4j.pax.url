@@ -36,6 +36,7 @@
     <module>pax-url-classpath</module>
     <module>pax-url-commons</module>
     <module>pax-url-dir</module>
+    <module>pax-url-link</module>
     <module>pax-url-mvn</module>
     <module>pax-url-obr</module>
     <module>pax-url-war</module>

@@ -123,54 +123,9 @@
           <option name="LABEL_INDENT_SIZE" value="0" />
           <option name="LABEL_INDENT_ABSOLUTE" value="false" />
         </ADDITIONAL_INDENT_OPTIONS>
-        <ADDITIONAL_INDENT_OPTIONS fileType="groovy">
-          <option name="INDENT_SIZE" value="2" />
-          <option name="CONTINUATION_INDENT_SIZE" value="8" />
-          <option name="TAB_SIZE" value="4" />
-          <option name="USE_TAB_CHARACTER" value="false" />
-          <option name="SMART_TABS" value="false" />
-          <option name="LABEL_INDENT_SIZE" value="0" />
-          <option name="LABEL_INDENT_ABSOLUTE" value="false" />
-        </ADDITIONAL_INDENT_OPTIONS>
-        <ADDITIONAL_INDENT_OPTIONS fileType="gsp">
-          <option name="INDENT_SIZE" value="2" />
-          <option name="CONTINUATION_INDENT_SIZE" value="8" />
-          <option name="TAB_SIZE" value="4" />
-          <option name="USE_TAB_CHARACTER" value="false" />
-          <option name="SMART_TABS" value="false" />
-          <option name="LABEL_INDENT_SIZE" value="0" />
-          <option name="LABEL_INDENT_ABSOLUTE" value="false" />
-        </ADDITIONAL_INDENT_OPTIONS>
         <ADDITIONAL_INDENT_OPTIONS fileType="java">
           <option name="INDENT_SIZE" value="4" />
           <option name="CONTINUATION_INDENT_SIZE" value="4" />
-          <option name="TAB_SIZE" value="4" />
-          <option name="USE_TAB_CHARACTER" value="false" />
-          <option name="SMART_TABS" value="false" />
-          <option name="LABEL_INDENT_SIZE" value="0" />
-          <option name="LABEL_INDENT_ABSOLUTE" value="false" />
-        </ADDITIONAL_INDENT_OPTIONS>
-        <ADDITIONAL_INDENT_OPTIONS fileType="js">
-          <option name="INDENT_SIZE" value="4" />
-          <option name="CONTINUATION_INDENT_SIZE" value="8" />
-          <option name="TAB_SIZE" value="4" />
-          <option name="USE_TAB_CHARACTER" value="false" />
-          <option name="SMART_TABS" value="false" />
-          <option name="LABEL_INDENT_SIZE" value="0" />
-          <option name="LABEL_INDENT_ABSOLUTE" value="false" />
-        </ADDITIONAL_INDENT_OPTIONS>
-        <ADDITIONAL_INDENT_OPTIONS fileType="jsp">
-          <option name="INDENT_SIZE" value="4" />
-          <option name="CONTINUATION_INDENT_SIZE" value="8" />
-          <option name="TAB_SIZE" value="4" />
-          <option name="USE_TAB_CHARACTER" value="false" />
-          <option name="SMART_TABS" value="false" />
-          <option name="LABEL_INDENT_SIZE" value="0" />
-          <option name="LABEL_INDENT_ABSOLUTE" value="false" />
-        </ADDITIONAL_INDENT_OPTIONS>
-        <ADDITIONAL_INDENT_OPTIONS fileType="sql">
-          <option name="INDENT_SIZE" value="2" />
-          <option name="CONTINUATION_INDENT_SIZE" value="8" />
           <option name="TAB_SIZE" value="4" />
           <option name="USE_TAB_CHARACTER" value="false" />
           <option name="SMART_TABS" value="false" />
@@ -431,15 +386,13 @@
     <option name="projectName" value="url" />
   </component>
   <component name="ProjectFileVersion" converted="true" />
-  <component name="ProjectKey">
-    <option name="state" value="https://scm.ops4j.org/repos/ops4j/projects/pax/url/url.ipr" />
-  </component>
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/pax-url-bnd/pax-url-bnd.iml" filepath="$PROJECT_DIR$/pax-url-bnd/pax-url-bnd.iml" />
       <module fileurl="file://$PROJECT_DIR$/pax-url-classpath/pax-url-classpath.iml" filepath="$PROJECT_DIR$/pax-url-classpath/pax-url-classpath.iml" />
       <module fileurl="file://$PROJECT_DIR$/pax-url-commons/pax-url-commons.iml" filepath="$PROJECT_DIR$/pax-url-commons/pax-url-commons.iml" />
       <module fileurl="file://$PROJECT_DIR$/pax-url-dir/pax-url-dir.iml" filepath="$PROJECT_DIR$/pax-url-dir/pax-url-dir.iml" />
+      <module fileurl="file://$PROJECT_DIR$/pax-url-link/pax-url-link.iml" filepath="$PROJECT_DIR$/pax-url-link/pax-url-link.iml" />
       <module fileurl="file://$PROJECT_DIR$/pax-url-mvn/pax-url-mvn.iml" filepath="$PROJECT_DIR$/pax-url-mvn/pax-url-mvn.iml" />
       <module fileurl="file://$PROJECT_DIR$/pax-url-mvnlive/pax-url-mvnlive.iml" filepath="$PROJECT_DIR$/pax-url-mvnlive/pax-url-mvnlive.iml" />
       <module fileurl="file://$PROJECT_DIR$/pax-url-obr/pax-url-obr.iml" filepath="$PROJECT_DIR$/pax-url-obr/pax-url-obr.iml" />
