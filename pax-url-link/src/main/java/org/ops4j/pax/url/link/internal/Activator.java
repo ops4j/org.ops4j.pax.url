@@ -33,7 +33,7 @@ import org.ops4j.util.property.PropertyResolver;
  * @since 0.5.0, March 10, 2009
  */
 public final class Activator
-    extends HandlerActivator<Void>
+    extends HandlerActivator<Configuration>
 {
 
     /**
@@ -44,7 +44,7 @@ public final class Activator
         super(
             new String[]{ ServiceConstants.PROTOCOL },
             ServiceConstants.PID,
-            new ConnectionFactory<Void>()
+            new ConnectionFactory<Configuration>()
             {
 
                 /**
@@ -54,18 +54,18 @@ public final class Activator
                  */
                 public URLConnection createConection( final BundleContext bundleContext,
                                                       final URL url,
-                                                      final Void notUsed )
+                                                      final Configuration config )
                     throws MalformedURLException
                 {
-                    return new Connection( url );
+                    return new Connection( url, config );
                 }
 
                 /**
                  * @see ConnectionFactory#createConfiguration(PropertyResolver)
                  */
-                public Void createConfiguration( final PropertyResolver propertyResolver )
+                public Configuration createConfiguration( final PropertyResolver propertyResolver )
                 {
-                    return null;
+                    return new ConfigurationImpl( propertyResolver );
                 }
 
             }
