@@ -20,6 +20,7 @@ package org.ops4j.pax.url.commons.handler;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.io.IOException;
 import org.osgi.framework.BundleContext;
 import org.ops4j.util.property.PropertyResolver;
 
@@ -41,10 +42,10 @@ public interface ConnectionFactory<T>
      *
      * @return URLConnection protocol specific connection
      *
-     * @throws MalformedURLException if a malformed url is encountered. Protocol specific.
+     * @throws IOException if a malformed url is encountered. Protocol specific.
      */
     URLConnection createConection( BundleContext bundleContext, URL url, T config )
-        throws MalformedURLException;
+        throws IOException;
 
     /**
      * Creates a handler specific configuration.

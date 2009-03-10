@@ -33,10 +33,6 @@ public interface ServiceConstants
     /**
      * The protocol name.
      */
-    public static final String PROTOCOL = "link";
-    /**
-     * Certificate check configuration property name.
-     */
-    static final String PROPERTY_CERTIFICATE_CHECK = PID + ".certificateCheck";    
+    public static final String PROTOCOL = "link";  
 
 }
