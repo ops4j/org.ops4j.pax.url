@@ -32,13 +32,15 @@ public class HandlerTest
 
     /**
      * Protocol handler can be used.
+     *
+     * @throws java.io.IOException - Unexpected
      */
     @Test
     public void use()
         throws IOException
     {
         System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
-        new URL( "mvn:org.ops4j.base/ops4j-base-lang/0.5.0" ).openStream().read();
+        new URL( "mvn:group/artifact/0.1.0" );
     }
 
 }
