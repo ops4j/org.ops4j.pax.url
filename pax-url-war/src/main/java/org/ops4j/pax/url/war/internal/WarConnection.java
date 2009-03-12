@@ -29,14 +29,14 @@ import org.ops4j.pax.url.war.ServiceConstants;
  * @author Alin Dreghiciu
  * @since 0.1.0, January 14, 2008
  */
-class WarConnection
+public class WarConnection
     extends AbstractConnection
 {
 
     /**
      * @see AbstractConnection#AbstractConnection(URL, Configuration)
      */
-    WarConnection( final URL url,
+    public WarConnection( final URL url,
                    final Configuration config )
         throws MalformedURLException
     {
