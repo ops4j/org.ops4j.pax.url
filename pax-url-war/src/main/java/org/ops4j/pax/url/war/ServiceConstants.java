@@ -31,13 +31,17 @@ public interface ServiceConstants
      */
     static final String PID = "org.ops4j.pax.url.war";
     /**
-     * The war protocol name.
+     * The "war" protocol name.
      */
     public static final String PROTOCOL_WAR = "war";
     /**
-     * The warfile protocol name.
+     * The "war-i" protocol name.
      */
     public static final String PROTOCOL_WAR_INSTRUCTIONS = "war-i";
+    /**
+     * The "warref:" protocol name.
+     */
+    public static final String PROTOCOL_WAR_REFERENCE = "warref";
     /**
      * Certificate check configuration property name.
      */

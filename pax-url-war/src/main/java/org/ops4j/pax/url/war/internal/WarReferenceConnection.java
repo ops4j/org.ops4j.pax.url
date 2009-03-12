@@ -30,14 +30,14 @@ import org.ops4j.net.URLUtils;
  * @author Alin Dreghiciu
  * @since 0.1.0, January 14, 2008
  */
-class WarInstructionsConnection
+public class WarReferenceConnection
     extends AbstractConnection
 {
 
     /**
      * @see AbstractConnection#AbstractConnection(URL, Configuration)
      */
-    WarInstructionsConnection( final URL url,
+    public WarReferenceConnection( final URL url,
                                final Configuration config )
         throws MalformedURLException
     {
