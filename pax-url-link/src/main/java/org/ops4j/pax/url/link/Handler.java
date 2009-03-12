@@ -21,9 +21,10 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
+import org.ops4j.pax.url.link.internal.Activator;
 
 /**
- * TODO Add JavaDoc.
+ * {@link URLStreamHandler} implementation for "link:" protocol.
  *
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.5.0, March 12, 2009
@@ -39,7 +40,7 @@ public class Handler
     protected URLConnection openConnection( final URL url )
         throws IOException
     {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return Activator.createConnection( url );
     }
-    
+
 }
