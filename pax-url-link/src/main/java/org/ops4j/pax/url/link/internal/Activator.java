@@ -61,18 +61,7 @@ public final class Activator
                                                       final Void notUsed )
                     throws IOException
                 {
-                    final String[] content = readLinkFile( new Parser( url.getPath() ).getUrl() );
-                    for( final String line : content )
-                    {
-                        if( line == null
-                            || line.trim().length() == 0
-                            || line.trim().startsWith( "#" ) )
-                        {
-                            continue;
-                        }
-                        return new URL( line ).openConnection();
-                    }
-                    throw new IOException( "Linked file could not be parsed into an URL" );
+                    return createConnection( url );
                 }
 
                 /**
@@ -85,6 +74,32 @@ public final class Activator
 
             }
         );
+    }
+
+    /**
+     * Creates a "link" url connection.
+     *
+     * @param url link file url
+     *
+     * @throws java.io.IOException - If occured during reading the link file
+     *                             - If linked url could not be found in the link file
+     *                             - If linked url cannot be accessed
+     */
+    public static URLConnection createConnection( final URL url )
+        throws IOException
+    {
+        final String[] content = readLinkFile( new Parser( url.getPath() ).getUrl() );
+        for( final String line : content )
+        {
+            if( line == null
+                || line.trim().length() == 0
+                || line.trim().startsWith( "#" ) )
+            {
+                continue;
+            }
+            return new URL( line ).openConnection();
+        }
+        throw new IOException( "Linked file could not be parsed into an URL" );
     }
 
     /**
