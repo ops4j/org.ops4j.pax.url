@@ -14,9 +14,9 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import org.ops4j.io.StreamUtils;
 import org.ops4j.pax.url.dir.internal.bundle.BundleBuilder;
-import org.ops4j.pax.url.dir.workspace.FileTailImpl;
-import org.ops4j.pax.url.dir.workspace.FileTail;
 import org.ops4j.pax.url.dir.internal.bundle.ResourceWriter;
+import org.ops4j.pax.url.dir.workspace.FileTail;
+import org.ops4j.pax.url.dir.workspace.FileTailImpl;
 
 /**
  * @author Toni Menzel (tonit)
@@ -34,9 +34,7 @@ public class FunctionalTest
         FileTail loc = new FileTailImpl( new File( "." ), clazz );
 
         // construct the builder
-        Properties p = new Properties();
-        p.put( "Dynamic-Import", "*" );
-        BundleBuilder b = new BundleBuilder( p, new ResourceWriter( loc.getParentOfTail() ) );
+        BundleBuilder b = new BundleBuilder( new Properties(), new ResourceWriter( loc.getParentOfTail() ) );
 
         // execute
         InputStream in = b.build();
