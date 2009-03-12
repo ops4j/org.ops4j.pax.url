@@ -21,11 +21,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Properties;
 import org.ops4j.lang.NullArgumentException;
 import org.ops4j.pax.url.dir.internal.bundle.BundleBuilder;
-import org.ops4j.pax.url.dir.workspace.FileTailImpl;
 import org.ops4j.pax.url.dir.internal.bundle.ResourceWriter;
+import org.ops4j.pax.url.dir.workspace.FileTailImpl;
 
 /**
  * Accepts URLs like
@@ -75,16 +74,13 @@ public class Connection extends URLConnection
     public InputStream getInputStream()
         throws IOException
     {
-        Properties p = m_parser.getOptions();
-        p.put( "Dynamic-Import", "*" );
-
-        return new BundleBuilder( p,
-                                  new ResourceWriter(
-                                      new FileTailImpl( m_parser.getDirectory(), m_parser.getTailExpr() )
-                                          .getParentOfTail()
-                                  )
-        )
-            .build();
+        return new BundleBuilder(
+            m_parser.getOptions(),
+            new ResourceWriter(
+                new FileTailImpl( m_parser.getDirectory(), m_parser.getTailExpr() )
+                    .getParentOfTail()
+            )
+        ).build();
 
 
     }
