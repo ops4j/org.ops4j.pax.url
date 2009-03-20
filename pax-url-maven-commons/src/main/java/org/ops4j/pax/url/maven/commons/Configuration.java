@@ -15,12 +15,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.url.mvn.internal;
+package org.ops4j.pax.url.maven.commons;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Handler configuration.
@@ -49,7 +48,6 @@ public interface Configuration
      * Returns a list of default repositories to be searched before any other repositories.
      *
      * @return a list of default repositories.  List can be null or empty if there are not default repositories to be searched.
-     * @throws MalformedURLException
      */
     List<RepositoryURL> getDefaultRepositories()
         throws MalformedURLException;

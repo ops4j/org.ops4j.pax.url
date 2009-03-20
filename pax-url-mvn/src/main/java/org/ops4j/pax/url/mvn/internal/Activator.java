@@ -23,6 +23,9 @@ import java.net.URLConnection;
 import org.osgi.framework.BundleContext;
 import org.ops4j.pax.url.commons.handler.ConnectionFactory;
 import org.ops4j.pax.url.commons.handler.HandlerActivator;
+import org.ops4j.pax.url.maven.commons.Configuration;
+import org.ops4j.pax.url.maven.commons.ConfigurationImpl;
+import org.ops4j.pax.url.maven.commons.SettingsImpl;
 import org.ops4j.pax.url.mvn.ServiceConstants;
 import org.ops4j.util.property.PropertyResolver;
 
@@ -64,7 +67,7 @@ public final class Activator
                  */
                 public Configuration createConfiguration( final PropertyResolver propertyResolver )
                 {
-                    final ConfigurationImpl config = new ConfigurationImpl( propertyResolver );
+                    final ConfigurationImpl config = new ConfigurationImpl( ServiceConstants.PID, propertyResolver );
                     config.setSettings( new SettingsImpl( config.getSettingsFileUrl() ) );
                     return config;
                 }

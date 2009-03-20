@@ -15,13 +15,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.url.mvn.internal;
+package org.ops4j.pax.url.maven.commons;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.ops4j.lang.NullArgumentException;
-import org.ops4j.pax.url.mvn.ServiceConstants;
-import static org.ops4j.pax.url.mvn.ServiceConstants.*;
 
 /**
  * An URL of Maven repository that knows if it contains SNAPSHOT versions and/or releases.
@@ -29,7 +27,7 @@ import static org.ops4j.pax.url.mvn.ServiceConstants.*;
  * @author Alin Dreghiciu
  * @since 0.2.1, February 07, 2008
  */
-class RepositoryURL
+public class RepositoryURL
 {
 
     /**
@@ -54,22 +52,22 @@ class RepositoryURL
      * @throws MalformedURLException if spec contains a malformed maven repository url
      * @throws NullArgumentException if repository spec is null or empty
      */
-    RepositoryURL( final String repositorySpec )
+    public RepositoryURL( final String repositorySpec )
         throws MalformedURLException
     {
         NullArgumentException.validateNotEmpty( repositorySpec, true, "Repository spec" );
 
-        final String[] segments = repositorySpec.split( SEPARATOR_OPTIONS );
+        final String[] segments = repositorySpec.split( Constants.SEPARATOR_OPTIONS );
         final StringBuilder urlBuilder = new StringBuilder();
         boolean snapshotEnabled = false;
         boolean releasesEnabled = true;
         for( int i = 0; i < segments.length; i++ )
         {
-            if( segments[ i ].trim().equalsIgnoreCase( OPTION_ALLOW_SNAPSHOTS ) )
+            if( segments[ i ].trim().equalsIgnoreCase( Constants.OPTION_ALLOW_SNAPSHOTS ) )
             {
                 snapshotEnabled = true;
             }
-            else if( segments[ i ].trim().equalsIgnoreCase( OPTION_DISALLOW_RELEASES ) )
+            else if( segments[ i ].trim().equalsIgnoreCase( Constants.OPTION_DISALLOW_RELEASES ) )
             {
                 releasesEnabled = false;
             }
@@ -77,7 +75,7 @@ class RepositoryURL
             {
                 if( i > 0 )
                 {
-                    urlBuilder.append( SEPARATOR_OPTIONS );
+                    urlBuilder.append( Constants.SEPARATOR_OPTIONS );
                 }
                 urlBuilder.append( segments[ i ] );
             }

@@ -35,6 +35,8 @@ import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 import org.ops4j.lang.NullArgumentException;
 import org.ops4j.net.URLUtils;
+import org.ops4j.pax.url.maven.commons.Configuration;
+import org.ops4j.pax.url.maven.commons.RepositoryURL;
 import org.ops4j.util.xml.XmlUtils;
 
 /**
@@ -214,21 +216,19 @@ public class Connection
         {
             repositories.add( 0, m_parser.getRepositoryURL() );
         }
-        return doCollectPossibleDownloads(repositories);
+        return doCollectPossibleDownloads( repositories );
     }
 
     /**
      * Search the default repositories for possible artifacts to download.
-     * @return
-     * @throws MalformedURLException
      */
     private Set<DownloadableArtifact> collectDefaultPossibleDownloads()
         throws MalformedURLException
     {
-        return doCollectPossibleDownloads(m_configuration.getDefaultRepositories());
+        return doCollectPossibleDownloads( m_configuration.getDefaultRepositories() );
     }
 
-    private Set<DownloadableArtifact> doCollectPossibleDownloads(final List<RepositoryURL> repositories)
+    private Set<DownloadableArtifact> doCollectPossibleDownloads( final List<RepositoryURL> repositories )
         throws MalformedURLException
     {
         final Set<DownloadableArtifact> downloadables = new TreeSet<DownloadableArtifact>( new DownloadComparator() );

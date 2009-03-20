@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.url.mvn.internal;
+package org.ops4j.pax.url.maven.commons;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,17 +24,16 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.HashSet;
 import javax.xml.parsers.ParserConfigurationException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import static org.ops4j.pax.url.mvn.ServiceConstants.*;
 import org.ops4j.util.xml.XmlUtils;
 
 /**
@@ -241,11 +240,13 @@ public class SettingsImpl
                                                         }
                                                         if( snapshots != null && Boolean.valueOf( snapshots ) )
                                                         {
-                                                            url += SEPARATOR_OPTIONS + OPTION_ALLOW_SNAPSHOTS;
+                                                            url += Constants.SEPARATOR_OPTIONS
+                                                                   + Constants.OPTION_ALLOW_SNAPSHOTS;
                                                         }
                                                         if( releases != null && !Boolean.valueOf( releases ) )
                                                         {
-                                                            url += SEPARATOR_OPTIONS + OPTION_DISALLOW_RELEASES;
+                                                            url += Constants.SEPARATOR_OPTIONS
+                                                                   + Constants.OPTION_DISALLOW_RELEASES;
                                                         }
                                                         repositories.put( id, url );
                                                         order.add( id );

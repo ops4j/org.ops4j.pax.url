@@ -18,6 +18,7 @@
 package org.ops4j.pax.url.mvn.internal;
 
 import java.net.MalformedURLException;
+import org.ops4j.pax.url.maven.commons.RepositoryURL;
 
 /**
  * Parser for mvn: protocol.<br/>

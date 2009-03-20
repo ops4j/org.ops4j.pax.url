@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <relativePath>../</relativePath>
+    <relativePath>../pom.xml</relativePath>
     <groupId>org.ops4j.pax</groupId>
     <artifactId>url</artifactId>
     <version>0.5.0-SNAPSHOT</version>
@@ -76,6 +76,13 @@
     <dependency>
       <groupId>org.ops4j.pax.url</groupId>
       <artifactId>pax-url-commons</artifactId>
+      <version>0.5.0-SNAPSHOT</version>
+      <scope>compile</scope>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.ops4j.pax.url</groupId>
+      <artifactId>pax-url-maven-commons</artifactId>
       <version>0.5.0-SNAPSHOT</version>
       <scope>compile</scope>
       <optional>true</optional>

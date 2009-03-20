@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.url.mvn.internal;
+package org.ops4j.pax.url.maven.commons;
 
 import java.io.File;
 import java.net.Authenticator;
@@ -25,11 +25,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ops4j.lang.NullArgumentException;
-import org.ops4j.pax.url.mvn.ServiceConstants;
 import org.ops4j.util.property.PropertyResolver;
 import org.ops4j.util.property.PropertyStore;
 
@@ -65,6 +63,10 @@ public class ConfigurationImpl
      */
     private Settings m_settings;
     /**
+     * Configuration PID. Cannot be null or empty.
+     */
+    private final String m_pid;
+    /**
      * Property resolver. Cannot be null.
      */
     private final PropertyResolver m_propertyResolver;
@@ -72,11 +74,16 @@ public class ConfigurationImpl
     /**
      * Creates a new service configuration.
      *
+     * @param pid              configuration PID; mandatory
      * @param propertyResolver propertyResolver used to resolve properties; mandatory
      */
-    public ConfigurationImpl( final PropertyResolver propertyResolver )
+    public ConfigurationImpl( final String pid,
+                              final PropertyResolver propertyResolver )
     {
+        NullArgumentException.validateNotEmpty( pid, true, "Configuration resolver" );
         NullArgumentException.validateNotNull( propertyResolver, "Property resolver" );
+
+        m_pid = pid;
         m_propertyResolver = propertyResolver;
     }
 
@@ -95,13 +102,13 @@ public class ConfigurationImpl
      */
     public Boolean getCertificateCheck()
     {
-        if( !contains( ServiceConstants.PROPERTY_CERTIFICATE_CHECK ) )
+        if( !contains( m_pid + Constants.PROPERTY_CERTIFICATE_CHECK ) )
         {
-            return set( ServiceConstants.PROPERTY_CERTIFICATE_CHECK,
-                        Boolean.valueOf( m_propertyResolver.get( ServiceConstants.PROPERTY_CERTIFICATE_CHECK ) )
+            return set( m_pid + Constants.PROPERTY_CERTIFICATE_CHECK,
+                        Boolean.valueOf( m_propertyResolver.get( m_pid + Constants.PROPERTY_CERTIFICATE_CHECK ) )
             );
         }
-        return get( ServiceConstants.PROPERTY_CERTIFICATE_CHECK );
+        return get( m_pid + Constants.PROPERTY_CERTIFICATE_CHECK );
     }
 
     /**
@@ -112,14 +119,14 @@ public class ConfigurationImpl
      */
     public URL getSettingsFileUrl()
     {
-        if( !contains( ServiceConstants.PROPERTY_SETTINGS_FILE ) )
+        if( !contains( m_pid + Constants.PROPERTY_SETTINGS_FILE ) )
         {
-            String spec = m_propertyResolver.get( ServiceConstants.PROPERTY_SETTINGS_FILE );
+            String spec = m_propertyResolver.get( m_pid + Constants.PROPERTY_SETTINGS_FILE );
             if( spec != null )
             {
                 try
                 {
-                    return set( ServiceConstants.PROPERTY_SETTINGS_FILE, new URL( spec ) );
+                    return set( m_pid + Constants.PROPERTY_SETTINGS_FILE, new URL( spec ) );
                 }
                 catch( MalformedURLException e )
                 {
@@ -128,7 +135,7 @@ public class ConfigurationImpl
                     {
                         try
                         {
-                            return set( ServiceConstants.PROPERTY_SETTINGS_FILE, file.toURL() );
+                            return set( m_pid + Constants.PROPERTY_SETTINGS_FILE, file.toURL() );
                         }
                         catch( MalformedURLException ignore )
                         {
@@ -140,12 +147,12 @@ public class ConfigurationImpl
                         LOGGER.warn( "Settings file [" + spec
                                      + "] cannot be used and will be skipped (malformed url or file does not exist)"
                         );
-                        set( ServiceConstants.PROPERTY_SETTINGS_FILE, null );
+                        set( m_pid + Constants.PROPERTY_SETTINGS_FILE, null );
                     }
                 }
             }
         }
-        return get( ServiceConstants.PROPERTY_SETTINGS_FILE );
+        return get( m_pid + Constants.PROPERTY_SETTINGS_FILE );
     }
 
     /**
@@ -167,10 +174,10 @@ public class ConfigurationImpl
     public List<RepositoryURL> getDefaultRepositories()
         throws MalformedURLException
     {
-        if( !contains( ServiceConstants.PROPERTY_DEFAULT_REPOSITORIES ) )
+        if( !contains( m_pid + Constants.PROPERTY_DEFAULT_REPOSITORIES ) )
         {
             // look for repositories property
-            String defaultRepositoriesProp = m_propertyResolver.get( ServiceConstants.PROPERTY_DEFAULT_REPOSITORIES );
+            String defaultRepositoriesProp = m_propertyResolver.get( m_pid + Constants.PROPERTY_DEFAULT_REPOSITORIES );
             // build repositories list
             final List<RepositoryURL> defaultRepositoriesProperty = new ArrayList<RepositoryURL>();
             RepositoryURL localRepository = getLocalRepository();
@@ -183,9 +190,9 @@ public class ConfigurationImpl
                 }
             }
             LOGGER.trace( "Using repositories [" + defaultRepositoriesProperty + "]" );
-            return set( ServiceConstants.PROPERTY_DEFAULT_REPOSITORIES, defaultRepositoriesProperty );
+            return set( m_pid + Constants.PROPERTY_DEFAULT_REPOSITORIES, defaultRepositoriesProperty );
         }
-        return get( ServiceConstants.PROPERTY_DEFAULT_REPOSITORIES );
+        return get( m_pid + Constants.PROPERTY_DEFAULT_REPOSITORIES );
     }
 
     /**
@@ -207,10 +214,10 @@ public class ConfigurationImpl
     public List<RepositoryURL> getRepositories()
         throws MalformedURLException
     {
-        if( !contains( ServiceConstants.PROPERTY_REPOSITORIES ) )
+        if( !contains( m_pid + Constants.PROPERTY_REPOSITORIES ) )
         {
             // look for repositories property
-            String repositoriesProp = m_propertyResolver.get( ServiceConstants.PROPERTY_REPOSITORIES );
+            String repositoriesProp = m_propertyResolver.get( m_pid + Constants.PROPERTY_REPOSITORIES );
             // if not set or starting with a plus (+) get repositories from settings xml
             if( ( repositoriesProp == null || repositoriesProp.startsWith( REPOSITORIES_APPEND_SIGN ) )
                 && m_settings != null )
@@ -245,9 +252,9 @@ public class ConfigurationImpl
                 }
             }
             LOGGER.trace( "Using repositories [" + repositoriesProperty + "]" );
-            return set( ServiceConstants.PROPERTY_REPOSITORIES, repositoriesProperty );
+            return set( m_pid + Constants.PROPERTY_REPOSITORIES, repositoriesProperty );
         }
-        return get( ServiceConstants.PROPERTY_REPOSITORIES );
+        return get( m_pid + Constants.PROPERTY_REPOSITORIES );
     }
 
     /**
@@ -261,10 +268,10 @@ public class ConfigurationImpl
      */
     public RepositoryURL getLocalRepository()
     {
-        if( !contains( ServiceConstants.PROPERTY_LOCAL_REPOSITORY ) )
+        if( !contains( m_pid + Constants.PROPERTY_LOCAL_REPOSITORY ) )
         {
             // look for a local repository property
-            String spec = m_propertyResolver.get( ServiceConstants.PROPERTY_LOCAL_REPOSITORY );
+            String spec = m_propertyResolver.get( m_pid + Constants.PROPERTY_LOCAL_REPOSITORY );
             // if not set get local repository from maven settings
             if( spec == null && m_settings != null )
             {
@@ -279,27 +286,27 @@ public class ConfigurationImpl
                 // check if we have a valid url
                 try
                 {
-                    return set( ServiceConstants.PROPERTY_LOCAL_REPOSITORY, new RepositoryURL( spec ) );
+                    return set( m_pid + Constants.PROPERTY_LOCAL_REPOSITORY, new RepositoryURL( spec ) );
                 }
                 catch( MalformedURLException e )
                 {
                     // maybe is just a file?
                     try
                     {
-                        return set( ServiceConstants.PROPERTY_LOCAL_REPOSITORY,
+                        return set( m_pid + Constants.PROPERTY_LOCAL_REPOSITORY,
                                     new RepositoryURL( new File( spec ).toURI().toASCIIString() )
                         );
                     }
                     catch( MalformedURLException ignore )
                     {
                         LOGGER.warn( "Local repository [" + spec + "] cannot be used and will be skipped" );
-                        return set( ServiceConstants.PROPERTY_LOCAL_REPOSITORY, null );
+                        return set( m_pid + Constants.PROPERTY_LOCAL_REPOSITORY, null );
                     }
 
                 }
             }
         }
-        return get( ServiceConstants.PROPERTY_LOCAL_REPOSITORY );
+        return get( m_pid + Constants.PROPERTY_LOCAL_REPOSITORY );
     }
 
     /**
@@ -307,19 +314,19 @@ public class ConfigurationImpl
      */
     public void enableProxy( URL url )
     {
-        final String proxySupport = m_propertyResolver.get( ServiceConstants.PROPERTY_PROXY_SUPPORT );
+        final String proxySupport = m_propertyResolver.get( m_pid + Constants.PROPERTY_PROXY_SUPPORT );
         if( "false".equalsIgnoreCase( proxySupport ) )
         {
             return; // automatic proxy support disabled
         }
 
         final String protocol = url.getProtocol();
-        if( protocol == null || protocol.equals( get( ServiceConstants.PROPERTY_PROXY_SUPPORT ) ) )
+        if( protocol == null || protocol.equals( get( m_pid + Constants.PROPERTY_PROXY_SUPPORT ) ) )
         {
             return; // already have this proxy enabled
         }
 
-        Map<String,String> proxyDetails = m_settings.getProxySettings().get( protocol );
+        Map<String, String> proxyDetails = m_settings.getProxySettings().get( protocol );
         if( proxyDetails != null )
         {
             LOGGER.trace( "Enabling proxy [" + proxyDetails + "]" );
@@ -334,14 +341,15 @@ public class ConfigurationImpl
                 {
                     return new PasswordAuthentication( user, pass.toCharArray() );
                 }
-            } );
+            }
+            );
 
             System.setProperty( "http.proxyHost", proxyDetails.get( "host" ) );
             System.setProperty( "http.proxyPort", proxyDetails.get( "port" ) );
 
             System.setProperty( "http.nonProxyHosts", proxyDetails.get( "nonProxyHosts" ) );
 
-            set( ServiceConstants.PROPERTY_PROXY_SUPPORT, protocol );
+            set( m_pid + Constants.PROPERTY_PROXY_SUPPORT, protocol );
         }
     }
 }
