@@ -1,0 +1,32 @@
+Bundle-SymbolicName:\
+  ${bundle.symbolicName}
+
+Bundle-Version>:\
+  ${pom.version}
+
+Import-Package:\
+  javax.*,\
+  !org.bouncycastle.*,\
+  !org.slf4j,\
+  !org.mortbay.*
+
+Export-Package:\
+   org.apache.maven.mercury.*; version="${dependency.mercury.version}"
+
+Private-Package:\
+  org.codehaus.plexus.lang,\
+  org.codehaus.plexus.util,\
+  org.codehaus.plexus.util.io,\
+  org.codehaus.plexus.util.reflection,\
+  org.codehaus.plexus.util.xml.*
+
+Embed-Dependency:\
+  *; type=!pom; inline=true; artifactId=!plexus-utils
+
+Embed-Transitive: true
+
+-removeheaders:\
+  Include-Resource,\
+  Private-Package,\
+  Embed-Dependency,\
+  Embed-Transitive
