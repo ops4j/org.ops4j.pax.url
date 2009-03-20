@@ -23,7 +23,7 @@ package org.ops4j.pax.url.maven.commons;
  * @author Alin Dreghiciu
  * @since August 26, 2007
  */
-public interface Constants
+public interface MavenConstants
 {
 
     /**

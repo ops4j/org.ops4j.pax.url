@@ -17,7 +17,7 @@
  */
 package org.ops4j.pax.url.mvn;
 
-import org.ops4j.pax.url.maven.commons.Constants;
+import org.ops4j.pax.url.maven.commons.MavenConstants;
 
 /**
  * An enumeration of constants related to maven handler.
@@ -35,27 +35,27 @@ public interface ServiceConstants
     /**
      * Certificate check configuration property name.
      */
-    static final String PROPERTY_CERTIFICATE_CHECK = PID + Constants.PROPERTY_CERTIFICATE_CHECK;
+    static final String PROPERTY_CERTIFICATE_CHECK = PID + MavenConstants.PROPERTY_CERTIFICATE_CHECK;
     /**
      * Maven settings file configuration property name.
      */
-    static final String PROPERTY_SETTINGS_FILE = PID + Constants.PROPERTY_SETTINGS_FILE;
+    static final String PROPERTY_SETTINGS_FILE = PID + MavenConstants.PROPERTY_SETTINGS_FILE;
     /**
      * LocalRepository configuration property name.
      */
-    static final String PROPERTY_LOCAL_REPOSITORY = PID + Constants.PROPERTY_LOCAL_REPOSITORY;
+    static final String PROPERTY_LOCAL_REPOSITORY = PID + MavenConstants.PROPERTY_LOCAL_REPOSITORY;
     /**
      * DefaultRepositories configuration property name
      */
-    static final String PROPERTY_DEFAULT_REPOSITORIES = PID + Constants.PROPERTY_DEFAULT_REPOSITORIES;
+    static final String PROPERTY_DEFAULT_REPOSITORIES = PID + MavenConstants.PROPERTY_DEFAULT_REPOSITORIES;
     /**
      * Repositories configuration property name.
      */
-    static final String PROPERTY_REPOSITORIES = PID + Constants.PROPERTY_REPOSITORIES;
+    static final String PROPERTY_REPOSITORIES = PID + MavenConstants.PROPERTY_REPOSITORIES;
     /**
      * Proxy support configuration property name.
      */
-    static final String PROPERTY_PROXY_SUPPORT = PID + Constants.PROPERTY_PROXY_SUPPORT;
+    static final String PROPERTY_PROXY_SUPPORT = PID + MavenConstants.PROPERTY_PROXY_SUPPORT;
     /**
      * The protocol name.
      */

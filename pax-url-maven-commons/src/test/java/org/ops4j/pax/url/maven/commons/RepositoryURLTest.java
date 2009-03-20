@@ -35,7 +35,7 @@ public class RepositoryURLTest
     public void nullSpec()
         throws MalformedURLException
     {
-        new RepositoryURL( null );
+        new MavenRepositoryURL( null );
     }
 
     /**
@@ -47,7 +47,7 @@ public class RepositoryURLTest
     public void emptySpec()
         throws MalformedURLException
     {
-        new RepositoryURL( "" );
+        new MavenRepositoryURL( "" );
     }
 
     /**
@@ -59,7 +59,7 @@ public class RepositoryURLTest
     public void onlySpacesSpec()
         throws MalformedURLException
     {
-        new RepositoryURL( "  " );
+        new MavenRepositoryURL( "  " );
     }
 
     /**
@@ -71,7 +71,7 @@ public class RepositoryURLTest
     public void defaultSnapshots()
         throws MalformedURLException
     {
-        assertEquals( "Default snapshot enabled", false, new RepositoryURL( "file:some/dir" ).isSnapshotsEnabled() );
+        assertEquals( "Default snapshot enabled", false, new MavenRepositoryURL( "file:some/dir" ).isSnapshotsEnabled() );
     }
 
     /**
@@ -83,7 +83,7 @@ public class RepositoryURLTest
     public void defaultReleases()
         throws MalformedURLException
     {
-        assertEquals( "Default releases enabled", true, new RepositoryURL( "file:some/dir" ).isReleasesEnabled() );
+        assertEquals( "Default releases enabled", true, new MavenRepositoryURL( "file:some/dir" ).isReleasesEnabled() );
     }
 
     /**
@@ -95,7 +95,7 @@ public class RepositoryURLTest
     public void enabledSnapshots()
         throws MalformedURLException
     {
-        assertEquals( "Snapshots enabled", true, new RepositoryURL( "file:some/dir@snapshots" ).isSnapshotsEnabled() );
+        assertEquals( "Snapshots enabled", true, new MavenRepositoryURL( "file:some/dir@snapshots" ).isSnapshotsEnabled() );
     }
 
     /**
@@ -107,7 +107,7 @@ public class RepositoryURLTest
     public void disabledReleases()
         throws MalformedURLException
     {
-        assertEquals( "Releases enabled", false, new RepositoryURL( "file:some/dir@noReleases" ).isReleasesEnabled() );
+        assertEquals( "Releases enabled", false, new MavenRepositoryURL( "file:some/dir@noReleases" ).isReleasesEnabled() );
     }
 
     /**
@@ -119,7 +119,7 @@ public class RepositoryURLTest
     public void disabledReleasesEnabledSnapshots()
         throws MalformedURLException
     {
-        final RepositoryURL repositoryURL = new RepositoryURL( "file:some/dir@noreleases@snapshots" );
+        final MavenRepositoryURL repositoryURL = new MavenRepositoryURL( "file:some/dir@noreleases@snapshots" );
         assertEquals( "Releases enabled", false, repositoryURL.isReleasesEnabled() );
         assertEquals( "Snapshots enabled", true, repositoryURL.isSnapshotsEnabled() );
     }
@@ -135,7 +135,7 @@ public class RepositoryURLTest
     {
         assertEquals( "URL",
                       new URL( "http://user:password@somerepo/" ),
-                      new RepositoryURL( "http://user:password@somerepo" ).toURL()
+                      new MavenRepositoryURL( "http://user:password@somerepo" ).toURL()
         );
     }
 

@@ -21,8 +21,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
-import org.ops4j.pax.url.maven.commons.ConfigurationImpl;
-import org.ops4j.pax.url.maven.commons.SettingsImpl;
+import org.ops4j.pax.url.maven.commons.MavenConfigurationImpl;
+import org.ops4j.pax.url.maven.commons.MavenSettingsImpl;
 import org.ops4j.pax.url.mvn.internal.Connection;
 import org.ops4j.util.property.PropertiesPropertyResolver;
 
@@ -43,11 +43,10 @@ public class Handler
     protected URLConnection openConnection( final URL url )
         throws IOException
     {
-        final ConfigurationImpl config = new ConfigurationImpl(
-            ServiceConstants.PID,
-            new PropertiesPropertyResolver( System.getProperties() )
+        final MavenConfigurationImpl config = new MavenConfigurationImpl(
+            new PropertiesPropertyResolver( System.getProperties() ), ServiceConstants.PID
         );
-        config.setSettings( new SettingsImpl( config.getSettingsFileUrl() ) );
+        config.setSettings( new MavenSettingsImpl( config.getSettingsFileUrl() ) );
         return new Connection( url, config );
     }
 
