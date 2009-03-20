@@ -35,8 +35,8 @@ import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 import org.ops4j.lang.NullArgumentException;
 import org.ops4j.net.URLUtils;
-import org.ops4j.pax.url.maven.commons.Configuration;
-import org.ops4j.pax.url.maven.commons.RepositoryURL;
+import org.ops4j.pax.url.maven.commons.MavenConfiguration;
+import org.ops4j.pax.url.maven.commons.MavenRepositoryURL;
 import org.ops4j.util.xml.XmlUtils;
 
 /**
@@ -96,7 +96,7 @@ public class Connection
     /**
      * Service configuration.
      */
-    private final Configuration m_configuration;
+    private final MavenConfiguration m_configuration;
 
     /**
      * Creates a new connection.
@@ -106,7 +106,7 @@ public class Connection
      *
      * @throws MalformedURLException in case of a malformed url
      */
-    public Connection( final URL url, final Configuration configuration )
+    public Connection( final URL url, final MavenConfiguration configuration )
         throws MalformedURLException
     {
         super( url );
@@ -209,7 +209,7 @@ public class Connection
     private Set<DownloadableArtifact> collectPossibleDownloads()
         throws MalformedURLException
     {
-        final List<RepositoryURL> repositories = new ArrayList<RepositoryURL>();
+        final List<MavenRepositoryURL> repositories = new ArrayList<MavenRepositoryURL>();
         repositories.addAll( m_configuration.getRepositories() );
         // if the url contains a prefered repository add that repository as the first repository to be searched
         if( m_parser.getRepositoryURL() != null )
@@ -228,7 +228,7 @@ public class Connection
         return doCollectPossibleDownloads( m_configuration.getDefaultRepositories() );
     }
 
-    private Set<DownloadableArtifact> doCollectPossibleDownloads( final List<RepositoryURL> repositories )
+    private Set<DownloadableArtifact> doCollectPossibleDownloads( final List<MavenRepositoryURL> repositories )
         throws MalformedURLException
     {
         final Set<DownloadableArtifact> downloadables = new TreeSet<DownloadableArtifact>( new DownloadComparator() );
@@ -252,7 +252,7 @@ public class Connection
         final boolean isExactVersion = !( isLatest || isSnapshot || isVersionRange );
 
         int priority = 0;
-        for( RepositoryURL repositoryURL : repositories )
+        for( MavenRepositoryURL repositoryURL : repositories )
         {
             LOG.debug( "Collecting versions from repository [" + repositoryURL + "]" );
             priority++;
@@ -364,7 +364,7 @@ public class Connection
      *
      * @throws IOException re-thrown
      */
-    private DownloadableArtifact resolveExactVersion( final RepositoryURL repositoryURL,
+    private DownloadableArtifact resolveExactVersion( final MavenRepositoryURL repositoryURL,
                                                       final int priority )
         throws IOException
     {
@@ -395,7 +395,7 @@ public class Connection
      * @throws IOException if the artifact could not be resolved
      */
     private DownloadableArtifact resolveLatestVersion( final Document metadata,
-                                                       final RepositoryURL repositoryURL,
+                                                       final MavenRepositoryURL repositoryURL,
                                                        final int priority )
         throws IOException
     {
@@ -438,7 +438,7 @@ public class Connection
      *
      * @throws IOException if the artifact could not be resolved
      */
-    private DownloadableArtifact resolveSnapshotVersion( final RepositoryURL repositoryURL,
+    private DownloadableArtifact resolveSnapshotVersion( final MavenRepositoryURL repositoryURL,
                                                          final int priority,
                                                          final String version )
         throws IOException
@@ -516,7 +516,7 @@ public class Connection
      * @throws IOException re-thrown
      */
     private List<DownloadableArtifact> resolveRangeVersions( final Document metadata,
-                                                             final RepositoryURL repositoryURL,
+                                                             final MavenRepositoryURL repositoryURL,
                                                              final int priority,
                                                              final VersionRange versionRange )
         throws IOException

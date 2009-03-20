@@ -27,7 +27,7 @@ import java.util.List;
  * @author Alin Dreghiciu
  * @since August 11, 2007
  */
-public interface Configuration
+public interface MavenConfiguration
 {
 
     /**
@@ -49,7 +49,7 @@ public interface Configuration
      *
      * @return a list of default repositories.  List can be null or empty if there are not default repositories to be searched.
      */
-    List<RepositoryURL> getDefaultRepositories()
+    List<MavenRepositoryURL> getDefaultRepositories()
         throws MalformedURLException;
 
     /**
@@ -57,7 +57,7 @@ public interface Configuration
      *
      * @return a list of repositories. List can be null or empty if there are no repositories to be searched.
      */
-    List<RepositoryURL> getRepositories()
+    List<MavenRepositoryURL> getRepositories()
         throws MalformedURLException;
 
     /**
@@ -65,7 +65,7 @@ public interface Configuration
      *
      * @return url of local repository. Can be null if there is no local repository.
      */
-    RepositoryURL getLocalRepository();
+    MavenRepositoryURL getLocalRepository();
 
     /**
      * Enables the proxy server for a given URL.

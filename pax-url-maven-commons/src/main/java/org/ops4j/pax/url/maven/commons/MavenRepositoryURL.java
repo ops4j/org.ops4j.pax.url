@@ -27,7 +27,7 @@ import org.ops4j.lang.NullArgumentException;
  * @author Alin Dreghiciu
  * @since 0.2.1, February 07, 2008
  */
-public class RepositoryURL
+public class MavenRepositoryURL
 {
 
     /**
@@ -52,22 +52,22 @@ public class RepositoryURL
      * @throws MalformedURLException if spec contains a malformed maven repository url
      * @throws NullArgumentException if repository spec is null or empty
      */
-    public RepositoryURL( final String repositorySpec )
+    public MavenRepositoryURL( final String repositorySpec )
         throws MalformedURLException
     {
         NullArgumentException.validateNotEmpty( repositorySpec, true, "Repository spec" );
 
-        final String[] segments = repositorySpec.split( Constants.SEPARATOR_OPTIONS );
+        final String[] segments = repositorySpec.split( MavenConstants.SEPARATOR_OPTIONS );
         final StringBuilder urlBuilder = new StringBuilder();
         boolean snapshotEnabled = false;
         boolean releasesEnabled = true;
         for( int i = 0; i < segments.length; i++ )
         {
-            if( segments[ i ].trim().equalsIgnoreCase( Constants.OPTION_ALLOW_SNAPSHOTS ) )
+            if( segments[ i ].trim().equalsIgnoreCase( MavenConstants.OPTION_ALLOW_SNAPSHOTS ) )
             {
                 snapshotEnabled = true;
             }
-            else if( segments[ i ].trim().equalsIgnoreCase( Constants.OPTION_DISALLOW_RELEASES ) )
+            else if( segments[ i ].trim().equalsIgnoreCase( MavenConstants.OPTION_DISALLOW_RELEASES ) )
             {
                 releasesEnabled = false;
             }
@@ -75,7 +75,7 @@ public class RepositoryURL
             {
                 if( i > 0 )
                 {
-                    urlBuilder.append( Constants.SEPARATOR_OPTIONS );
+                    urlBuilder.append( MavenConstants.SEPARATOR_OPTIONS );
                 }
                 urlBuilder.append( segments[ i ] );
             }

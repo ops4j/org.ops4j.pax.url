@@ -35,18 +35,18 @@ import org.ops4j.util.property.PropertyStore;
  * Service Configuration implementation.
  *
  * @author Alin Dreghiciu
- * @see Configuration
+ * @see MavenConfiguration
  * @since August 11, 2007
  */
-public class ConfigurationImpl
+public class MavenConfigurationImpl
     extends PropertyStore
-    implements Configuration
+    implements MavenConfiguration
 {
 
     /**
      * Logger.
      */
-    private static final Log LOGGER = LogFactory.getLog( ConfigurationImpl.class );
+    private static final Log LOGGER = LogFactory.getLog( MavenConfigurationImpl.class );
 
     /**
      * The character that should be the first character in repositories property in order to be appended with the
@@ -61,7 +61,7 @@ public class ConfigurationImpl
     /**
      * Maven settings abstraction. Can be null.
      */
-    private Settings m_settings;
+    private MavenSettings m_settings;
     /**
      * Configuration PID. Cannot be null or empty.
      */
@@ -74,14 +74,13 @@ public class ConfigurationImpl
     /**
      * Creates a new service configuration.
      *
-     * @param pid              configuration PID; mandatory
      * @param propertyResolver propertyResolver used to resolve properties; mandatory
+     * @param pid              configuration PID; mandatory
      */
-    public ConfigurationImpl( final String pid,
-                              final PropertyResolver propertyResolver )
+    public MavenConfigurationImpl( final PropertyResolver propertyResolver, final String pid )
     {
-        NullArgumentException.validateNotEmpty( pid, true, "Configuration resolver" );
         NullArgumentException.validateNotNull( propertyResolver, "Property resolver" );
+        NullArgumentException.validateNotEmpty( pid, true, "Configuration pid" );
 
         m_pid = pid;
         m_propertyResolver = propertyResolver;
@@ -92,41 +91,41 @@ public class ConfigurationImpl
      *
      * @param settings maven settings abstraction
      */
-    public void setSettings( final Settings settings )
+    public void setSettings( final MavenSettings settings )
     {
         m_settings = settings;
     }
 
     /**
-     * @see Configuration#getCertificateCheck()
+     * @see MavenConfiguration#getCertificateCheck()
      */
     public Boolean getCertificateCheck()
     {
-        if( !contains( m_pid + Constants.PROPERTY_CERTIFICATE_CHECK ) )
+        if( !contains( m_pid + MavenConstants.PROPERTY_CERTIFICATE_CHECK ) )
         {
-            return set( m_pid + Constants.PROPERTY_CERTIFICATE_CHECK,
-                        Boolean.valueOf( m_propertyResolver.get( m_pid + Constants.PROPERTY_CERTIFICATE_CHECK ) )
+            return set( m_pid + MavenConstants.PROPERTY_CERTIFICATE_CHECK,
+                        Boolean.valueOf( m_propertyResolver.get( m_pid + MavenConstants.PROPERTY_CERTIFICATE_CHECK ) )
             );
         }
-        return get( m_pid + Constants.PROPERTY_CERTIFICATE_CHECK );
+        return get( m_pid + MavenConstants.PROPERTY_CERTIFICATE_CHECK );
     }
 
     /**
      * Returns the URL of settings file. Will try first to use the url as is. If a malformed url encountered then will
      * try to use the url as a file path. If still not valid will throw the original Malformed URL exception.
      *
-     * @see Configuration#getSettingsFileUrl()
+     * @see MavenConfiguration#getSettingsFileUrl()
      */
     public URL getSettingsFileUrl()
     {
-        if( !contains( m_pid + Constants.PROPERTY_SETTINGS_FILE ) )
+        if( !contains( m_pid + MavenConstants.PROPERTY_SETTINGS_FILE ) )
         {
-            String spec = m_propertyResolver.get( m_pid + Constants.PROPERTY_SETTINGS_FILE );
+            String spec = m_propertyResolver.get( m_pid + MavenConstants.PROPERTY_SETTINGS_FILE );
             if( spec != null )
             {
                 try
                 {
-                    return set( m_pid + Constants.PROPERTY_SETTINGS_FILE, new URL( spec ) );
+                    return set( m_pid + MavenConstants.PROPERTY_SETTINGS_FILE, new URL( spec ) );
                 }
                 catch( MalformedURLException e )
                 {
@@ -135,7 +134,7 @@ public class ConfigurationImpl
                     {
                         try
                         {
-                            return set( m_pid + Constants.PROPERTY_SETTINGS_FILE, file.toURL() );
+                            return set( m_pid + MavenConstants.PROPERTY_SETTINGS_FILE, file.toURL() );
                         }
                         catch( MalformedURLException ignore )
                         {
@@ -147,12 +146,12 @@ public class ConfigurationImpl
                         LOGGER.warn( "Settings file [" + spec
                                      + "] cannot be used and will be skipped (malformed url or file does not exist)"
                         );
-                        set( m_pid + Constants.PROPERTY_SETTINGS_FILE, null );
+                        set( m_pid + MavenConstants.PROPERTY_SETTINGS_FILE, null );
                     }
                 }
             }
         }
-        return get( m_pid + Constants.PROPERTY_SETTINGS_FILE );
+        return get( m_pid + MavenConstants.PROPERTY_SETTINGS_FILE );
     }
 
     /**
@@ -168,31 +167,32 @@ public class ConfigurationImpl
      * including configured user/password. In this case the central repository is also added.
      * Note that the local repository is added as the first repository if exists.
      *
-     * @see Configuration#getRepositories()
-     * @see Configuration#getLocalRepository()
+     * @see MavenConfiguration#getRepositories()
+     * @see MavenConfiguration#getLocalRepository()
      */
-    public List<RepositoryURL> getDefaultRepositories()
+    public List<MavenRepositoryURL> getDefaultRepositories()
         throws MalformedURLException
     {
-        if( !contains( m_pid + Constants.PROPERTY_DEFAULT_REPOSITORIES ) )
+        if( !contains( m_pid + MavenConstants.PROPERTY_DEFAULT_REPOSITORIES ) )
         {
             // look for repositories property
-            String defaultRepositoriesProp = m_propertyResolver.get( m_pid + Constants.PROPERTY_DEFAULT_REPOSITORIES );
+            String defaultRepositoriesProp =
+                m_propertyResolver.get( m_pid + MavenConstants.PROPERTY_DEFAULT_REPOSITORIES );
             // build repositories list
-            final List<RepositoryURL> defaultRepositoriesProperty = new ArrayList<RepositoryURL>();
-            RepositoryURL localRepository = getLocalRepository();
+            final List<MavenRepositoryURL> defaultRepositoriesProperty = new ArrayList<MavenRepositoryURL>();
+            MavenRepositoryURL localRepository = getLocalRepository();
             if( defaultRepositoriesProp != null && defaultRepositoriesProp.trim().length() > 0 )
             {
                 String[] repositories = defaultRepositoriesProp.split( REPOSITORIES_SEPARATOR );
                 for( String repositoryURL : repositories )
                 {
-                    defaultRepositoriesProperty.add( new RepositoryURL( repositoryURL ) );
+                    defaultRepositoriesProperty.add( new MavenRepositoryURL( repositoryURL ) );
                 }
             }
             LOGGER.trace( "Using repositories [" + defaultRepositoriesProperty + "]" );
-            return set( m_pid + Constants.PROPERTY_DEFAULT_REPOSITORIES, defaultRepositoriesProperty );
+            return set( m_pid + MavenConstants.PROPERTY_DEFAULT_REPOSITORIES, defaultRepositoriesProperty );
         }
-        return get( m_pid + Constants.PROPERTY_DEFAULT_REPOSITORIES );
+        return get( m_pid + MavenConstants.PROPERTY_DEFAULT_REPOSITORIES );
     }
 
     /**
@@ -208,16 +208,16 @@ public class ConfigurationImpl
      * including configured user/password. In this case the central repository is also added.
      * Note that the local repository is added as the first repository if exists.
      *
-     * @see Configuration#getRepositories()
-     * @see Configuration#getLocalRepository()
+     * @see MavenConfiguration#getRepositories()
+     * @see MavenConfiguration#getLocalRepository()
      */
-    public List<RepositoryURL> getRepositories()
+    public List<MavenRepositoryURL> getRepositories()
         throws MalformedURLException
     {
-        if( !contains( m_pid + Constants.PROPERTY_REPOSITORIES ) )
+        if( !contains( m_pid + MavenConstants.PROPERTY_REPOSITORIES ) )
         {
             // look for repositories property
-            String repositoriesProp = m_propertyResolver.get( m_pid + Constants.PROPERTY_REPOSITORIES );
+            String repositoriesProp = m_propertyResolver.get( m_pid + MavenConstants.PROPERTY_REPOSITORIES );
             // if not set or starting with a plus (+) get repositories from settings xml
             if( ( repositoriesProp == null || repositoriesProp.startsWith( REPOSITORIES_APPEND_SIGN ) )
                 && m_settings != null )
@@ -237,8 +237,8 @@ public class ConfigurationImpl
                 }
             }
             // build repositories list
-            final List<RepositoryURL> repositoriesProperty = new ArrayList<RepositoryURL>();
-            RepositoryURL localRepository = getLocalRepository();
+            final List<MavenRepositoryURL> repositoriesProperty = new ArrayList<MavenRepositoryURL>();
+            MavenRepositoryURL localRepository = getLocalRepository();
             if( localRepository != null )
             {
                 repositoriesProperty.add( localRepository );
@@ -248,13 +248,13 @@ public class ConfigurationImpl
                 String[] repositories = repositoriesProp.split( REPOSITORIES_SEPARATOR );
                 for( String repositoryURL : repositories )
                 {
-                    repositoriesProperty.add( new RepositoryURL( repositoryURL ) );
+                    repositoriesProperty.add( new MavenRepositoryURL( repositoryURL ) );
                 }
             }
             LOGGER.trace( "Using repositories [" + repositoriesProperty + "]" );
-            return set( m_pid + Constants.PROPERTY_REPOSITORIES, repositoriesProperty );
+            return set( m_pid + MavenConstants.PROPERTY_REPOSITORIES, repositoriesProperty );
         }
-        return get( m_pid + Constants.PROPERTY_REPOSITORIES );
+        return get( m_pid + MavenConstants.PROPERTY_REPOSITORIES );
     }
 
     /**
@@ -264,14 +264,14 @@ public class ConfigurationImpl
      * 3. looks in settings.xml (see settings.xml resolution);<br/>
      * 4. falls back to ${user.home}/.m2/repository.
      *
-     * @see Configuration#getLocalRepository()
+     * @see MavenConfiguration#getLocalRepository()
      */
-    public RepositoryURL getLocalRepository()
+    public MavenRepositoryURL getLocalRepository()
     {
-        if( !contains( m_pid + Constants.PROPERTY_LOCAL_REPOSITORY ) )
+        if( !contains( m_pid + MavenConstants.PROPERTY_LOCAL_REPOSITORY ) )
         {
             // look for a local repository property
-            String spec = m_propertyResolver.get( m_pid + Constants.PROPERTY_LOCAL_REPOSITORY );
+            String spec = m_propertyResolver.get( m_pid + MavenConstants.PROPERTY_LOCAL_REPOSITORY );
             // if not set get local repository from maven settings
             if( spec == null && m_settings != null )
             {
@@ -286,27 +286,27 @@ public class ConfigurationImpl
                 // check if we have a valid url
                 try
                 {
-                    return set( m_pid + Constants.PROPERTY_LOCAL_REPOSITORY, new RepositoryURL( spec ) );
+                    return set( m_pid + MavenConstants.PROPERTY_LOCAL_REPOSITORY, new MavenRepositoryURL( spec ) );
                 }
                 catch( MalformedURLException e )
                 {
                     // maybe is just a file?
                     try
                     {
-                        return set( m_pid + Constants.PROPERTY_LOCAL_REPOSITORY,
-                                    new RepositoryURL( new File( spec ).toURI().toASCIIString() )
+                        return set( m_pid + MavenConstants.PROPERTY_LOCAL_REPOSITORY,
+                                    new MavenRepositoryURL( new File( spec ).toURI().toASCIIString() )
                         );
                     }
                     catch( MalformedURLException ignore )
                     {
                         LOGGER.warn( "Local repository [" + spec + "] cannot be used and will be skipped" );
-                        return set( m_pid + Constants.PROPERTY_LOCAL_REPOSITORY, null );
+                        return set( m_pid + MavenConstants.PROPERTY_LOCAL_REPOSITORY, null );
                     }
 
                 }
             }
         }
-        return get( m_pid + Constants.PROPERTY_LOCAL_REPOSITORY );
+        return get( m_pid + MavenConstants.PROPERTY_LOCAL_REPOSITORY );
     }
 
     /**
@@ -314,14 +314,14 @@ public class ConfigurationImpl
      */
     public void enableProxy( URL url )
     {
-        final String proxySupport = m_propertyResolver.get( m_pid + Constants.PROPERTY_PROXY_SUPPORT );
+        final String proxySupport = m_propertyResolver.get( m_pid + MavenConstants.PROPERTY_PROXY_SUPPORT );
         if( "false".equalsIgnoreCase( proxySupport ) )
         {
             return; // automatic proxy support disabled
         }
 
         final String protocol = url.getProtocol();
-        if( protocol == null || protocol.equals( get( m_pid + Constants.PROPERTY_PROXY_SUPPORT ) ) )
+        if( protocol == null || protocol.equals( get( m_pid + MavenConstants.PROPERTY_PROXY_SUPPORT ) ) )
         {
             return; // already have this proxy enabled
         }
@@ -349,7 +349,7 @@ public class ConfigurationImpl
 
             System.setProperty( "http.nonProxyHosts", proxyDetails.get( "nonProxyHosts" ) );
 
-            set( m_pid + Constants.PROPERTY_PROXY_SUPPORT, protocol );
+            set( m_pid + MavenConstants.PROPERTY_PROXY_SUPPORT, protocol );
         }
     }
 }

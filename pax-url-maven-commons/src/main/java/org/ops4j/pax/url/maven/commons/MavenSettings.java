@@ -25,7 +25,7 @@ import java.util.Map;
  * @author Alin Dreghiciu
  * @since August 10, 2007
  */
-public interface Settings
+public interface MavenSettings
 {
 
     /**

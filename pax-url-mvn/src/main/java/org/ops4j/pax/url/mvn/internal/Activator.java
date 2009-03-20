@@ -23,9 +23,9 @@ import java.net.URLConnection;
 import org.osgi.framework.BundleContext;
 import org.ops4j.pax.url.commons.handler.ConnectionFactory;
 import org.ops4j.pax.url.commons.handler.HandlerActivator;
-import org.ops4j.pax.url.maven.commons.Configuration;
-import org.ops4j.pax.url.maven.commons.ConfigurationImpl;
-import org.ops4j.pax.url.maven.commons.SettingsImpl;
+import org.ops4j.pax.url.maven.commons.MavenConfiguration;
+import org.ops4j.pax.url.maven.commons.MavenConfigurationImpl;
+import org.ops4j.pax.url.maven.commons.MavenSettingsImpl;
 import org.ops4j.pax.url.mvn.ServiceConstants;
 import org.ops4j.util.property.PropertyResolver;
 
@@ -37,7 +37,7 @@ import org.ops4j.util.property.PropertyResolver;
  * @since August 10, 2007
  */
 public final class Activator
-    extends HandlerActivator<Configuration>
+    extends HandlerActivator<MavenConfiguration>
 {
 
     /**
@@ -48,7 +48,7 @@ public final class Activator
         super(
             new String[]{ ServiceConstants.PROTOCOL },
             ServiceConstants.PID,
-            new ConnectionFactory<Configuration>()
+            new ConnectionFactory<MavenConfiguration>()
             {
 
                 /**
@@ -56,7 +56,7 @@ public final class Activator
                  */
                 public URLConnection createConection( final BundleContext bundleContext,
                                                       final URL url,
-                                                      final Configuration config )
+                                                      final MavenConfiguration config )
                     throws MalformedURLException
                 {
                     return new Connection( url, config );
@@ -65,10 +65,11 @@ public final class Activator
                 /**
                  * @see ConnectionFactory#createConfiguration(org.ops4j.util.property.PropertyResolver)
                  */
-                public Configuration createConfiguration( final PropertyResolver propertyResolver )
+                public MavenConfiguration createConfiguration( final PropertyResolver propertyResolver )
                 {
-                    final ConfigurationImpl config = new ConfigurationImpl( ServiceConstants.PID, propertyResolver );
-                    config.setSettings( new SettingsImpl( config.getSettingsFileUrl() ) );
+                    final MavenConfigurationImpl config =
+                        new MavenConfigurationImpl( propertyResolver, ServiceConstants.PID );
+                    config.setSettings( new MavenSettingsImpl( config.getSettingsFileUrl() ) );
                     return config;
                 }
 

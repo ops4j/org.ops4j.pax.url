@@ -29,22 +29,22 @@ public class SettingsImplTest
     @Test
     public void constructorWithNullURL()
     {
-        new SettingsImpl( null );
+        new MavenSettingsImpl( null );
     }
 
     @Test
     public void validSettingsFile()
         throws MalformedURLException, FileNotFoundException
     {
-        new SettingsImpl( FileUtils.getFileFromClasspath( "settings/settingsWithLocalRepository.xml" ).toURL() );
+        new MavenSettingsImpl( FileUtils.getFileFromClasspath( "settings/settingsWithLocalRepository.xml" ).toURL() );
     }
 
     @Test
     public void getExistingLocalRepository()
         throws MalformedURLException, FileNotFoundException
     {
-        SettingsImpl settings =
-            new SettingsImpl( FileUtils.getFileFromClasspath( "settings/settingsWithLocalRepository.xml" ).toURL() );
+        MavenSettingsImpl settings =
+            new MavenSettingsImpl( FileUtils.getFileFromClasspath( "settings/settingsWithLocalRepository.xml" ).toURL() );
         assertEquals( "Local repository", "repository", settings.getLocalRepository() );
     }
 
@@ -52,8 +52,8 @@ public class SettingsImplTest
     public void getInexistingLocalRepository()
         throws MalformedURLException, FileNotFoundException
     {
-        SettingsImpl settings =
-            new SettingsImpl( FileUtils.getFileFromClasspath( "settings/settingsEmpty.xml" ).toURL() );
+        MavenSettingsImpl settings =
+            new MavenSettingsImpl( FileUtils.getFileFromClasspath( "settings/settingsEmpty.xml" ).toURL() );
         assertEquals( "Local repository",
                       System.getProperty( "user.home" ) + "/.m2/repository",
                       settings.getLocalRepository()
@@ -64,8 +64,8 @@ public class SettingsImplTest
     public void getEmptyTagLocalRepository()
         throws MalformedURLException, FileNotFoundException
     {
-        SettingsImpl settings =
-            new SettingsImpl( FileUtils.getFileFromClasspath( "settings/settingsEmptyTags.xml" ).toURL() );
+        MavenSettingsImpl settings =
+            new MavenSettingsImpl( FileUtils.getFileFromClasspath( "settings/settingsEmptyTags.xml" ).toURL() );
         assertEquals( "Local repository",
                       System.getProperty( "user.home" ) + "/.m2/repository",
                       settings.getLocalRepository()
@@ -76,8 +76,8 @@ public class SettingsImplTest
     public void getInexistingRepositories()
         throws MalformedURLException, FileNotFoundException
     {
-        SettingsImpl settings =
-            new SettingsImpl( FileUtils.getFileFromClasspath( "settings/settingsEmpty.xml" ).toURL() );
+        MavenSettingsImpl settings =
+            new MavenSettingsImpl( FileUtils.getFileFromClasspath( "settings/settingsEmpty.xml" ).toURL() );
         assertEquals( "Repositories",
                       "http://repo1.maven.org/maven2,"
                       + "http://repository.ops4j.org/maven2,"
@@ -91,8 +91,8 @@ public class SettingsImplTest
     public void getExistingRepositories()
         throws MalformedURLException, FileNotFoundException
     {
-        SettingsImpl settings =
-            new SettingsImpl(
+        MavenSettingsImpl settings =
+            new MavenSettingsImpl(
                 FileUtils.getFileFromClasspath( "settings/settingsWithRepositories.xml" ).toURL()
             );
         String repositories = settings.getRepositories();

@@ -40,17 +40,17 @@ import org.ops4j.util.xml.XmlUtils;
  * Default implementation of Settings.
  *
  * @author Alin Dreghiciu
- * @see Settings
+ * @see MavenSettings
  * @since August 10, 2007
  */
-public class SettingsImpl
-    implements Settings
+public class MavenSettingsImpl
+    implements MavenSettings
 {
 
     /**
      * Logger.
      */
-    private static final Log LOGGER = LogFactory.getLog( SettingsImpl.class );
+    private static final Log LOGGER = LogFactory.getLog( MavenSettingsImpl.class );
     /**
      * Path of local repository tag.
      */
@@ -119,7 +119,7 @@ public class SettingsImpl
      *
      * @param settingsURL prefered settings.xml file
      */
-    public SettingsImpl( final URL settingsURL )
+    public MavenSettingsImpl( final URL settingsURL )
     {
         m_settingsURL = settingsURL;
         if( m_settingsURL == null )
@@ -240,13 +240,13 @@ public class SettingsImpl
                                                         }
                                                         if( snapshots != null && Boolean.valueOf( snapshots ) )
                                                         {
-                                                            url += Constants.SEPARATOR_OPTIONS
-                                                                   + Constants.OPTION_ALLOW_SNAPSHOTS;
+                                                            url += MavenConstants.SEPARATOR_OPTIONS
+                                                                   + MavenConstants.OPTION_ALLOW_SNAPSHOTS;
                                                         }
                                                         if( releases != null && !Boolean.valueOf( releases ) )
                                                         {
-                                                            url += Constants.SEPARATOR_OPTIONS
-                                                                   + Constants.OPTION_DISALLOW_RELEASES;
+                                                            url += MavenConstants.SEPARATOR_OPTIONS
+                                                                   + MavenConstants.OPTION_DISALLOW_RELEASES;
                                                         }
                                                         repositories.put( id, url );
                                                         order.add( id );
