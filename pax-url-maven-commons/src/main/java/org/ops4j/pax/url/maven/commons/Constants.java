@@ -15,9 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.url.mvn;
-
-import org.ops4j.pax.url.maven.commons.Constants;
+package org.ops4j.pax.url.maven.commons;
 
 /**
  * An enumeration of constants related to maven handler.
@@ -25,39 +23,43 @@ import org.ops4j.pax.url.maven.commons.Constants;
  * @author Alin Dreghiciu
  * @since August 26, 2007
  */
-public interface ServiceConstants
+public interface Constants
 {
 
     /**
-     * Service PID used for configuration.
-     */
-    static final String PID = "org.ops4j.pax.url.mvn";
-    /**
      * Certificate check configuration property name.
      */
-    static final String PROPERTY_CERTIFICATE_CHECK = PID + Constants.PROPERTY_CERTIFICATE_CHECK;
+    static final String PROPERTY_CERTIFICATE_CHECK = ".certificateCheck";
     /**
      * Maven settings file configuration property name.
      */
-    static final String PROPERTY_SETTINGS_FILE = PID + Constants.PROPERTY_SETTINGS_FILE;
+    static final String PROPERTY_SETTINGS_FILE = ".settings";
     /**
      * LocalRepository configuration property name.
      */
-    static final String PROPERTY_LOCAL_REPOSITORY = PID + Constants.PROPERTY_LOCAL_REPOSITORY;
+    static final String PROPERTY_LOCAL_REPOSITORY = ".localRepository";
     /**
      * DefaultRepositories configuration property name
      */
-    static final String PROPERTY_DEFAULT_REPOSITORIES = PID + Constants.PROPERTY_DEFAULT_REPOSITORIES;
+    static final String PROPERTY_DEFAULT_REPOSITORIES = ".defaultRepositories";
     /**
      * Repositories configuration property name.
      */
-    static final String PROPERTY_REPOSITORIES = PID + Constants.PROPERTY_REPOSITORIES;
+    static final String PROPERTY_REPOSITORIES = ".repositories";
     /**
      * Proxy support configuration property name.
      */
-    static final String PROPERTY_PROXY_SUPPORT = PID + Constants.PROPERTY_PROXY_SUPPORT;
+    static final String PROPERTY_PROXY_SUPPORT = ".proxySupport";
     /**
-     * The protocol name.
+     * Option to mark repository as allowing snapshots.
      */
-    static final String PROTOCOL = "mvn";
+    String OPTION_ALLOW_SNAPSHOTS = "snapshots";
+    /**
+     * Option to mark repository as not allowing releases.
+     */
+    String OPTION_DISALLOW_RELEASES = "noreleases";
+    /**
+     * Options separator in repository url.
+     */
+    String SEPARATOR_OPTIONS = "@";
 }

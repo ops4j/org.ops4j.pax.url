@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.url.mvn.internal;
+package org.ops4j.pax.url.maven.commons;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -31,19 +31,21 @@ import org.ops4j.util.property.PropertyResolver;
 public class ConfigurationImplTest
 {
 
+    private static final String PID = "test.pid";
+
     @Test( expected = IllegalArgumentException.class )
     public void constructorWithNullResolver()
     {
-        new ConfigurationImpl( null );
+        new ConfigurationImpl( PID, null );
     }
 
     @Test
     public void getCertificateCheck()
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.certificateCheck" ) ).andReturn( "true" );
+        expect( propertyResolver.get( "test.pid.certificateCheck" ) ).andReturn( "true" );
         replay( propertyResolver );
-        Configuration config = new ConfigurationImpl( propertyResolver );
+        Configuration config = new ConfigurationImpl( PID, propertyResolver );
         assertEquals( "Certificate check", true, config.getCertificateCheck() );
         verify( propertyResolver );
     }
@@ -52,9 +54,9 @@ public class ConfigurationImplTest
     public void getDefaultCertificateCheck()
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.certificateCheck" ) ).andReturn( null );
+        expect( propertyResolver.get( "test.pid.certificateCheck" ) ).andReturn( null );
         replay( propertyResolver );
-        Configuration config = new ConfigurationImpl( propertyResolver );
+        Configuration config = new ConfigurationImpl( PID, propertyResolver );
         assertEquals( "Certificate check", false, config.getCertificateCheck() );
         verify( propertyResolver );
     }
@@ -64,11 +66,11 @@ public class ConfigurationImplTest
         throws MalformedURLException
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.settings" ) ).andReturn(
+        expect( propertyResolver.get( "test.pid.settings" ) ).andReturn(
             "file:somewhere/settings.xml"
         );
         replay( propertyResolver );
-        Configuration config = new ConfigurationImpl( propertyResolver );
+        Configuration config = new ConfigurationImpl( PID, propertyResolver );
         assertEquals( "Settings", new URL( "file:somewhere/settings.xml" ), config.getSettingsFileUrl() );
         verify( propertyResolver );
     }
@@ -79,11 +81,11 @@ public class ConfigurationImplTest
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
         File validSettings = FileUtils.getFileFromClasspath( "configuration/settings.xml" );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.settings" ) ).andReturn(
+        expect( propertyResolver.get( "test.pid.settings" ) ).andReturn(
             validSettings.getAbsolutePath()
         );
         replay( propertyResolver );
-        Configuration config = new ConfigurationImpl( propertyResolver );
+        Configuration config = new ConfigurationImpl( PID, propertyResolver );
         assertEquals( "Settings", validSettings.toURL(), config.getSettingsFileUrl() );
         verify( propertyResolver );
     }
@@ -98,9 +100,9 @@ public class ConfigurationImplTest
         throws MalformedURLException
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.settings" ) ).andReturn( "noprotocol:settings.xml" );
+        expect( propertyResolver.get( "test.pid.settings" ) ).andReturn( "noprotocol:settings.xml" );
         replay( propertyResolver );
-        new ConfigurationImpl( propertyResolver ).getSettingsFileUrl();
+        new ConfigurationImpl( PID, propertyResolver ).getSettingsFileUrl();
     }
 
     @Test
@@ -108,9 +110,9 @@ public class ConfigurationImplTest
         throws MalformedURLException
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.settings" ) ).andReturn( null );
+        expect( propertyResolver.get( "test.pid.settings" ) ).andReturn( null );
         replay( propertyResolver );
-        Configuration config = new ConfigurationImpl( propertyResolver );
+        Configuration config = new ConfigurationImpl( PID, propertyResolver );
         assertEquals( "Settings", null, config.getSettingsFileUrl() );
         verify( propertyResolver );
     }
@@ -120,10 +122,10 @@ public class ConfigurationImplTest
         throws MalformedURLException
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.repositories" ) ).andReturn( "file:repository1/" );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null );
+        expect( propertyResolver.get( "test.pid.repositories" ) ).andReturn( "file:repository1/" );
+        expect( propertyResolver.get( "test.pid.localRepository" ) ).andReturn( null );
         replay( propertyResolver );
-        Configuration config = new ConfigurationImpl( propertyResolver );
+        Configuration config = new ConfigurationImpl( PID, propertyResolver );
         List<RepositoryURL> repositories = config.getRepositories();
         assertNotNull( "Repositories is null", repositories );
         assertEquals( "Repositories size", 1, repositories.size() );
@@ -136,10 +138,10 @@ public class ConfigurationImplTest
         throws MalformedURLException
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.repositories" ) ).andReturn( "file:repository1" );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null );
+        expect( propertyResolver.get( "test.pid.repositories" ) ).andReturn( "file:repository1" );
+        expect( propertyResolver.get( "test.pid.localRepository" ) ).andReturn( null );
         replay( propertyResolver );
-        Configuration config = new ConfigurationImpl( propertyResolver );
+        Configuration config = new ConfigurationImpl( PID, propertyResolver );
         List<RepositoryURL> repositories = config.getRepositories();
         assertNotNull( "Repositories is null", repositories );
         assertEquals( "Repositories size", 1, repositories.size() );
@@ -152,10 +154,10 @@ public class ConfigurationImplTest
         throws MalformedURLException
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.repositories" ) ).andReturn( "file:repository1/" );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null );
+        expect( propertyResolver.get( "test.pid.repositories" ) ).andReturn( "file:repository1/" );
+        expect( propertyResolver.get( "test.pid.localRepository" ) ).andReturn( null );
         replay( propertyResolver );
-        Configuration config = new ConfigurationImpl( propertyResolver );
+        Configuration config = new ConfigurationImpl( PID, propertyResolver );
         List<RepositoryURL> repositories = config.getRepositories();
         assertNotNull( "Repositories is null", repositories );
         assertEquals( "Repositories size", 1, repositories.size() );
@@ -168,10 +170,10 @@ public class ConfigurationImplTest
         throws MalformedURLException
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.repositories" ) ).andReturn( "file:repository1\\" );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null );
+        expect( propertyResolver.get( "test.pid.repositories" ) ).andReturn( "file:repository1\\" );
+        expect( propertyResolver.get( "test.pid.localRepository" ) ).andReturn( null );
         replay( propertyResolver );
-        Configuration config = new ConfigurationImpl( propertyResolver );
+        Configuration config = new ConfigurationImpl( PID, propertyResolver );
         List<RepositoryURL> repositories = config.getRepositories();
         assertNotNull( "Repositories is null", repositories );
         assertEquals( "Repositories size", 1, repositories.size() );
@@ -180,33 +182,33 @@ public class ConfigurationImplTest
     }
 
     @Test
-    public void getRepositoriesWithAtSnapshotsAndAtNoReleases() 
-    	throws MalformedURLException
-    {    	
+    public void getRepositoriesWithAtSnapshotsAndAtNoReleases()
+        throws MalformedURLException
+    {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.repositories" ) ).andReturn(
+        expect( propertyResolver.get( "test.pid.repositories" ) ).andReturn(
             "http:repository1@snapshots@noreleases"
         );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null );
+        expect( propertyResolver.get( "test.pid.localRepository" ) ).andReturn( null );
         replay( propertyResolver );
-        Configuration config = new ConfigurationImpl( propertyResolver );
+        Configuration config = new ConfigurationImpl( PID, propertyResolver );
         List<RepositoryURL> repositories = config.getRepositories();
         assertTrue( "Repository as snapshot enabled:", repositories.get( 0 ).isSnapshotsEnabled() );
         assertFalse( "Repository as release enabled:", repositories.get( 0 ).isReleasesEnabled() );
         verify( propertyResolver );
-    }    
-    
+    }
+
     @Test
-    public void getRepositoriesWithAtSnapshots() 
-    	throws MalformedURLException
+    public void getRepositoriesWithAtSnapshots()
+        throws MalformedURLException
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.repositories" ) ).andReturn(
+        expect( propertyResolver.get( "test.pid.repositories" ) ).andReturn(
             "http:repository1@snapshots"
         );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null );
+        expect( propertyResolver.get( "test.pid.localRepository" ) ).andReturn( null );
         replay( propertyResolver );
-        Configuration config = new ConfigurationImpl( propertyResolver );
+        Configuration config = new ConfigurationImpl( PID, propertyResolver );
         List<RepositoryURL> repositories = config.getRepositories();
         assertTrue( "Repository as snapshot enabled:", repositories.get( 0 ).isSnapshotsEnabled() );
         assertTrue( "Repository as release enabled:", repositories.get( 0 ).isReleasesEnabled() );
@@ -215,32 +217,32 @@ public class ConfigurationImplTest
 
     @Test
     public void getRepositoriesWithAtNoReleases()
-    	throws MalformedURLException
+        throws MalformedURLException
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.repositories" ) ).andReturn(
+        expect( propertyResolver.get( "test.pid.repositories" ) ).andReturn(
             "http:repository1@noreleases"
         );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null );
+        expect( propertyResolver.get( "test.pid.localRepository" ) ).andReturn( null );
         replay( propertyResolver );
-        Configuration config = new ConfigurationImpl( propertyResolver );
+        Configuration config = new ConfigurationImpl( PID, propertyResolver );
         List<RepositoryURL> repositories = config.getRepositories();
         assertFalse( "Repository as snapshot not enabled:", repositories.get( 0 ).isSnapshotsEnabled() );
         assertFalse( "Repository as release not enabled:", repositories.get( 0 ).isReleasesEnabled() );
         verify( propertyResolver );
-    }        
-    
+    }
+
     @Test
     public void getRepositoriesWithMoreRepositories()
         throws MalformedURLException
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.repositories" ) ).andReturn(
+        expect( propertyResolver.get( "test.pid.repositories" ) ).andReturn(
             "file:repository1/,file:repository2/"
         );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null );
+        expect( propertyResolver.get( "test.pid.localRepository" ) ).andReturn( null );
         replay( propertyResolver );
-        Configuration config = new ConfigurationImpl( propertyResolver );
+        Configuration config = new ConfigurationImpl( PID, propertyResolver );
         List<RepositoryURL> repositories = config.getRepositories();
         assertNotNull( "Repositories is null", repositories );
         assertEquals( "Repositories size", 2, repositories.size() );
@@ -254,13 +256,13 @@ public class ConfigurationImplTest
         throws MalformedURLException
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.repositories" ) ).andReturn( null );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null );
+        expect( propertyResolver.get( "test.pid.repositories" ) ).andReturn( null );
+        expect( propertyResolver.get( "test.pid.localRepository" ) ).andReturn( null );
         Settings settings = createMock( Settings.class );
         expect( settings.getRepositories() ).andReturn( "file:repository1/" );
         expect( settings.getLocalRepository() ).andReturn( null );
         replay( propertyResolver, settings );
-        ConfigurationImpl config = new ConfigurationImpl( propertyResolver );
+        ConfigurationImpl config = new ConfigurationImpl( PID, propertyResolver );
         config.setSettings( settings );
         List<RepositoryURL> repositories = config.getRepositories();
         assertNotNull( "Repositories is null", repositories );
@@ -274,13 +276,13 @@ public class ConfigurationImplTest
         throws MalformedURLException
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.repositories" ) ).andReturn( "+file:repository1/" );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null );
+        expect( propertyResolver.get( "test.pid.repositories" ) ).andReturn( "+file:repository1/" );
+        expect( propertyResolver.get( "test.pid.localRepository" ) ).andReturn( null );
         Settings settings = createMock( Settings.class );
         expect( settings.getRepositories() ).andReturn( "file:repository2/" );
         expect( settings.getLocalRepository() ).andReturn( null );
         replay( propertyResolver, settings );
-        ConfigurationImpl config = new ConfigurationImpl( propertyResolver );
+        ConfigurationImpl config = new ConfigurationImpl( PID, propertyResolver );
         config.setSettings( settings );
         List<RepositoryURL> repositories = config.getRepositories();
         assertNotNull( "Repositories is null", repositories );
@@ -295,12 +297,12 @@ public class ConfigurationImplTest
         throws MalformedURLException
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.repositories" ) ).andReturn( "file:repository1/" );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn(
+        expect( propertyResolver.get( "test.pid.repositories" ) ).andReturn( "file:repository1/" );
+        expect( propertyResolver.get( "test.pid.localRepository" ) ).andReturn(
             "file:localRepository/"
         );
         replay( propertyResolver );
-        Configuration config = new ConfigurationImpl( propertyResolver );
+        Configuration config = new ConfigurationImpl( PID, propertyResolver );
         List<RepositoryURL> repositories = config.getRepositories();
         assertNotNull( "Repositories is null", repositories );
         assertEquals( "Repositories size", 2, repositories.size() );
@@ -315,11 +317,11 @@ public class ConfigurationImplTest
         throws MalformedURLException
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn(
+        expect( propertyResolver.get( "test.pid.localRepository" ) ).andReturn(
             "file:somewhere/localrepository/"
         );
         replay( propertyResolver );
-        Configuration config = new ConfigurationImpl( propertyResolver );
+        Configuration config = new ConfigurationImpl( PID, propertyResolver );
         assertEquals( "Local repository",
                       new URL( "file:somewhere/localrepository/" ),
                       config.getLocalRepository().toURL()
@@ -332,11 +334,11 @@ public class ConfigurationImplTest
         throws MalformedURLException
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn(
+        expect( propertyResolver.get( "test.pid.localRepository" ) ).andReturn(
             "file:somewhere/localrepository"
         );
         replay( propertyResolver );
-        Configuration config = new ConfigurationImpl( propertyResolver );
+        Configuration config = new ConfigurationImpl( PID, propertyResolver );
         assertEquals( "Local repository",
                       new URL( "file:somewhere/localrepository/" ),
                       config.getLocalRepository().toURL()
@@ -349,11 +351,11 @@ public class ConfigurationImplTest
         throws MalformedURLException
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn(
+        expect( propertyResolver.get( "test.pid.localRepository" ) ).andReturn(
             "file:somewhere/localrepository\\"
         );
         replay( propertyResolver );
-        Configuration config = new ConfigurationImpl( propertyResolver );
+        Configuration config = new ConfigurationImpl( PID, propertyResolver );
         assertEquals( "Local repository",
                       new URL( "file:somewhere/localrepository\\" ),
                       config.getLocalRepository().toURL()
@@ -367,11 +369,11 @@ public class ConfigurationImplTest
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
         File valid = FileUtils.getFileFromClasspath( "configuration/localrepository" );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn(
+        expect( propertyResolver.get( "test.pid.localRepository" ) ).andReturn(
             valid.getAbsolutePath()
         );
         replay( propertyResolver );
-        Configuration config = new ConfigurationImpl( propertyResolver );
+        Configuration config = new ConfigurationImpl( PID, propertyResolver );
         assertEquals( "Local repository",
                       valid.toURL(),
                       config.getLocalRepository().toURL()
@@ -386,11 +388,11 @@ public class ConfigurationImplTest
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
         File valid = FileUtils.getFileFromClasspath( "configuration/localrepository" );
         File validWithSlash = FileUtils.getFileFromClasspath( "configuration/localrepository/" );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn(
+        expect( propertyResolver.get( "test.pid.localRepository" ) ).andReturn(
             valid.getAbsolutePath()
         );
         replay( propertyResolver );
-        Configuration config = new ConfigurationImpl( propertyResolver );
+        Configuration config = new ConfigurationImpl( PID, propertyResolver );
         assertEquals( "Local repository",
                       validWithSlash.toURL(),
                       config.getLocalRepository().toURL()
@@ -408,15 +410,16 @@ public class ConfigurationImplTest
         throws MalformedURLException
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn(
+        expect( propertyResolver.get( "test.pid.localRepository" ) ).andReturn(
             "noprotocol://localrepository"
         );
         replay( propertyResolver );
-        new ConfigurationImpl( propertyResolver ).getLocalRepository();
+        new ConfigurationImpl( PID, propertyResolver ).getLocalRepository();
     }
 
     /**
      * Test that a path to a file that does not exist will not trigger an exception.
+     *
      * @throws MalformedURLException never
      */
     @Test
@@ -424,11 +427,11 @@ public class ConfigurationImplTest
         throws MalformedURLException
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn(
+        expect( propertyResolver.get( "test.pid.localRepository" ) ).andReturn(
             "c:/this/should/be/an/inexistent/directory"
         );
         replay( propertyResolver );
-        new ConfigurationImpl( propertyResolver ).getLocalRepository();
+        new ConfigurationImpl( PID, propertyResolver ).getLocalRepository();
     }
 
     @Test
@@ -436,9 +439,9 @@ public class ConfigurationImplTest
         throws MalformedURLException
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null );
+        expect( propertyResolver.get( "test.pid.localRepository" ) ).andReturn( null );
         replay( propertyResolver );
-        Configuration config = new ConfigurationImpl( propertyResolver );
+        Configuration config = new ConfigurationImpl( PID, propertyResolver );
         assertEquals( "Local repository", null, config.getLocalRepository() );
         verify( propertyResolver );
     }
@@ -448,15 +451,16 @@ public class ConfigurationImplTest
         throws MalformedURLException
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null );
+        expect( propertyResolver.get( "test.pid.localRepository" ) ).andReturn( null );
         Settings settings = createMock( Settings.class );
         expect( settings.getLocalRepository() ).andReturn( "file:somewhere/localrepository/" );
         replay( propertyResolver, settings );
-        ConfigurationImpl config = new ConfigurationImpl( propertyResolver );
+        ConfigurationImpl config = new ConfigurationImpl( PID, propertyResolver );
         config.setSettings( settings );
         assertEquals( "Local repository",
                       new URL( "file:somewhere/localrepository/" ),
-                      config.getLocalRepository().toURL() );
+                      config.getLocalRepository().toURL()
+        );
         verify( propertyResolver, settings );
     }
 

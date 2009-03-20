@@ -21,9 +21,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
-import org.ops4j.pax.url.mvn.internal.ConfigurationImpl;
+import org.ops4j.pax.url.maven.commons.ConfigurationImpl;
+import org.ops4j.pax.url.maven.commons.SettingsImpl;
 import org.ops4j.pax.url.mvn.internal.Connection;
-import org.ops4j.pax.url.mvn.internal.SettingsImpl;
 import org.ops4j.util.property.PropertiesPropertyResolver;
 
 /**
@@ -44,6 +44,7 @@ public class Handler
         throws IOException
     {
         final ConfigurationImpl config = new ConfigurationImpl(
+            ServiceConstants.PID,
             new PropertiesPropertyResolver( System.getProperties() )
         );
         config.setSettings( new SettingsImpl( config.getSettingsFileUrl() ) );
