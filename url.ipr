@@ -881,28 +881,6 @@
         <root url="jar://$M2_REPO$/org/codehaus/plexus/plexus-utils/1.5.5/plexus-utils-1.5.5-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: org.apache.maven.mercury:mercury-artifact:1.0.0-alpha-2-SNAPSHOT">
-      <CLASSES>
-        <root url="jar://$M2_REPO$/org/apache/maven/mercury/mercury-artifact/1.0.0-alpha-2-SNAPSHOT/mercury-artifact-1.0.0-alpha-2-SNAPSHOT.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$M2_REPO$/org/apache/maven/mercury/mercury-artifact/1.0.0-alpha-2-SNAPSHOT/mercury-artifact-1.0.0-alpha-2-SNAPSHOT-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$M2_REPO$/org/apache/maven/mercury/mercury-artifact/1.0.0-alpha-2-SNAPSHOT/mercury-artifact-1.0.0-alpha-2-SNAPSHOT-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Maven: org.apache.maven.mercury:mercury-external:1.0.0-alpha-2-SNAPSHOT">
-      <CLASSES>
-        <root url="jar://$M2_REPO$/org/apache/maven/mercury/mercury-external/1.0.0-alpha-2-SNAPSHOT/mercury-external-1.0.0-alpha-2-SNAPSHOT.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$M2_REPO$/org/apache/maven/mercury/mercury-external/1.0.0-alpha-2-SNAPSHOT/mercury-external-1.0.0-alpha-2-SNAPSHOT-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$M2_REPO$/org/apache/maven/mercury/mercury-external/1.0.0-alpha-2-SNAPSHOT/mercury-external-1.0.0-alpha-2-SNAPSHOT-sources.jar!/" />
-      </SOURCES>
-    </library>
     <library name="Maven: org.apache.maven.mercury:mercury-md-sat:1.0-alpha-5">
       <CLASSES>
         <root url="jar://$M2_REPO$/org/apache/maven/mercury/mercury-md-sat/1.0-alpha-5/mercury-md-sat-1.0-alpha-5.jar!/" />
@@ -989,6 +967,28 @@
       </JAVADOC>
       <SOURCES>
         <root url="jar://$M2_REPO$/stax/stax-api/1.0.1/stax-api-1.0.1-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.apache.maven.mercury:mercury-artifact:1.0-alpha-5">
+      <CLASSES>
+        <root url="jar://$M2_REPO$/org/apache/maven/mercury/mercury-artifact/1.0-alpha-5/mercury-artifact-1.0-alpha-5.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$M2_REPO$/org/apache/maven/mercury/mercury-artifact/1.0-alpha-5/mercury-artifact-1.0-alpha-5-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$M2_REPO$/org/apache/maven/mercury/mercury-artifact/1.0-alpha-5/mercury-artifact-1.0-alpha-5-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.apache.maven.mercury:mercury-external:1.0-alpha-5">
+      <CLASSES>
+        <root url="jar://$M2_REPO$/org/apache/maven/mercury/mercury-external/1.0-alpha-5/mercury-external-1.0-alpha-5.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$M2_REPO$/org/apache/maven/mercury/mercury-external/1.0-alpha-5/mercury-external-1.0-alpha-5-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$M2_REPO$/org/apache/maven/mercury/mercury-external/1.0-alpha-5/mercury-external-1.0-alpha-5-sources.jar!/" />
       </SOURCES>
     </library>
   </component>

@@ -104,7 +104,7 @@
         </exclusion>
       </exclusions>
     </dependency>
-    <!--dependency>
+    <dependency>
       <groupId>org.apache.maven.mercury</groupId>
       <artifactId>mercury-artifact</artifactId>
       <version>${dependency.mercury.version}</version>
@@ -127,7 +127,7 @@
           <artifactId>plexus-lang</artifactId>
         </exclusion>
       </exclusions>
-    </dependency-->
+    </dependency>
   </dependencies>
 
 </project>

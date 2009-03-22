@@ -18,6 +18,7 @@
     <orderEntry type="module" module-name="pax-url-maven-commons" />
     <orderEntry type="library" exported="" name="Maven: org.ops4j.base:ops4j-base-util-xml:0.5.0" level="project" />
     <orderEntry type="library" exported="" name="Maven: org.ops4j.base:ops4j-base-util-collections:0.5.0" level="project" />
+    <orderEntry type="module" module-name="pax-url-mercury" />
     <orderEntry type="library" name="Maven: org.osgi:org.osgi.core:4.0.1" level="project" />
     <orderEntry type="library" name="Maven: org.osgi:org.osgi.compendium:4.0.1" level="project" />
     <orderEntry type="library" name="Maven: junit:junit:4.4" level="project" />
