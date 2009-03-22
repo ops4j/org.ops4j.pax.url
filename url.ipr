@@ -393,6 +393,7 @@
       <module fileurl="file://$PROJECT_DIR$/pax-url-commons/pax-url-commons.iml" filepath="$PROJECT_DIR$/pax-url-commons/pax-url-commons.iml" />
       <module fileurl="file://$PROJECT_DIR$/pax-url-dir/pax-url-dir.iml" filepath="$PROJECT_DIR$/pax-url-dir/pax-url-dir.iml" />
       <module fileurl="file://$PROJECT_DIR$/pax-url-link/pax-url-link.iml" filepath="$PROJECT_DIR$/pax-url-link/pax-url-link.iml" />
+      <module fileurl="file://$PROJECT_DIR$/pax-url-maven/pax-url-maven.iml" filepath="$PROJECT_DIR$/pax-url-maven/pax-url-maven.iml" />
       <module fileurl="file://$PROJECT_DIR$/pax-url-maven-commons/pax-url-maven-commons.iml" filepath="$PROJECT_DIR$/pax-url-maven-commons/pax-url-maven-commons.iml" />
       <module fileurl="file://$PROJECT_DIR$/pax-url-mercury/pax-url-mercury.iml" filepath="$PROJECT_DIR$/pax-url-mercury/pax-url-mercury.iml" />
       <module fileurl="file://$PROJECT_DIR$/pax-url-mvn/pax-url-mvn.iml" filepath="$PROJECT_DIR$/pax-url-mvn/pax-url-mvn.iml" />
@@ -715,17 +716,6 @@
         <root url="jar://$M2_REPO$/org/apache/maven/mercury/mercury-repo-api/1.0-alpha-5/mercury-repo-api-1.0-alpha-5-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: org.apache.maven.mercury:mercury-artifact:1.0-alpha-5">
-      <CLASSES>
-        <root url="jar://$M2_REPO$/org/apache/maven/mercury/mercury-artifact/1.0-alpha-5/mercury-artifact-1.0-alpha-5.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$M2_REPO$/org/apache/maven/mercury/mercury-artifact/1.0-alpha-5/mercury-artifact-1.0-alpha-5-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$M2_REPO$/org/apache/maven/mercury/mercury-artifact/1.0-alpha-5/mercury-artifact-1.0-alpha-5-sources.jar!/" />
-      </SOURCES>
-    </library>
     <library name="Maven: org.apache.maven.mercury:mercury-transport-api:1.0-alpha-5">
       <CLASSES>
         <root url="jar://$M2_REPO$/org/apache/maven/mercury/mercury-transport-api/1.0-alpha-5/mercury-transport-api-1.0-alpha-5.jar!/" />
@@ -746,17 +736,6 @@
       </JAVADOC>
       <SOURCES>
         <root url="jar://$M2_REPO$/org/apache/maven/mercury/mercury-crypto-api/1.0-alpha-5/mercury-crypto-api-1.0-alpha-5-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Maven: org.apache.maven.mercury:mercury-external:1.0-alpha-5">
-      <CLASSES>
-        <root url="jar://$M2_REPO$/org/apache/maven/mercury/mercury-external/1.0-alpha-5/mercury-external-1.0-alpha-5.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$M2_REPO$/org/apache/maven/mercury/mercury-external/1.0-alpha-5/mercury-external-1.0-alpha-5-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$M2_REPO$/org/apache/maven/mercury/mercury-external/1.0-alpha-5/mercury-external-1.0-alpha-5-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: org.apache.maven.mercury:mercury-event:1.0-alpha-5">
@@ -900,6 +879,116 @@
       </JAVADOC>
       <SOURCES>
         <root url="jar://$M2_REPO$/org/codehaus/plexus/plexus-utils/1.5.5/plexus-utils-1.5.5-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.apache.maven.mercury:mercury-artifact:1.0.0-alpha-2-SNAPSHOT">
+      <CLASSES>
+        <root url="jar://$M2_REPO$/org/apache/maven/mercury/mercury-artifact/1.0.0-alpha-2-SNAPSHOT/mercury-artifact-1.0.0-alpha-2-SNAPSHOT.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$M2_REPO$/org/apache/maven/mercury/mercury-artifact/1.0.0-alpha-2-SNAPSHOT/mercury-artifact-1.0.0-alpha-2-SNAPSHOT-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$M2_REPO$/org/apache/maven/mercury/mercury-artifact/1.0.0-alpha-2-SNAPSHOT/mercury-artifact-1.0.0-alpha-2-SNAPSHOT-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.apache.maven.mercury:mercury-external:1.0.0-alpha-2-SNAPSHOT">
+      <CLASSES>
+        <root url="jar://$M2_REPO$/org/apache/maven/mercury/mercury-external/1.0.0-alpha-2-SNAPSHOT/mercury-external-1.0.0-alpha-2-SNAPSHOT.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$M2_REPO$/org/apache/maven/mercury/mercury-external/1.0.0-alpha-2-SNAPSHOT/mercury-external-1.0.0-alpha-2-SNAPSHOT-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$M2_REPO$/org/apache/maven/mercury/mercury-external/1.0.0-alpha-2-SNAPSHOT/mercury-external-1.0.0-alpha-2-SNAPSHOT-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.apache.maven.mercury:mercury-md-sat:1.0-alpha-5">
+      <CLASSES>
+        <root url="jar://$M2_REPO$/org/apache/maven/mercury/mercury-md-sat/1.0-alpha-5/mercury-md-sat-1.0-alpha-5.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$M2_REPO$/org/apache/maven/mercury/mercury-md-sat/1.0-alpha-5/mercury-md-sat-1.0-alpha-5-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$M2_REPO$/org/apache/maven/mercury/mercury-md-sat/1.0-alpha-5/mercury-md-sat-1.0-alpha-5-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.sat4j:org.sat4j.core:2.0.4">
+      <CLASSES>
+        <root url="jar://$M2_REPO$/org/sat4j/org.sat4j.core/2.0.4/org.sat4j.core-2.0.4.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$M2_REPO$/org/sat4j/org.sat4j.core/2.0.4/org.sat4j.core-2.0.4-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$M2_REPO$/org/sat4j/org.sat4j.core/2.0.4/org.sat4j.core-2.0.4-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.sat4j:org.sat4j.pb:2.0.4">
+      <CLASSES>
+        <root url="jar://$M2_REPO$/org/sat4j/org.sat4j.pb/2.0.4/org.sat4j.pb-2.0.4.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$M2_REPO$/org/sat4j/org.sat4j.pb/2.0.4/org.sat4j.pb-2.0.4-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$M2_REPO$/org/sat4j/org.sat4j.pb/2.0.4/org.sat4j.pb-2.0.4-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.apache.maven:maven-mercury:3.0-SNAPSHOT">
+      <CLASSES>
+        <root url="jar://$M2_REPO$/org/apache/maven/maven-mercury/3.0-SNAPSHOT/maven-mercury-3.0-SNAPSHOT.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$M2_REPO$/org/apache/maven/maven-mercury/3.0-SNAPSHOT/maven-mercury-3.0-SNAPSHOT-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$M2_REPO$/org/apache/maven/maven-mercury/3.0-SNAPSHOT/maven-mercury-3.0-SNAPSHOT-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.apache.maven:maven-project-builder:3.0-SNAPSHOT">
+      <CLASSES>
+        <root url="jar://$M2_REPO$/org/apache/maven/maven-project-builder/3.0-SNAPSHOT/maven-project-builder-3.0-SNAPSHOT.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$M2_REPO$/org/apache/maven/maven-project-builder/3.0-SNAPSHOT/maven-project-builder-3.0-SNAPSHOT-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$M2_REPO$/org/apache/maven/maven-project-builder/3.0-SNAPSHOT/maven-project-builder-3.0-SNAPSHOT-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.apache.maven.shared:maven-shared-model:1.0-SNAPSHOT">
+      <CLASSES>
+        <root url="jar://$M2_REPO$/org/apache/maven/shared/maven-shared-model/1.0-SNAPSHOT/maven-shared-model-1.0-SNAPSHOT.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$M2_REPO$/org/apache/maven/shared/maven-shared-model/1.0-SNAPSHOT/maven-shared-model-1.0-SNAPSHOT-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$M2_REPO$/org/apache/maven/shared/maven-shared-model/1.0-SNAPSHOT/maven-shared-model-1.0-SNAPSHOT-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.codehaus.woodstox:wstx-asl:3.2.6">
+      <CLASSES>
+        <root url="jar://$M2_REPO$/org/codehaus/woodstox/wstx-asl/3.2.6/wstx-asl-3.2.6.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$M2_REPO$/org/codehaus/woodstox/wstx-asl/3.2.6/wstx-asl-3.2.6-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$M2_REPO$/org/codehaus/woodstox/wstx-asl/3.2.6/wstx-asl-3.2.6-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: stax:stax-api:1.0.1">
+      <CLASSES>
+        <root url="jar://$M2_REPO$/stax/stax-api/1.0.1/stax-api-1.0.1.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$M2_REPO$/stax/stax-api/1.0.1/stax-api-1.0.1-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$M2_REPO$/stax/stax-api/1.0.1/stax-api-1.0.1-sources.jar!/" />
       </SOURCES>
     </library>
   </component>

@@ -6,9 +6,13 @@ Bundle-Version>:\
 
 Import-Package:\
   javax.*,\
+  org.xml*,\
+  org.w3c.*,\
   !org.bouncycastle.*,\
   !org.slf4j,\
-  !org.mortbay.*
+  !org.mortbay.*,\
+  !org.relaxng.datatype,\
+  !com.sun.msv.*
 
 Export-Package:\
    org.apache.maven.mercury.*; version="${dependency.mercury.version}"
