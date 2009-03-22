@@ -23,7 +23,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -103,39 +102,21 @@ public class Connection
     {
         final List<Repository> repositories = new ArrayList<Repository>();
         final MavenRepositoryURL localRepository = m_configuration.getLocalRepository();
-        LOG.debug( "Using local repository " + localRepository );
         if( localRepository != null )
         {
-            try
-            {
-                repositories.add(
-                    new LocalRepositoryM2(
-                        "localRepo",
-                        new File( localRepository.toURL().toURI() ),
-                        DependencyProcessor.NULL_PROCESSOR
-                    )
-                );
-            } catch( URISyntaxException e )
-            {
-                throw initIOException( "Cannot initialize Maven local repository", e );
-            }
+            LOG.debug( "Using local repository " + localRepository );
+            repositories.add( toRepository( localRepository ) );
         }
         final List<MavenRepositoryURL> remoteRepos = new ArrayList<MavenRepositoryURL>();
         if( m_parser.getRepositoryURL() != null )
         {
-            remoteRepos.add( 0, m_parser.getRepositoryURL() );
+            remoteRepos.add( m_parser.getRepositoryURL() );
         }
         remoteRepos.addAll( m_configuration.getRepositories() );
         for( MavenRepositoryURL repositoryURL : remoteRepos )
         {
             LOG.debug( "Using remote repository " + repositoryURL );
-            final Server server = new Server( repositoryURL.toURL().toExternalForm(), repositoryURL.toURL() );
-            final RemoteRepositoryM2 remoteRepo =
-                new RemoteRepositoryM2( server.getId(), server, DependencyProcessor.NULL_PROCESSOR );
-            remoteRepo.setRepositoryQualityRange(
-                createQualityRange( repositoryURL.isReleasesEnabled(), repositoryURL.isSnapshotsEnabled() )
-            );
-            repositories.add( remoteRepo );
+            repositories.add( toRepository( repositoryURL ) );
         }
         try
         {
@@ -148,6 +129,33 @@ public class Connection
     }
 
     /**
+     * Adapt a {@link MavenRepositoryURL} to a Mercury {@link Repository}.
+     *
+     * @param repositoryURL to adapt
+     *
+     * @return adapted
+     */
+    private Repository toRepository( final MavenRepositoryURL repositoryURL )
+    {
+        final Repository repository;
+        if( repositoryURL.isFileRepository() )
+        {
+            repository = new LocalRepositoryM2(
+                repositoryURL.getId(), repositoryURL.getFile(), DependencyProcessor.NULL_PROCESSOR
+            );
+        }
+        else
+        {
+            final Server server = new Server( repositoryURL.getId(), repositoryURL.getURL() );
+            repository = new RemoteRepositoryM2( server.getId(), server, DependencyProcessor.NULL_PROCESSOR );
+        }
+        repository.setRepositoryQualityRange(
+            createQualityRange( repositoryURL.isReleasesEnabled(), repositoryURL.isSnapshotsEnabled() )
+        );
+        return repository;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -157,55 +165,69 @@ public class Connection
         connect();
 
         LOG.debug( "Resolving [" + url.toExternalForm() + "]" );
+
+        List<ArtifactBasicMetadata> query = new ArrayList<ArtifactBasicMetadata>();
+        final ArtifactMetadata queryMeta = new ArtifactMetadata( m_parser.getGAV() );
+        query.add( queryMeta );
+
+        final ArtifactBasicResults results;
         try
         {
-            List<ArtifactBasicMetadata> query = new ArrayList<ArtifactBasicMetadata>();
-            final ArtifactMetadata queryMeta = new ArtifactMetadata( m_parser.getGAV() );
-            query.add( queryMeta );
-
-            final ArtifactBasicResults results = m_vrr.readVersions( query );
-            if( results == null )
-            {
-                throw new IOException( "Cannot determine artifact versions from [" + m_parser.getGAV() );
-            }
-            if( results.hasExceptions() || !results.hasResults( queryMeta ) )
-            {
-                //noinspection ThrowableResultOfMethodCallIgnored
-                throw initIOException( "Cannot determine artifact versions", results.getError( queryMeta ) );
-            }
-
-            final List<ArtifactBasicMetadata> foundArtifacts = results.getResult( queryMeta );
-            if( LOG.isDebugEnabled() )
-            {
-                for( ArtifactBasicMetadata foundArtifact : foundArtifacts )
-                {
-                    LOG.debug( "Found artifact [" + foundArtifact.getGAV() + "]" );
-                }
-
-                // download the artifact
-                // TODO selecting the last artifact in the list is not the correct approach
-                final ArtifactBasicMetadata foundArtifact = foundArtifacts.get( foundArtifacts.size() - 1 );
-
-                LOG.debug( "Selected artifact [" + foundArtifact.getGAV() + "]" );
-
-                final ArtifactResults artifactResults = m_vrr.readArtifacts( toList( foundArtifact ) );
-                if( artifactResults.hasExceptions() || !artifactResults.hasResults( foundArtifact ) )
-                {
-                    //noinspection ThrowableResultOfMethodCallIgnored
-                    throw initIOException( "Cannot download", artifactResults.getError( foundArtifact ) );
-                }
-                final List<Artifact> artifacts = artifactResults.getResults( foundArtifact );
-                final File artifactFile = artifacts.get( 0 ).getFile();
-                if( artifactFile == null )
-                {
-                    throw new IOException( "Cannot download artifact [" + foundArtifact.getGAV() );
-                }
-                return new BufferedInputStream( new FileInputStream( artifactFile ) );
-            }
+            results = m_vrr.readVersions( query );
         }
         catch( RepositoryException e )
         {
             throw initIOException( "Canot determine artifacts versions", e );
+        }
+        if( results == null )
+        {
+            throw new IOException( "Cannot determine artifact versions from [" + m_parser.getGAV() );
+        }
+        if( results.hasExceptions() || !results.hasResults( queryMeta ) )
+        {
+            //noinspection ThrowableResultOfMethodCallIgnored
+            throw initIOException( "Cannot determine artifact versions", results.getError( queryMeta ) );
+        }
+
+        final List<ArtifactBasicMetadata> foundArtifacts = results.getResult( queryMeta );
+        if( LOG.isDebugEnabled() )
+        {
+            for( ArtifactBasicMetadata foundArtifact : foundArtifacts )
+            {
+                LOG.debug( "Found artifact [" + foundArtifact.getGAV() + "]" );
+            }
+
+            // download the artifact
+            // TODO selecting the last artifact in the list is not the correct approach
+            final ArtifactBasicMetadata selectedArtifact = foundArtifacts.get( foundArtifacts.size() - 1 );
+
+            LOG.debug( "Selected artifact [" + selectedArtifact.getGAV() + "]" );
+
+            final ArtifactResults artifactResults;
+            try
+            {
+                artifactResults = m_vrr.readArtifacts( toList( selectedArtifact ) );
+            }
+            catch( RepositoryException e )
+            {
+                e.printStackTrace();
+                throw initIOException( "Canot download artifact [" + selectedArtifact.getGAV() + "]", e );
+            }
+            if( artifactResults.hasExceptions() || !artifactResults.hasResults( selectedArtifact ) )
+            {
+                //noinspection ThrowableResultOfMethodCallIgnored
+                throw initIOException(
+                    "Cannot download artifact [" + selectedArtifact.getGAV() + "]",
+                    artifactResults.getError( selectedArtifact )
+                );
+            }
+            final List<Artifact> artifacts = artifactResults.getResults( selectedArtifact );
+            final File artifactFile = artifacts.get( 0 ).getFile();
+            if( artifactFile == null )
+            {
+                throw new IOException( "Cannot download artifact [" + selectedArtifact.getGAV() );
+            }
+            return new BufferedInputStream( new FileInputStream( artifactFile ) );
         }
 
         // no artifact found

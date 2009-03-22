@@ -129,7 +129,7 @@ public class ConfigurationImplTest
         List<MavenRepositoryURL> repositories = config.getRepositories();
         assertNotNull( "Repositories is null", repositories );
         assertEquals( "Repositories size", 1, repositories.size() );
-        assertEquals( "Repository", new URL( "file:repository1/" ), repositories.get( 0 ).toURL() );
+        assertEquals( "Repository", new URL( "file:repository1/" ), repositories.get( 0 ).getURL() );
         verify( propertyResolver );
     }
 
@@ -145,7 +145,7 @@ public class ConfigurationImplTest
         List<MavenRepositoryURL> repositories = config.getRepositories();
         assertNotNull( "Repositories is null", repositories );
         assertEquals( "Repositories size", 1, repositories.size() );
-        assertEquals( "Repository", new URL( "file:repository1/" ), repositories.get( 0 ).toURL() );
+        assertEquals( "Repository", new URL( "file:repository1/" ), repositories.get( 0 ).getURL() );
         verify( propertyResolver );
     }
 
@@ -161,7 +161,7 @@ public class ConfigurationImplTest
         List<MavenRepositoryURL> repositories = config.getRepositories();
         assertNotNull( "Repositories is null", repositories );
         assertEquals( "Repositories size", 1, repositories.size() );
-        assertEquals( "Repository", new URL( "file:repository1/" ), repositories.get( 0 ).toURL() );
+        assertEquals( "Repository", new URL( "file:repository1/" ), repositories.get( 0 ).getURL() );
         verify( propertyResolver );
     }
 
@@ -177,7 +177,7 @@ public class ConfigurationImplTest
         List<MavenRepositoryURL> repositories = config.getRepositories();
         assertNotNull( "Repositories is null", repositories );
         assertEquals( "Repositories size", 1, repositories.size() );
-        assertEquals( "Repository", new URL( "file:repository1\\" ), repositories.get( 0 ).toURL() );
+        assertEquals( "Repository", new URL( "file:repository1\\" ), repositories.get( 0 ).getURL() );
         verify( propertyResolver );
     }
 
@@ -246,8 +246,8 @@ public class ConfigurationImplTest
         List<MavenRepositoryURL> repositories = config.getRepositories();
         assertNotNull( "Repositories is null", repositories );
         assertEquals( "Repositories size", 2, repositories.size() );
-        assertEquals( "Repository 1", new URL( "file:repository1/" ), repositories.get( 0 ).toURL() );
-        assertEquals( "Repository 2", new URL( "file:repository2/" ), repositories.get( 1 ).toURL() );
+        assertEquals( "Repository 1", new URL( "file:repository1/" ), repositories.get( 0 ).getURL() );
+        assertEquals( "Repository 2", new URL( "file:repository2/" ), repositories.get( 1 ).getURL() );
         verify( propertyResolver );
     }
 
@@ -267,7 +267,7 @@ public class ConfigurationImplTest
         List<MavenRepositoryURL> repositories = config.getRepositories();
         assertNotNull( "Repositories is null", repositories );
         assertEquals( "Repositories size", 1, repositories.size() );
-        assertEquals( "Repository", new URL( "file:repository1/" ), repositories.get( 0 ).toURL() );
+        assertEquals( "Repository", new URL( "file:repository1/" ), repositories.get( 0 ).getURL() );
         verify( propertyResolver );
     }
 
@@ -287,8 +287,8 @@ public class ConfigurationImplTest
         List<MavenRepositoryURL> repositories = config.getRepositories();
         assertNotNull( "Repositories is null", repositories );
         assertEquals( "Repositories size", 2, repositories.size() );
-        assertEquals( "Repository 1", new URL( "file:repository1/" ), repositories.get( 0 ).toURL() );
-        assertEquals( "Repository 2", new URL( "file:repository2/" ), repositories.get( 1 ).toURL() );
+        assertEquals( "Repository 1", new URL( "file:repository1/" ), repositories.get( 0 ).getURL() );
+        assertEquals( "Repository 2", new URL( "file:repository2/" ), repositories.get( 1 ).getURL() );
         verify( propertyResolver );
     }
 
@@ -306,9 +306,9 @@ public class ConfigurationImplTest
         List<MavenRepositoryURL> repositories = config.getRepositories();
         assertNotNull( "Repositories is null", repositories );
         assertEquals( "Repositories size", 2, repositories.size() );
-        assertEquals( "Local repository", new URL( "file:localRepository/" ), repositories.get( 0 ).toURL()
+        assertEquals( "Local repository", new URL( "file:localRepository/" ), repositories.get( 0 ).getURL()
         );
-        assertEquals( "Repository", new URL( "file:repository1/" ), repositories.get( 1 ).toURL() );
+        assertEquals( "Repository", new URL( "file:repository1/" ), repositories.get( 1 ).getURL() );
         verify( propertyResolver );
     }
 
@@ -324,7 +324,7 @@ public class ConfigurationImplTest
         MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
         assertEquals( "Local repository",
                       new URL( "file:somewhere/localrepository/" ),
-                      config.getLocalRepository().toURL()
+                      config.getLocalRepository().getURL()
         );
         verify( propertyResolver );
     }
@@ -341,7 +341,7 @@ public class ConfigurationImplTest
         MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
         assertEquals( "Local repository",
                       new URL( "file:somewhere/localrepository/" ),
-                      config.getLocalRepository().toURL()
+                      config.getLocalRepository().getURL()
         );
         verify( propertyResolver );
     }
@@ -358,7 +358,7 @@ public class ConfigurationImplTest
         MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
         assertEquals( "Local repository",
                       new URL( "file:somewhere/localrepository\\" ),
-                      config.getLocalRepository().toURL()
+                      config.getLocalRepository().getURL()
         );
         verify( propertyResolver );
     }
@@ -376,7 +376,7 @@ public class ConfigurationImplTest
         MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
         assertEquals( "Local repository",
                       valid.toURL(),
-                      config.getLocalRepository().toURL()
+                      config.getLocalRepository().getURL()
         );
         verify( propertyResolver );
     }
@@ -395,7 +395,7 @@ public class ConfigurationImplTest
         MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
         assertEquals( "Local repository",
                       validWithSlash.toURL(),
-                      config.getLocalRepository().toURL()
+                      config.getLocalRepository().getURL()
         );
         verify( propertyResolver );
     }
@@ -459,7 +459,7 @@ public class ConfigurationImplTest
         config.setSettings( settings );
         assertEquals( "Local repository",
                       new URL( "file:somewhere/localrepository/" ),
-                      config.getLocalRepository().toURL()
+                      config.getLocalRepository().getURL()
         );
         verify( propertyResolver, settings );
     }

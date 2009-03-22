@@ -135,7 +135,7 @@ public class RepositoryURLTest
     {
         assertEquals( "URL",
                       new URL( "http://user:password@somerepo/" ),
-                      new MavenRepositoryURL( "http://user:password@somerepo" ).toURL()
+                      new MavenRepositoryURL( "http://user:password@somerepo" ).getURL()
         );
     }
 
