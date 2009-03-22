@@ -17,6 +17,7 @@
  */
 package org.ops4j.pax.url.maven.commons;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.ops4j.lang.NullArgumentException;
@@ -31,9 +32,17 @@ public class MavenRepositoryURL
 {
 
     /**
+     * Repository Id.
+     */
+    private String m_id;
+    /**
      * Repository URL.
      */
     private final URL m_repositoryURL;
+    /**
+     * Repository file (only if URL is a file URL).
+     */
+    private final File m_file;
     /**
      * True if the repository contains snapshots.
      */
@@ -88,6 +97,45 @@ public class MavenRepositoryURL
         m_repositoryURL = new URL( spec );
         m_snapshotsEnabled = snapshotEnabled;
         m_releasesEnabled = releasesEnabled;
+        m_id = "" + spec.hashCode();
+        if( m_repositoryURL.getProtocol().equals( "file" ) )
+        {
+            m_file = new File( m_repositoryURL.getPath() );
+        }
+        else
+        {
+            m_file = null;
+        }
+    }
+
+    /**
+     * Getter.
+     *
+     * @return repository id
+     */
+    public String getId()
+    {
+        return m_id;
+    }
+
+    /**
+     * Getter.
+     *
+     * @return repository URL
+     */
+    public URL getURL()
+    {
+        return m_repositoryURL;
+    }
+
+    /**
+     * Getter.
+     *
+     * @return repository file
+     */
+    public File getFile()
+    {
+        return m_file;
     }
 
     /**
@@ -103,21 +151,21 @@ public class MavenRepositoryURL
     /**
      * Getter.
      *
-     * @return repository URL
-     */
-    public URL toURL()
-    {
-        return m_repositoryURL;
-    }
-
-    /**
-     * Getter.
-     *
      * @return true if the repository contains snapshots
      */
     public boolean isSnapshotsEnabled()
     {
         return m_snapshotsEnabled;
+    }
+
+    /**
+     * Getter.
+     *
+     * @return if the repository is a file based repository.
+     */
+    public boolean isFileRepository()
+    {
+        return m_file != null;
     }
 
     @Override
@@ -129,4 +177,5 @@ public class MavenRepositoryURL
             .append( ",snapshots=" ).append( m_snapshotsEnabled )
             .toString();
     }
+
 }

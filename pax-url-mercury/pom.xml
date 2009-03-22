@@ -42,7 +42,6 @@
       <groupId>org.apache.maven.mercury</groupId>
       <artifactId>mercury-repo-local-m2</artifactId>
       <version>${dependency.mercury.version}</version>
-      <scope>provided</scope>
       <exclusions>
         <exclusion>
           <groupId>org.codehaus.plexus</groupId>
@@ -54,7 +53,6 @@
       <groupId>org.apache.maven.mercury</groupId>
       <artifactId>mercury-repo-remote-m2</artifactId>
       <version>${dependency.mercury.version}</version>
-      <scope>provided</scope>
       <exclusions>
         <exclusion>
           <groupId>org.codehaus.plexus</groupId>
@@ -66,7 +64,6 @@
       <groupId>org.apache.maven.mercury</groupId>
       <artifactId>mercury-repo-virtual</artifactId>
       <version>${dependency.mercury.version}</version>
-      <scope>provided</scope>
       <exclusions>
         <exclusion>
           <groupId>org.codehaus.plexus</groupId>
@@ -78,13 +75,12 @@
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
       <version>1.5.5</version>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.mercury</groupId>
       <artifactId>mercury-md-sat</artifactId>
       <version>${dependency.mercury.version}</version>
-      <scope>provided</scope>
+      <optional>true</optional>
       <exclusions>
         <exclusion>
           <groupId>org.codehaus.plexus</groupId>
@@ -96,7 +92,6 @@
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-mercury</artifactId>
       <version>3.0-SNAPSHOT</version>
-      <scope>provided</scope>
       <exclusions>
         <exclusion>
           <groupId>org.codehaus.plexus</groupId>
@@ -108,7 +103,6 @@
       <groupId>org.apache.maven.mercury</groupId>
       <artifactId>mercury-artifact</artifactId>
       <version>${dependency.mercury.version}</version>
-      <scope>provided</scope>
       <exclusions>
         <exclusion>
           <groupId>org.codehaus.plexus</groupId>
@@ -120,7 +114,6 @@
       <groupId>org.apache.maven.mercury</groupId>
       <artifactId>mercury-external</artifactId>
       <version>${dependency.mercury.version}</version>
-      <scope>provided</scope>
       <exclusions>
         <exclusion>
           <groupId>org.codehaus.plexus</groupId>

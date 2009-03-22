@@ -95,7 +95,7 @@ public class ParserTest
         assertEquals( "Type", "jar", parser.getType() );
         assertEquals( "Classifier", null, parser.getClassifier() );
         assertEquals( "Artifact path", "group/artifact/LATEST/artifact-LATEST.jar", parser.getArtifactPath() );
-        assertEquals( "repository", new URL( "http://repository/" ), parser.getRepositoryURL().toURL() );
+        assertEquals( "repository", new URL( "http://repository/" ), parser.getRepositoryURL().getURL() );
     }
 
     @Test
@@ -123,7 +123,7 @@ public class ParserTest
         assertEquals( "Type", "type", parser.getType() );
         assertEquals( "Classifier", null, parser.getClassifier() );
         assertEquals( "Artifact path", "group/artifact/version/artifact-version.type", parser.getArtifactPath() );
-        assertEquals( "repository", new URL( "http://repository/" ), parser.getRepositoryURL().toURL() );
+        assertEquals( "repository", new URL( "http://repository/" ), parser.getRepositoryURL().getURL() );
     }
 
     @Test
@@ -139,7 +139,7 @@ public class ParserTest
         assertEquals( "Artifact path", "group/artifact/version/artifact-version-classifier.type",
                       parser.getArtifactPath()
         );
-        assertEquals( "repository", new URL( "http://repository/" ), parser.getRepositoryURL().toURL() );
+        assertEquals( "repository", new URL( "http://repository/" ), parser.getRepositoryURL().getURL() );
     }
 
     @Test
@@ -228,7 +228,7 @@ public class ParserTest
         assertEquals( "Artifact path", "group/artifact/0.1.0/artifact-0.1.0.jar", parser.getArtifactPath() );
         assertEquals( "repository",
                       new URL( "jar:http://repository/repository.jar!/" ),
-                      parser.getRepositoryURL().toURL()
+                      parser.getRepositoryURL().getURL()
         );
     }
 

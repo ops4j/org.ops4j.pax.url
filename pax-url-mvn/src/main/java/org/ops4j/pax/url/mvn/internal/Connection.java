@@ -275,7 +275,7 @@ public class Connection
                 }
                 else
                 {
-                    final Document metadata = getMetadata( repositoryURL.toURL(),
+                    final Document metadata = getMetadata( repositoryURL.getURL(),
                                                            new String[]
                                                                {
                                                                    m_parser.getArtifactLocalMetdataPath(),
@@ -376,7 +376,7 @@ public class Connection
         return new DownloadableArtifact(
             m_parser.getVersion(),
             priority,
-            repositoryURL.toURL(),
+            repositoryURL.getURL(),
             m_parser.getArtifactPath(),
             false, // no local built snapshot
             m_configuration.getCertificateCheck()
@@ -412,7 +412,7 @@ public class Connection
                 return new DownloadableArtifact(
                     version,
                     priority,
-                    repositoryURL.toURL(),
+                    repositoryURL.getURL(),
                     m_parser.getArtifactPath( version ),
                     false, // no local built snapshot
                     m_configuration.getCertificateCheck()
@@ -450,7 +450,7 @@ public class Connection
         LOG.debug( Ix2 + "Resolving snapshot version [" + version + "]" );
         try
         {
-            final Document snapshotMetadata = getMetadata( repositoryURL.toURL(),
+            final Document snapshotMetadata = getMetadata( repositoryURL.getURL(),
                                                            new String[]
                                                                {
                                                                    m_parser.getVersionLocalMetadataPath( version ),
@@ -468,7 +468,7 @@ public class Connection
                 return new DownloadableArtifact(
                     m_parser.getSnapshotVersion( version, timestamp, buildNumber ),
                     priority,
-                    repositoryURL.toURL(),
+                    repositoryURL.getURL(),
                     m_parser.getSnapshotPath( version, timestamp, buildNumber ),
                     localSnapshot != null,
                     m_configuration.getCertificateCheck()
@@ -487,7 +487,7 @@ public class Connection
                         return new DownloadableArtifact(
                             m_parser.getSnapshotVersion( version, lastUpdated, "0" ),
                             priority,
-                            repositoryURL.toURL(),
+                            repositoryURL.getURL(),
                             m_parser.getArtifactPath( version ),
                             localSnapshot != null,
                             m_configuration.getCertificateCheck()
@@ -546,7 +546,7 @@ public class Connection
                                 new DownloadableArtifact(
                                     versionString,
                                     priority,
-                                    repositoryURL.toURL(),
+                                    repositoryURL.getURL(),
                                     m_parser.getArtifactPath( versionString ),
                                     false, // no local built snapshot
                                     m_configuration.getCertificateCheck()
