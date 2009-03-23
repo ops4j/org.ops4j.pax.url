@@ -129,33 +129,6 @@ public class Connection
     }
 
     /**
-     * Adapt a {@link MavenRepositoryURL} to a Mercury {@link Repository}.
-     *
-     * @param repositoryURL to adapt
-     *
-     * @return adapted
-     */
-    private Repository toRepository( final MavenRepositoryURL repositoryURL )
-    {
-        final Repository repository;
-        if( repositoryURL.isFileRepository() )
-        {
-            repository = new LocalRepositoryM2(
-                repositoryURL.getId(), repositoryURL.getFile(), DependencyProcessor.NULL_PROCESSOR
-            );
-        }
-        else
-        {
-            final Server server = new Server( repositoryURL.getId(), repositoryURL.getURL() );
-            repository = new RemoteRepositoryM2( server.getId(), server, DependencyProcessor.NULL_PROCESSOR );
-        }
-        repository.setRepositoryQualityRange(
-            createQualityRange( repositoryURL.isReleasesEnabled(), repositoryURL.isSnapshotsEnabled() )
-        );
-        return repository;
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
@@ -234,6 +207,33 @@ public class Connection
         throw new RuntimeException(
             "URL [" + url.toExternalForm() + "] could not be resolved. (enable TRACE logging for details)"
         );
+    }
+
+    /**
+     * Adapt a {@link MavenRepositoryURL} to a Mercury {@link Repository}.
+     *
+     * @param repositoryURL to adapt
+     *
+     * @return adapted
+     */
+    private Repository toRepository( final MavenRepositoryURL repositoryURL )
+    {
+        final Repository repository;
+        if( repositoryURL.isFileRepository() )
+        {
+            repository = new LocalRepositoryM2(
+                repositoryURL.getId(), repositoryURL.getFile(), DependencyProcessor.NULL_PROCESSOR
+            );
+        }
+        else
+        {
+            final Server server = new Server( repositoryURL.getId(), repositoryURL.getURL() );
+            repository = new RemoteRepositoryM2( server.getId(), server, DependencyProcessor.NULL_PROCESSOR );
+        }
+        repository.setRepositoryQualityRange(
+            createQualityRange( repositoryURL.isReleasesEnabled(), repositoryURL.isSnapshotsEnabled() )
+        );
+        return repository;
     }
 
     //TODO remove once a version > 1.0-alpha-5 of Mercury and use QualityRange.create
