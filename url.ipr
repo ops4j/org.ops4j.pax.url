@@ -437,7 +437,7 @@
     <option name="mySupportsUserInfoFilter" value="true" />
   </component>
   <component name="VcsDirectoryMappings">
-    <mapping directory="" vcs="svn" />
+    <mapping directory="" vcs="Git" />
   </component>
   <component name="WebServicesPlugin" addRequiredLibraries="true" />
   <component name="libraryTable">
@@ -538,17 +538,6 @@
       </JAVADOC>
       <SOURCES>
         <root url="jar://$M2_REPO$/org/easymock/easymock/2.3/easymock-2.3-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Maven: biz.aQute:bndlib:0.0.255">
-      <CLASSES>
-        <root url="jar://$M2_REPO$/biz/aQute/bndlib/0.0.255/bndlib-0.0.255.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$M2_REPO$/biz/aQute/bndlib/0.0.255/bndlib-0.0.255-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$M2_REPO$/biz/aQute/bndlib/0.0.255/bndlib-0.0.255-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: org.ops4j.base:ops4j-base-net:0.5.0">
@@ -934,6 +923,17 @@
       </JAVADOC>
       <SOURCES>
         <root url="jar://$M2_REPO$/org/apache/maven/mercury/mercury-external/1.0-alpha-5/mercury-external-1.0-alpha-5-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: biz.aQute:bndlib:0.0.313">
+      <CLASSES>
+        <root url="jar://$M2_REPO$/biz/aQute/bndlib/0.0.313/bndlib-0.0.313.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$M2_REPO$/biz/aQute/bndlib/0.0.313/bndlib-0.0.313-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$M2_REPO$/biz/aQute/bndlib/0.0.313/bndlib-0.0.313-sources.jar!/" />
       </SOURCES>
     </library>
   </component>
