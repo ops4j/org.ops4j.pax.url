@@ -96,8 +96,14 @@ public class BndUtils
                  && manifest.getMainAttributes().getValue( Analyzer.IMPORT_PACKAGE ) == null )
             )
         {
-            final Properties properties = new Properties( instructions );
+            // Do not use instrauctions as default for properties because it looks like BND uses the props
+            // via some other means then getProperty() and so the instructions will not be used at all
+            // So, just cyo instructions to properties
+            final Properties properties = new Properties( );
+            properties.putAll( instructions );
+
             properties.put( "Generated-By-Ops4j-Pax-From", jarInfo );
+
             final Analyzer analyzer = new Analyzer();
             analyzer.setJar( jar );
             analyzer.setProperties( properties );
