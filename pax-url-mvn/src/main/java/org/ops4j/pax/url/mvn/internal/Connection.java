@@ -193,7 +193,7 @@ public class Connection
         }
         // no artifact found
         throw new RuntimeException(
-            "URL [" + url.toExternalForm() + "] could not be resolved. (enable TRACE logging for details)"
+            "URL [" + url.toExternalForm() + "] could not be resolved."
         );
     }
 
@@ -578,7 +578,9 @@ public class Connection
             repository = repository + Parser.FILE_SEPARATOR;
         }
         m_configuration.enableProxy( repositoryURL );
-        return URLUtils.prepareInputStream( new URL( repository + path ), !m_configuration.getCertificateCheck() );
+        final URL url = new URL( repository + path );
+        LOG.trace( "Reading " + url.toExternalForm() ); 
+        return URLUtils.prepareInputStream( url, !m_configuration.getCertificateCheck() );
     }
 
     /**
