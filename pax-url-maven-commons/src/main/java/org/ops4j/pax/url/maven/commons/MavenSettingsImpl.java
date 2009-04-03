@@ -208,48 +208,51 @@ public class MavenSettingsImpl
                                 if( activeProfiles.contains( profileId ) )
                                 {
                                     List<Element> repos = XmlUtils.getElements( profile, REPOSITORY_TAG );
-                                    for( Element repo : repos )
+                                    if( repos != null )
                                     {
-                                        Element element = XmlUtils.getElement( repo, "id" );
-                                        if( element != null )
+                                        for( Element repo : repos )
                                         {
-                                            String id = XmlUtils.getTextContent( element );
-                                            element = XmlUtils.getElement( repo, "layout" );
-                                            String layout = null;
+                                            Element element = XmlUtils.getElement( repo, "id" );
                                             if( element != null )
                                             {
-                                                layout = XmlUtils.getTextContent( element );
-                                            }
-                                            // take only repositories with a default layout (skip legacy ones)
-                                            if( layout == null || "default".equals( layout ) )
-                                            {
-                                                String snapshots =
-                                                    XmlUtils.getTextContentOfElement( repo, "snapshots/enabled" );
-                                                String releases =
-                                                    XmlUtils.getTextContentOfElement( repo, "releases/enabled" );
-                                                element = XmlUtils.getElement( repo, "url" );
+                                                String id = XmlUtils.getTextContent( element );
+                                                element = XmlUtils.getElement( repo, "layout" );
+                                                String layout = null;
                                                 if( element != null )
                                                 {
-                                                    String url = XmlUtils.getTextContent( element );
-                                                    if( url != null )
+                                                    layout = XmlUtils.getTextContent( element );
+                                                }
+                                                // take only repositories with a default layout (skip legacy ones)
+                                                if( layout == null || "default".equals( layout ) )
+                                                {
+                                                    String snapshots =
+                                                        XmlUtils.getTextContentOfElement( repo, "snapshots/enabled" );
+                                                    String releases =
+                                                        XmlUtils.getTextContentOfElement( repo, "releases/enabled" );
+                                                    element = XmlUtils.getElement( repo, "url" );
+                                                    if( element != null )
                                                     {
-                                                        if( repositories == null )
+                                                        String url = XmlUtils.getTextContent( element );
+                                                        if( url != null )
                                                         {
-                                                            repositories = new HashMap<String, String>();
-                                                            order = new ArrayList<String>();
+                                                            if( repositories == null )
+                                                            {
+                                                                repositories = new HashMap<String, String>();
+                                                                order = new ArrayList<String>();
+                                                            }
+                                                            if( snapshots != null && Boolean.valueOf( snapshots ) )
+                                                            {
+                                                                url += MavenConstants.SEPARATOR_OPTIONS
+                                                                       + MavenConstants.OPTION_ALLOW_SNAPSHOTS;
+                                                            }
+                                                            if( releases != null && !Boolean.valueOf( releases ) )
+                                                            {
+                                                                url += MavenConstants.SEPARATOR_OPTIONS
+                                                                       + MavenConstants.OPTION_DISALLOW_RELEASES;
+                                                            }
+                                                            repositories.put( id, url );
+                                                            order.add( id );
                                                         }
-                                                        if( snapshots != null && Boolean.valueOf( snapshots ) )
-                                                        {
-                                                            url += MavenConstants.SEPARATOR_OPTIONS
-                                                                   + MavenConstants.OPTION_ALLOW_SNAPSHOTS;
-                                                        }
-                                                        if( releases != null && !Boolean.valueOf( releases ) )
-                                                        {
-                                                            url += MavenConstants.SEPARATOR_OPTIONS
-                                                                   + MavenConstants.OPTION_DISALLOW_RELEASES;
-                                                        }
-                                                        repositories.put( id, url );
-                                                        order.add( id );
                                                     }
                                                 }
                                             }
