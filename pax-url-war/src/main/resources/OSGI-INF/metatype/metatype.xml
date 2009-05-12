@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0" localization="OSGI-INF/metatype/metatype">
+    <OCD id="org.ops4j.pax.url.war" name="%war.name" description="%war.description">
+      <AD id="org.ops4j.pax.url.war.certificateCheck" type="Boolean" default="false" name="%certificateCheck.name" description="%certificateCheck.description"/>
+    </OCD>
+    <Designate pid="org.ops4j.pax.url.war">
+        <Object ocdref="org.ops4j.pax.url.war"/>
+    </Designate>
+</metatype:MetaData>
