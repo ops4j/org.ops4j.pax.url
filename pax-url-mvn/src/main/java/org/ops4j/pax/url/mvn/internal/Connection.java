@@ -214,7 +214,10 @@ public class Connection
         // if the url contains a prefered repository add that repository as the first repository to be searched
         if( m_parser.getRepositoryURL() != null )
         {
-            repositories.add( 0, m_parser.getRepositoryURL() );
+            repositories.add(
+                repositories.size() == 0 ? 0 : 1,
+                m_parser.getRepositoryURL()
+            );
         }
         return doCollectPossibleDownloads( repositories );
     }
@@ -579,7 +582,7 @@ public class Connection
         }
         m_configuration.enableProxy( repositoryURL );
         final URL url = new URL( repository + path );
-        LOG.trace( "Reading " + url.toExternalForm() ); 
+        LOG.trace( "Reading " + url.toExternalForm() );
         return URLUtils.prepareInputStream( url, !m_configuration.getCertificateCheck() );
     }
 
