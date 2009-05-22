@@ -53,8 +53,8 @@ import org.ops4j.util.xml.XmlUtils;
  * metadata<br/>
  * - type = type of maven artifact; optional, if not specified uses JAR<br/>
  * Examples:<br>
- * mvn:http://repository.ops4j.org/maven2!org.ops4j.pax.runner/runner/0.4.0 - an artifact from an http repository<br/>
- * mvn:http://user:password@repository.ops4j.org/maven2!org.ops4j.pax.runner/runner/0.4.0 - an artifact from an http
+ * mvn:http://repository.ops4j.org/mvn-releases!org.ops4j.pax.runner/runner/0.4.0 - an artifact from an http repository<br/>
+ * mvn:http://user:password@repository.ops4j.org/mvn-releases!org.ops4j.pax.runner/runner/0.4.0 - an artifact from an http
  * repository with authentication<br/>
  * mvn:file://c:/localRepo!org.ops4j.pax.runner/runner/0.4.0 - an artifact from a directory<br/>
  * mvn:jar:file://c:/repo.zip!/repository!org.ops4j.pax.runner/runner/0.4.0 - an artifact from a zip file<br/>
