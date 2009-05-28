@@ -202,6 +202,14 @@
       </snapshots>
     </repository>
     <repository>
+      <id>ops4j.releases.maven2</id>
+      <name>The OPS4J Release Repository (Maven2)</name>
+      <url>http://repository.ops4j.org/maven2/</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    <repository>
       <id>aqute.releases</id>
       <name>Peter Kriens aQute Release Repository</name>
       <url>http://www.aqute.biz/repo/</url>
