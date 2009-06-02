@@ -39,6 +39,7 @@
       </activation>
       <modules>
         <module>pax-url-bnd</module>
+        <module>pax-url-cache</module>
         <module>pax-url-classpath</module>
         <module>pax-url-commons</module>
         <module>pax-url-dir</module>

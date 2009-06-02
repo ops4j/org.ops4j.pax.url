@@ -244,7 +244,6 @@
         <option value="$PROJECT_DIR$/pax-url-classpath/pom.xml" />
         <option value="$PROJECT_DIR$/pax-url-commons/pom.xml" />
         <option value="$PROJECT_DIR$/pax-url-mvn/pom.xml" />
-        <option value="$PROJECT_DIR$/pax-url-mvnlive/pom.xml" />
         <option value="$PROJECT_DIR$/pax-url-obr/pom.xml" />
         <option value="$PROJECT_DIR$/pax-url-war/pom.xml" />
         <option value="$PROJECT_DIR$/pax-url-wrap/pom.xml" />
@@ -388,6 +387,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/pax-url-bnd/pax-url-bnd.iml" filepath="$PROJECT_DIR$/pax-url-bnd/pax-url-bnd.iml" />
+      <module fileurl="file://$PROJECT_DIR$/pax-url-cache/pax-url-cache.iml" filepath="$PROJECT_DIR$/pax-url-cache/pax-url-cache.iml" />
       <module fileurl="file://$PROJECT_DIR$/pax-url-classpath/pax-url-classpath.iml" filepath="$PROJECT_DIR$/pax-url-classpath/pax-url-classpath.iml" />
       <module fileurl="file://$PROJECT_DIR$/pax-url-commons/pax-url-commons.iml" filepath="$PROJECT_DIR$/pax-url-commons/pax-url-commons.iml" />
       <module fileurl="file://$PROJECT_DIR$/pax-url-dir/pax-url-dir.iml" filepath="$PROJECT_DIR$/pax-url-dir/pax-url-dir.iml" />
