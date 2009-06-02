@@ -10,11 +10,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="Maven: biz.aQute:bndlib:0.0.313" level="project" />
-    <orderEntry type="library" exported="" name="Maven: org.ops4j.base:ops4j-base-lang:0.5.0" level="project" />
-    <orderEntry type="library" name="Maven: org.ops4j.pax.swissbox:pax-swissbox-optional-jcl:0.2.0" level="project" />
-    <orderEntry type="library" name="Maven: junit:junit:4.4" level="project" />
-    <orderEntry type="library" name="Maven: org.easymock:easymock:2.3" level="project" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
@@ -66,6 +61,11 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" exported="" name="Maven: biz.aQute:bndlib:0.0.313" level="project" />
+    <orderEntry type="library" exported="" name="Maven: org.ops4j.base:ops4j-base-lang:0.5.3" level="project" />
+    <orderEntry type="library" name="Maven: org.ops4j.pax.swissbox:pax-swissbox-optional-jcl:0.2.0" level="project" />
+    <orderEntry type="library" name="Maven: junit:junit:4.4" level="project" />
+    <orderEntry type="library" name="Maven: org.easymock:easymock:2.3" level="project" />
   </component>
 </module>
 
