@@ -22,6 +22,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
 import org.ops4j.pax.url.cache.internal.Activator;
+import org.ops4j.pax.url.cache.internal.ConfigurationImpl;
+import org.ops4j.util.property.PropertiesPropertyResolver;
 
 /**
  * {@link URLStreamHandler} implementation for "cache:" protocol.
@@ -40,7 +42,10 @@ public class Handler
     protected URLConnection openConnection( final URL url )
         throws IOException
     {
-        return Activator.createConnection( url );
+        return Activator.createConnection(
+            url,
+            new ConfigurationImpl( new PropertiesPropertyResolver( System.getProperties() ) )
+        );
     }
 
 }

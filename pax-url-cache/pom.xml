@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <relativePath>../</relativePath>
+    <relativePath>../pom.xml</relativePath>
     <groupId>org.ops4j.pax</groupId>
     <artifactId>url</artifactId>
     <version>0.5.3-SNAPSHOT</version>
@@ -40,6 +40,12 @@
     <dependency>
       <groupId>org.ops4j.base</groupId>
       <artifactId>ops4j-base-lang</artifactId>
+      <scope>compile</scope>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.ops4j.base</groupId>
+      <artifactId>ops4j-base-io</artifactId>
       <scope>compile</scope>
       <optional>true</optional>
     </dependency>
@@ -84,11 +90,6 @@
     <dependency>
       <groupId>org.easymock</groupId>
       <artifactId>easymock</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.ops4j.base</groupId>
-      <artifactId>ops4j-base-io</artifactId>
       <scope>test</scope>
     </dependency>
 
