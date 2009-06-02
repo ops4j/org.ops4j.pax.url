@@ -6,12 +6,12 @@
     <relativePath>../pom.xml</relativePath>
     <groupId>org.ops4j.pax</groupId>
     <artifactId>url</artifactId>
-    <version>0.5.0-SNAPSHOT</version>
+    <version>0.6.0-SNAPSHOT</version>
   </parent>
 
   <groupId>org.ops4j.pax.url</groupId>
   <artifactId>pax-url-maven</artifactId>
-  <version>0.5.0-SNAPSHOT</version>
+  <version>0.6.0-SNAPSHOT</version>
   <packaging>bundle</packaging>
 
   <name>OPS4J Pax Url - maven:</name>
@@ -57,21 +57,21 @@
     <dependency>
       <groupId>org.ops4j.pax.url</groupId>
       <artifactId>pax-url-commons</artifactId>
-      <version>0.5.0-SNAPSHOT</version>
+      <version>0.6.0-SNAPSHOT</version>
       <scope>compile</scope>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.ops4j.pax.url</groupId>
       <artifactId>pax-url-maven-commons</artifactId>
-      <version>0.5.0-SNAPSHOT</version>
+      <version>0.6.0-SNAPSHOT</version>
       <scope>compile</scope>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.ops4j.pax.url</groupId>
       <artifactId>pax-url-mercury</artifactId>
-      <version>0.5.0-SNAPSHOT</version>
+      <version>0.6.0-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>    
 
