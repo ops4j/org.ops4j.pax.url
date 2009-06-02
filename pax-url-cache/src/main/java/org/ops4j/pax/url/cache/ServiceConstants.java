@@ -36,7 +36,7 @@ public interface ServiceConstants
     public static final String PROTOCOL = "cache";
 
     /**
-     * Root directory name configuration property name.
+     * Working directory name configuration property name.
      */
     static final String PROPERTY_WORKING_DIRECTORY = PID + ".workingDirectory";
 
