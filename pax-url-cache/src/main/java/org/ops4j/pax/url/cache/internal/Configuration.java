@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 Alin Dreghiciu.
+ * Copyright 2008 Alin Dreghiciu.
  *
  * Licensed  under the  Apache License,  Version 2.0  (the "License");
  * you may not use  this file  except in  compliance with the License.
@@ -15,34 +15,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.url.cache;
+package org.ops4j.pax.url.cache.internal;
+
+import java.io.File;
 
 /**
- * An enumeration of constants related to "cache" url handler.
+ * "cache:" protocol configuration.
  *
  * @author Alin Dreghiciu
  * @since 0.6.0, June 02, 2009
  */
-public interface ServiceConstants
+public interface Configuration
 {
 
     /**
-     * Service PID used for configuration.
+     * Returns the root directory to be used for storage.
+     * Defaults to "./cache".
+     *
+     * @return the root directory
      */
-    static final String PID = "org.ops4j.pax.url.cache";
-    /**
-     * The protocol name.
-     */
-    public static final String PROTOCOL = "cache";
-
-    /**
-     * Root directory name configuration property name.
-     */
-    static final String PROPERTY_ROOT_DIRECTORY = PID + ".rootDirectory";
-
-    /**
-     * Default root directory.
-     */
-    static final String DEFAULT_ROOT_DIRECTORY = "./cache";    
+    File getRootDirectory();
 
 }

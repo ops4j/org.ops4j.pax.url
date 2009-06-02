@@ -33,7 +33,7 @@ import org.ops4j.util.property.PropertyResolver;
  * @since 0.6.0, June 02, 2009
  */
 public final class Activator
-    extends HandlerActivator<Void>
+    extends HandlerActivator<Configuration>
 {
 
     /**
@@ -44,7 +44,7 @@ public final class Activator
         super(
             new String[]{ ServiceConstants.PROTOCOL },
             ServiceConstants.PID,
-            new ConnectionFactory<Void>()
+            new ConnectionFactory<Configuration>()
             {
 
                 /**
@@ -54,18 +54,18 @@ public final class Activator
                  */
                 public URLConnection createConection( final BundleContext bundleContext,
                                                       final URL url,
-                                                      final Void notUsed )
+                                                      final Configuration config )
                     throws IOException
                 {
-                    return createConnection( url );
+                    return createConnection( url, config );
                 }
 
                 /**
                  * @see ConnectionFactory#createConfiguration(PropertyResolver)
                  */
-                public Void createConfiguration( final PropertyResolver propertyResolver )
+                public Configuration createConfiguration( final PropertyResolver propertyResolver )
                 {
-                    return null;
+                    return new ConfigurationImpl( propertyResolver );
                 }
 
             }
@@ -75,13 +75,18 @@ public final class Activator
     /**
      * Creates a "cache" url connection.
      *
-     * @param url cache file url
+     * @param url    cache file url
+     * @param config configuration
      *
      * @return url connection
+     *
+     * @throws java.io.IOException re-thrown
      */
-    public static URLConnection createConnection( final URL url )
+    public static URLConnection createConnection( final URL url,
+                                                  final Configuration config )
+        throws IOException
     {
-        throw new UnsupportedOperationException( "Not yet implemented" );
+        return new Connection( url, config );
     }
 
 }
