@@ -38,11 +38,11 @@ public interface ServiceConstants
     /**
      * Root directory name configuration property name.
      */
-    static final String PROPERTY_ROOT_DIRECTORY = PID + ".rootDirectory";
+    static final String PROPERTY_WORKING_DIRECTORY = PID + ".workingDirectory";
 
     /**
      * Default root directory.
      */
-    static final String DEFAULT_ROOT_DIRECTORY = "./cache";    
+    static final String DEFAULT_ROOT_DIRECTORY = "./cache";
 
 }

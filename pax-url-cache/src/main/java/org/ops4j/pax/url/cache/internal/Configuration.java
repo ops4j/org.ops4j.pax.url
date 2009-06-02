@@ -34,6 +34,6 @@ public interface Configuration
      *
      * @return the root directory
      */
-    File getRootDirectory();
+    File getWorkingDirectory();
 
 }

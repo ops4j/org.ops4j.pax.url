@@ -53,19 +53,19 @@ public class ConfigurationImpl
     /**
      * {@inheritDoc}
      */
-    public File getRootDirectory()
+    public File getWorkingDirectory()
     {
-        if( !contains( ServiceConstants.PROPERTY_ROOT_DIRECTORY ) )
+        if( !contains( ServiceConstants.PROPERTY_WORKING_DIRECTORY ) )
         {
-            String rootDirectoryName = m_propertyResolver.get( ServiceConstants.PROPERTY_ROOT_DIRECTORY );
-            if( rootDirectoryName == null )
+            String workingDirName = m_propertyResolver.get( ServiceConstants.PROPERTY_WORKING_DIRECTORY );
+            if( workingDirName == null )
             {
-                rootDirectoryName = ServiceConstants.DEFAULT_ROOT_DIRECTORY;
+                workingDirName = ServiceConstants.DEFAULT_ROOT_DIRECTORY;
             }
-            final File rootDirectory = new File( rootDirectoryName );
-            rootDirectory.mkdirs();
-            return set( ServiceConstants.PROPERTY_ROOT_DIRECTORY, rootDirectory );
+            final File workingDir = new File( workingDirName );
+            workingDir.mkdirs();
+            return set( ServiceConstants.PROPERTY_WORKING_DIRECTORY, workingDir );
         }
-        return get( ServiceConstants.PROPERTY_ROOT_DIRECTORY );
+        return get( ServiceConstants.PROPERTY_WORKING_DIRECTORY );
     }
 }

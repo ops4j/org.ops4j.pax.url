@@ -149,9 +149,9 @@ public class Connection
         throws IOException
     {
         connect();
-        final File rootDirectory = m_configuration.getRootDirectory();
-        final File cacheMetaFile = new File( rootDirectory, m_cacheName + EXT_META );
-        final File cacheDateFile = new File( rootDirectory, m_cacheName + EXT_DATA );
+        final File workingDir = m_configuration.getWorkingDirectory();
+        final File cacheMetaFile = new File( workingDir, m_cacheName + EXT_META );
+        final File cacheDateFile = new File( workingDir, m_cacheName + EXT_DATA );
 
         final Properties cacheMeta = new Properties();
         try
