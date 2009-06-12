@@ -1,12 +1,13 @@
-<?xml version='1.0' encoding='UTF-8' ?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>org.ops4j.pax</groupId>
     <artifactId>master</artifactId>
-    <version>2.2</version>
+    <version>3.0.0</version>
   </parent>
 
   <groupId>org.ops4j.pax</groupId>
@@ -30,57 +31,6 @@
     <connection>scm:svn:https://scm.ops4j.org/repos/ops4j/projects/pax/url</connection>
     <developerConnection>scm:svn:https://scm.ops4j.org/repos/ops4j/projects/pax/url</developerConnection>
   </scm>
-
-  <profiles>
-    <profile>
-      <id>default</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <modules>
-        <module>pax-url-bnd</module>
-        <module>pax-url-cache</module>
-        <module>pax-url-classpath</module>
-        <module>pax-url-commons</module>
-        <module>pax-url-dir</module>
-        <module>pax-url-link</module>
-        <module>pax-url-maven-commons</module>
-        <module>pax-url-mvn</module>
-        <module>pax-url-obr</module>
-        <module>pax-url-war</module>
-        <module>pax-url-wrap</module>
-      </modules>
-    </profile>
-    <profile>
-      <id>non-releaseable</id>
-      <modules>
-        <module>pax-url-mercury</module>
-        <module>pax-url-maven</module>
-        <module>pax-url-mvnlive</module>
-      </modules>
-    </profile>
-  </profiles>
-
-  <developers>
-    <developer>
-      <id>adreghiciu</id>
-      <name>Alin Dreghiciu</name>
-      <email>adreghiciu@gmail.com</email>
-      <roles>
-        <role>Developer</role>
-      </roles>
-      <timezone>UTC+2</timezone>
-    </developer>
-    <developer>
-      <id>tonit</id>
-      <name>Toni Menzel</name>
-      <email>toni@okidokiteam.com</email>
-      <roles>
-        <role>Developer</role>
-      </roles>
-      <timezone>UTC+1</timezone>
-    </developer>
-  </developers>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -191,6 +141,19 @@
         <artifactId>org.osgi.compendium</artifactId>
         <version>4.0.1</version>
       </dependency>
+      <!-- Test dependencies-->
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.4</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.easymock</groupId>
+        <artifactId>easymock</artifactId>
+        <version>2.3</version>
+        <scope>test</scope>
+      </dependency>      
     </dependencies>
   </dependencyManagement>
 
@@ -220,5 +183,56 @@
       </snapshots>
     </repository>
   </repositories>
+
+  <developers>
+    <developer>
+      <id>adreghiciu</id>
+      <name>Alin Dreghiciu</name>
+      <email>adreghiciu@gmail.com</email>
+      <roles>
+        <role>Developer</role>
+      </roles>
+      <timezone>UTC+2</timezone>
+    </developer>
+    <developer>
+      <id>tonit</id>
+      <name>Toni Menzel</name>
+      <email>toni@okidokiteam.com</email>
+      <roles>
+        <role>Developer</role>
+      </roles>
+      <timezone>UTC+1</timezone>
+    </developer>
+  </developers>
+
+  <profiles>
+    <profile>
+      <id>default</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <modules>
+        <module>pax-url-bnd</module>
+        <module>pax-url-cache</module>
+        <module>pax-url-classpath</module>
+        <module>pax-url-commons</module>
+        <module>pax-url-dir</module>
+        <module>pax-url-link</module>
+        <module>pax-url-maven-commons</module>
+        <module>pax-url-mvn</module>
+        <module>pax-url-obr</module>
+        <module>pax-url-war</module>
+        <module>pax-url-wrap</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>non-releaseable</id>
+      <modules>
+        <module>pax-url-mercury</module>
+        <module>pax-url-maven</module>
+        <module>pax-url-mvnlive</module>
+      </modules>
+    </profile>
+  </profiles>
 
 </project>
