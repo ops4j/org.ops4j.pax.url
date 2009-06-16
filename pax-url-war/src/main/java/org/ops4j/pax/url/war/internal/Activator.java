@@ -62,11 +62,17 @@ public final class Activator
                     throws MalformedURLException
                 {
                     final String protocol = url.getProtocol();
-                    if( ServiceConstants.PROTOCOL_WAR.equals( protocol ) )
+                    if( ServiceConstants.PROTOCOL_WAR.equals( protocol )
+                        || ServiceConstants.PROTOCOL_WEB_BUNDLE.equals( protocol ) )
                     {
                         return new WarConnection( url, config );
                     }
-                    return new WarReferenceConnection( url, config );
+                    if( ServiceConstants.PROTOCOL_WAR_INSTRUCTIONS.equals( protocol )
+                        || ServiceConstants.PROTOCOL_WAR_REFERENCE.equals( protocol ) )
+                    {
+                        return new WarReferenceConnection( url, config );
+                    }
+                    throw new MalformedURLException( "Unsupported protocol: " + protocol );
                 }
 
                 /**
