@@ -62,9 +62,8 @@
       <optional>true</optional>
     </dependency>
     <dependency>
-      <groupId>org.ops4j.pax.url</groupId>
-      <artifactId>pax-url-bnd</artifactId>
-      <version>0.6.0-SNAPSHOT</version>
+      <groupId>org.ops4j.pax.swissbox</groupId>
+      <artifactId>pax-swissbox-bnd</artifactId>
       <scope>compile</scope>
       <optional>true</optional>
     </dependency>

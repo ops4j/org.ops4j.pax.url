@@ -26,7 +26,7 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.ops4j.net.URLUtils;
-import org.ops4j.pax.url.bnd.BndUtils;
+import org.ops4j.pax.swissbox.bnd.BndUtils;
 
 /**
  * Parser for wrap: protocol.<br/>
@@ -189,7 +189,7 @@ public class Parser
     {
         final MalformedURLException exception = new MalformedURLException( message );
         exception.initCause( cause );
-        throw  exception;
+        throw exception;
     }
 
 }

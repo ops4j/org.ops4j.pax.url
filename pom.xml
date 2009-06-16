@@ -35,7 +35,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <dependency.base.version>0.5.3</dependency.base.version>
-    <dependency.swissbox.version>0.2.0</dependency.swissbox.version>
+    <dependency.swissbox.version>0.3.0-SNAPSHOT</dependency.swissbox.version>
   </properties>
 
   <build>
@@ -76,12 +76,6 @@
 
   <dependencyManagement>
     <dependencies>
-      <!-- Peter Kriens BND -->
-      <dependency>
-        <groupId>biz.aQute</groupId>
-        <artifactId>bndlib</artifactId>
-        <version>0.0.313</version>
-      </dependency>
       <!-- Felix -->
       <dependency>
         <groupId>org.apache.felix</groupId>
@@ -115,6 +109,11 @@
         <version>${dependency.base.version}</version>
       </dependency>
       <!-- OPS4J Pax Swissbox -->
+      <dependency>
+        <groupId>org.ops4j.pax.swissbox</groupId>
+        <artifactId>pax-swissbox-bnd</artifactId>
+        <version>${dependency.swissbox.version}</version>
+      </dependency>
       <dependency>
         <groupId>org.ops4j.pax.swissbox</groupId>
         <artifactId>pax-swissbox-optional-jcl</artifactId>
@@ -212,7 +211,6 @@
         <activeByDefault>true</activeByDefault>
       </activation>
       <modules>
-        <module>pax-url-bnd</module>
         <module>pax-url-cache</module>
         <module>pax-url-classpath</module>
         <module>pax-url-commons</module>
@@ -223,14 +221,24 @@
         <module>pax-url-obr</module>
         <module>pax-url-war</module>
         <module>pax-url-wrap</module>
+        <module>pax-url-mercury</module>
+        <module>pax-url-maven</module>
+        <module>pax-url-mvnlive</module>        
       </modules>
     </profile>
     <profile>
-      <id>non-releaseable</id>
+      <id>release</id>
       <modules>
-        <module>pax-url-mercury</module>
-        <module>pax-url-maven</module>
-        <module>pax-url-mvnlive</module>
+        <module>pax-url-cache</module>
+        <module>pax-url-classpath</module>
+        <module>pax-url-commons</module>
+        <module>pax-url-dir</module>
+        <module>pax-url-link</module>
+        <module>pax-url-maven-commons</module>
+        <module>pax-url-mvn</module>
+        <module>pax-url-obr</module>
+        <module>pax-url-war</module>
+        <module>pax-url-wrap</module>
       </modules>
     </profile>
   </profiles>

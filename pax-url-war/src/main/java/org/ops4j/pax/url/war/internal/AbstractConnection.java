@@ -35,7 +35,7 @@ import java.util.jar.JarFile;
 import org.ops4j.lang.NullArgumentException;
 import org.ops4j.lang.PreConditionException;
 import org.ops4j.net.URLUtils;
-import org.ops4j.pax.url.bnd.BndUtils;
+import org.ops4j.pax.swissbox.bnd.BndUtils;
 import org.ops4j.pax.url.war.ServiceConstants;
 
 /**
