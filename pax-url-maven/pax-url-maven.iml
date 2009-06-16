@@ -10,14 +10,14 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Maven: org.ops4j.base:ops4j-base-lang:0.5.3" level="project" />
-    <orderEntry type="library" name="Maven: org.ops4j.base:ops4j-base-util-property:0.5.3" level="project" />
+    <orderEntry type="library" name="Maven: org.ops4j.base:ops4j-base-lang:1.0.0" level="project" />
+    <orderEntry type="library" name="Maven: org.ops4j.base:ops4j-base-util-property:1.0.0" level="project" />
     <orderEntry type="library" name="Maven: org.ops4j.pax.swissbox:pax-swissbox-optional-jcl:1.0.0-SNAPSHOT" level="project" />
     <orderEntry type="module" module-name="pax-url-commons" />
     <orderEntry type="library" exported="" name="Maven: org.ops4j.pax.swissbox:pax-swissbox-property:1.0.0-SNAPSHOT" level="project" />
     <orderEntry type="module" module-name="pax-url-maven-commons" />
-    <orderEntry type="library" exported="" name="Maven: org.ops4j.base:ops4j-base-util-xml:0.5.3" level="project" />
-    <orderEntry type="library" exported="" name="Maven: org.ops4j.base:ops4j-base-util-collections:0.5.3" level="project" />
+    <orderEntry type="library" exported="" name="Maven: org.ops4j.base:ops4j-base-util-xml:1.0.0" level="project" />
+    <orderEntry type="library" exported="" name="Maven: org.ops4j.base:ops4j-base-util-collections:1.0.0" level="project" />
     <orderEntry type="module" module-name="pax-url-mercury" />
     <orderEntry type="library" name="Maven: org.apache.maven.mercury:mercury-repo-local-m2:1.0-alpha-5" level="project" />
     <orderEntry type="library" name="Maven: org.apache.maven.mercury:mercury-logging:1.0-alpha-5" level="project" />
