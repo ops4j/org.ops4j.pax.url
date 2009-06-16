@@ -43,6 +43,10 @@ public interface ServiceConstants
      */
     public static final String PROTOCOL_WAR_REFERENCE = "warref";
     /**
+     * The "webbundle:" protocol name.
+     */
+    public static final String PROTOCOL_WEB_BUNDLE = "webbundle";    
+    /**
      * Certificate check configuration property name.
      */
     static final String PROPERTY_CERTIFICATE_CHECK = PID + ".certificateCheck";
