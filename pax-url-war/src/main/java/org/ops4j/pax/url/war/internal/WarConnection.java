@@ -20,7 +20,7 @@ package org.ops4j.pax.url.war.internal;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
-import org.ops4j.pax.url.bnd.BndUtils;
+import org.ops4j.pax.swissbox.bnd.BndUtils;
 import org.ops4j.pax.url.war.ServiceConstants;
 
 /**
@@ -37,7 +37,7 @@ public class WarConnection
      * @see AbstractConnection#AbstractConnection(URL, Configuration)
      */
     public WarConnection( final URL url,
-                   final Configuration config )
+                          final Configuration config )
         throws MalformedURLException
     {
         super( url, config );

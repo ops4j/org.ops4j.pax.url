@@ -26,7 +26,7 @@ import java.util.Properties;
 import java.util.jar.JarOutputStream;
 import org.osgi.framework.Constants;
 import org.ops4j.lang.NullArgumentException;
-import org.ops4j.pax.url.bnd.BndUtils;
+import org.ops4j.pax.swissbox.bnd.BndUtils;
 import org.ops4j.pax.url.dir.internal.ResourceLocator;
 
 /**
@@ -46,7 +46,7 @@ public class BundleBuilder
     /**
      * Constructor.
      *
-     * @param ref    name of test class
+     * @param ref             name of test class
      * @param resourceLocator locator that gathers all resources that have to be inside the test probe
      */
     public BundleBuilder( final Properties ref,
@@ -63,7 +63,7 @@ public class BundleBuilder
     /**
      * Builds an osgi bundle out of settings given while creating this instance.
      * Output is being asynchronously in a new thread when reading from the InputStream returned by this method.
-     * 
+     *
      * @return an inputstream that must be flushed in order to actually invoke the bundle build process.
      */
     public InputStream build()
