@@ -45,7 +45,8 @@ public final class Activator
             new String[]{
                 ServiceConstants.PROTOCOL_WAR,
                 ServiceConstants.PROTOCOL_WAR_INSTRUCTIONS,
-                ServiceConstants.PROTOCOL_WAR_REFERENCE
+                ServiceConstants.PROTOCOL_WAR_REFERENCE,
+                ServiceConstants.PROTOCOL_WEB_BUNDLE
             },
             ServiceConstants.PID,
             new ConnectionFactory<Configuration>()
