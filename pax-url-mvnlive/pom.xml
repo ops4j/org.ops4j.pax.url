@@ -46,7 +46,10 @@
       <scope>compile</scope>
       <optional>true</optional>
     </dependency>
-  
+    <dependency>
+      <groupId>org.ops4j.base</groupId>
+      <artifactId>ops4j-base-io</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>org.ops4j.pax.swissbox</groupId>
@@ -60,11 +63,6 @@
       <version>1.0.0-SNAPSHOT</version>
       <scope>compile</scope>
       <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>org.ops4j.base</groupId>
-      <artifactId>ops4j-base-io</artifactId>
-      <version>0.5.3</version>
     </dependency>
 
     <dependency>
