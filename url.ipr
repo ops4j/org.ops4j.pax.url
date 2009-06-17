@@ -490,17 +490,6 @@
         <root url="jar://$M2_REPO$/org/easymock/easymock/2.3/easymock-2.3-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: org.ops4j.base:ops4j-base-io:0.5.3">
-      <CLASSES>
-        <root url="jar://$M2_REPO$/org/ops4j/base/ops4j-base-io/0.5.3/ops4j-base-io-0.5.3.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$M2_REPO$/org/ops4j/base/ops4j-base-io/0.5.3/ops4j-base-io-0.5.3-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$M2_REPO$/org/ops4j/base/ops4j-base-io/0.5.3/ops4j-base-io-0.5.3-sources.jar!/" />
-      </SOURCES>
-    </library>
     <library name="Maven: org.apache.felix:org.osgi.service.obr:1.0.2">
       <CLASSES>
         <root url="jar://$M2_REPO$/org/apache/felix/org.osgi.service.obr/1.0.2/org.osgi.service.obr-1.0.2.jar!/" />
@@ -796,17 +785,6 @@
       </JAVADOC>
       <SOURCES>
         <root url="jar://$M2_REPO$/biz/aQute/bndlib/0.0.313/bndlib-0.0.313-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Maven: org.ops4j.base:ops4j-base-monitors:0.5.3">
-      <CLASSES>
-        <root url="jar://$M2_REPO$/org/ops4j/base/ops4j-base-monitors/0.5.3/ops4j-base-monitors-0.5.3.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$M2_REPO$/org/ops4j/base/ops4j-base-monitors/0.5.3/ops4j-base-monitors-0.5.3-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$M2_REPO$/org/ops4j/base/ops4j-base-monitors/0.5.3/ops4j-base-monitors-0.5.3-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: org.ops4j.base:ops4j-base-lang:1.0.0">
