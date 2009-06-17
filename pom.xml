@@ -160,7 +160,7 @@
   <repositories>
     <repository>
       <id>ops4j.3rdparty</id>
-      <name>The OPS4J 3rd Party Repository</name>
+      <name>OPS4J 3rd Party Repository</name>
       <url>http://repository.ops4j.org/mvn-3rdparty</url>
       <snapshots>
         <enabled>false</enabled>
