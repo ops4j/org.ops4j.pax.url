@@ -198,6 +198,7 @@
         <module>pax-url-commons</module>
         <module>pax-url-dir</module>
         <module>pax-url-link</module>
+        <module>pax-url-manifest</module>
         <module>pax-url-maven-commons</module>
         <module>pax-url-mvn</module>
         <module>pax-url-obr</module>
@@ -216,6 +217,7 @@
         <module>pax-url-commons</module>
         <module>pax-url-dir</module>
         <module>pax-url-link</module>
+        <module>pax-url-manifest</module>
         <module>pax-url-maven-commons</module>
         <module>pax-url-mvn</module>
         <module>pax-url-obr</module>
