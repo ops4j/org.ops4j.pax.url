@@ -8,13 +8,13 @@
   <parent>
     <groupId>org.ops4j.pax</groupId>
     <artifactId>url</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.1-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
   <groupId>org.ops4j.pax.url</groupId>
   <artifactId>pax-url-mvnlive</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.0.1-SNAPSHOT</version>
   <packaging>bundle</packaging>
 
   <name>OPS4J Pax Url - mvnlive:</name>
@@ -60,7 +60,7 @@
     <dependency>
       <groupId>org.ops4j.pax.url</groupId>
       <artifactId>pax-url-commons</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>1.0.1-SNAPSHOT</version>
       <scope>compile</scope>
       <optional>true</optional>
     </dependency>
