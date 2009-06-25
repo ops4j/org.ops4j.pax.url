@@ -31,13 +31,12 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.maven.mercury.artifact.Artifact;
-import org.apache.maven.mercury.artifact.ArtifactBasicMetadata;
 import org.apache.maven.mercury.artifact.ArtifactMetadata;
 import org.apache.maven.mercury.artifact.Quality;
 import org.apache.maven.mercury.artifact.QualityRange;
 import org.apache.maven.mercury.builder.api.DependencyProcessor;
-import org.apache.maven.mercury.repository.api.ArtifactBasicResults;
 import org.apache.maven.mercury.repository.api.ArtifactResults;
+import org.apache.maven.mercury.repository.api.MetadataResults;
 import org.apache.maven.mercury.repository.api.Repository;
 import org.apache.maven.mercury.repository.api.RepositoryException;
 import org.apache.maven.mercury.repository.local.m2.LocalRepositoryM2;
@@ -139,11 +138,11 @@ public class Connection
 
         LOG.debug( "Resolving [" + url.toExternalForm() + "]" );
 
-        List<ArtifactBasicMetadata> query = new ArrayList<ArtifactBasicMetadata>();
+        List<ArtifactMetadata> query = new ArrayList<ArtifactMetadata>();
         final ArtifactMetadata queryMeta = new ArtifactMetadata( m_parser.getGAV() );
         query.add( queryMeta );
 
-        final ArtifactBasicResults results;
+        final MetadataResults results;
         try
         {
             results = m_vrr.readVersions( query );
@@ -154,7 +153,7 @@ public class Connection
         }
         if( results == null )
         {
-            throw new IOException( "Cannot determine artifact versions from [" + m_parser.getGAV() );
+            throw new IOException( "Cannot determine artifact versions from [" + m_parser.getGAV() + "]" );
         }
         if( results.hasExceptions() || !results.hasResults( queryMeta ) )
         {
@@ -162,51 +161,44 @@ public class Connection
             throw initIOException( "Cannot determine artifact versions", results.getError( queryMeta ) );
         }
 
-        final List<ArtifactBasicMetadata> foundArtifacts = results.getResult( queryMeta );
-        if( LOG.isDebugEnabled() )
+        final List<ArtifactMetadata> foundArtifacts = results.getResult( queryMeta );
+        for( ArtifactMetadata foundArtifact : foundArtifacts )
         {
-            for( ArtifactBasicMetadata foundArtifact : foundArtifacts )
-            {
-                LOG.debug( "Found artifact [" + foundArtifact.getGAV() + "]" );
-            }
-
-            // download the artifact
-            // TODO selecting the last artifact in the list is not the correct approach
-            final ArtifactBasicMetadata selectedArtifact = foundArtifacts.get( foundArtifacts.size() - 1 );
-
-            LOG.debug( "Selected artifact [" + selectedArtifact.getGAV() + "]" );
-
-            final ArtifactResults artifactResults;
-            try
-            {
-                artifactResults = m_vrr.readArtifacts( toList( selectedArtifact ) );
-            }
-            catch( RepositoryException e )
-            {
-                e.printStackTrace();
-                throw initIOException( "Canot download artifact [" + selectedArtifact.getGAV() + "]", e );
-            }
-            if( artifactResults.hasExceptions() || !artifactResults.hasResults( selectedArtifact ) )
-            {
-                //noinspection ThrowableResultOfMethodCallIgnored
-                throw initIOException(
-                    "Cannot download artifact [" + selectedArtifact.getGAV() + "]",
-                    artifactResults.getError( selectedArtifact )
-                );
-            }
-            final List<Artifact> artifacts = artifactResults.getResults( selectedArtifact );
-            final File artifactFile = artifacts.get( 0 ).getFile();
-            if( artifactFile == null )
-            {
-                throw new IOException( "Cannot download artifact [" + selectedArtifact.getGAV() );
-            }
-            return new BufferedInputStream( new FileInputStream( artifactFile ) );
+            LOG.debug( "Found artifact [" + foundArtifact.getGAV() + "]" );
         }
 
-        // no artifact found
-        throw new RuntimeException(
-            "URL [" + url.toExternalForm() + "] could not be resolved."
-        );
+        // download the artifact
+        // TODO selecting the last artifact in the list is not the correct approach
+        final ArtifactMetadata selectedArtifact = foundArtifacts.get( foundArtifacts.size() - 1 );
+
+        LOG.debug( "Selected artifact [" + selectedArtifact.getGAV() + "]" );
+
+        final ArtifactResults artifactResults;
+        try
+        {
+            artifactResults = m_vrr.readArtifacts( toList( selectedArtifact ) );
+        }
+        catch( RepositoryException e )
+        {
+            e.printStackTrace();
+            throw initIOException( "Canot download artifact [" + selectedArtifact.getGAV() + "]", e );
+        }
+        if( artifactResults.hasExceptions() || !artifactResults.hasResults( selectedArtifact ) )
+        {
+            //noinspection ThrowableResultOfMethodCallIgnored
+            throw initIOException(
+                "Cannot download artifact [" + selectedArtifact.getGAV() + "]",
+                artifactResults.getError( selectedArtifact )
+            );
+        }
+        final List<Artifact> artifacts = artifactResults.getResults( selectedArtifact );
+        final File artifactFile = artifacts.get( 0 ).getFile();
+        if( artifactFile == null )
+        {
+            throw new IOException( "Cannot download artifact [" + selectedArtifact.getGAV() );
+        }
+        return new BufferedInputStream( new FileInputStream( artifactFile ) );
+
     }
 
     /**
