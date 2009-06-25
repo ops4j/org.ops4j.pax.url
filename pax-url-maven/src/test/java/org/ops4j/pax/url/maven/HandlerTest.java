@@ -19,6 +19,7 @@ package org.ops4j.pax.url.maven;
 
 import java.io.IOException;
 import java.net.URL;
+import java.net.MalformedURLException;
 import org.junit.Test;
 
 /**
@@ -40,7 +41,15 @@ public class HandlerTest
         throws IOException
     {
         System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
-        new URL( "maven:group/artifact/0.1.0" );
+        new URL( "maven:group:artifact:0.1.0" );
+    }
+
+    @Test
+    public void download()
+        throws IOException
+    {
+        System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
+        new URL( "maven:org.ops4j.base:ops4j-base-lang:[0.9.0,):jdk14:jar" ).openStream();
     }
 
 }
