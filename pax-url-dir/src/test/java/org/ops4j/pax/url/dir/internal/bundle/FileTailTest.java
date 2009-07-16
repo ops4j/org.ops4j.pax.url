@@ -4,8 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import static junit.framework.Assert.*;
 import org.junit.Test;
-import org.ops4j.pax.url.dir.workspace.FileTailImpl;
-import org.ops4j.pax.url.dir.workspace.FileTail;
+import org.ops4j.pax.url.dir.internal.FileTailImpl;
+import org.ops4j.pax.url.dir.internal.FileTail;
 
 /**
  * @author Toni Menzel (tonit)

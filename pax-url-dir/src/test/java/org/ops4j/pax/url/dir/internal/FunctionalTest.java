@@ -15,8 +15,8 @@ import org.junit.Test;
 import org.ops4j.io.StreamUtils;
 import org.ops4j.pax.url.dir.internal.bundle.BundleBuilder;
 import org.ops4j.pax.url.dir.internal.bundle.ResourceWriter;
-import org.ops4j.pax.url.dir.workspace.FileTail;
-import org.ops4j.pax.url.dir.workspace.FileTailImpl;
+import org.ops4j.pax.url.dir.internal.FileTail;
+import org.ops4j.pax.url.dir.internal.FileTailImpl;
 
 /**
  * @author Toni Menzel (tonit)
@@ -41,7 +41,7 @@ public class FunctionalTest
         assertNotNull( in );
 
         // stream is filled lazily, so a complete read is important to verify
-        dumpToConsole( in, 17 );
+        dumpToConsole( in, 15 );
     }
 
     public static void dumpToConsole( InputStream in, int expecedEntries )
