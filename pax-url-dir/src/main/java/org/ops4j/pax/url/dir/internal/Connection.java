@@ -24,7 +24,7 @@ import java.net.URLConnection;
 import org.ops4j.lang.NullArgumentException;
 import org.ops4j.pax.url.dir.internal.bundle.BundleBuilder;
 import org.ops4j.pax.url.dir.internal.bundle.ResourceWriter;
-import org.ops4j.pax.url.dir.workspace.FileTailImpl;
+import org.ops4j.pax.url.dir.internal.FileTailImpl;
 
 /**
  * Accepts URLs like

@@ -23,7 +23,7 @@ public class ConnectionTest
 
         Connection con = new Connection( url, config );
         InputStream inp = con.getInputStream();
-        FunctionalTest.dumpToConsole( inp, 17 );
+        FunctionalTest.dumpToConsole( inp, 15 );
     }
 
 }
