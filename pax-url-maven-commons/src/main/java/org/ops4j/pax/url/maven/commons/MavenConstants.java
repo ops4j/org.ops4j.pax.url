@@ -47,6 +47,10 @@ public interface MavenConstants
      */
     static final String PROPERTY_REPOSITORIES = ".repositories";
     /**
+     * Use fallback repositories switch configuration property name.
+     */
+    static final String PROPERTY_USE_FALLBACK_REPOSITORIES = ".useFallbackRepositories";
+    /**
      * Proxy support configuration property name.
      */
     static final String PROPERTY_PROXY_SUPPORT = ".proxySupport";

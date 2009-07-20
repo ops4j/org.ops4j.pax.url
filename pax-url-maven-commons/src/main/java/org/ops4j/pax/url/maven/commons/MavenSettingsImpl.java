@@ -80,9 +80,14 @@ public class MavenSettingsImpl
      */
     private static final String PROXY_TAG = "proxies/proxy";
     /**
-     * Maven Central repository.
+     * Default Maven repositories.
      */
     private static final String DEFAULT_REPOSITORIES =
+        "http://osgi.sonatype.org/content/groups/pax-runner";
+    /**
+     * Fallback Maven repositories.
+     */
+    private static final String FALLBACK_REPOSITORIES =
         "http://repo1.maven.org/maven2,"
         + "http://repository.ops4j.org/maven2,"
         + "http://repository.springsource.com/maven/bundles/release,"
@@ -96,6 +101,10 @@ public class MavenSettingsImpl
      * The settings.xml file url. Can be null if no settings.xml was resolved.
      */
     private URL m_settingsURL;
+    /**
+     * Forces uses of fallback repositories instead of default repositories.
+     */
+    private final boolean m_useFallbackRepositories;
     /**
      * The local repository spec.
      */
@@ -117,11 +126,14 @@ public class MavenSettingsImpl
      * 3. if not found looks for ${maven.home}/conf/settings.xml
      * 4. if not found looks for ${M2_HOME}/conf/settings.xml
      *
-     * @param settingsURL prefered settings.xml file
+     * @param settingsURL             prefered settings.xml file
+     * @param useFallbackRepositories if fallback repositories should be used instead of default repositories
      */
-    public MavenSettingsImpl( final URL settingsURL )
+    public MavenSettingsImpl( final URL settingsURL,
+                              final boolean useFallbackRepositories )
     {
         m_settingsURL = settingsURL;
+        m_useFallbackRepositories = useFallbackRepositories;
         if( m_settingsURL == null )
         {
             m_settingsURL = safeGetFile( System.getProperty( "user.home" ) + "/.m2/settings.xml" );
@@ -141,6 +153,17 @@ public class MavenSettingsImpl
                 }
             }
         }
+    }
+
+    /**
+     * See {@link #MavenSettingsImpl(java.net.URL, boolean)}.
+     * Forces use of default repositories.
+     *
+     * @param settingsURL prefered settings.xml file
+     */
+    public MavenSettingsImpl( final URL settingsURL )
+    {
+        this( settingsURL, false );
     }
 
     /**
@@ -328,11 +351,13 @@ public class MavenSettingsImpl
             }
             if( m_repositories == null || m_repositories.length() == 0 )
             {
-                m_repositories = DEFAULT_REPOSITORIES;
+                m_repositories = ( m_useFallbackRepositories ? FALLBACK_REPOSITORIES : DEFAULT_REPOSITORIES );
             }
             else
             {
-                m_repositories = m_repositories + "," + DEFAULT_REPOSITORIES;
+                m_repositories = m_repositories
+                                 + ","
+                                 + ( m_useFallbackRepositories ? FALLBACK_REPOSITORIES : DEFAULT_REPOSITORIES );
             }
         }
         return m_repositories;

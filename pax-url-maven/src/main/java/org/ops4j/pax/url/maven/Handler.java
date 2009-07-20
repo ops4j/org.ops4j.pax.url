@@ -46,7 +46,7 @@ public class Handler
         final MavenConfigurationImpl config = new MavenConfigurationImpl(
             new PropertiesPropertyResolver( System.getProperties() ), ServiceConstants.PID
         );
-        config.setSettings( new MavenSettingsImpl( config.getSettingsFileUrl() ) );
+        config.setSettings( new MavenSettingsImpl( config.getSettingsFileUrl(), config.useFallbackRepositories() ) );
         return new Connection( url, config );
     }
 
