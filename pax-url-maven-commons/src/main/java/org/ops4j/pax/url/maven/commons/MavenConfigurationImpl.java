@@ -310,6 +310,22 @@ public class MavenConfigurationImpl
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public Boolean useFallbackRepositories()
+    {
+        if( !contains( m_pid + MavenConstants.PROPERTY_USE_FALLBACK_REPOSITORIES ) )
+        {
+            return set( m_pid + MavenConstants.PROPERTY_USE_FALLBACK_REPOSITORIES,
+                        Boolean.valueOf(
+                            m_propertyResolver.get( m_pid + MavenConstants.PROPERTY_USE_FALLBACK_REPOSITORIES )
+                        )
+            );
+        }
+        return get( m_pid + MavenConstants.PROPERTY_USE_FALLBACK_REPOSITORIES );
+    }
+
+    /**
      * Enables the proxy server for a given URL.
      */
     public void enableProxy( URL url )

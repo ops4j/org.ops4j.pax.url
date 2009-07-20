@@ -68,6 +68,14 @@ public interface MavenConfiguration
     MavenRepositoryURL getLocalRepository();
 
     /**
+     * Returns true if the fallback repositories should be used instead of default ones.
+     * Default value is false.
+     *
+     * @return true if the fallback repositories should
+     */
+    Boolean useFallbackRepositories();
+
+    /**
      * Enables the proxy server for a given URL.
      */
     void enableProxy( URL url );

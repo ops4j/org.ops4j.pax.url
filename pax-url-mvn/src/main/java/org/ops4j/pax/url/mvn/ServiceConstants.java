@@ -53,6 +53,10 @@ public interface ServiceConstants
      */
     static final String PROPERTY_REPOSITORIES = PID + MavenConstants.PROPERTY_REPOSITORIES;
     /**
+     * Use fallback repositories switch configuration property name.
+     */
+    static final String PROPERTY_USE_FALLBACK_REPOSITORIES = PID + MavenConstants.PROPERTY_USE_FALLBACK_REPOSITORIES;
+    /**
      * Proxy support configuration property name.
      */
     static final String PROPERTY_PROXY_SUPPORT = PID + MavenConstants.PROPERTY_PROXY_SUPPORT;

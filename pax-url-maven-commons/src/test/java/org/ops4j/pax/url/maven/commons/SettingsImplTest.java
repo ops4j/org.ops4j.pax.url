@@ -79,6 +79,18 @@ public class SettingsImplTest
         MavenSettingsImpl settings =
             new MavenSettingsImpl( FileUtils.getFileFromClasspath( "settings/settingsEmpty.xml" ).toURL() );
         assertEquals( "Repositories",
+                      "http://osgi.sonatype.org/content/groups/pax-runner",
+                      settings.getRepositories()
+        );
+    }
+
+    @Test
+    public void getInexistingRepositoriesWithFallback()
+        throws MalformedURLException, FileNotFoundException
+    {
+        MavenSettingsImpl settings =
+            new MavenSettingsImpl( FileUtils.getFileFromClasspath( "settings/settingsEmpty.xml" ).toURL(), true );
+        assertEquals( "Repositories",
                       "http://repo1.maven.org/maven2,"
                       + "http://repository.ops4j.org/maven2,"
                       + "http://repository.springsource.com/maven/bundles/release,"
@@ -94,6 +106,45 @@ public class SettingsImplTest
         MavenSettingsImpl settings =
             new MavenSettingsImpl(
                 FileUtils.getFileFromClasspath( "settings/settingsWithRepositories.xml" ).toURL()
+            );
+        String repositories = settings.getRepositories();
+        assertNotNull( "Repositories", repositories );
+        String[] segments = repositories.split( "," );
+        assertEquals( "Number of repositories", 6, segments.length );
+
+        assertEquals( "Repository 1",
+                      "http://repository1",
+                      segments[ 0 ]
+        );
+        assertEquals( "Repository 2",
+                      "http://user@repository2@snapshots",
+                      segments[ 1 ]
+        );
+        assertEquals( "Repository 3",
+                      "http://user:password@repository3@noreleases",
+                      segments[ 2 ]
+        );
+        assertEquals( "Repository 5",
+                      "jar:http://user:password@repository5/jar!@noreleases",
+                      segments[ 3 ]
+        );
+        assertEquals( "Repository 6",
+                      "http://user:password@repository6@snapshots@noreleases",
+                      segments[ 4 ]
+        );
+        assertEquals( "Repository 7",
+                      "http://osgi.sonatype.org/content/groups/pax-runner",
+                      segments[ 5 ]
+        );
+    }
+
+    @Test
+    public void getExistingRepositoriesWithFallback()
+        throws MalformedURLException, FileNotFoundException
+    {
+        MavenSettingsImpl settings =
+            new MavenSettingsImpl(
+                FileUtils.getFileFromClasspath( "settings/settingsWithRepositories.xml" ).toURL(), true
             );
         String repositories = settings.getRepositories();
         assertNotNull( "Repositories", repositories );

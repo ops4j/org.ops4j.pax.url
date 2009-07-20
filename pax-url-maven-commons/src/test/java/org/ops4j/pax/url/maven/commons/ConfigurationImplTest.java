@@ -464,4 +464,26 @@ public class ConfigurationImplTest
         verify( propertyResolver, settings );
     }
 
+    @Test
+    public void useFallbackRepositories()
+    {
+        PropertyResolver propertyResolver = createMock( PropertyResolver.class );
+        expect( propertyResolver.get( "test.pid.useFallbackRepositories" ) ).andReturn( "true" );
+        replay( propertyResolver );
+        MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
+        assertEquals( "Use Fallback Repositories", true, config.useFallbackRepositories() );
+        verify( propertyResolver );
+    }
+
+    @Test
+    public void defaultUseFallbackRepositories()
+    {
+        PropertyResolver propertyResolver = createMock( PropertyResolver.class );
+        expect( propertyResolver.get( "test.pid.useFallbackRepositories" ) ).andReturn( null );
+        replay( propertyResolver );
+        MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
+        assertEquals( "Use Fallback Repositories", false, config.useFallbackRepositories() );
+        verify( propertyResolver );
+    }
+
 }
