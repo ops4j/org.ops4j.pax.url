@@ -255,6 +255,8 @@
         <option value="default" />
         <option value="non-releaseable" />
         <option value="release" />
+        <option value="dev" />
+        <option value="inprogress" />
       </list>
     </option>
   </component>
@@ -755,12 +757,18 @@
       <CLASSES>
         <root url="jar://$M2_REPO$/org/mortbay/jetty/jetty-client/6.1.15/jetty-client-6.1.15-assembly.jar!/" />
         <root url="jar://$M2_REPO$/org/mortbay/jetty/jetty-client/6.1.15/jetty-client-6.1.15-assembly.jar!/" />
+        <root url="jar://$M2_REPO$/org/mortbay/jetty/jetty-client/6.1.15/jetty-client-6.1.15-assembly.jar!/" />
+        <root url="jar://$M2_REPO$/org/mortbay/jetty/jetty-client/6.1.15/jetty-client-6.1.15-assembly.jar!/" />
       </CLASSES>
       <JAVADOC>
         <root url="jar://$M2_REPO$/org/mortbay/jetty/jetty-client/6.1.15/jetty-client-6.1.15-assembly-javadoc.jar!/" />
         <root url="jar://$M2_REPO$/org/mortbay/jetty/jetty-client/6.1.15/jetty-client-6.1.15-assembly-javadoc.jar!/" />
+        <root url="jar://$M2_REPO$/org/mortbay/jetty/jetty-client/6.1.15/jetty-client-6.1.15-assembly-javadoc.jar!/" />
+        <root url="jar://$M2_REPO$/org/mortbay/jetty/jetty-client/6.1.15/jetty-client-6.1.15-assembly-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
+        <root url="jar://$M2_REPO$/org/mortbay/jetty/jetty-client/6.1.15/jetty-client-6.1.15-assembly-sources.jar!/" />
+        <root url="jar://$M2_REPO$/org/mortbay/jetty/jetty-client/6.1.15/jetty-client-6.1.15-assembly-sources.jar!/" />
         <root url="jar://$M2_REPO$/org/mortbay/jetty/jetty-client/6.1.15/jetty-client-6.1.15-assembly-sources.jar!/" />
         <root url="jar://$M2_REPO$/org/mortbay/jetty/jetty-client/6.1.15/jetty-client-6.1.15-assembly-sources.jar!/" />
       </SOURCES>
