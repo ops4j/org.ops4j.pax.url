@@ -360,10 +360,10 @@ public class MavenConfigurationImpl
             }
             );
 
-            System.setProperty( "http.proxyHost", proxyDetails.get( "host" ) );
-            System.setProperty( "http.proxyPort", proxyDetails.get( "port" ) );
+            System.setProperty( protocol + ".proxyHost", proxyDetails.get( "host" ) );
+            System.setProperty( protocol + ".proxyPort", proxyDetails.get( "port" ) );
 
-            System.setProperty( "http.nonProxyHosts", proxyDetails.get( "nonProxyHosts" ) );
+            System.setProperty( protocol + ".nonProxyHosts", proxyDetails.get( "nonProxyHosts" ) );
 
             set( m_pid + MavenConstants.PROPERTY_PROXY_SUPPORT, protocol );
         }
