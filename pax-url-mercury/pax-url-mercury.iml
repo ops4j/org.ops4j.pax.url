@@ -10,13 +10,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="Maven: org.apache.maven.mercury:mercury-core:1.0-alpha-8-SNAPSHOT" level="project" />
-    <orderEntry type="library" exported="" name="Maven: commons-cli:commons-cli:1.1" level="project" />
-    <orderEntry type="library" exported="" name="Maven: org.sat4j:org.sat4j.core:2.0.4" level="project" />
-    <orderEntry type="library" exported="" name="Maven: org.sat4j:org.sat4j.pb:2.0.4" level="project" />
-    <orderEntry type="library" exported="" name="Maven: org.mortbay.jetty:jetty-client:assembly:6.1.15" level="project" />
-    <orderEntry type="library" exported="" name="Maven: org.mortbay.jetty:jetty-util5:6.1.15" level="project" />
-    <orderEntry type="library" exported="" name="Maven: org.mortbay.jetty:jetty-util:6.1.15" level="project" />
-    <orderEntry type="library" exported="" name="Maven: org.codehaus.plexus:plexus-utils:1.5.5" level="project" />
   </component>
 </module>
 
