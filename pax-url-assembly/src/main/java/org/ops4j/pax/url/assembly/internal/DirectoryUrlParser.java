@@ -74,4 +74,14 @@ class DirectoryUrlParser
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * Always returns first wins merge policy.
+     *
+     * {@inheritDoc}
+     */
+    public MergePolicy mergePolicy()
+    {
+        return MergePolicy.FIRST;
+    }
+
 }

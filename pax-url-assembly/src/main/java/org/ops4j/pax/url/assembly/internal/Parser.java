@@ -49,4 +49,11 @@ public interface Parser
      */
     public Set<String> patterns();
 
+    /**
+     * Returns the merging policy for resources.
+     *
+     * @return merging policy
+     */
+    public MergePolicy mergePolicy();
+
 }

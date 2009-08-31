@@ -18,9 +18,9 @@
 package org.ops4j.pax.url.assembly.internal;
 
 import java.io.IOException;
-import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
+import org.ops4j.lang.NullArgumentException;
 
 /**
  * JAVADOC
@@ -35,10 +35,19 @@ class DirectoryAssembly
      * Set of patterns of resources that make up this assembly.
      */
     private final Set<String> m_patterns;
+    /**
+     * Merging policy of resources.
+     */
+    private final MergePolicy m_policy;
 
-    public DirectoryAssembly( final Set<String> patterns )
+    public DirectoryAssembly( final Set<String> patterns,
+                              final MergePolicy policy )
     {
+        NullArgumentException.validateNotNull( patterns, "Resource patterns" );
+        NullArgumentException.validateNotNull( policy, "Merging policy" );
+
         m_patterns = patterns;
+        m_policy = policy;
     }
 
     Set<Resource> scanResources()

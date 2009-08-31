@@ -81,8 +81,13 @@ class Connection
         throws IOException
     {
         connect();
-        final Set<Resource> resources = new DirectoryAssembly( m_parser.patterns() ).scanResources();
+
+        final Set<Resource> resources = new DirectoryAssembly(
+            m_parser.patterns(), m_parser.mergePolicy()
+        ).scanResources();
+
         final URL manifest = getManifest( resources );
+
         final VirtualJar virtualJar = new VirtualJar( manifest, resources );
         return virtualJar.inputStream();
     }
