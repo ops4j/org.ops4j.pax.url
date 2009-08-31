@@ -198,6 +198,7 @@
           <module name="pax-url-wrap" />
           <module name="pax-url-classpath" />
           <module name="pax-url-maven" />
+          <module name="pax-url-assembly" />
         </modules>
       </facet-type>
     </autodetection-disabled>
@@ -401,6 +402,7 @@
   </component>
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/pax-url-assembly/pax-url-assembly.iml" filepath="$PROJECT_DIR$/pax-url-assembly/pax-url-assembly.iml" />
       <module fileurl="file://$PROJECT_DIR$/pax-url-cache/pax-url-cache.iml" filepath="$PROJECT_DIR$/pax-url-cache/pax-url-cache.iml" />
       <module fileurl="file://$PROJECT_DIR$/pax-url-classpath/pax-url-classpath.iml" filepath="$PROJECT_DIR$/pax-url-classpath/pax-url-classpath.iml" />
       <module fileurl="file://$PROJECT_DIR$/pax-url-commons/pax-url-commons.iml" filepath="$PROJECT_DIR$/pax-url-commons/pax-url-commons.iml" />
@@ -503,20 +505,11 @@
     <library name="Maven: org.mortbay.jetty:jetty-client:assembly:6.1.15">
       <CLASSES>
         <root url="jar://$MAVEN_REPOSITORY$/org/mortbay/jetty/jetty-client/6.1.15/jetty-client-6.1.15-assembly.jar!/" />
-        <root url="jar://$MAVEN_REPOSITORY$/org/mortbay/jetty/jetty-client/6.1.15/jetty-client-6.1.15-assembly.jar!/" />
-        <root url="jar://$MAVEN_REPOSITORY$/org/mortbay/jetty/jetty-client/6.1.15/jetty-client-6.1.15-assembly.jar!/" />
-        <root url="jar://$MAVEN_REPOSITORY$/org/mortbay/jetty/jetty-client/6.1.15/jetty-client-6.1.15-assembly.jar!/" />
       </CLASSES>
       <JAVADOC>
         <root url="jar://$MAVEN_REPOSITORY$/org/mortbay/jetty/jetty-client/6.1.15/jetty-client-6.1.15-assembly-javadoc.jar!/" />
-        <root url="jar://$MAVEN_REPOSITORY$/org/mortbay/jetty/jetty-client/6.1.15/jetty-client-6.1.15-assembly-javadoc.jar!/" />
-        <root url="jar://$MAVEN_REPOSITORY$/org/mortbay/jetty/jetty-client/6.1.15/jetty-client-6.1.15-assembly-javadoc.jar!/" />
-        <root url="jar://$MAVEN_REPOSITORY$/org/mortbay/jetty/jetty-client/6.1.15/jetty-client-6.1.15-assembly-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/mortbay/jetty/jetty-client/6.1.15/jetty-client-6.1.15-assembly-sources.jar!/" />
-        <root url="jar://$MAVEN_REPOSITORY$/org/mortbay/jetty/jetty-client/6.1.15/jetty-client-6.1.15-assembly-sources.jar!/" />
-        <root url="jar://$MAVEN_REPOSITORY$/org/mortbay/jetty/jetty-client/6.1.15/jetty-client-6.1.15-assembly-sources.jar!/" />
         <root url="jar://$MAVEN_REPOSITORY$/org/mortbay/jetty/jetty-client/6.1.15/jetty-client-6.1.15-assembly-sources.jar!/" />
       </SOURCES>
     </library>
@@ -749,6 +742,72 @@
       </JAVADOC>
       <SOURCES>
         <root url="jar://$MAVEN_REPOSITORY$/org/apache/felix/org.osgi.core/1.0.1/org.osgi.core-1.0.1-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: commons-cli:commons-cli:1.1">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-cli/commons-cli/1.1/commons-cli-1.1.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-cli/commons-cli/1.1/commons-cli-1.1-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-cli/commons-cli/1.1/commons-cli-1.1-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.sat4j:org.sat4j.core:2.0.4">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/sat4j/org.sat4j.core/2.0.4/org.sat4j.core-2.0.4.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/sat4j/org.sat4j.core/2.0.4/org.sat4j.core-2.0.4-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/sat4j/org.sat4j.core/2.0.4/org.sat4j.core-2.0.4-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.sat4j:org.sat4j.pb:2.0.4">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/sat4j/org.sat4j.pb/2.0.4/org.sat4j.pb-2.0.4.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/sat4j/org.sat4j.pb/2.0.4/org.sat4j.pb-2.0.4-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/sat4j/org.sat4j.pb/2.0.4/org.sat4j.pb-2.0.4-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.mortbay.jetty:jetty-util5:6.1.15">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/mortbay/jetty/jetty-util5/6.1.15/jetty-util5-6.1.15.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/mortbay/jetty/jetty-util5/6.1.15/jetty-util5-6.1.15-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/mortbay/jetty/jetty-util5/6.1.15/jetty-util5-6.1.15-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.mortbay.jetty:jetty-util:6.1.15">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/mortbay/jetty/jetty-util/6.1.15/jetty-util-6.1.15.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/mortbay/jetty/jetty-util/6.1.15/jetty-util-6.1.15-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/mortbay/jetty/jetty-util/6.1.15/jetty-util-6.1.15-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.codehaus.plexus:plexus-utils:1.5.5">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/plexus/plexus-utils/1.5.5/plexus-utils-1.5.5.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/plexus/plexus-utils/1.5.5/plexus-utils-1.5.5-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/plexus/plexus-utils/1.5.5/plexus-utils-1.5.5-sources.jar!/" />
       </SOURCES>
     </library>
   </component>

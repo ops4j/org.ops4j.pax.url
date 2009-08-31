@@ -229,6 +229,7 @@
         <module>pax-url-mercury</module>
         <module>pax-url-maven</module>
         <module>pax-url-mvnlive</module>
+        <module>pax-url-assembly</module>
       </modules>
     </profile>
   </profiles>
