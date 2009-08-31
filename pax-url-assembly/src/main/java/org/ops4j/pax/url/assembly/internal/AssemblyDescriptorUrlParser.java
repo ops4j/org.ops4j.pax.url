@@ -80,4 +80,15 @@ class AssemblyDescriptorUrlParser
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * Returns merge policy based on descriptor. If not specified returns a first wins merge policy.
+     *
+     * {@inheritDoc}
+     */
+    public MergePolicy mergePolicy()
+    {
+        return MergePolicy.FIRST;
+        // TODO read merge policy from descriptor
+    }
+
 }
