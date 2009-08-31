@@ -46,16 +46,16 @@ import org.ops4j.lang.NullArgumentException;
  * dir:<Dir>;<tail>;<filenamepattern>$<param>=<v>
  *
  * While tail and filenamepattern are optional.
- * 
+ *
  * On a higher level:
  * dir:<contentselection>$<paramters>
  *
  * paramters is optional
- * 
+ *
  * Where contentsection and parameters can be "chained" by & (like you see above in the samples)
  *
  * This supports multiple (different) roots, each one with teir own (optional) tail.
- * 
+ *
  * @author Toni Menzel (tonit)
  * @since Dec 10, 2008
  */
@@ -85,7 +85,6 @@ public class Parser
     private File m_directory;
 
     private Properties m_options = new Properties();
-    private String m_marker;
 
     public Parser( String url )
     {
