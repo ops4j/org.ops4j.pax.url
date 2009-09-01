@@ -107,4 +107,34 @@ class FileResource
             throw new RuntimeException( String.format( "Cannot convert file [%s] to an url", m_file.getPath() ), e );
         }
     }
+
+    @Override
+    public boolean equals( Object o )
+    {
+        if( this == o )
+        {
+            return true;
+        }
+        if( !( o instanceof Resource ) )
+        {
+            return false;
+        }
+
+        Resource that = (Resource) o;
+
+        return path().equals( that.path() );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return path().hashCode();
+    }
+
+    @Override
+    public String toString()
+    {
+        return path();
+    }
+    
 }

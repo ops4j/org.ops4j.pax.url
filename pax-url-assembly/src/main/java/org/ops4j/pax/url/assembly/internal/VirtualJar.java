@@ -20,6 +20,7 @@ package org.ops4j.pax.url.assembly.internal;
 import java.io.IOException;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Set;
 import java.util.jar.JarEntry;
@@ -49,7 +50,7 @@ class VirtualJar
         m_manifest = manifest;
     }
 
-    JarInputStream inputStream()
+    InputStream inputStream()
         throws IOException
     {
         final PipedOutputStream pos = new PipedOutputStream();
@@ -101,7 +102,7 @@ class VirtualJar
             }
         }.start();
 
-        return new JarInputStream( pis );
+        return pis;
     }
 
 }

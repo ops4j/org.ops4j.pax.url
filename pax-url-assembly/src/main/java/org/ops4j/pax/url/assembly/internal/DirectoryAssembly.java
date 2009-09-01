@@ -17,9 +17,16 @@
  */
 package org.ops4j.pax.url.assembly.internal;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
+import org.ops4j.io.DirectoryLister;
+import org.ops4j.io.Lister;
+import org.ops4j.io.ListerUtils;
 import org.ops4j.lang.NullArgumentException;
 
 /**
@@ -56,16 +63,62 @@ class DirectoryAssembly
         final Set<Resource> resources = new HashSet<Resource>();
         for( String pattern : m_patterns )
         {
-            if( pattern.startsWith( "jar:" ) )
+            String base = pattern;
+            String filter = "**";
+            if( pattern.contains( "!/" ) )
+            {
+                final int startOfFilter = pattern.lastIndexOf( "!/" );
+                base = pattern.substring( 0, startOfFilter );
+                filter = pattern.substring( startOfFilter + 2 );
+            }
+            if( base.startsWith( "jar:" ) || base.startsWith( "zip:" ) )
             {
                 // TODO implement jar scanning
             }
             else
             {
-                // TODO implement file scanning
+                scanDirectory( resources, base, filter );
             }
         }
         return resources;
+    }
+
+    private void scanDirectory( Set<Resource> resources,
+                                String base,
+                                String filter )
+        throws IOException
+    {
+        File baseDir;
+        try
+        {
+            baseDir = new File( new URI( base ) );
+        }
+        catch( Exception e )
+        {
+            baseDir = new File( base );
+        }
+        if( !baseDir.exists() )
+        {
+            throw new IOException(
+                String.format( "Pattern [%s] could not be used as it does not refer to a file", base )
+            );
+        }
+        Lister lister = new DirectoryLister( baseDir, ListerUtils.parseFilter( filter ) );
+        for( URL url : lister.list() )
+        {
+            try
+            {
+                m_policy.addResource( new FileResource( baseDir, new File( url.toURI() ) ), resources );
+            }
+            catch( URISyntaxException e )
+            {
+                IOException io = new IOException(
+                    String.format( "URL [%s] could not be used", url.toExternalForm() )
+                );
+                io.initCause( e );
+                throw io;
+            }
+        }
     }
 
 }
