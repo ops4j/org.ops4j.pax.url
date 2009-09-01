@@ -19,76 +19,68 @@ package org.ops4j.pax.url.assembly.internal;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Parser for "assemblyref:" protocol where the url referes to an assembly descriptor file.
+ * Parser for "assembly:" protocol wher ethe url is a path to a directory, optionally followed by an file pattern.
  *
  * @author Alin Dreghiciu
  * @since 1.1.0, August 31, 2009
  */
-class AssemblyDescriptorUrlParser
+class UrlParser
     implements Parser
 {
 
-    /**
-     * Url of descriptor file.
-     */
-    private final URL m_descriptorUrl;
+    private final String m_pattern;
 
     /**
      * Constructor.
      *
-     * @param url the path part of the url (without starting assemblyref:)
+     * @param pattern the path part of the url (without starting assembly:)
      *
-     * @throws java.net.MalformedURLException - If provided url does not comply to expected syntax
+     * @throws MalformedURLException - If provided url does not comply to expected syntax
      */
-    AssemblyDescriptorUrlParser( final String url )
+    UrlParser( final String pattern )
         throws MalformedURLException
     {
-        if( url == null )
+        m_pattern = pattern;
+        if( pattern == null )
         {
             throw new MalformedURLException( "Url cannot be null. Syntax " + SYNTAX );
         }
-        if( "".equals( url.trim() ) || "/".equals( url.trim() ) )
+        if( "".equals( pattern.trim() ) || "/".equals( pattern.trim() ) )
         {
             throw new MalformedURLException( "Url cannot be empty. Syntax " + SYNTAX );
         }
-        m_descriptorUrl = new URL( url );
     }
 
     /**
-     * Returns the parsed manifest url.
-     *
-     * @return parsed manifest url
+     * Always returns null as "assembly" protocol does not support manifest.
+     * {@inheritDoc}
      */
     public URL manifest()
     {
-        // TODO implement method
-        throw new UnsupportedOperationException();
+        return null;
     }
 
     /**
-     * Returns the parsed resource patterns to be included into assembly. It should not return null if there is no
-     * pattern but an empty set.
-     *
-     * @return parsed resource patterns
+     * {@inheritDoc}
      */
     public Set<String> patterns()
     {
-        // TODO implement method
-        throw new UnsupportedOperationException();
+        return new HashSet<String>( Arrays.asList( m_pattern ) );
     }
 
     /**
-     * Returns merge policy based on descriptor. If not specified returns a first wins merge policy.
+     * Always returns first wins merge policy.
      *
      * {@inheritDoc}
      */
     public MergePolicy mergePolicy()
     {
         return MergePolicy.FIRST;
-        // TODO read merge policy from descriptor
     }
 
 }

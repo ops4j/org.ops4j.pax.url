@@ -88,9 +88,9 @@ public final class Activator
     {
         if( ServiceConstants.PROTOCOL_REFERENCE.equals( url.getProtocol() ) )
         {
-            return new Connection( url, new AssemblyDescriptorUrlParser( url.getPath() ) );
+            return new Connection( url, new AssemblyDescriptorParser( url.getPath() ) );
         }
-        return new Connection( url, new DirectoryUrlParser( url.getPath() ) );
+        return new Connection( url, new UrlParser( url.getPath() ) );
     }
 
 }
