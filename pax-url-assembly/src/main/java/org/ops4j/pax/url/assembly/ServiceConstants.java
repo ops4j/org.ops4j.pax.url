@@ -37,6 +37,6 @@ public interface ServiceConstants
     /**
      * The ref protocol name.
      */
-    public static final String PROTOCOL_REF = "assemblyref";    
+    public static final String PROTOCOL_REFERENCE = "assemblyref";
 
 }
