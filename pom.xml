@@ -196,6 +196,7 @@
         <activeByDefault>true</activeByDefault>
       </activation>
       <modules>
+        <module>pax-url-assembly</module>
         <module>pax-url-cache</module>
         <module>pax-url-classpath</module>
         <module>pax-url-commons</module>
@@ -211,6 +212,7 @@
     <profile>
       <id>release</id>
       <modules>
+        <module>pax-url-assembly</module>
         <module>pax-url-cache</module>
         <module>pax-url-classpath</module>
         <module>pax-url-commons</module>
@@ -229,7 +231,6 @@
         <module>pax-url-mercury</module>
         <module>pax-url-maven</module>
         <module>pax-url-mvnlive</module>
-        <module>pax-url-assembly</module>
       </modules>
     </profile>
   </profiles>
