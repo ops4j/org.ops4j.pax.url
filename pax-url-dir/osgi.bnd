@@ -17,8 +17,7 @@ Import-Package:\
   javax.xml.transform.stream
   
 Export-Package:\
-  ${bundle.namespace}; version="${pom.version}",\
-  ${bundle.namespace}.workspace; version="${pom.version}"
+  ${bundle.namespace}; version="${pom.version}"
 
 
 Private-Package:\
