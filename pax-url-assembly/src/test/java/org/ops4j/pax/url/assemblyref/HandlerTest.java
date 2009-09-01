@@ -38,7 +38,7 @@ public class HandlerTest
     {
         System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
         final File dir = FileUtils.getFileFromClasspath( "assemblies/simple.descriptor" );
-        new URL( "assemblyref:" + dir.toURL() ).openStream();
+        new URL( "assemblyref:" + dir.toURL() );
     }
 
 }
