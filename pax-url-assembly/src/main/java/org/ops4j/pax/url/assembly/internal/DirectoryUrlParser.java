@@ -19,6 +19,8 @@ package org.ops4j.pax.url.assembly.internal;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -31,47 +33,44 @@ class DirectoryUrlParser
     implements Parser
 {
 
+    private final String m_pattern;
+
     /**
      * Constructor.
      *
-     * @param url the path part of the url (without starting assembly:)
+     * @param pattern the path part of the url (without starting assembly:)
      *
      * @throws MalformedURLException - If provided url does not comply to expected syntax
      */
-    DirectoryUrlParser( final String url )
+    DirectoryUrlParser( final String pattern )
         throws MalformedURLException
     {
-        if( url == null )
+        m_pattern = pattern;
+        if( pattern == null )
         {
             throw new MalformedURLException( "Url cannot be null. Syntax " + SYNTAX );
         }
-        if( "".equals( url.trim() ) || "/".equals( url.trim() ) )
+        if( "".equals( pattern.trim() ) || "/".equals( pattern.trim() ) )
         {
             throw new MalformedURLException( "Url cannot be empty. Syntax " + SYNTAX );
         }
     }
 
     /**
-     * Returns the parsed manifest url.
-     *
-     * @return parsed manifest url
+     * Always returns null as "assembly" protocol does not support manifest.
+     * {@inheritDoc}
      */
     public URL manifest()
     {
-        // TODO implement method
-        throw new UnsupportedOperationException();
+        return null;
     }
 
     /**
-     * Returns the parsed resource patterns to be included into assembly. It should not return null if there is no
-     * pattern but an empty set.
-     *
-     * @return parsed resource patterns
+     * {@inheritDoc}
      */
     public Set<String> patterns()
     {
-        // TODO implement method
-        throw new UnsupportedOperationException();
+        return new HashSet<String>( Arrays.asList( m_pattern ) );
     }
 
     /**
