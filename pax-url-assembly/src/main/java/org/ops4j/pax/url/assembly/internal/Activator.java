@@ -43,7 +43,7 @@ public final class Activator
     public Activator()
     {
         super(
-            new String[]{ ServiceConstants.PROTOCOL, ServiceConstants.PROTOCOL_REF },
+            new String[]{ ServiceConstants.PROTOCOL, ServiceConstants.PROTOCOL_REFERENCE },
             ServiceConstants.PID,
             new ConnectionFactory<Void>()
             {
@@ -86,7 +86,7 @@ public final class Activator
     public static URLConnection createConnection( final URL url )
         throws IOException
     {
-        if( ServiceConstants.PROTOCOL_REF.equals( url.getProtocol() ) )
+        if( ServiceConstants.PROTOCOL_REFERENCE.equals( url.getProtocol() ) )
         {
             return new Connection( url, new AssemblyDescriptorUrlParser( url.getPath() ) );
         }
