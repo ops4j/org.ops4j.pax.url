@@ -19,7 +19,7 @@ Import-Package:\
   org.xml.sax
 
 Export-Package:\
-  ${bundle.namespace}; version="1.0.0"
+  ${bundle.namespace}; version="${pom.version}"
   
 Private-Package:\
   ${bundle.namespace}.internal.*
