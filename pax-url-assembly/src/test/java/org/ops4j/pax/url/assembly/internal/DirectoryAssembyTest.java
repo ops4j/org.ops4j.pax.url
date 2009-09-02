@@ -13,17 +13,13 @@
  */
 package org.ops4j.pax.url.assembly.internal;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-import java.io.IOException;
 import java.io.File;
+import java.io.IOException;
 import org.junit.Test;
-import org.junit.Assert;
 import org.ops4j.io.FileUtils;
 
 /**
- * {@link DirectoryAssembly} unit tests.
+ * {@link ResourceAssembly} unit tests.
  *
  * @author Alin Dreghiciu
  */
@@ -34,16 +30,20 @@ public class DirectoryAssembyTest
     public void scanDir()
         throws IOException
     {
-        final File dir = FileUtils.getFileFromClasspath( "assemblies" ).getParentFile();
-        final Set<Resource> resources = new DirectoryAssembly(
-            new HashSet<String>(
-                Arrays.asList(
-                    dir.getCanonicalPath()
-                )
-            ),
-            MergePolicy.FIRST
-        ).scanResources();
-        
+        final File dir = FileUtils.getFileFromClasspath( "assemblies/simple" );
+        final ResourceAssembly assembly = new ResourceAssembly(
+            new Source[]{ new PathEncodedSource( dir.getCanonicalPath() ) }, MergePolicy.FIRST
+        );
+    }
+
+    @Test
+    public void scanZip()
+        throws IOException
+    {
+        final File dir = FileUtils.getFileFromClasspath( "assemblies/simple.zip" );
+        final ResourceAssembly assembly = new ResourceAssembly(
+            new Source[]{ new PathEncodedSource( dir.getCanonicalPath() ) }, MergePolicy.FIRST
+        );
     }
 
 }

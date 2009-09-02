@@ -19,7 +19,6 @@ package org.ops4j.pax.url.assembly.internal;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Set;
 
 /**
  * Parser for "assemblyref:" protocol where the url referes to an assembly descriptor file.
@@ -58,9 +57,7 @@ class AssemblyDescriptorParser
     }
 
     /**
-     * Returns the parsed manifest url.
-     *
-     * @return parsed manifest url
+     * {@inheritDoc}
      */
     public URL manifest()
     {
@@ -69,12 +66,9 @@ class AssemblyDescriptorParser
     }
 
     /**
-     * Returns the parsed resource patterns to be included into assembly. It should not return null if there is no
-     * pattern but an empty set.
-     *
-     * @return parsed resource patterns
+     * {@inheritDoc}
      */
-    public Set<String> patterns()
+    public Source[] sources()
     {
         // TODO implement method
         throw new UnsupportedOperationException();

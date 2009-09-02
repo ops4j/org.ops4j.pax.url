@@ -17,9 +17,6 @@
  */
 package org.ops4j.pax.url.assembly.internal;
 
-import java.io.File;
-import java.util.Set;
-import java.util.jar.JarInputStream;
 import java.net.URL;
 
 /**
@@ -33,6 +30,7 @@ public interface Resource
 
     /**
      * Getter.
+     *
      * @return resource path
      */
     String path();

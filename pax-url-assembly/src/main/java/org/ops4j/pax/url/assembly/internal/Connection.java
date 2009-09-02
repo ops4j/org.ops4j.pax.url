@@ -22,7 +22,6 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Set;
 import org.ops4j.lang.NullArgumentException;
 
 /**
@@ -82,13 +81,11 @@ class Connection
     {
         connect();
 
-        final Set<Resource> resources = new DirectoryAssembly(
-            m_parser.patterns(), m_parser.mergePolicy()
-        ).scanResources();
+        final ResourceAssembly assembly = new ResourceAssembly( m_parser.sources(), m_parser.mergePolicy() );
 
-        final URL manifest = getManifest( resources );
+        final URL manifest = getManifest( assembly );
 
-        final VirtualJar virtualJar = new VirtualJar( manifest, resources );
+        final VirtualJar virtualJar = new VirtualJar( manifest, assembly );
         return virtualJar.inputStream();
     }
 
@@ -100,7 +97,7 @@ class Connection
      *
      * @return manifest url or null if none
      */
-    private URL getManifest( Set<Resource> resources )
+    private URL getManifest( Iterable<Resource> resources )
     {
         if( m_parser.manifest() != null )
         {

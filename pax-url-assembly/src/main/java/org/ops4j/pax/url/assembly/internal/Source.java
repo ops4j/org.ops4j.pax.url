@@ -17,41 +17,36 @@
  */
 package org.ops4j.pax.url.assembly.internal;
 
-import java.net.URL;
+import java.util.regex.Pattern;
 
 /**
- * Parser for "assembly:" protocol.
+ * A source of resources.
  *
  * @author Alin Dreghiciu
  * @since 1.1.0, August 31, 2009
  */
-public interface Parser
+public interface Source
 {
 
     /**
-     * Syntax for the url; to be shown on exception messages.
+     * Base source path for resources.
+     *
+     * @return source path for resources
      */
-    static final String SYNTAX = "assembly:dir|assembly-file-url";
+    String path();
 
     /**
-     * Returns the parsed manifest url.
+     * List of patterns for inclusion.
      *
-     * @return parsed manifest url
+     * @return list of patterns
      */
-    public URL manifest();
+    Pattern[] includes();
 
     /**
-     * Returns the resources sources to be included into assembly.
+     * List of patterns for exclusion.
      *
-     * @return parsed resource patterns
+     * @return list of patterns
      */
-    public Source[] sources();
-
-    /**
-     * Returns the merging policy for resources.
-     *
-     * @return merging policy
-     */
-    public MergePolicy mergePolicy();
+    Pattern[] excludes();
 
 }
