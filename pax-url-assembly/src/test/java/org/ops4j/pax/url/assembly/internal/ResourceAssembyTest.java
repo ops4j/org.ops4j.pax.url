@@ -23,7 +23,7 @@ import org.ops4j.io.FileUtils;
  *
  * @author Alin Dreghiciu
  */
-public class DirectoryAssembyTest
+public class ResourceAssembyTest
 {
 
     @Test
@@ -32,7 +32,8 @@ public class DirectoryAssembyTest
     {
         final File dir = FileUtils.getFileFromClasspath( "assemblies/simple" );
         final ResourceAssembly assembly = new ResourceAssembly(
-            new Source[]{ new PathEncodedSource( dir.getCanonicalPath() ) }, MergePolicy.FIRST
+            new Source[]{ new PathEncodedSource( dir.getCanonicalPath() ) },
+            MergePolicy.FIRST
         );
     }
 
@@ -42,7 +43,30 @@ public class DirectoryAssembyTest
     {
         final File dir = FileUtils.getFileFromClasspath( "assemblies/simple.zip" );
         final ResourceAssembly assembly = new ResourceAssembly(
-            new Source[]{ new PathEncodedSource( dir.getCanonicalPath() ) }, MergePolicy.FIRST
+            new Source[]{ new PathEncodedSource( dir.getCanonicalPath() ) },
+            MergePolicy.FIRST
+        );
+    }
+
+    @Test
+    public void scanZipWithIncludes()
+        throws IOException
+    {
+        final File dir = FileUtils.getFileFromClasspath( "assemblies/simple.zip" );
+        final ResourceAssembly assembly = new ResourceAssembly(
+            new Source[]{ new PathEncodedSource( dir.getCanonicalPath() + "!/subdir/**" ) },
+            MergePolicy.FIRST
+        );
+    }
+
+    @Test
+    public void scanZipWithManyIncludes()
+        throws IOException
+    {
+        final File dir = FileUtils.getFileFromClasspath( "assemblies/simple.zip" );
+        final ResourceAssembly assembly = new ResourceAssembly(
+            new Source[]{ new PathEncodedSource( dir.getCanonicalPath() + "!/subdir/*.jar&&*.jar" ) },
+            MergePolicy.FIRST
         );
     }
 
