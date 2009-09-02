@@ -232,7 +232,6 @@ class ResourceAssembly
      */
     public Iterator<Resource> iterator()
     {
-        // TODO implement method
-        throw new UnsupportedOperationException();
+        return m_resources.iterator();
     }
 }
