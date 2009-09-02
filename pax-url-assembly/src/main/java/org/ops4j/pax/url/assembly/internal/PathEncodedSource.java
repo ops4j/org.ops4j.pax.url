@@ -74,7 +74,7 @@ public class PathEncodedSource
                 }
             }
             m_includes = includes.toArray( new Pattern[includes.size()] );
-            m_excludes = includes.toArray( new Pattern[excludes.size()] );
+            m_excludes = excludes.toArray( new Pattern[excludes.size()] );
         }
         else
         {
