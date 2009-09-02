@@ -45,7 +45,8 @@ class FileResource
     /**
      * Constructor.
      *
-     * @param file resource file
+     * @param parent resource file parent
+     * @param file   resource file
      */
     FileResource( final File parent,
                   final File file )
@@ -136,5 +137,5 @@ class FileResource
     {
         return path();
     }
-    
+
 }

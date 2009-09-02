@@ -19,9 +19,6 @@ package org.ops4j.pax.url.assembly.internal;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Parser for "assembly:" protocol wher ethe url is a path to a directory, optionally followed by an file pattern.
@@ -33,31 +30,32 @@ class UrlParser
     implements Parser
 {
 
-    private final String m_pattern;
+    private final Source[] m_sources;
 
     /**
      * Constructor.
      *
-     * @param pattern the path part of the url (without starting assembly:)
+     * @param url the path part of the url (without starting assembly:)
      *
      * @throws MalformedURLException - If provided url does not comply to expected syntax
      */
-    UrlParser( final String pattern )
+    UrlParser( final String url )
         throws MalformedURLException
     {
-        m_pattern = pattern;
-        if( pattern == null )
+        if( url == null )
         {
             throw new MalformedURLException( "Url cannot be null. Syntax " + SYNTAX );
         }
-        if( "".equals( pattern.trim() ) || "/".equals( pattern.trim() ) )
+        if( "".equals( url.trim() ) || "/".equals( url.trim() ) )
         {
             throw new MalformedURLException( "Url cannot be empty. Syntax " + SYNTAX );
         }
+        m_sources = new Source[]{ new PathEncodedSource( url ) };
     }
 
     /**
      * Always returns null as "assembly" protocol does not support manifest.
+     *
      * {@inheritDoc}
      */
     public URL manifest()
@@ -68,9 +66,9 @@ class UrlParser
     /**
      * {@inheritDoc}
      */
-    public Set<String> patterns()
+    public Source[] sources()
     {
-        return new HashSet<String>( Arrays.asList( m_pattern ) );
+        return m_sources;
     }
 
     /**

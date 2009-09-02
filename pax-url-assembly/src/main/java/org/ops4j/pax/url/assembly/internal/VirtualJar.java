@@ -18,13 +18,11 @@
 package org.ops4j.pax.url.assembly.internal;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
-import java.io.InputStream;
 import java.net.URL;
-import java.util.Set;
 import java.util.jar.JarEntry;
-import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 import org.ops4j.io.StreamUtils;
@@ -39,11 +37,11 @@ import org.ops4j.lang.NullArgumentException;
 class VirtualJar
 {
 
-    private final Set<Resource> m_resources;
+    private final Iterable<Resource> m_resources;
     private final URL m_manifest;
 
-    public VirtualJar( final URL manifest,
-                       final Set<Resource> resources )
+    VirtualJar( final URL manifest,
+                       final Iterable<Resource> resources )
     {
         NullArgumentException.validateNotNull( resources, "Resources" );
         m_resources = resources;
