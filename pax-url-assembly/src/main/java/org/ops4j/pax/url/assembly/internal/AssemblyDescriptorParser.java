@@ -17,11 +17,20 @@
  */
 package org.ops4j.pax.url.assembly.internal;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.regex.Pattern;
+import org.codehaus.jackson.JsonFactory;
+import org.codehaus.jackson.JsonParser;
+import org.codehaus.jackson.JsonToken;
+import org.ops4j.io.ListerUtils;
 
 /**
  * Parser for "assemblyref:" protocol where the url referes to an assembly descriptor file.
+ * Descriptor file should be a json file.
  *
  * @author Alin Dreghiciu
  * @since 1.1.0, August 31, 2009
@@ -31,19 +40,27 @@ class AssemblyDescriptorParser
 {
 
     /**
-     * Url of descriptor file.
+     * Parsed manifest path.
      */
-    private final URL m_descriptorUrl;
+    private String m_manifest;
+    /**
+     * Parsed array of sources.
+     */
+    private Source[] m_sources;
+    /**
+     * Parsed merge policy.
+     */
+    private MergePolicy m_mergePolicy;
 
     /**
      * Constructor.
      *
      * @param url the path part of the url (without starting assemblyref:)
      *
-     * @throws java.net.MalformedURLException - If provided url does not comply to expected syntax
+     * @throws IOException - IIf a problem encountered while parsing descriptor file
      */
     AssemblyDescriptorParser( final String url )
-        throws MalformedURLException
+        throws IOException
     {
         if( url == null )
         {
@@ -53,16 +70,19 @@ class AssemblyDescriptorParser
         {
             throw new MalformedURLException( "Url cannot be empty. Syntax " + SYNTAX );
         }
-        m_descriptorUrl = new URL( url );
+
+        m_sources = new Source[0];
+        m_mergePolicy = MergePolicy.FIRST;
+
+        parseDescriptor( new URL( url ) );
     }
 
     /**
      * {@inheritDoc}
      */
-    public URL manifest()
+    public String manifest()
     {
-        // TODO implement method
-        throw new UnsupportedOperationException();
+        return m_manifest;
     }
 
     /**
@@ -70,8 +90,7 @@ class AssemblyDescriptorParser
      */
     public Source[] sources()
     {
-        // TODO implement method
-        throw new UnsupportedOperationException();
+        return m_sources;
     }
 
     /**
@@ -81,8 +100,123 @@ class AssemblyDescriptorParser
      */
     public MergePolicy mergePolicy()
     {
-        return MergePolicy.FIRST;
-        // TODO read merge policy from descriptor
+        return m_mergePolicy;
+    }
+
+    /**
+     * Reads descriptor file.
+     *
+     * @param url descriptor file url
+     *
+     * @throws IOException - If a problem encountered while parsing descriptor file
+     */
+    private void parseDescriptor( final URL url )
+        throws IOException
+    {
+        final JsonFactory jFactory = new JsonFactory();
+        final JsonParser jp = jFactory.createJsonParser( url );
+        if( jp.nextToken() != JsonToken.START_OBJECT )
+        {
+            throw new IOException( String.format( "Descriptor [%s] not in JSON format", url.toExternalForm() ) );
+        }
+        final Collection<Source> sources = new HashSet<Source>();
+        try
+        {
+            while( jp.nextToken() != JsonToken.END_OBJECT )
+            {
+                final String currentName = jp.getCurrentName();
+                jp.nextToken();
+
+                if( "manifest".equals( currentName ) )
+                {
+                    m_manifest = jp.getText();
+                }
+                else if( "directories".equals( currentName ) )
+                {
+                    sources.addAll( parseDirectories( jp ) );
+                }
+                else if( "mergePolicy".equals( currentName ) )
+                {
+                    m_mergePolicy = "last".equalsIgnoreCase( jp.getText() ) ? MergePolicy.LAST : MergePolicy.FIRST;
+                }
+            }
+        }
+        finally
+        {
+            jp.close();
+        }
+        m_sources = sources.toArray( new Source[sources.size()] );
+    }
+
+    /**
+     * Parses "directories" section.
+     *
+     * @param jp json parser.
+     *
+     * @return parsed sources
+     *
+     * @throws IOException - If a problem encountered while parsing descriptor file
+     */
+    private Collection<Source> parseDirectories( final JsonParser jp )
+        throws IOException
+    {
+        final Collection<Source> sources = new HashSet<Source>();
+
+        while( jp.nextToken() != JsonToken.END_OBJECT )
+        {
+            final String currentName = jp.getCurrentName();
+            jp.nextToken();
+
+            if( "directory".equals( currentName ) )
+            {
+                final Source source = parseDirectory( jp );
+                sources.add( source );
+            }
+        }
+        return sources;
+    }
+
+    /**
+     * Parses "directory" section.
+     *
+     * @param jp json parser.
+     *
+     * @return parsed source
+     *
+     * @throws IOException - If a problem encountered while parsing descriptor file
+     */
+    private Source parseDirectory( final JsonParser jp )
+        throws IOException
+    {
+        String path = null;
+        final Collection<Pattern> includes = new HashSet<Pattern>();
+        final Collection<Pattern> excludes = new HashSet<Pattern>();
+
+        while( jp.nextToken() != JsonToken.END_OBJECT )
+        {
+            final String currentName = jp.getCurrentName();
+            jp.nextToken();
+
+            if( "path".equals( currentName ) )
+            {
+                path = jp.getText();
+            }
+            else if( "include".equals( currentName ) )
+            {
+                includes.add( ListerUtils.parseFilter( jp.getText() ) );
+            }
+            else if( "exclude".equals( currentName ) )
+            {
+                excludes.add( ListerUtils.parseFilter( jp.getText() ) );
+            }
+        }
+        if( path == null )
+        {
+            throw new IOException( "Invalid descriptor file" );
+        }
+        return new ImmutableSource(
+            path, includes.toArray( new Pattern[includes.size()] ), excludes.toArray( new Pattern[excludes.size()] )
+        );
     }
 
 }

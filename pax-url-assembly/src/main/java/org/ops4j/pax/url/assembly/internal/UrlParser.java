@@ -58,7 +58,7 @@ class UrlParser
      *
      * {@inheritDoc}
      */
-    public URL manifest()
+    public String manifest()
     {
         return null;
     }

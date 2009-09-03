@@ -34,11 +34,11 @@ public interface Parser
     static final String SYNTAX = "assembly:dir|assembly-file-url";
 
     /**
-     * Returns the parsed manifest url.
+     * Returns the parsed manifest path.
      *
-     * @return parsed manifest url
+     * @return parsed manifest path
      */
-    public URL manifest();
+    public String manifest();
 
     /**
      * Returns the resources sources to be included into assembly.

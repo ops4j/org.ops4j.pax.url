@@ -17,6 +17,7 @@
  */
 package org.ops4j.pax.url.assembly.internal;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -96,12 +97,23 @@ class Connection
      * @param resources set of resources that may contain an manifest
      *
      * @return manifest url or null if none
+     *
+     * @throws MalformedURLException - If parser returns an invalid manifest path
      */
     private URL getManifest( Iterable<Resource> resources )
+        throws MalformedURLException
     {
-        if( m_parser.manifest() != null )
+        final String manifest = m_parser.manifest();
+        if( manifest != null )
         {
-            return m_parser.manifest();
+            try
+            {
+                return new URL( manifest );
+            }
+            catch( MalformedURLException e )
+            {
+                return new File( manifest ).toURL();
+            }
         }
         if( resources != null )
         {
