@@ -131,9 +131,9 @@ class AssemblyDescriptorParser
                 {
                     m_manifest = jp.getText();
                 }
-                else if( "directories".equals( currentName ) )
+                else if( "assembly".equals( currentName ) )
                 {
-                    sources.addAll( parseDirectories( jp ) );
+                    sources.addAll( parseAssembly( jp ) );
                 }
                 else if( "mergePolicy".equals( currentName ) )
                 {
@@ -157,7 +157,7 @@ class AssemblyDescriptorParser
      *
      * @throws IOException - If a problem encountered while parsing descriptor file
      */
-    private Collection<Source> parseDirectories( final JsonParser jp )
+    private Collection<Source> parseAssembly( final JsonParser jp )
         throws IOException
     {
         final Collection<Source> sources = new HashSet<Source>();
@@ -167,7 +167,9 @@ class AssemblyDescriptorParser
             final String currentName = jp.getCurrentName();
             jp.nextToken();
 
-            if( "directory".equals( currentName ) )
+            if( "directory".equals( currentName )
+                || "jar".equals( currentName )
+                || "zip".equals( currentName) )
             {
                 final Source source = parseDirectory( jp );
                 sources.add( source );

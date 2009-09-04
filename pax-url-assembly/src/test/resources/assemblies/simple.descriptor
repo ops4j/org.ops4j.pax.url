@@ -1,6 +1,6 @@
 {
   "manifest" : "./foo/MANIFEST.MF",
-  "directories" :
+  "assembly" :
   {
     "directory" :
     {
@@ -9,7 +9,7 @@
       "include" : "*.xml",
       "exclude" : "*.java"
     },
-    "directory" :
+    "jar" :
     {
       "path" : "jar:file:/some/other/path",
       "include" : "*.class",
