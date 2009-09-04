@@ -678,17 +678,6 @@
         <root url="jar://$MAVEN_REPOSITORY$/biz/aQute/bndlib/0.0.313/bndlib-0.0.313-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: org.ops4j.base:ops4j-base-monitors:1.1.0-SNAPSHOT">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/ops4j/base/ops4j-base-monitors/1.1.0-SNAPSHOT/ops4j-base-monitors-1.1.0-SNAPSHOT.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/org/ops4j/base/ops4j-base-monitors/1.1.0-SNAPSHOT/ops4j-base-monitors-1.1.0-SNAPSHOT-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/ops4j/base/ops4j-base-monitors/1.1.0-SNAPSHOT/ops4j-base-monitors-1.1.0-SNAPSHOT-sources.jar!/" />
-      </SOURCES>
-    </library>
     <library name="Maven: org.codehaus.jackson:jackson-core-asl:1.2.0">
       <CLASSES>
         <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/jackson/jackson-core-asl/1.2.0/jackson-core-asl-1.2.0.jar!/" />
