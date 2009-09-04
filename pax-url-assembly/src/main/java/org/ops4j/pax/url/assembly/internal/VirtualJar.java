@@ -41,7 +41,7 @@ class VirtualJar
     private final URL m_manifest;
 
     VirtualJar( final URL manifest,
-                       final Iterable<Resource> resources )
+                final Iterable<Resource> resources )
     {
         NullArgumentException.validateNotNull( resources, "Resources" );
         m_resources = resources;
