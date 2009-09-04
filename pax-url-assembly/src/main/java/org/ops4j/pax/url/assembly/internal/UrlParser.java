@@ -18,7 +18,6 @@
 package org.ops4j.pax.url.assembly.internal;
 
 import java.net.MalformedURLException;
-import java.net.URL;
 
 /**
  * Parser for "assembly:" protocol wher ethe url is a path to a directory, optionally followed by an file pattern.

@@ -17,8 +17,6 @@
  */
 package org.ops4j.pax.url.assembly.internal;
 
-import java.net.URL;
-
 /**
  * Parser for "assembly:" protocol.
  *
