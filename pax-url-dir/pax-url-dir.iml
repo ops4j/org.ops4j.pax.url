@@ -127,9 +127,9 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="Maven: org.ops4j.base:ops4j-base-lang:1.1.0-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: org.ops4j.base:ops4j-base-util-property:1.1.0-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: org.ops4j.base:ops4j-base-io:1.1.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.ops4j.base:ops4j-base-lang:1.1.0" level="project" />
+    <orderEntry type="library" name="Maven: org.ops4j.base:ops4j-base-util-property:1.1.0" level="project" />
+    <orderEntry type="library" name="Maven: org.ops4j.base:ops4j-base-io:1.1.0" level="project" />
     <orderEntry type="library" name="Maven: org.ops4j.pax.swissbox:pax-swissbox-optional-jcl:1.0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.ops4j.pax.swissbox:pax-swissbox-bnd:1.0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" exported="" name="Maven: biz.aQute:bndlib:0.0.313" level="project" />
