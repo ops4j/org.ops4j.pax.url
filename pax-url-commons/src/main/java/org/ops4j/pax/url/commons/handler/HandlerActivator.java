@@ -27,16 +27,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceRegistration;
-import org.osgi.service.cm.ConfigurationException;
-import org.osgi.service.cm.ManagedService;
 import org.osgi.service.url.AbstractURLStreamHandlerService;
 import org.osgi.service.url.URLConstants;
 import org.osgi.service.url.URLStreamHandlerService;
 import org.ops4j.lang.NullArgumentException;
 import org.ops4j.pax.swissbox.property.BundleContextPropertyResolver;
-import org.ops4j.util.property.DictionaryPropertyResolver;
 import org.ops4j.util.property.PropertyResolver;
 
 /**
@@ -98,8 +94,8 @@ public class HandlerActivator<T>
      * @throws NullArgumentException if any of the paramters is null
      */
     public HandlerActivator( final String[] protocols,
-                                final String pid,
-                                final ConnectionFactory<T> connectionFactory )
+                             final String pid,
+                             final ConnectionFactory<T> connectionFactory )
     {
         NullArgumentException.validateNotNull( protocols, "Protocols" );
         NullArgumentException.validateNotNull( pid, "PID" );
@@ -137,11 +133,11 @@ public class HandlerActivator<T>
     public void stop( final BundleContext bundleContext )
     {
         NullArgumentException.validateNotNull( bundleContext, "Bundle context" );
-        if( m_handlerReg != null )
+        if ( m_handlerReg != null )
         {
             m_handlerReg.unregister();
         }
-        if( m_managedServiceReg != null )
+        if ( m_managedServiceReg != null )
         {
             m_managedServiceReg.unregister();
         }
@@ -169,54 +165,36 @@ public class HandlerActivator<T>
      */
     private void registerManagedService()
     {
-        final ManagedService managedService = new ManagedService()
+        try
         {
-            /**
-             * Sets the resolver on handler.
-             *
-             * @see org.osgi.service.cm.ManagedService#updated(java.util.Dictionary)
-             */
-            public void updated( final Dictionary config )
-                throws ConfigurationException
-            {
-                if( config == null )
-                {
-                    setResolver( new BundleContextPropertyResolver( m_bundleContext ) );
-                }
-                else
-                {
-                    setResolver(
-                        new DictionaryPropertyResolver(
-                            config,
-                            new BundleContextPropertyResolver( m_bundleContext )
-                        )
-                    );
-                }
-            }
-
-        };
-        final Dictionary<String, String> props = new Hashtable<String, String>();
-        props.put( Constants.SERVICE_PID, m_pid );
-        m_managedServiceReg = m_bundleContext.registerService(
-            ManagedService.class.getName(),
-            managedService,
-            props
-        );
-        synchronized( this )
-        {
-            if( m_propertyResolver == null )
-            {
-                try
-                {
-                    managedService.updated( null );
-                }
-                catch( ConfigurationException ignore )
-                {
-                    // this should never happen
-                    LOG.error( "Internal error. Cannot set initial configuration resolver.", ignore );
-                }
-            }
+            m_managedServiceReg = OptionalConfigAdminHelper.registerManagedService( m_bundleContext, m_pid, this );
         }
+        catch ( Throwable ignore )
+        {
+            setResolver( new BundleContextPropertyResolver( m_bundleContext ) );
+            m_managedServiceReg = null;
+        }
+    }
+
+    /**
+     * Getter.
+     *
+     * @return property resolver
+     */
+    synchronized PropertyResolver getResolver()
+    {
+        return m_propertyResolver;
+    }
+
+    /**
+     * Setter.
+     *
+     * @param propertyResolver property resolver
+     */
+    synchronized void setResolver( final PropertyResolver propertyResolver )
+    {
+        m_propertyResolver = propertyResolver;
+        m_configuration = m_connectionFactory.createConfiguration( propertyResolver );
     }
 
     /**
@@ -241,15 +219,5 @@ public class HandlerActivator<T>
 
     }
 
-    public synchronized PropertyResolver getResolver()
-    {
-        return m_propertyResolver;
-    }
-
-    public synchronized void setResolver( final PropertyResolver propertyResolver )
-    {
-        m_propertyResolver = propertyResolver;
-        m_configuration = m_connectionFactory.createConfiguration( propertyResolver );
-    }
 
 }
