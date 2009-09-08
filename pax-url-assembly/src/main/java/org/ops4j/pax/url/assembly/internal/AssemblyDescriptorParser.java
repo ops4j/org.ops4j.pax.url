@@ -114,6 +114,8 @@ class AssemblyDescriptorParser
         throws IOException
     {
         final JsonFactory jFactory = new JsonFactory();
+        jFactory.enable( JsonParser.Feature.ALLOW_COMMENTS );
+        
         final JsonParser jp = jFactory.createJsonParser( url );
         if( jp.nextToken() != JsonToken.START_OBJECT )
         {
