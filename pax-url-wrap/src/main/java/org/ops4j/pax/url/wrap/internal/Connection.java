@@ -72,7 +72,7 @@ public class Connection
      *
      * @return the input stream for the bundle created from the jar
      *
-     * @throws IOException re-thrown brom BndLib.createBundle
+     * @throws IOException re-thrown from BndLib.createBundle
      * @see BndUtils#createBundle(InputStream, Properties, String)
      */
     @Override
@@ -86,7 +86,8 @@ public class Connection
                 !m_configuration.getCertificateCheck()
             ),
             m_parser.getWrappingProperties(),
-            url.toExternalForm()
+            url.toExternalForm(),
+            m_parser.getOverwriteMode()
         );
     }
 

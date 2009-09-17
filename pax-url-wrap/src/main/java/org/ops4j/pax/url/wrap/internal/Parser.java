@@ -27,6 +27,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.ops4j.net.URLUtils;
 import org.ops4j.pax.swissbox.bnd.BndUtils;
+import org.ops4j.pax.swissbox.bnd.OverwriteMode;
 
 /**
  * Parser for wrap: protocol.
@@ -69,11 +70,15 @@ public class Parser
     /**
      * Wrapped jar URL.
      */
-    private URL m_wrappedJarURL;
+    private final URL m_wrappedJarURL;
     /**
      * Wrapping instructions URL.
      */
-    private Properties m_wrappingProperties;
+    private final Properties m_wrappingProperties;
+    /**
+     * Manifest overwrite mode.
+     */
+    private final OverwriteMode m_overwriteMode;
 
     /**
      * Creates a new protocol parser.
@@ -121,6 +126,18 @@ public class Parser
             //we have only a wrapped jar
             m_wrappedJarURL = new URL( path );
         }
+        OverwriteMode overwriteMode;
+        try
+        {
+            overwriteMode = OverwriteMode.valueOf(
+                m_wrappingProperties.getProperty( "overwrite", OverwriteMode.KEEP.name() ).toUpperCase()
+            );
+        }
+        catch( Exception e )
+        {
+            overwriteMode = OverwriteMode.KEEP;
+        }
+        m_overwriteMode = overwriteMode;
     }
 
     /**
@@ -174,6 +191,16 @@ public class Parser
     public Properties getWrappingProperties()
     {
         return m_wrappingProperties;
+    }
+
+    /**
+     * Returns the overwrite mode.
+     *
+     * @return overwrite mode
+     */
+    public OverwriteMode getOverwriteMode()
+    {
+        return m_overwriteMode;
     }
 
     /**

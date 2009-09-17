@@ -24,6 +24,7 @@ import java.util.Properties;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.ops4j.io.FileUtils;
+import org.ops4j.pax.swissbox.bnd.OverwriteMode;
 
 public class ParserTest
 {
@@ -183,6 +184,42 @@ public class ParserTest
         assertEquals( "Property 1", "v1", props.getProperty( "Bundle-SymbolicName" ) );
         assertEquals( "Property 2", "v3", props.getProperty( "Bundle-Name" ) );
         assertEquals( "Property 3", "v4", props.getProperty( "Bundle-URL" ) );
+    }
+
+    @Test
+    public void defaultOverwriteMode()
+        throws MalformedURLException
+    {
+        Parser parser = new Parser( "file:toWrap.jar" );
+        assertEquals( "Wrapped Jar URL", new URL( "file:toWrap.jar" ), parser.getWrappedJarURL() );
+        assertEquals( "Overwrite mode", OverwriteMode.KEEP, parser.getOverwriteMode() );
+    }
+
+    @Test
+    public void invalidOverwriteMode()
+        throws MalformedURLException
+    {
+        Parser parser = new Parser( "file:toWrap.jar$overwrite=invalid" );
+        assertEquals( "Wrapped Jar URL", new URL( "file:toWrap.jar" ), parser.getWrappedJarURL() );
+        assertEquals( "Overwrite mode", OverwriteMode.KEEP, parser.getOverwriteMode() );
+    }
+
+    @Test
+    public void mergeOverwriteMode()
+        throws MalformedURLException
+    {
+        Parser parser = new Parser( "file:toWrap.jar$overwrite=merge" );
+        assertEquals( "Wrapped Jar URL", new URL( "file:toWrap.jar" ), parser.getWrappedJarURL() );
+        assertEquals( "Overwrite mode", OverwriteMode.MERGE, parser.getOverwriteMode() );
+    }
+
+    @Test
+    public void fullOverwriteMode()
+        throws MalformedURLException
+    {
+        Parser parser = new Parser( "file:toWrap.jar$overwrite=full" );
+        assertEquals( "Wrapped Jar URL", new URL( "file:toWrap.jar" ), parser.getWrappedJarURL() );
+        assertEquals( "Overwrite mode", OverwriteMode.FULL, parser.getOverwriteMode() );
     }
 
 }
