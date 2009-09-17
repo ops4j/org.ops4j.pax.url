@@ -29,7 +29,7 @@ import org.ops4j.net.URLUtils;
 import org.ops4j.pax.swissbox.bnd.BndUtils;
 
 /**
- * Parser for wrap: protocol.<br/>
+ * Parser for wrap: protocol.
  *
  * @author Alin Dreghiciu
  * @see Connection
@@ -51,17 +51,17 @@ public class Parser
      */
     private static final String INSTRUCTIONS_FILE_SEPARATOR = ",";
     /**
-     * Regex pattern for matching jar, wrapping file and instructions.
+     * Regexp pattern for matching jar, wrapping file and instructions.
      */
     private static final Pattern SYNTAX_JAR_BND_INSTR =
         Pattern.compile( "(.+?)" + INSTRUCTIONS_FILE_SEPARATOR + "(.+?)\\" + INSTRUCTIONS_SEPARATOR + "(.+?)" );
     /**
-     * Regex pattern for matching jar and instructions.
+     * Regexp pattern for matching jar and instructions.
      */
     private static final Pattern SYNTAX_JAR_INSTR =
         Pattern.compile( "(.+?)\\" + INSTRUCTIONS_SEPARATOR + "(.+?)" );
     /**
-     * Regex pattern for matching jar and wrapping file.
+     * Regexp pattern for matching jar and wrapping file.
      */
     private static final Pattern SYNTAX_JAR_BND =
         Pattern.compile( "(.+?)" + INSTRUCTIONS_FILE_SEPARATOR + "(.+?)" );
@@ -112,7 +112,7 @@ public class Parser
         }
         else if( ( matcher = SYNTAX_JAR_BND.matcher( path ) ).matches() )
         {
-            // we have a wraped jar and a wrapping instructions file
+            // we have a wrapped jar and a wrapping instructions file
             m_wrappedJarURL = new URL( matcher.group( 1 ) );
             parseInstructionsFile( new URL( matcher.group( 2 ) ) );
         }
@@ -124,7 +124,7 @@ public class Parser
     }
 
     /**
-     * Loeads the propertis out of an url.
+     * Loads the properties out of an url.
      *
      * @param bndFileURL url of the file containing the instructions
      *
@@ -159,7 +159,7 @@ public class Parser
     /**
      * Returns the wrapped URL if present, null otherwise
      *
-     * @return wraped jar URL
+     * @return wrapped jar URL
      */
     public URL getWrappedJarURL()
     {
