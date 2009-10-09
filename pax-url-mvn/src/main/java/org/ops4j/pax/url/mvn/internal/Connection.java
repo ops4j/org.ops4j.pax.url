@@ -503,7 +503,14 @@ public class Connection
         {
             // in this case we could not find any metadata so try to get the *-SNAPSHOT file directly
         }
-        return resolveExactVersion( repositoryURL, priority );
+        return new DownloadableArtifact(
+            m_parser.getVersion(),
+            priority,
+            repositoryURL.getURL(),
+            m_parser.getArtifactPath(),
+            false, // no local built snapshot
+            m_configuration.getCertificateCheck()
+        );
     }
 
     /**
