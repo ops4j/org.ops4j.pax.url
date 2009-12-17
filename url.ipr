@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project relativePaths="true" version="4">
+<project version="4">
   <component name="AntConfiguration">
     <defaultAnt bundledAnt="true" />
   </component>
@@ -75,10 +75,12 @@
         </option>
         <option name="IMPORT_LAYOUT_TABLE">
           <value>
-            <package name="java" withSubpackages="true" />
-            <package name="javax" withSubpackages="true" />
-            <package name="" withSubpackages="true" />
-            <package name="org.ops4j" withSubpackages="true" />
+            <package name="java" withSubpackages="true" static="false" />
+            <package name="javax" withSubpackages="true" static="false" />
+            <package name="" withSubpackages="true" static="false" />
+            <package name="org.ops4j" withSubpackages="true" static="false" />
+            <emptyLine />
+            <package name="" withSubpackages="true" static="true" />
           </value>
         </option>
         <option name="CALL_PARAMETERS_WRAP" value="1" />
@@ -143,11 +145,9 @@
         </ADDITIONAL_INDENT_OPTIONS>
       </value>
     </option>
-    <option name="USE_PER_PROJECT_SETTINGS" value="false" />
   </component>
   <component name="CompilerConfiguration">
     <option name="DEFAULT_COMPILER" value="Javac" />
-    <option name="DEPLOY_AFTER_MAKE" value="0" />
     <resourceExtensions>
       <entry name=".+\.(properties|xml|html|dtd|tld)" />
       <entry name=".+\.(gif|png|jpeg|jpg)" />
@@ -155,6 +155,7 @@
     <wildcardResourcePatterns>
       <entry name="!?*.java" />
     </wildcardResourcePatterns>
+    <annotationProcessing enabled="false" useClasspath="true" />
   </component>
   <component name="CopyrightManager" default="">
     <module2copyright />
@@ -205,16 +206,36 @@
   </component>
   <component name="IdProvider" IDEtalkID="4451B5B5A99F7794544410A3C9A2B92B" />
   <component name="InspectionProjectProfileManager">
-    <option name="PROJECT_PROFILE" value="Project Default" />
-    <option name="USE_PROJECT_PROFILE" value="true" />
-    <version value="1.0" />
     <profiles>
       <profile version="1.0" is_locked="false">
         <option name="myName" value="Project Default" />
         <option name="myLocal" value="false" />
+        <inspection_tool class="IgnoreResultOfCall" enabled="false" level="WARNING" enabled_by_default="false">
+          <option name="m_reportAllNonLibraryCalls" value="false" />
+          <option name="callCheckString" value="java.io.InputStream,read,java.io.InputStream,skip,java.lang.StringBuffer,toString,java.lang.StringBuilder,toString,java.lang.String,.*,java.math.BigInteger,.*,java.math.BigDecimal,.*,java.net.InetAddress,.*,java.io.File,.*,java.lang.Object,equals|hashCode" />
+        </inspection_tool>
+        <inspection_tool class="UNUSED_SYMBOL" enabled="true" level="WARNING" enabled_by_default="true">
+          <option name="LOCAL_VARIABLE" value="true" />
+          <option name="FIELD" value="true" />
+          <option name="METHOD" value="true" />
+          <option name="CLASS" value="true" />
+          <option name="PARAMETER" value="true" />
+          <option name="REPORT_PARAMETER_FOR_PUBLIC_METHODS" value="true" />
+          <option name="INJECTION_ANNOS">
+            <value>
+              <list size="3">
+                <item index="0" class="java.lang.String" itemvalue="org.qi4j.injection.scope.Service" />
+                <item index="1" class="java.lang.String" itemvalue="org.qi4j.injection.scope.Structure" />
+                <item index="2" class="java.lang.String" itemvalue="org.qi4j.injection.scope.This" />
+              </list>
+            </value>
+          </option>
+        </inspection_tool>
       </profile>
     </profiles>
-    <list size="0" />
+    <option name="PROJECT_PROFILE" value="Project Default" />
+    <option name="USE_PROJECT_PROFILE" value="true" />
+    <version value="1.0" />
   </component>
   <component name="JavacSettings">
     <option name="DEBUGGING_INFO" value="true" />
@@ -441,6 +462,15 @@
         <entry key="$PROJECT_DIR$">
           <value>
             <SvnBranchConfiguration>
+              <option name="branchMap">
+                <map>
+                  <entry key="https://scm.ops4j.org/repos/ops4j/qa/pax">
+                    <value>
+                      <list />
+                    </value>
+                  </entry>
+                </map>
+              </option>
               <option name="branchUrls">
                 <list>
                   <option value="https://scm.ops4j.org/repos/ops4j/qa/pax" />
@@ -733,8 +763,5 @@
       </SOURCES>
     </library>
   </component>
-  <UsedPathMacros>
-    <macro name="MAVEN_REPOSITORY" description="Maven Local Repostiry" />
-  </UsedPathMacros>
 </project>
 
