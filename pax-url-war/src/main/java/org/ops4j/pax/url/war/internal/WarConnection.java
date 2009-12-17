@@ -59,7 +59,9 @@ public class WarConnection
         {
             instructions.setProperty(
                 "Import-Package",
-                "javax.*; resolution:=optional,"
+                "javax.servlet,"
+                + "javax.servlet.http,"
+                + "javax.*; resolution:=optional,"
                 + "org.xml.*; resolution:=optional,"
                 + "org.w3c.*; resolution:=optional"
             );
