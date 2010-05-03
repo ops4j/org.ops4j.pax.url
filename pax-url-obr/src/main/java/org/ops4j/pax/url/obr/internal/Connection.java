@@ -22,12 +22,14 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.osgi.service.obr.RepositoryAdmin;
-import org.osgi.service.obr.Resource;
 import org.ops4j.lang.NullArgumentException;
 import org.ops4j.net.URLUtils;
+import org.ops4j.pax.swissbox.tracker.ReplaceableService;
+import org.osgi.service.obr.RepositoryAdmin;
+import org.osgi.service.obr.Resource;
 
 /**
  * Url connection for obr protocol handler.
@@ -52,10 +54,8 @@ class Connection
      * Service configuration.
      */
     private final Configuration m_configuration;
-    /**
-     * OBR Repository Admin.
-     */
-    private final RepositoryAdmin m_repositoryAdmin;
+    
+    private final ReplaceableService<RepositoryAdmin> m_replaceableService;
 
     /**
      * Creates a new connection.
@@ -70,7 +70,7 @@ class Connection
      */
     public Connection( final URL url,
                        final Configuration configuration,
-                       final RepositoryAdmin repositoryAdmin,
+                       final ReplaceableService<RepositoryAdmin> replaceableService,
                        final FilterValidator filterValidator )
         throws MalformedURLException
     {
@@ -78,11 +78,10 @@ class Connection
 
         NullArgumentException.validateNotNull( url, "URL cannot be null" );
         NullArgumentException.validateNotNull( configuration, "Service configuration" );
-        NullArgumentException.validateNotNull( repositoryAdmin, "Repository Admin service" );
+        NullArgumentException.validateNotNull( replaceableService, "Replaceable Services" );
 
         m_configuration = configuration;
-        m_repositoryAdmin = repositoryAdmin;
-
+        m_replaceableService = replaceableService;
         m_parser = new Parser( url.getPath(), filterValidator );
     }
 
@@ -97,7 +96,9 @@ class Connection
     {
         connect();
         LOG.debug( "Discover resources for filter [" + m_parser.getFilter() + "]" );
-        final Resource[] resources = m_repositoryAdmin.discoverResources( m_parser.getFilter() );
+        m_replaceableService.start();
+        RepositoryAdmin repositoryAdmin = m_replaceableService.getService();
+        final Resource[] resources = repositoryAdmin.discoverResources( m_parser.getFilter() );
         if( resources.length == 0 )
         {
             throw new IOException( "No resource found for provided filter [" + m_parser.getFilter() + "]" );

@@ -20,15 +20,16 @@ package org.ops4j.pax.url.obr.internal;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import org.osgi.framework.BundleActivator;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.service.obr.RepositoryAdmin;
+
 import org.ops4j.pax.swissbox.tracker.ReplaceableService;
 import org.ops4j.pax.url.commons.handler.ConnectionFactory;
 import org.ops4j.pax.url.commons.handler.HandlerActivator;
 import org.ops4j.pax.url.obr.ServiceConstants;
 import org.ops4j.util.property.PropertyResolver;
+import org.osgi.framework.BundleActivator;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.service.obr.RepositoryAdmin;
 
 /**
  * Bundle activator for obr: protocol handler.
@@ -44,14 +45,14 @@ public final class Activator
      * Delegate.
      */
     private HandlerActivator<Configuration> m_activatorDelegate;
-    /**
-     * OBR Repository Admin in use. Valid only after start method has been called.
-     */
-    private RepositoryAdmin m_repositoryAdmin;
-    /**
-     * Bundle context. Valid only after start method has been called.
-     */
+	/**
+    * Bundle context. Valid only after start method has been called.
+    */
     private BundleContext m_bundleContext;
+	/**
+     * Replaceable Service. Valid only after start method has been called.
+     */
+    private ReplaceableService<RepositoryAdmin> m_replaceableService;
 
     /**
      * @see HandlerActivator#HandlerActivator(String[], String, ConnectionFactory)
@@ -74,7 +75,7 @@ public final class Activator
                 {
                     return new Connection( url,
                                            config,
-                                           m_repositoryAdmin,
+                                           m_replaceableService,
                                            new FilterValidator()
                                            {
                                                /**
@@ -117,11 +118,8 @@ public final class Activator
     public void start( final BundleContext bundleContext )
         throws Exception
     {
-        m_bundleContext = bundleContext;
-        final ReplaceableService<RepositoryAdmin> replaceableService =
-            new ReplaceableService<RepositoryAdmin>( bundleContext, RepositoryAdmin.class );
-        replaceableService.start();
-        m_repositoryAdmin = replaceableService.getService();
+    	m_bundleContext = bundleContext;
+    	m_replaceableService = new ReplaceableService<RepositoryAdmin>( bundleContext, RepositoryAdmin.class );
         m_activatorDelegate.start( bundleContext );
     }
 
