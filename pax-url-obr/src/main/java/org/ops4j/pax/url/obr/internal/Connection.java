@@ -78,12 +78,13 @@ class Connection
 
         NullArgumentException.validateNotNull( url, "URL cannot be null" );
         NullArgumentException.validateNotNull( configuration, "Service configuration" );
-        NullArgumentException.validateNotNull( replaceableService, "Replaceable Services" );
+        NullArgumentException.validateNotNull( replaceableService, "No Replaceable Service available" );
 
         m_configuration = configuration;
         m_replaceableService = replaceableService;
         m_parser = new Parser( url.getPath(), filterValidator );
     }
+
 
     /**
      * Returns an input stream for the discovered bundle.
@@ -96,8 +97,11 @@ class Connection
     {
         connect();
         LOG.debug( "Discover resources for filter [" + m_parser.getFilter() + "]" );
+        
         m_replaceableService.start();
         RepositoryAdmin repositoryAdmin = m_replaceableService.getService();
+        NullArgumentException.validateNotNull( repositoryAdmin, "No Repository Admin Service available" );
+        
         final Resource[] resources = repositoryAdmin.discoverResources( m_parser.getFilter() );
         if( resources.length == 0 )
         {
