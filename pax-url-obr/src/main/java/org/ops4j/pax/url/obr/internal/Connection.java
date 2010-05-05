@@ -100,7 +100,11 @@ class Connection
         
         m_replaceableService.start();
         RepositoryAdmin repositoryAdmin = m_replaceableService.getService();
-        NullArgumentException.validateNotNull( repositoryAdmin, "No Repository Admin Service available" );
+
+        if(repositoryAdmin == null)
+        {
+        	throw new IllegalStateException("No RepositoryAdmin Service available" );
+        }        
         
         final Resource[] resources = repositoryAdmin.discoverResources( m_parser.getFilter() );
         if( resources.length == 0 )
