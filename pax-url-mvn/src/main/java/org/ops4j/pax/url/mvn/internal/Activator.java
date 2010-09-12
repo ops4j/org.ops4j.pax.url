@@ -59,7 +59,7 @@ public final class Activator
                                                       final MavenConfiguration config )
                     throws MalformedURLException
                 {
-                    return new Connection( url, config );
+                    return new AetherBridgeConnection(url,new Connection( url, config ));
                 }
 
                 /**
