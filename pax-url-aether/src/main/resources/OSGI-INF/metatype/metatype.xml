@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0" localization="OSGI-INF/metatype/metatype">
+    <OCD id="org.ops4j.pax.url.aether" name="%mvn.name" description="%mvn.description">
+      <AD id="org.ops4j.pax.url.aether.certificateCheck" type="Boolean" default="false" name="%certificateCheck.name" description="%certificateCheck.description"/>
+      <AD id="org.ops4j.pax.url.aether.settings" type="String" default="" name="%settings.name" description="%settings.description"/>
+      <AD id="org.ops4j.pax.url.aether.localRepository" type="String" default="" name="%localRepository.name" description="%localRepository.description"/>
+      <AD id="org.ops4j.pax.url.aether.defaultRepositories" type="String" default="" name="%defaultRepositories.name" description="%defaultRepositories.description"/>
+      <AD id="org.ops4j.pax.url.aether.repositories" type="String" default="" name="%repositories.name" description="%repositories.description"/>
+      <AD id="org.ops4j.pax.url.aether.proxySupport" type="String" default="" name="%proxySupport.name" description="%proxySupport.description"/>
+    </OCD>
+    <Designate pid="org.ops4j.pax.url.aether">
+        <Object ocdref="org.ops4j.pax.url.aether"/>
+    </Designate>
+</metatype:MetaData>
