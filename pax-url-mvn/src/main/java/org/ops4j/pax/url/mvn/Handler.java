@@ -23,6 +23,7 @@ import java.net.URLConnection;
 import java.net.URLStreamHandler;
 import org.ops4j.pax.url.maven.commons.MavenConfigurationImpl;
 import org.ops4j.pax.url.maven.commons.MavenSettingsImpl;
+import org.ops4j.pax.url.mvn.internal.AetherBridgeConnection;
 import org.ops4j.pax.url.mvn.internal.Connection;
 import org.ops4j.util.property.PropertiesPropertyResolver;
 
@@ -47,7 +48,7 @@ public class Handler
             new PropertiesPropertyResolver( System.getProperties() ), ServiceConstants.PID
         );
         config.setSettings( new MavenSettingsImpl( config.getSettingsFileUrl(), config.useFallbackRepositories() ) );
-        return new Connection( url, config );
+        return new AetherBridgeConnection(url,new Connection( url, config ));
     }
 
 }
