@@ -31,12 +31,10 @@ public class LogAdapter implements Logger {
     }
 
     public void debug(String s) {
-        System.out.println(s);
         LOG.debug(s);
     }
 
     public void debug(String s, Throwable throwable) {
-        System.out.println(s);
         LOG.debug(s, throwable);
     }
 }
