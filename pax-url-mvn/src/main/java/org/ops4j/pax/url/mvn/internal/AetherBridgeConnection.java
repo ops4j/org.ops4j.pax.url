@@ -63,6 +63,8 @@ public class AetherBridgeConnection extends URLConnection {
             // other exceptions. don't try to resolve otherwise:
             throw new IOException(e);
         }
+        LOG.info("Using mvn fallback to resolve " + url.toExternalForm());
+
         return m_fallback.getInputStream();
     }
 }
