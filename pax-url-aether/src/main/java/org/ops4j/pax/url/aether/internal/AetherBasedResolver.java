@@ -45,7 +45,8 @@ import java.io.InputStream;
 public class AetherBasedResolver {
 
     private static final Log LOG = LogFactory.getLog(AetherBasedResolver.class);
-
+    private static final String LATEST_VERSION_RANGE = "(0.0,]";
+    
     final private String m_localRepo;
     final private String[] m_repositories;
     final private RepositorySystem m_repoSystem;
@@ -59,6 +60,10 @@ public class AetherBasedResolver {
     public InputStream resolve(String groupId, String artifactId, String extension, String version) {
 
         try {
+            if (version != null && version.equals("LATEST")) {
+                version = LATEST_VERSION_RANGE;
+            }
+            
             RepositorySystemSession session = newSession(m_repoSystem);
 
             Dependency dependency =
@@ -77,7 +82,7 @@ public class AetherBasedResolver {
             DependencyNode node = m_repoSystem.collectDependencies(session, collectRequest).getRoot();
 
             File resolved = m_repoSystem.resolveDependencies(session, node, null).get(0).getArtifact().getFile();
-        
+            LOG.info("Resolved (" + dependency.toString() + ") as " + resolved.getAbsolutePath() );
             return new FileInputStream(resolved);
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
