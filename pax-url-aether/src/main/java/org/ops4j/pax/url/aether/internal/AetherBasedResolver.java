@@ -61,14 +61,12 @@ public class AetherBasedResolver {
         try {
             RepositorySystemSession session = newSession(m_repoSystem);
 
-
-            LOG.info("Launching new Aether Session");
-            
             Dependency dependency =
                     new Dependency(new DefaultArtifact(groupId, artifactId, extension, version), "provided");
 
+            LOG.info("Resolving using Aether Session: " + dependency.toString() );
             CollectRequest collectRequest = new CollectRequest();
-
+            
             int i = 0;
             for (String repos : m_repositories) {
                 RemoteRepository central = new RemoteRepository("repos" + i, "default", repos);
@@ -79,7 +77,7 @@ public class AetherBasedResolver {
             DependencyNode node = m_repoSystem.collectDependencies(session, collectRequest).getRoot();
 
             File resolved = m_repoSystem.resolveDependencies(session, node, null).get(0).getArtifact().getFile();
-
+        
             return new FileInputStream(resolved);
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
@@ -97,7 +95,6 @@ public class AetherBasedResolver {
         LocalRepository localRepo = new LocalRepository(m_localRepo);
 
         session.setLocalRepositoryManager(system.newLocalRepositoryManager(localRepo));
-
 
         return session;
     }
