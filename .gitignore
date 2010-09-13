@@ -1,2 +1,4 @@
-url.iws
+*.iws
+*.iml
+*.ipr
 target
