@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Okidokiteam
+ * Copyright (C) 2010 Toni Menzel
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,19 +24,25 @@ import org.sonatype.aether.connector.wagon.WagonProvider;
  * Simplistic wagon provider
  */
 public class ManualWagonProvider
-        implements WagonProvider {
+    implements WagonProvider
+{
 
-    public Wagon lookup(String roleHint)
-            throws Exception {
-        if ("file".equals(roleHint)) {
+    public Wagon lookup( String roleHint )
+        throws Exception
+    {
+        if( "file".equals( roleHint ) )
+        {
             return new FileWagon();
-        } else if ("http".equals(roleHint)) {
+        }
+        else if( "http".equals( roleHint ) )
+        {
             return new LightweightHttpWagon();
         }
         return null;
     }
 
-    public void release(Wagon wagon) {
+    public void release( Wagon wagon )
+    {
 
     }
 

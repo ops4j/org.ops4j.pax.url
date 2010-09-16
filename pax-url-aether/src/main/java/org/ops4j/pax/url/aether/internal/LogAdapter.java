@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Okidokiteam
+ * Copyright (C) 2010 Toni Menzel
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,21 +20,25 @@ import org.apache.commons.logging.LogFactory;
 import org.sonatype.aether.spi.log.Logger;
 
 /**
- * 
+ *
  */
-public class LogAdapter implements Logger {
+public class LogAdapter implements Logger
+{
 
-    private static final Log LOG = LogFactory.getLog(AetherBasedResolver.class);
+    private static final Log LOG = LogFactory.getLog( AetherBasedResolver.class );
 
-    public boolean isDebugEnabled() {
+    public boolean isDebugEnabled()
+    {
         return LOG.isDebugEnabled();
     }
 
-    public void debug(String s) {
-        LOG.debug(s);
+    public void debug( String s )
+    {
+        LOG.debug( s );
     }
 
-    public void debug(String s, Throwable throwable) {
-        LOG.debug(s, throwable);
+    public void debug( String s, Throwable throwable )
+    {
+        LOG.debug( s, throwable );
     }
 }

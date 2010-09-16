@@ -65,12 +65,13 @@ import java.util.ArrayList;
  * @since September 10, 2010
  */
 public class Connection
-        extends URLConnection {
+    extends URLConnection
+{
 
     /**
      * Logger.
      */
-    private static final Log LOG = LogFactory.getLog(Connection.class);
+    private static final Log LOG = LogFactory.getLog( Connection.class );
     /**
      * 2 spacess indent;
      */
@@ -91,20 +92,24 @@ public class Connection
      *
      * @param url           the url; cannot be null.
      * @param configuration service configuration; cannot be null
+     *
      * @throws MalformedURLException in case of a malformed url
      */
-    public Connection(final URL url, final MavenConfiguration configuration)
-            throws MalformedURLException {
-        super(url);
-        NullArgumentException.validateNotNull(url, "URL cannot be null");
-        NullArgumentException.validateNotNull(configuration, "Service configuration");
-        m_parser = new Parser(url.getPath());
+    public Connection( final URL url, final MavenConfiguration configuration )
+        throws MalformedURLException
+    {
+        super( url );
+        NullArgumentException.validateNotNull( url, "URL cannot be null" );
+        NullArgumentException.validateNotNull( configuration, "Service configuration" );
+        m_parser = new Parser( url.getPath() );
 
-          ArrayList<String> r = new ArrayList<String>();
+        ArrayList<String> r = new ArrayList<String>();
 
-        for (MavenRepositoryURL s : configuration.getRepositories()) {
-            if (!s.isFileRepository()) {
-                r.add(s.getURL().toExternalForm());
+        for( MavenRepositoryURL s : configuration.getRepositories() )
+        {
+            if( !s.isFileRepository() )
+            {
+                r.add( s.getURL().toExternalForm() );
             }
         }
 
@@ -112,7 +117,7 @@ public class Connection
 
         String local = configuration.getLocalRepository().getFile().getAbsolutePath();
 
-         m_aetherBasedResolver = new AetherBasedResolver(local, r.toArray(new String[r.size()]));
+        m_aetherBasedResolver = new AetherBasedResolver( local, r.toArray( new String[r.size()] ) );
     }
 
     /**
@@ -121,21 +126,23 @@ public class Connection
      * @see java.net.URLConnection#connect()
      */
     @Override
-    public void connect() {
+    public void connect()
+    {
         // do nothing
     }
 
     /**
-    * TODO doc
+     * TODO doc
      */
     @Override
     public InputStream getInputStream()
-            throws IOException {
+        throws IOException
+    {
         connect();
-        
-        LOG.debug("Resolving [" + url.toExternalForm() + "]");
 
-        return m_aetherBasedResolver.resolve(m_parser.getGroup(), m_parser.getArtifact(), m_parser.getType(), m_parser.getVersion());
+        LOG.debug( "Resolving [" + url.toExternalForm() + "]" );
+
+        return m_aetherBasedResolver.resolve( m_parser.getGroup(), m_parser.getArtifact(), m_parser.getType(), m_parser.getVersion() );
     }
 
 
