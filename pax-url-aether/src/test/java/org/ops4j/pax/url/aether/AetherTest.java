@@ -26,26 +26,26 @@ import java.io.IOException;
 /**
  * Simply playing with aether api.
  */
-public class AetherTest {
+public class AetherTest
+{
+
     @Test
-    public void testMe() throws DependencyCollectionException, ArtifactResolutionException, IOException {
-
-
-        String[] repos = "http://repo1.maven.org/maven2/".split(",");
-
-        File localRepo = new File(new File(System.getProperty("user.home"),".m2"),"repository");
-
-        String local = localRepo.getAbsolutePath();
-        
-        AetherBasedResolver aetherBasedResolver = new AetherBasedResolver(local,repos);
-
-        aetherBasedResolver.resolve("org.apache.maven", "maven-profile", "jar", "2.2.1").close();
-
-        aetherBasedResolver.resolve("org.apache.felix", "org.apache.felix.framework", "jar", "3.0.2" ).close();
-        aetherBasedResolver.resolve("org.ops4j.pax.exam", "pax-exam-spi", "jar", "2.0.0-SNAPSHOT" ).close();
-
+    public void resolveArtifact()
+        throws DependencyCollectionException, ArtifactResolutionException, IOException
+    {
+        String[] repos = "http://repo1.maven.org/maven2/,http://scm.ops4j.org/repos/ops4j/projects/pax/runner-repository/,".split( "," );
+        AetherBasedResolver aetherBasedResolver = new AetherBasedResolver( "target/local1", repos );
+        aetherBasedResolver.resolve( "org.ops4j.pax.web", "pax-web-api", "jar", "0.7.2" ).close();
 
     }
 
-
+    @Test
+    public void resolveRangeBased()
+        throws DependencyCollectionException, ArtifactResolutionException, IOException
+    {
+        String[] repos = "http://repo1.maven.org/maven2/,http://scm.ops4j.org/repos/ops4j/projects/pax/runner-repository/,".split( "," );
+        AetherBasedResolver aetherBasedResolver = new AetherBasedResolver( "target/local2", repos );
+        aetherBasedResolver.resolve( "org.ops4j.pax.web", "pax-web-api", "jar", "(0.0,]" ).close();
+    }
 }
+
