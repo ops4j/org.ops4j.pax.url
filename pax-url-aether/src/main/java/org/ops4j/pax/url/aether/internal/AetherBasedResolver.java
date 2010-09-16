@@ -42,83 +42,94 @@ import java.io.InputStream;
 /**
  * Aether based, drop in replacement for mvn protocol
  */
-public class AetherBasedResolver {
+public class AetherBasedResolver
+{
 
-    private static final Log LOG = LogFactory.getLog(AetherBasedResolver.class);
+    private static final Log LOG = LogFactory.getLog( AetherBasedResolver.class );
     private static final String LATEST_VERSION_RANGE = "(0.0,]";
-    
+
     final private String m_localRepo;
     final private String[] m_repositories;
     final private RepositorySystem m_repoSystem;
 
-    public AetherBasedResolver(String local, String[] repos) {
+    public AetherBasedResolver( String local, String[] repos )
+    {
         m_localRepo = local;
         m_repositories = repos;
         m_repoSystem = newRepositorySystem();
     }
 
-    public InputStream resolve(String groupId, String artifactId, String extension, String version) {
+    public InputStream resolve( String groupId, String artifactId, String extension, String version )
+    {
+        try
+        {
+            version = mapLatestToRange( version );
 
-        try {
-            if (version != null && version.equals("LATEST")) {
-                version = LATEST_VERSION_RANGE;
-            }
-            
-            RepositorySystemSession session = newSession(m_repoSystem);
+            RepositorySystemSession session = newSession( m_repoSystem );
+            Dependency dependency = new Dependency( new DefaultArtifact( groupId, artifactId, extension, version ), "provided" );
+            CollectRequest collectRequest = prepareResolveRequest( dependency );
+            DependencyNode node = m_repoSystem.collectDependencies( session, collectRequest ).getRoot();
 
-            Dependency dependency =
-                    new Dependency(new DefaultArtifact(groupId, artifactId, extension, version), "provided");
+            File resolved = m_repoSystem.resolveDependencies( session, node, null ).get( 0 ).getArtifact().getFile();
 
-            LOG.info("Resolving using Aether Session: " + dependency.toString() );
-            CollectRequest collectRequest = new CollectRequest();
-            
-            int i = 0;
-            for (String repos : m_repositories) {
-                RemoteRepository central = new RemoteRepository("repos" + i, "default", repos);
-                collectRequest.addRepository(central);
-            }
-
-            collectRequest.setRoot(dependency);
-            DependencyNode node = m_repoSystem.collectDependencies(session, collectRequest).getRoot();
-
-            File resolved = m_repoSystem.resolveDependencies(session, node, null).get(0).getArtifact().getFile();
-            LOG.info("Resolved (" + dependency.toString() + ") as " + resolved.getAbsolutePath() );
-            return new FileInputStream(resolved);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (DependencyCollectionException e) {
-            throw new RuntimeException(e);
-        } catch (ArtifactResolutionException e) {
-            throw new RuntimeException(e);
+            LOG.info( "Resolved (" + dependency.toString() + ") as " + resolved.getAbsolutePath() );
+            return new FileInputStream( resolved );
+        } catch( FileNotFoundException e )
+        {
+            throw new RuntimeException( e );
+        } catch( DependencyCollectionException e )
+        {
+            throw new RuntimeException( e );
+        } catch( ArtifactResolutionException e )
+        {
+            throw new RuntimeException( e );
         }
 
     }
 
-    private RepositorySystemSession newSession(RepositorySystem system) {
+    private CollectRequest prepareResolveRequest( Dependency dependency )
+    {
+        LOG.info( "Resolving using Aether Session: " + dependency.toString() );
+
+        CollectRequest collectRequest = new CollectRequest();
+        collectRequest.setRoot( dependency );
+
+        int i = 0;
+        for( String repos : m_repositories )
+        {
+            RemoteRepository central = new RemoteRepository( "repos" + i, "default", repos );
+            collectRequest.addRepository( central );
+        }
+        return collectRequest;
+    }
+
+    private String mapLatestToRange( String version )
+    {
+        if( version != null && version.equals( "LATEST" ) )
+        {
+            version = LATEST_VERSION_RANGE;
+        }
+        return version;
+    }
+
+    private RepositorySystemSession newSession( RepositorySystem system )
+    {
         MavenRepositorySystemSession session = new MavenRepositorySystemSession();
 
-        LocalRepository localRepo = new LocalRepository(m_localRepo);
-
-        session.setLocalRepositoryManager(system.newLocalRepositoryManager(localRepo));
+        LocalRepository localRepo = new LocalRepository( m_localRepo );
+        session.setLocalRepositoryManager( system.newLocalRepositoryManager( localRepo ) );
 
         return session;
     }
 
-    private RepositorySystem newRepositorySystem() {
+    private RepositorySystem newRepositorySystem()
+    {
         DefaultServiceLocator locator = new DefaultServiceLocator();
 
-        locator.setServices(WagonProvider.class, new ManualWagonProvider());
+        locator.setServices( WagonProvider.class, new ManualWagonProvider() );
+        locator.addService( RepositoryConnectorFactory.class, WagonRepositoryConnectorFactory.class );
+        locator.setService( Logger.class, LogAdapter.class );
 
-        locator.addService(RepositoryConnectorFactory.class, WagonRepositoryConnectorFactory.class);
-
-        locator.setService(Logger.class, LogAdapter.class );
-
-        /**
-        locator.setService(VersionResolver.class, DefaultVersionResolver.class);
-        locator.setService(VersionRangeResolver.class, DefaultVersionRangeResolver.class);
-        locator.setService(ArtifactDescriptorReader.class, DefaultArtifactDescriptorReader.class);
-**/
-
-        return locator.getService(RepositorySystem.class);
+        return locator.getService( RepositorySystem.class );
     }
 }
