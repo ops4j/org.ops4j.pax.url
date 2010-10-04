@@ -34,9 +34,8 @@ public class AetherTest
         throws DependencyCollectionException, ArtifactResolutionException, IOException
     {
         String[] repos = "http://repo1.maven.org/maven2/,http://scm.ops4j.org/repos/ops4j/projects/pax/runner-repository/,".split( "," );
-        AetherBasedResolver aetherBasedResolver = new AetherBasedResolver( "target/local3", repos );
+        AetherBasedResolver aetherBasedResolver = new AetherBasedResolver( getCache(), repos );
         aetherBasedResolver.resolve( "org.ops4j.pax.web", "pax-web-api", "jar", "0.7.2" ).close();
-
     }
 
     @Test
@@ -44,8 +43,29 @@ public class AetherTest
         throws DependencyCollectionException, ArtifactResolutionException, IOException
     {
         String[] repos = "http://repo1.maven.org/maven2/,http://scm.ops4j.org/repos/ops4j/projects/pax/runner-repository/,".split( "," );
-        AetherBasedResolver aetherBasedResolver = new AetherBasedResolver( "target/local4", repos );
+        AetherBasedResolver aetherBasedResolver = new AetherBasedResolver( getCache(), repos );
         aetherBasedResolver.resolve( "org.ops4j.pax.web", "pax-web-api", "jar", "(0.1,]" ).close();
+    }
+
+    @Test
+    public void resolveFakeRepo()
+        throws DependencyCollectionException, ArtifactResolutionException, IOException
+    {
+        String[] repos = "http://repo1.maven.org/maven2/,http://scm.ops4j.org/repos/ops4j/projects/pax/runner-repository/,".split( "," );
+        AetherBasedResolver aetherBasedResolver = new AetherBasedResolver( getCache(), repos );
+        aetherBasedResolver.resolve( "org.ops4j.pax.runner.profiles", "ds", "composite", "LATEST" ).close();
+    }
+
+    private String getCache()
+        throws IOException
+    {
+        File base = new File( "target" );
+        base.mkdir();
+        File f = File.createTempFile( "aethertest", ".dir", base );
+        f.delete();
+        f.mkdirs();
+        System.out.println( "Caching" + " to " + f.getAbsolutePath() );
+        return f.getAbsolutePath();
     }
 }
 
