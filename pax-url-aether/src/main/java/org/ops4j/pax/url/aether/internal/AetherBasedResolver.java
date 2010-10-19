@@ -46,7 +46,7 @@ public class AetherBasedResolver
 {
 
     private static final Log LOG = LogFactory.getLog( AetherBasedResolver.class );
-    public static final String LATEST_VERSION_RANGE = "(0.0,]";
+    private static final String LATEST_VERSION_RANGE = "(0.0,]";
 
     final private String m_localRepo;
     final private String[] m_repositories;
@@ -97,7 +97,8 @@ public class AetherBasedResolver
         int i = 0;
         for( String repos : m_repositories )
         {
-            RemoteRepository central = new RemoteRepository( "repos" + ( i++ ), "default", repos );
+            RemoteRepository central = new RemoteRepository( "repos" + (i++), "default", repos );
+            LOG.info( "+ " + repos );
             collectRequest.addRepository( central );
         }
         return collectRequest;
