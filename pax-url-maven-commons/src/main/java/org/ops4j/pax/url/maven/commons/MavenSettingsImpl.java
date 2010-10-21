@@ -28,13 +28,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+
 import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.ops4j.util.xml.XmlUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
-import org.ops4j.util.xml.XmlUtils;
 
 /**
  * Default implementation of Settings.
@@ -322,10 +325,11 @@ public class MavenSettingsImpl
                                                         username = username + ":" + password;
                                                     }
                                                 }
-                                                repositories.put( id,
-                                                                  repository.replaceFirst( "://", "://" + username + "@"
-                                                                  )
-                                                );
+                                                // PAXURL-86: treat string as
+                                                // literal
+                                                String repo = "://" + username + "@";
+                                                repo = Matcher.quoteReplacement(repo);
+                                                repositories.put(id, repository.replaceFirst("://", repo));
                                             }
                                         }
                                     }
