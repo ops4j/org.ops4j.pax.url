@@ -63,4 +63,17 @@ public class ConfigurationImpl
         return get( ServiceConstants.PROPERTY_CERTIFICATE_CHECK );
     }
 
+    /**
+     * @see Configuration#getImportPaxLoggingPackages()
+     */
+    public Boolean getImportPaxLoggingPackages()
+    {
+        if( !contains( ServiceConstants.PROPERTY_IMPORT_PAXLOGGING_PACKAGES ) )
+        {
+            return set( ServiceConstants.PROPERTY_IMPORT_PAXLOGGING_PACKAGES,
+                        Boolean.valueOf( m_propertyResolver.get( ServiceConstants.PROPERTY_IMPORT_PAXLOGGING_PACKAGES ) )
+            );
+        }
+        return get( ServiceConstants.PROPERTY_IMPORT_PAXLOGGING_PACKAGES );
+    }
 }

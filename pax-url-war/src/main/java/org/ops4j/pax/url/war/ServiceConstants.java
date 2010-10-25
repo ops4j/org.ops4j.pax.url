@@ -50,7 +50,11 @@ public interface ServiceConstants
      * Certificate check configuration property name.
      */
     static final String PROPERTY_CERTIFICATE_CHECK = PID + ".certificateCheck";
-
+    /**
+     * Import pax-logging packages to ease the deployment of WAR files
+     * when pax-logging is present.
+     */
+    static final String PROPERTY_IMPORT_PAXLOGGING_PACKAGES = PID + ".importPaxLoggingPackages";
     /**
      * URI of the war file to be processed.
      */
