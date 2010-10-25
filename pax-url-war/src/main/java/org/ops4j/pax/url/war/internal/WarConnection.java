@@ -57,13 +57,27 @@ public class WarConnection
         // default import packages
         if( !instructions.containsKey( "Import-Package" ) )
         {
-            instructions.setProperty(
-                "Import-Package",
-                "javax.servlet,"
+            String packages = "javax.servlet,"
                 + "javax.servlet.http,"
                 + "javax.*; resolution:=optional,"
                 + "org.xml.*; resolution:=optional,"
-                + "org.w3c.*; resolution:=optional"
+                + "org.w3c.*; resolution:=optional";
+            if( getConfiguration().getImportPaxLoggingPackages() )
+            {
+                String provider = ";provider=paxlogging;resolution:=optional";
+                packages +=
+                        ",org.apache.commons.logging" + provider +
+                        ",org.apache.commons.logging.impl" + provider +
+                        ",org.apache.log4j" + provider +
+                        ",org.apache.log4j.spi" + provider +
+                        ",org.apache.log4j.xml" + provider +
+                        ",org.slf4j" + provider +
+                        ",org.slf4j.helpers" + provider +
+                        ",org.slf4j.spi" + provider;
+            }
+            instructions.setProperty(
+                "Import-Package",
+                packages
             );
         }
         // default no export packages

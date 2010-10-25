@@ -33,4 +33,10 @@ public interface Configuration
      */
     Boolean getCertificateCheck();
 
+    /**
+     * Returns true if pax-logging packages should be imported by the generated WAR file, false otherwise.
+     *
+     * @return true if pax-logging packages should be imported
+     */
+    Boolean getImportPaxLoggingPackages();
 }
