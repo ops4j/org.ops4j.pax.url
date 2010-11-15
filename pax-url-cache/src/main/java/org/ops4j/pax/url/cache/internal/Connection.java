@@ -25,6 +25,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -48,7 +49,7 @@ public class Connection
     /**
      * Parsed url.
      */
-    private Parser m_parser;
+    private final Parser m_parser;
     /**
      * Service configuration.
      */
@@ -66,11 +67,11 @@ public class Connection
      */
     private static final String META_CACHED_ON = "cachedOn";
     /**
-     * Meta file extention.
+     * Meta file extension.
      */
     private static final String EXT_META = ".meta";
     /**
-     * Data file extention.
+     * Data file extension.
      */
     private static final String EXT_DATA = ".data";
 
@@ -156,18 +157,27 @@ public class Connection
         final Properties cacheMeta = new Properties();
         try
         {
-            cacheMeta.load( new FileInputStream( cacheMetaFile ) );
+            InputStream in = new FileInputStream( cacheMetaFile );
+            try
+            {
+                cacheMeta.load( in );
+            }
+            finally
+            {
+                in.close();
+            }
         }
         catch( FileNotFoundException ignore )
         {
             //ignore 
         }
+
         final String cacheUrl = cacheMeta.getProperty( META_URL );
         if( cacheUrl == null )
         {
             cacheMeta.setProperty( META_URL, url.getPath() );
         }
-        cacheMeta.store( new FileOutputStream( cacheMetaFile ), null );
+
         final String cacheTime = cacheMeta.getProperty( META_CACHED_ON );
         if( cacheTime == null || !cacheDateFile.exists() )
         {
@@ -177,7 +187,16 @@ public class Connection
                 true
             );
             cacheMeta.setProperty( META_CACHED_ON, String.valueOf( System.currentTimeMillis() ) );
-            cacheMeta.store( new FileOutputStream( cacheMetaFile ), null );
+        }
+
+        OutputStream out = new FileOutputStream( cacheMetaFile );
+        try
+        {
+            cacheMeta.store( out, null );
+        }
+        finally
+        {
+            out.close();
         }
         return new BufferedInputStream( new FileInputStream( cacheDateFile ) );
     }
