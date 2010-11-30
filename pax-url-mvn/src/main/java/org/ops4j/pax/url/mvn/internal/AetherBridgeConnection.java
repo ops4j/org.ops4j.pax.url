@@ -58,12 +58,11 @@ public class AetherBridgeConnection extends URLConnection {
 
             return new URL(url.toExternalForm().replaceFirst("mvn", "aether")).openStream();
         } catch (MalformedURLException e) {
-            LOG.info("Ather URL Handler not available.");
+            LOG.debug("Ather URL Handler not available. Using mvn fallback to resolve " + url.toExternalForm());
         } catch (Exception e) {
             // other exceptions. don't try to resolve otherwise:
             throw new IOException(e);
         }
-        LOG.info("Using mvn fallback to resolve " + url.toExternalForm());
 
         return m_fallback.getInputStream();
     }
