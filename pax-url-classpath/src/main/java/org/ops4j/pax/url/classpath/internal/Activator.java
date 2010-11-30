@@ -50,11 +50,11 @@ public final class Activator
                 /**
                  * Creates a classpath url connection.
                  *
-                 * @see org.ops4j.pax.url.commons.handler.ConnectionFactory#createConection(BundleContext, URL, Object)
+                 * @see org.ops4j.pax.url.commons.handler.ConnectionFactory#createConnection(BundleContext, URL, Object)
                  */
-                public URLConnection createConection( final BundleContext bundleContext,
+                public URLConnection createConnection(final BundleContext bundleContext,
                                                       final URL url,
-                                                      final Void notUsed )
+                                                      final Void notUsed)
                     throws MalformedURLException
                 {
                     return new Connection( url, bundleContext );
