@@ -29,7 +29,8 @@ import java.net.URLConnection;
  * Small performance penalty of Aeather URL Handler is not installed. Should be settable by property though.
  */
 public class AetherBridgeConnection extends URLConnection {
-    private Connection m_fallback;
+
+    private URLConnection m_fallback;
 
     private static final Log LOG = LogFactory.getLog(AetherBridgeConnection.class);
 
@@ -40,7 +41,7 @@ public class AetherBridgeConnection extends URLConnection {
      * @param url      the specified URL.
      * @param fallback Fallback connection if aether is not available.
      */
-    public AetherBridgeConnection(URL url, Connection fallback) {
+    public AetherBridgeConnection(URL url, URLConnection fallback) {
         super(url);
         m_fallback = fallback;
     }

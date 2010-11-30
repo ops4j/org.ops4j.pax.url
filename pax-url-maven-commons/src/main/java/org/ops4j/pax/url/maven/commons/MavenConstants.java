@@ -55,6 +55,10 @@ public interface MavenConstants
      */
     static final String PROPERTY_PROXY_SUPPORT = ".proxySupport";
     /**
+     * Use fallback repositories switch configuration property name.
+     */
+    static final String PROPERTY_DISABLE_AETHER = ".disableAether";
+    /**
      * Option to mark repository as allowing snapshots.
      */
     String OPTION_ALLOW_SNAPSHOTS = "snapshots";

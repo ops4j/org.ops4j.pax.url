@@ -368,4 +368,21 @@ public class MavenConfigurationImpl
             set( m_pid + MavenConstants.PROPERTY_PROXY_SUPPORT, protocol );
         }
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Boolean isAetherDisabled()
+    {
+        if( !contains( m_pid + MavenConstants.PROPERTY_DISABLE_AETHER) )
+        {
+            return set( m_pid + MavenConstants.PROPERTY_DISABLE_AETHER,
+                        Boolean.valueOf(
+                            m_propertyResolver.get( m_pid + MavenConstants.PROPERTY_DISABLE_AETHER)
+                        )
+            );
+        }
+        return get( m_pid + MavenConstants.PROPERTY_DISABLE_AETHER);
+    }
+
 }

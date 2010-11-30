@@ -79,4 +79,11 @@ public interface MavenConfiguration
      * Enables the proxy server for a given URL.
      */
     void enableProxy( URL url );
+
+    /**
+     * Returns if aether should be disabled or not.
+     *
+     * @return true if aether should be disabled
+     */
+    Boolean isAetherDisabled();
 }
