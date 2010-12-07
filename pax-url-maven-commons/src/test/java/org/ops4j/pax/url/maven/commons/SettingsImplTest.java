@@ -108,9 +108,10 @@ public class SettingsImplTest
                 FileUtils.getFileFromClasspath( "settings/settingsWithRepositories.xml" ).toURL()
             );
         String repositories = settings.getRepositories();
+        System.out.println(repositories);
         assertNotNull( "Repositories", repositories );
         String[] segments = repositories.split( "," );
-        assertEquals( "Number of repositories", 6, segments.length );
+        assertEquals( "Number of repositories", 5, segments.length );
 
         assertEquals( "Repository 1",
                       "http://repository1",
@@ -131,10 +132,6 @@ public class SettingsImplTest
         assertEquals( "Repository 6",
                       "http://user:password@repository6@snapshots@noreleases",
                       segments[ 4 ]
-        );
-        assertEquals( "Repository 7",
-                      "http://osgi.sonatype.org/content/groups/pax-runner",
-                      segments[ 5 ]
         );
     }
 

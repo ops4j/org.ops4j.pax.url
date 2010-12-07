@@ -359,9 +359,11 @@ public class MavenSettingsImpl
             }
             else
             {
-                m_repositories = m_repositories
-                                 + ","
-                                 + ( m_useFallbackRepositories ? FALLBACK_REPOSITORIES : DEFAULT_REPOSITORIES );
+                // PAXURL-92 do not return a default repository all the time.
+                if (m_useFallbackRepositories)
+                {
+                    m_repositories = m_repositories + "," + FALLBACK_REPOSITORIES;
+                }
             }
         }
         return m_repositories;
