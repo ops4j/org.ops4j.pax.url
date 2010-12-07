@@ -108,7 +108,6 @@ public class SettingsImplTest
                 FileUtils.getFileFromClasspath( "settings/settingsWithRepositories.xml" ).toURL()
             );
         String repositories = settings.getRepositories();
-        System.out.println(repositories);
         assertNotNull( "Repositories", repositories );
         String[] segments = repositories.split( "," );
         assertEquals( "Number of repositories", 5, segments.length );
