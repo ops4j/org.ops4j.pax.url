@@ -82,16 +82,13 @@ public class MavenSettingsImpl
      * Path to proxy tag.
      */
     private static final String PROXY_TAG = "proxies/proxy";
-    /**
-     * Default Maven repositories.
-     */
-    private static final String DEFAULT_REPOSITORIES =
-        "http://osgi.sonatype.org/content/groups/pax-runner";
+   
     /**
      * Fallback Maven repositories.
      */
     private static final String FALLBACK_REPOSITORIES =
-        "http://repo1.maven.org/maven2,"
+    	"http://osgi.sonatype.org/content/groups/pax-runner,"
+        + "http://repo1.maven.org/maven2,"
         + "http://repository.ops4j.org/maven2,"
         + "http://repository.springsource.com/maven/bundles/release,"
         + "http://repository.springsource.com/maven/bundles/external";
@@ -198,9 +195,9 @@ public class MavenSettingsImpl
     }
 
     /**
-     * Gets the list of repositories from settings.xml including the central repository.
-     * If there is no settings.xml file or there are no repositories in settings.xml the list returned will include
-     * only the central repository..
+     * Gets the list of repositories from settings.xml.
+     * If there is no settings.xml file or there are no repositories in settings.xml the list returned will be null.
+     * 
      * If there are repositories in settings.xml and those repositories have user and password the user and password
      * will be included in the repository url as for example http://user:password@repository.ops4j.org/maven2.
      *
@@ -353,17 +350,20 @@ public class MavenSettingsImpl
                     m_repositories = builder.toString();
                 }
             }
-            if( m_repositories == null || m_repositories.length() == 0 )
-            {
-                m_repositories = ( m_useFallbackRepositories ? FALLBACK_REPOSITORIES : DEFAULT_REPOSITORIES );
-            }
-            else
-            {
-                // PAXURL-92 do not return a default repository all the time.
-                if (m_useFallbackRepositories)
-                {
-                    m_repositories = m_repositories + "," + FALLBACK_REPOSITORIES;
-                }
+            
+            // PAXURL-92 Have the ability to only use a local repository, by
+            // not requiring the use of a DEFAULT_REPOSITORY.  Helps with
+            // users who have proxies and want to lockdown their repos.
+        	if( m_useFallbackRepositories )
+        	{
+           		if( m_repositories == null || m_repositories.length() == 0 )
+           		{
+           			m_repositories = FALLBACK_REPOSITORIES;
+            	} 
+           		else 
+           		{
+           			m_repositories = m_repositories + "," + FALLBACK_REPOSITORIES;
+           		}
             }
         }
         return m_repositories;

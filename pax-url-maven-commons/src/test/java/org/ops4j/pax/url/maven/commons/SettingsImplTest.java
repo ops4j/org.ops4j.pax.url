@@ -78,8 +78,8 @@ public class SettingsImplTest
     {
         MavenSettingsImpl settings =
             new MavenSettingsImpl( FileUtils.getFileFromClasspath( "settings/settingsEmpty.xml" ).toURL() );
-        assertEquals( "Repositories",
-                      "http://osgi.sonatype.org/content/groups/pax-runner",
+        assertEquals( "Repositories",   
+        		      null,
                       settings.getRepositories()
         );
     }
@@ -91,7 +91,8 @@ public class SettingsImplTest
         MavenSettingsImpl settings =
             new MavenSettingsImpl( FileUtils.getFileFromClasspath( "settings/settingsEmpty.xml" ).toURL(), true );
         assertEquals( "Repositories",
-                      "http://repo1.maven.org/maven2,"
+        		      "http://osgi.sonatype.org/content/groups/pax-runner,"
+                      + "http://repo1.maven.org/maven2,"
                       + "http://repository.ops4j.org/maven2,"
                       + "http://repository.springsource.com/maven/bundles/release,"
                       + "http://repository.springsource.com/maven/bundles/external",
@@ -145,7 +146,7 @@ public class SettingsImplTest
         String repositories = settings.getRepositories();
         assertNotNull( "Repositories", repositories );
         String[] segments = repositories.split( "," );
-        assertEquals( "Number of repositories", 9, segments.length );
+        assertEquals( "Number of repositories", 10, segments.length );
 
         assertEquals( "Repository 1",
                       "http://repository1",
@@ -159,22 +160,35 @@ public class SettingsImplTest
                       "http://user:password@repository3@noreleases",
                       segments[ 2 ]
         );
-        assertEquals( "Repository 5",
+        assertEquals( "Repository 4",
                       "jar:http://user:password@repository5/jar!@noreleases",
                       segments[ 3 ]
         );
-        assertEquals( "Repository 6",
+        assertEquals( "Repository 5",
                       "http://user:password@repository6@snapshots@noreleases",
                       segments[ 4 ]
         );
+        assertEquals( "Repository 6",
+        		      "http://osgi.sonatype.org/content/groups/pax-runner",
+        		      segments[ 5 ]
+        );
         assertEquals( "Repository 7",
                       "http://repo1.maven.org/maven2",
-                      segments[ 5 ]
+                      segments[ 6 ]
         );
         assertEquals( "Repository 8",
                       "http://repository.ops4j.org/maven2",
-                      segments[ 6 ]
+                      segments[ 7 ]
         );
+        assertEquals( "Repository 9",
+        		      "http://repository.springsource.com/maven/bundles/release",
+                      segments[ 8 ]
+        );
+        assertEquals( "Repository 10",
+        		      "http://repository.springsource.com/maven/bundles/external",
+                      segments[ 9 ]
+        );
+
     }
 
 
