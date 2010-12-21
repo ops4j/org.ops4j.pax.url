@@ -2,3 +2,6 @@
 *.iml
 *.ipr
 target
+*.project
+*.classpath
+*.settings
