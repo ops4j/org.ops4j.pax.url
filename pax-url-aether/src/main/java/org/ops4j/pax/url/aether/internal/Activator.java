@@ -48,11 +48,11 @@ public final class Activator
             {
 
                 /**
-                 * @see ConnectionFactory#createConnection(BundleContext, URL, Object)
+                 * @see ConnectionFactory#createConection(BundleContext, URL, Object)
                  */
-                public URLConnection createConnection(final BundleContext bundleContext,
+                public URLConnection createConection( final BundleContext bundleContext,
                                                       final URL url,
-                                                      final MavenConfiguration config)
+                                                      final MavenConfiguration config )
                     throws MalformedURLException
                 {
                     return new Connection( url, config );

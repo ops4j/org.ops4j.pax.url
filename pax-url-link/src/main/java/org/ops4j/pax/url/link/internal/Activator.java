@@ -54,14 +54,14 @@ public final class Activator
                 /**
                  * Creates a "link" url connection.
                  *
-                 * @see ConnectionFactory#createConnection(BundleContext, URL, Object)
+                 * @see ConnectionFactory#createConection(BundleContext, URL, Object)
                  */
-                public URLConnection createConnection(final BundleContext bundleContext,
+                public URLConnection createConection( final BundleContext bundleContext,
                                                       final URL url,
-                                                      final Void notUsed)
+                                                      final Void notUsed )
                     throws IOException
                 {
-                    return Activator.createConnection( url );
+                    return createConnection( url );
                 }
 
                 /**

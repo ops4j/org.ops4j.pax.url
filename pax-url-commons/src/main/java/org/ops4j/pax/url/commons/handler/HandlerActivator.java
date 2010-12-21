@@ -214,7 +214,7 @@ public class HandlerActivator<T>
         public URLConnection openConnection( final URL url )
             throws IOException
         {
-            return m_connectionFactory.createConnection(m_bundleContext, url, m_configuration);
+            return m_connectionFactory.createConection( m_bundleContext, url, m_configuration );
         }
 
     }

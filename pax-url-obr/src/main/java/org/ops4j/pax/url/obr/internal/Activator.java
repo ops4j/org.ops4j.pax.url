@@ -66,11 +66,11 @@ public final class Activator
             {
 
                 /**
-                 * @see org.ops4j.pax.url.commons.handler.ConnectionFactory#createConnection(BundleContext, URL, Object)
+                 * @see org.ops4j.pax.url.commons.handler.ConnectionFactory#createConection(BundleContext, URL, Object)
                  */
-                public URLConnection createConnection(final BundleContext bundleContext,
+                public URLConnection createConection( final BundleContext bundleContext,
                                                       final URL url,
-                                                      final Configuration config)
+                                                      final Configuration config )
                     throws MalformedURLException
                 {
                     return new Connection( url,

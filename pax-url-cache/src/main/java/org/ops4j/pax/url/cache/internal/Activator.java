@@ -50,14 +50,14 @@ public final class Activator
                 /**
                  * Creates a "cache" url connection.
                  *
-                 * @see ConnectionFactory#createConnection(BundleContext, java.net.URL, Object)
+                 * @see ConnectionFactory#createConection(BundleContext, java.net.URL, Object)
                  */
-                public URLConnection createConnection(final BundleContext bundleContext,
+                public URLConnection createConection( final BundleContext bundleContext,
                                                       final URL url,
-                                                      final Configuration config)
+                                                      final Configuration config )
                     throws IOException
                 {
-                    return Activator.createConnection(url, config);
+                    return createConnection( url, config );
                 }
 
                 /**
