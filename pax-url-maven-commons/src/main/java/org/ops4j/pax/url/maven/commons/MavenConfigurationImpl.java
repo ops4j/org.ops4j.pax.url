@@ -25,6 +25,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ops4j.lang.NullArgumentException;
@@ -316,10 +317,9 @@ public class MavenConfigurationImpl
     {
         if( !contains( m_pid + MavenConstants.PROPERTY_USE_FALLBACK_REPOSITORIES ) )
         {
+            String useFallbackRepoProp = m_propertyResolver.get( m_pid + MavenConstants.PROPERTY_USE_FALLBACK_REPOSITORIES );
             return set( m_pid + MavenConstants.PROPERTY_USE_FALLBACK_REPOSITORIES,
-                        Boolean.valueOf(
-                            m_propertyResolver.get( m_pid + MavenConstants.PROPERTY_USE_FALLBACK_REPOSITORIES )
-                        )
+                        Boolean.valueOf(useFallbackRepoProp == null ? "true" : useFallbackRepoProp)
             );
         }
         return get( m_pid + MavenConstants.PROPERTY_USE_FALLBACK_REPOSITORIES );

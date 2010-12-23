@@ -17,13 +17,21 @@
  */
 package org.ops4j.pax.url.maven.commons;
 
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
-import static org.easymock.EasyMock.*;
-import static org.junit.Assert.*;
+
 import org.junit.Test;
 import org.ops4j.io.FileUtils;
 import org.ops4j.util.property.PropertyResolver;
@@ -482,7 +490,7 @@ public class ConfigurationImplTest
         expect( propertyResolver.get( "test.pid.useFallbackRepositories" ) ).andReturn( null );
         replay( propertyResolver );
         MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
-        assertEquals( "Use Fallback Repositories", false, config.useFallbackRepositories() );
+        assertEquals("Use Fallback Repositories", true, config.useFallbackRepositories());
         verify( propertyResolver );
     }
 
