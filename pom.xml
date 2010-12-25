@@ -27,12 +27,12 @@
 
   <scm>
     <connection>scm:git:git://github.com/ops4j/org.ops4j.pax.url.git</connection>
-	<developerConnection>${release-paxurl-altGitURL}</developerConnection>
+    <developerConnection>${release-paxurl-altGitURL}</developerConnection>
     <url>http://github.com/ops4j/org.ops4j.pax.url/tree/master</url>
   </scm>
 
   <properties>
-	<release-paxurl-altGitURL>scm:git:ssh://git@github.com/ops4j/org.ops4j.pax.url.git</release-paxurl-altGitURL>
+    <release-paxurl-altGitURL>scm:git:ssh://git@github.com/ops4j/org.ops4j.pax.url.git</release-paxurl-altGitURL>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <dependency.base.version>1.2.1</dependency.base.version>
     <dependency.swissbox.version>1.3.0</dependency.swissbox.version>
@@ -214,7 +214,7 @@
         <module>pax-url-obr</module>
         <module>pax-url-war</module>
         <module>pax-url-wrap</module>
-		<module>pax-url-aether</module>
+        <module>pax-url-aether</module>
       </modules>
     </profile>
     <profile>
@@ -231,7 +231,7 @@
         <module>pax-url-obr</module>
         <module>pax-url-war</module>
         <module>pax-url-wrap</module>
-		<module>pax-url-aether</module>
+        <module>pax-url-aether</module>
       </modules>
     </profile>
     <profile>
