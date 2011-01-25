@@ -82,13 +82,10 @@ public class WarConnection
         } else {
         	// Certain Packages are always needed and therefore should be appended.
         	String importPackages = instructions.getProperty("Import-Package");
-        	System.out.println("Altering existing Import-Package: "+importPackages);
         	if (importPackages.indexOf("javax.servlet") == -1) { //TODO better regex
         		importPackages +=",javax.servlet";
-        		System.out.println("Added javax.servlet: "+importPackages);
         	} else if (importPackages.indexOf("javax.servlet.http") == -1) {
         		importPackages += ",javax.servlet,javax.servlet.http";
-        		System.out.println("Added javax.servlet.http: "+importPackages);
         	}
         }
         // default no export packages
