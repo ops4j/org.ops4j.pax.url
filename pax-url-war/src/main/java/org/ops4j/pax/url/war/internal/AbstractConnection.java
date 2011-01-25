@@ -160,10 +160,12 @@ abstract class AbstractConnection
             bundleClassPath.add( 0, "WEB-INF/classes" );
         }
         // check if we have a "." entry
+        /* War archives do have the required classes at WEB-INF/classes "." is not allowed
         if( !bundleClassPath.contains( "." ) )
         {
             bundleClassPath.add( 0, "." );
         }
+        */
         // set back the new bundle classpath
         instructions.setProperty( ServiceConstants.INSTR_BUNDLE_CLASSPATH, join( bundleClassPath, "," ) );
     }

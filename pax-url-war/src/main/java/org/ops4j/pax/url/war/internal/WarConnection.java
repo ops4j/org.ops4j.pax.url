@@ -55,7 +55,7 @@ public class WarConnection
         // war file to be processed
         instructions.setProperty( ServiceConstants.INSTR_WAR_URL, getURL().getPath() );
         // default import packages
-        if( !instructions.containsKey( "Import-Package" ) )
+        if( !instructions.containsKey( "Import-Package" ) ) //TODO: merge the provided packages with the required ones.
         {
             String packages = "javax.servlet,"
                 + "javax.servlet.http,"
@@ -79,6 +79,17 @@ public class WarConnection
                 "Import-Package",
                 packages
             );
+        } else {
+        	// Certain Packages are always needed and therefore should be appended.
+        	String importPackages = instructions.getProperty("Import-Package");
+        	System.out.println("Altering existing Import-Package: "+importPackages);
+        	if (importPackages.indexOf("javax.servlet") == -1) { //TODO better regex
+        		importPackages +=",javax.servlet";
+        		System.out.println("Added javax.servlet: "+importPackages);
+        	} else if (importPackages.indexOf("javax.servlet.http") == -1) {
+        		importPackages += ",javax.servlet,javax.servlet.http";
+        		System.out.println("Added javax.servlet.http: "+importPackages);
+        	}
         }
         // default no export packages
         if( !instructions.containsKey( "Export-Package" ) )
