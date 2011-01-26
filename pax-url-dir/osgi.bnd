@@ -13,6 +13,11 @@ Import-Package:\
   org.osgi.framework; version="[1.0.0,2.0.0)",\
   org.osgi.service.cm; version="[1.0.0,2.0.0)"; resolution:=optional,\
   org.osgi.service.url; version="[1.0.0,2.0.0)",\
+  aQute.service.scripting; resolution:=optional,\
+  javax.xml.parsers; resolution:=optional,\
+  org.osgi.service.log; resolution:=optional,\
+  org.w3c.dom; resolution:=optional,\
+  org.xml.sax; resolution:=optional,\
   javax.xml.transform,\
   javax.xml.transform.stream
   
