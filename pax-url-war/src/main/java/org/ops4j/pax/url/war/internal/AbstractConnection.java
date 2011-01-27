@@ -32,6 +32,8 @@ import java.util.List;
 import java.util.Properties;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.regex.Pattern;
+
 import org.ops4j.lang.NullArgumentException;
 import org.ops4j.lang.PreConditionException;
 import org.ops4j.net.URLUtils;
@@ -53,6 +55,19 @@ abstract class AbstractConnection
      * Service configuration.
      */
     private final Configuration m_configuration;
+    
+    /**
+     * The pattern blacklist to verify that the jar is "legal" within a web-context.
+     */
+    private static final Pattern[] blacklist = {
+    						Pattern.compile("servlet\\.jar"),
+    						Pattern.compile("servlet-[0-9\\.]+\\.jar"),
+    						Pattern.compile("servlet-api\\.jar"),
+    						Pattern.compile("servlet-api-[0-9\\.]+\\.jar"),
+    						Pattern.compile("jasper\\.jar"),
+    						Pattern.compile("jasper-[0-9\\.]+\\.jar"),
+    						Pattern.compile("jsp-api\\.jar"),
+    						Pattern.compile("jsp-api-[0-9\\.]+\\.jar")};
 
     /**
      * Creates a new connection.
@@ -221,6 +236,10 @@ abstract class AbstractConnection
                 {
                     continue;
                 }
+                if ( !checkJarIsLegal(name) )
+                {
+                	continue;
+                }
                 list.add( name );
             }
         }
@@ -246,6 +265,27 @@ abstract class AbstractConnection
     }
 
     /**
+     * verifies that the given jar name is not contained
+     * in the blacklist.
+     * 
+     * @param name of the jar which needs verification
+     * @return 
+     * 		true - if the jar is a legal jar </br> 
+     * 		false - if the jar is not supposed to be in a war archive like servlet.jar
+     */
+    protected static boolean checkJarIsLegal(String name) {
+    	boolean isMatched = false;
+    	for (Pattern pattern : blacklist) {
+			isMatched = pattern.matcher(name).matches();
+			if (isMatched) {
+				break;
+			}
+		}
+
+		return !isMatched;
+	}
+
+	/**
      * Splits a delimiter separated string into a list.
      *
      * @param separatedString string to be split
