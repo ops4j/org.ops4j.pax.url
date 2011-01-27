@@ -49,7 +49,7 @@ public class HandlerTest
         System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
         URL url = new URL( "webbundle:file:foo.war?Import-Package=javax.servlet.jsp; version=\"[2.0,1000.0]\",javax.servlet.jsp.tagext; version=\"[2.0,1000.0]\"]&Web-ContextPath=/ct-testwar1_0" );
         WarConnection conn = (WarConnection) url.openConnection();
-        Method mth = conn.getClass().getDeclaredMethod("getInstructions");
+        Method mth = conn.getClass().getSuperclass().getDeclaredMethod("getInstructions");
         mth.setAccessible(true);
         Properties props = (Properties) mth.invoke(conn);
         assertNotNull( props );

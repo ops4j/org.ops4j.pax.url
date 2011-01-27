@@ -63,10 +63,13 @@ public final class Activator
                     throws MalformedURLException
                 {
                     final String protocol = url.getProtocol();
-                    if( ServiceConstants.PROTOCOL_WAR.equals( protocol )
-                        || ServiceConstants.PROTOCOL_WEB_BUNDLE.equals( protocol ) )
+                    if( ServiceConstants.PROTOCOL_WAR.equals( protocol ) )
                     {
                         return new WarConnection( url, config );
+                    }
+                    if( ServiceConstants.PROTOCOL_WEB_BUNDLE.equals( protocol ) )
+                    {
+                        return new WebBundleConnection( url, config );
                     }
                     if( ServiceConstants.PROTOCOL_WAR_INSTRUCTIONS.equals( protocol )
                         || ServiceConstants.PROTOCOL_WAR_REFERENCE.equals( protocol ) )

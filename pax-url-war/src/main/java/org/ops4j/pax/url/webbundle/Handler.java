@@ -21,8 +21,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
+
 import org.ops4j.pax.url.war.internal.ConfigurationImpl;
-import org.ops4j.pax.url.war.internal.WarConnection;
+import org.ops4j.pax.url.war.internal.WebBundleConnection;
 import org.ops4j.util.property.PropertiesPropertyResolver;
 
 /**
@@ -45,7 +46,7 @@ public class Handler
         final ConfigurationImpl config = new ConfigurationImpl(
             new PropertiesPropertyResolver( System.getProperties() )
         );
-        return new WarConnection( url, config );
-    }
+        return new WebBundleConnection( url, config );
+   }
 
 }

@@ -108,12 +108,22 @@ abstract class AbstractConnection
 
         generateClassPathInstruction( instructions );
 
-        return BndUtils.createBundle(
-            URLUtils.prepareInputStream( new URL( warUri ), m_configuration.getCertificateCheck() ),
-            instructions,
-            warUri
-        );
+        return createBundle(
+                    URLUtils.prepareInputStream(new URL(warUri), m_configuration.getCertificateCheck()),
+                    instructions,
+                    warUri );
+    }
 
+    /**
+     * Actually create the bundle based on the parsed instructions and  the given stream
+     * @param warUri
+     * @param instructions
+     * @return
+     * @throws IOException
+     */
+    protected InputStream createBundle(InputStream inputStream, Properties instructions, String warUri) throws IOException
+    {
+        return BndUtils.createBundle( inputStream, instructions, warUri );
     }
 
     /**
