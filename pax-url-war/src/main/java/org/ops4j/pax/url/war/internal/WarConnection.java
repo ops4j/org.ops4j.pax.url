@@ -17,14 +17,11 @@
  */
 package org.ops4j.pax.url.war.internal;
 
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLDecoder;
 import java.util.Properties;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
+import org.ops4j.pax.swissbox.bnd.BndUtils;
 import org.ops4j.pax.url.war.ServiceConstants;
 
 /**
@@ -55,7 +52,7 @@ public class WarConnection
     protected Properties getInstructions()
         throws MalformedURLException
     {
-        final Properties instructions = parseInstructions( getURL().getQuery() );
+        final Properties instructions = BndUtils.parseInstructions(getURL().getQuery());
         // war file to be processed
         instructions.setProperty( ServiceConstants.INSTR_WAR_URL, getURL().getPath() );
         // default import packages
@@ -108,63 +105,6 @@ public class WarConnection
                 "Private-Package,"
                 + "Ignore-Package"
             );
-        }
-        return instructions;
-    }
-
-    /**
-     * Regex pattern for matching instructions when specified in url.
-     */
-    private static final Pattern INSTRUCTIONS_PATTERN =
-        Pattern.compile("([a-zA-Z_0-9-]+)=([ \\-!\"'()\\[\\]*+,.0-9A-Z_a-z%;:=/]+)");
-
-
-    /**
-     * Parses bnd instructions out of an url query string.
-     *
-     * @param query query part of an url.
-     *
-     * @return parsed instructions as properties
-     *
-     * @throws java.net.MalformedURLException if provided path does not comply to syntax.
-     */
-    public static Properties parseInstructions( final String query )
-        throws MalformedURLException
-    {
-        final Properties instructions = new Properties();
-        if( query != null )
-        {
-            try
-            {
-                // just ignore for the moment and try out if we have valid properties separated by "&"
-                final String segments[] = query.split( "&" );
-                for( String segment : segments )
-                {
-                    // do not parse empty strings
-                    if( segment.trim().length() > 0 )
-                    {
-                        final Matcher matcher = INSTRUCTIONS_PATTERN.matcher( segment );
-                        if( matcher.matches() )
-                        {
-                            instructions.setProperty(
-                                matcher.group( 1 ),
-                                URLDecoder.decode(matcher.group(2), "UTF-8")
-                            );
-                        }
-                        else
-                        {
-                            throw new MalformedURLException( "Invalid syntax for instruction [" + segment
-                                                             + "]. Take a look at http://www.aqute.biz/Code/Bnd."
-                            );
-                        }
-                    }
-                }
-            }
-            catch( UnsupportedEncodingException e )
-            {
-                // thrown by URLDecoder but it should never happen
-                throw (MalformedURLException) new MalformedURLException( "Could not retrieve the instructions from [" + query + "]").initCause( e );
-            }
         }
         return instructions;
     }
