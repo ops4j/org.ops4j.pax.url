@@ -80,6 +80,17 @@ public class WebBundleConnection extends WarConnection {
         {
             System.err.println("WEBBUNDLE: war is not a bundle: " + warUri);
         }
+        
+        //OSGi-Spec 128.3.1 WAB Definition
+        //The Context Path must always begin with a forward slash ( ‘/’).
+        if(instructions.get("Web-ContextPath") != null) {
+	        String ctxtPath = (String) instructions.get("Web-ContextPath");
+	        if (!ctxtPath.startsWith("/")) {
+	        	ctxtPath = "/"+ctxtPath;
+	        	instructions.setProperty("Web-ContextPath", ctxtPath);
+	        }
+        }
+        
         return super.createBundle(bis, instructions, warUri, OverwriteMode.MERGE);
     }
 
