@@ -27,6 +27,7 @@ import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
 
 import org.ops4j.pax.swissbox.bnd.BndUtils;
+import org.ops4j.pax.swissbox.bnd.OverwriteMode;
 import org.osgi.framework.Constants;
 
 /**
@@ -79,7 +80,7 @@ public class WebBundleConnection extends WarConnection {
         {
             System.err.println("WEBBUNDLE: war is not a bundle: " + warUri);
         }
-        return super.createBundle(bis, instructions, warUri);
+        return super.createBundle(bis, instructions, warUri, OverwriteMode.MERGE);
     }
 
 }

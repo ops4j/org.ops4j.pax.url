@@ -38,6 +38,7 @@ import org.ops4j.lang.NullArgumentException;
 import org.ops4j.lang.PreConditionException;
 import org.ops4j.net.URLUtils;
 import org.ops4j.pax.swissbox.bnd.BndUtils;
+import org.ops4j.pax.swissbox.bnd.OverwriteMode;
 import org.ops4j.pax.url.war.ServiceConstants;
 
 /**
@@ -139,6 +140,22 @@ abstract class AbstractConnection
     protected InputStream createBundle(InputStream inputStream, Properties instructions, String warUri) throws IOException
     {
         return BndUtils.createBundle( inputStream, instructions, warUri );
+    }
+    
+    /**
+     * Actually create the bundle based on the parsed instructions and  the given stream
+     * @param inputStream
+     * @param instructions
+     * @param warUri
+     * @param overwriteMode
+     * @return an input stream for the generated bundle
+     * @throws IOException
+     * 
+     * @see BndUtils.createBundle
+     */
+    protected InputStream createBundle(InputStream inputStream, Properties instructions, String warUri, OverwriteMode overwriteMode) throws IOException
+    {
+        return BndUtils.createBundle( inputStream, instructions, warUri, overwriteMode );
     }
 
     /**
