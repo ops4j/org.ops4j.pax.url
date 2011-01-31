@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.ops4j.lang.NullArgumentException;
@@ -62,13 +63,13 @@ abstract class AbstractConnection
      */
     private static final Pattern[] blacklist = {
     						Pattern.compile("servlet\\.jar"),
-    						Pattern.compile("servlet-[0-9\\.]+\\.jar"),
+    						Pattern.compile("servlet-[0-9]+(\\.[0-9])+\\.jar"),
     						Pattern.compile("servlet-api\\.jar"),
-    						Pattern.compile("servlet-api-[0-9\\.]+\\.jar"),
+    						Pattern.compile("servlet-api-[0-9]+(\\.[0-9])+\\.jar"),
     						Pattern.compile("jasper\\.jar"),
-    						Pattern.compile("jasper-[0-9\\.]+\\.jar"),
+    						Pattern.compile("jasper-[0-9]+(\\.[0-9])+\\.jar"),
     						Pattern.compile("jsp-api\\.jar"),
-    						Pattern.compile("jsp-api-[0-9\\.]+\\.jar")};
+    						Pattern.compile("jsp-api-[0-9]+(\\.[0-9])+\\.jar")};
 
     /**
      * Creates a new connection.
@@ -293,7 +294,7 @@ abstract class AbstractConnection
     protected static boolean checkJarIsLegal(String name) {
     	boolean isMatched = false;
     	for (Pattern pattern : blacklist) {
-			isMatched = pattern.matcher(name).matches();
+			isMatched = pattern.matcher(name).find();
 			if (isMatched) {
 				break;
 			}
