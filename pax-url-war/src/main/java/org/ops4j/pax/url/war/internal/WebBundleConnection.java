@@ -68,17 +68,12 @@ public class WebBundleConnection extends WarConnection {
         }
         if (isBundle)
         {
-            System.err.println("WEBBUNDLE: war is a bundle: " + warUri);
             final Properties originalInstructions = BndUtils.parseInstructions(getURL().getQuery());
             if (originalInstructions.size() > 1
                     || originalInstructions.size() == 1 && !originalInstructions.containsKey("Web-ContextPath"))
             {
                 throw new MalformedURLException("The webbundle URL handler can not be used with bundles");
             }
-        }
-        else
-        {
-            System.err.println("WEBBUNDLE: war is not a bundle: " + warUri);
         }
         
         //OSGi-Spec 128.3.1 WAB Definition
