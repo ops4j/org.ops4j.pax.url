@@ -5,13 +5,13 @@
   <parent>
     <groupId>org.ops4j.pax</groupId>
     <artifactId>url</artifactId>
-    <version>1.2.5-SNAPSHOT</version>
+    <version>1.2.5</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
   <groupId>org.ops4j.pax.url</groupId>
   <artifactId>pax-url-mvn</artifactId>
-  <version>1.2.5-SNAPSHOT</version>
+  <version>1.2.5</version>
   <packaging>bundle</packaging>
 
   <name>OPS4J Pax Url - mvn:</name>
@@ -76,14 +76,14 @@
     <dependency>
       <groupId>org.ops4j.pax.url</groupId>
       <artifactId>pax-url-commons</artifactId>
-      <version>1.2.5-SNAPSHOT</version>
+      <version>1.2.5</version>
       <scope>compile</scope>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.ops4j.pax.url</groupId>
       <artifactId>pax-url-maven-commons</artifactId>
-      <version>1.2.5-SNAPSHOT</version>
+      <version>1.2.5</version>
       <scope>compile</scope>
       <optional>true</optional>
     </dependency>
