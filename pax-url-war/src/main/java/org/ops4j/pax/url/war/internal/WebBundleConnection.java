@@ -22,13 +22,25 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
+import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
+import java.util.zip.ZipEntry;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.ops4j.pax.swissbox.bnd.BndUtils;
 import org.ops4j.pax.swissbox.bnd.OverwriteMode;
 import org.osgi.framework.Constants;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
  * Url connection for webbundle protocol handler.
@@ -36,6 +48,8 @@ import org.osgi.framework.Constants;
  * @author Guillaume Nodet
  */
 public class WebBundleConnection extends WarConnection {
+	
+	private static DocumentBuilderFactory dbf = null;
 
     public WebBundleConnection(URL url, Configuration config) throws MalformedURLException
     {
@@ -56,12 +70,55 @@ public class WebBundleConnection extends WarConnection {
             {
                 isBundle = true;
             }
+            JarEntry entry;
+            List<String> webXmlImports = new ArrayList<String>();
+            while ((entry = jis.getNextJarEntry()) != null) {
+            	if ("web.xml".equalsIgnoreCase(((JarEntry)entry).getName())){
+            		//Found the web.xml will try to get all "-class" attributes from it to import them
+            		if (dbf == null) {
+	            		dbf = DocumentBuilderFactory.newInstance();
+	            		dbf.setNamespaceAware(true);
+            		}
+            		DocumentBuilder db = dbf.newDocumentBuilder();
+            		
+            		Document doc = db.parse(jis);
+            		
+            		NodeList childNodes = doc.getDocumentElement().getChildNodes();
+            		for (int i = 0; i < childNodes.getLength(); i++) {
+						Node node = childNodes.item(i);
+						String nodeName = node.getNodeName();
+						if (nodeName.contains("-class")) {
+							//found a class attribute extract package
+							String lookupClass = node.getTextContent();
+							String packageName = lookupClass.substring(0, lookupClass.lastIndexOf("."));
+							webXmlImports.add(packageName);
+						}
+					}
+            		
+            	}
+            }
+            //add extra ImportPackages from web.xml
+            String importPackages = instructions.getProperty("Import-Package");
+
+            for (String importPackage : webXmlImports) {
+            	importPackage += ","+importPackage;
+			}
+
+            instructions.setProperty("Import-Package", importPackages);
+            
+
         }
         catch (IOException e)
         {
             // Ignore
             e.printStackTrace();
-        }
+        } catch (ParserConfigurationException e) {
+			// Ignore
+			e.printStackTrace();
+		} catch (SAXException e) {
+			// Ignore
+			e.printStackTrace();
+		}
         finally
         {
             bis.reset();
