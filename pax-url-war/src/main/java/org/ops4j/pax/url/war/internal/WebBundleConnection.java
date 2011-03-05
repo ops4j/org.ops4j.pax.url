@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Alin Dreghiciu.
+ * Copyright 2008 Alin Dreghiciu, Achim Nierbeck.
  *
  * Licensed  under the  Apache License,  Version 2.0  (the "License");
  * you may not use  this file  except in  compliance with the License.
@@ -22,25 +22,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
-import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
-import java.util.zip.ZipEntry;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.ops4j.pax.swissbox.bnd.BndUtils;
 import org.ops4j.pax.swissbox.bnd.OverwriteMode;
 import org.osgi.framework.Constants;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 /**
  * Url connection for webbundle protocol handler.
@@ -49,8 +37,6 @@ import org.xml.sax.SAXException;
  */
 public class WebBundleConnection extends WarConnection {
 	
-	private static DocumentBuilderFactory dbf = null;
-
     public WebBundleConnection(URL url, Configuration config) throws MalformedURLException
     {
         super(url, config);
@@ -60,6 +46,7 @@ public class WebBundleConnection extends WarConnection {
     protected InputStream createBundle(InputStream inputStream, Properties instructions, String warUri) throws IOException
     {
         BufferedInputStream bis = new BufferedInputStream(inputStream, 64 * 1024);
+        BufferedInputStream backupStream = new BufferedInputStream(inputStream, 64 * 1024);
         bis.mark(64 * 1024);
         boolean isBundle = false;
         try
@@ -70,58 +57,22 @@ public class WebBundleConnection extends WarConnection {
             {
                 isBundle = true;
             }
-            JarEntry entry;
-            List<String> webXmlImports = new ArrayList<String>();
-            while ((entry = jis.getNextJarEntry()) != null) {
-            	if ("web.xml".equalsIgnoreCase(((JarEntry)entry).getName())){
-            		//Found the web.xml will try to get all "-class" attributes from it to import them
-            		if (dbf == null) {
-	            		dbf = DocumentBuilderFactory.newInstance();
-	            		dbf.setNamespaceAware(true);
-            		}
-            		DocumentBuilder db = dbf.newDocumentBuilder();
-            		
-            		Document doc = db.parse(jis);
-            		
-            		NodeList childNodes = doc.getDocumentElement().getChildNodes();
-            		for (int i = 0; i < childNodes.getLength(); i++) {
-						Node node = childNodes.item(i);
-						String nodeName = node.getNodeName();
-						if (nodeName.contains("-class")) {
-							//found a class attribute extract package
-							String lookupClass = node.getTextContent();
-							String packageName = lookupClass.substring(0, lookupClass.lastIndexOf("."));
-							webXmlImports.add(packageName);
-						}
-					}
-            		
-            	}
-            }
-            //add extra ImportPackages from web.xml
-            String importPackages = instructions.getProperty("Import-Package");
-
-            for (String importPackage : webXmlImports) {
-            	importPackage += ","+importPackage;
-			}
-
-            instructions.setProperty("Import-Package", importPackages);
-            
 
         }
         catch (IOException e)
         {
             // Ignore
             e.printStackTrace();
-        } catch (ParserConfigurationException e) {
-			// Ignore
-			e.printStackTrace();
-		} catch (SAXException e) {
-			// Ignore
-			e.printStackTrace();
-		}
+        }
         finally
         {
-            bis.reset();
+        	if (bis.markSupported()) {
+        		try {
+        			bis.reset();
+        		} catch (IOException ignore) {
+        			//Ignore since buffer is already resetted
+        		}
+        	}
         }
         if (isBundle)
         {
@@ -134,7 +85,7 @@ public class WebBundleConnection extends WarConnection {
         }
         
         //OSGi-Spec 128.3.1 WAB Definition
-        //The Context Path must always begin with a forward slash ( ‘/’).
+        //The Context Path must always begin with a forward slash ( ï¿½/ï¿½).
         if(instructions.get("Web-ContextPath") != null) {
 	        String ctxtPath = (String) instructions.get("Web-ContextPath");
 	        if (!ctxtPath.startsWith("/")) {
@@ -143,7 +94,7 @@ public class WebBundleConnection extends WarConnection {
 	        }
         }
         
-        return super.createBundle(bis, instructions, warUri, OverwriteMode.MERGE);
+        return super.createBundle(backupStream, instructions, warUri, OverwriteMode.MERGE);
     }
 
 }

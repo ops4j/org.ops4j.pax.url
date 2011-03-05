@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Alin Dreghiciu.
+ * Copyright 2008 Alin Dreghiciu, Achim Nierbeck.
  *
  * Licensed  under the  Apache License,  Version 2.0  (the "License");
  * you may not use  this file  except in  compliance with the License.
@@ -32,8 +32,11 @@ import java.util.List;
 import java.util.Properties;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.ops4j.lang.NullArgumentException;
 import org.ops4j.lang.PreConditionException;
@@ -41,12 +44,16 @@ import org.ops4j.net.URLUtils;
 import org.ops4j.pax.swissbox.bnd.BndUtils;
 import org.ops4j.pax.swissbox.bnd.OverwriteMode;
 import org.ops4j.pax.url.war.ServiceConstants;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
  * Abstract url connection for wrap protocol handler.
  * Subclasses must provide the processing instructions.
  *
- * @author Alin Dreghiciu
+ * @author Alin Dreghiciu, Achim Nierbeck
  * @since 0.1.0, January 14, 2008
  */
 abstract class AbstractConnection
@@ -57,6 +64,12 @@ abstract class AbstractConnection
      * Service configuration.
      */
     private final Configuration m_configuration;
+    
+	/**
+	 * DocumentBuilderFactory for parsing web.xml files
+	 */
+	private static DocumentBuilderFactory dbf = null;
+
     
     /**
      * The pattern blacklist to verify that the jar is "legal" within a web-context.
@@ -124,6 +137,8 @@ abstract class AbstractConnection
         }
 
         generateClassPathInstruction( instructions );
+        
+        generateImportPackageFromWebXML( instructions );
 
         return createBundle(
                     URLUtils.prepareInputStream(new URL(warUri), m_configuration.getCertificateCheck()),
@@ -131,7 +146,7 @@ abstract class AbstractConnection
                     warUri );
     }
 
-    /**
+	/**
      * Actually create the bundle based on the parsed instructions and  the given stream
      * @param warUri
      * @param instructions
@@ -212,6 +227,99 @@ abstract class AbstractConnection
         // set back the new bundle classpath
         instructions.setProperty( ServiceConstants.INSTR_BUNDLE_CLASSPATH, join( bundleClassPath, "," ) );
     }
+    
+    /**
+     * Adds Package-Import for classes contained in the web.xml of the war. 
+     * 
+     * @param instructions - Properties containing the instructions for the manifest generation
+     * @throws IOException 
+     */
+    private static void generateImportPackageFromWebXML(Properties instructions) throws IOException {
+    	String warUri = instructions.getProperty( ServiceConstants.INSTR_WAR_URL );
+    	JarFile jarFile = null;
+    	List<String> webXmlImports = new ArrayList<String>();
+        try
+        {
+            final JarURLConnection conn = (JarURLConnection) new URL( "jar:" + warUri + "!/" ).openConnection();
+            conn.setUseCaches( false );
+            jarFile = conn.getJarFile();
+            Enumeration entries = jarFile.entries();
+            while( entries.hasMoreElements() )
+            {
+            	JarEntry entry = (JarEntry) entries.nextElement();
+            	if ("WEB-INF/web.xml".equalsIgnoreCase(entry.getName())){
+            		//Found the web.xml will try to get all "-class" attributes from it to import them
+            		if (dbf == null) {
+            			dbf = DocumentBuilderFactory.newInstance();
+            			dbf.setNamespaceAware(true);
+            		}
+            		DocumentBuilder db = dbf.newDocumentBuilder();
+
+            		Document doc = db.parse(jarFile.getInputStream(entry));
+
+            		NodeList childNodes = doc.getDocumentElement().getChildNodes();
+            		parseChildNodes(webXmlImports, childNodes);
+
+            		break;
+            	}
+            }
+
+            //add extra ImportPackages from web.xml
+            String importPackages = instructions.getProperty("Import-Package");
+
+            for (String importPackage : webXmlImports) {
+            	importPackage += ","+importPackage;
+            }
+
+            instructions.setProperty("Import-Package", importPackages);
+        } catch( ClassCastException e ) {
+            throw new IOException( "Provided url [" + warUri + "] does not refer a valid war file", e );
+        } catch (MalformedURLException e) {
+        	throw new IOException( "Provided url [" + warUri + "] does not refer a valid war file", e );
+		} catch (IOException e) {
+			throw new IOException( "Provided url [" + warUri + "] does not refer a valid war file", e );
+		} catch (ParserConfigurationException e) {
+			throw new IOException( "Provided url [" + warUri + "] does not refer a valid war file", e );
+		} catch (SAXException e) {
+			throw new IOException( "Provided url [" + warUri + "] does not refer a valid war file", e );
+		}
+        finally {
+            if( jarFile != null )
+            {
+                try
+                {
+                    jarFile.close();
+                }
+                catch( IOException ignore )
+                {
+                    // ignore
+                }
+            }
+        }
+                	
+    }
+
+
+	/**
+	 * @param webXmlImports
+	 * @param childNodes
+	 */
+	private static void parseChildNodes(List<String> webXmlImports, NodeList childNodes) {
+		for (int i = 0; i < childNodes.getLength(); i++) {
+			Node node = childNodes.item(i);
+			NodeList subNodes = node.getChildNodes();
+			if (subNodes != null)
+				parseChildNodes(webXmlImports, subNodes);
+			String nodeName = node.getNodeName();
+			if (nodeName.contains("-class")) {
+				//found a class attribute extract package
+				String lookupClass = node.getTextContent();
+				String packageName = lookupClass.substring(0, lookupClass.lastIndexOf("."));
+				webXmlImports.add(packageName);
+			}
+		}
+	}
+
 
     /**
      * Does nothing.
