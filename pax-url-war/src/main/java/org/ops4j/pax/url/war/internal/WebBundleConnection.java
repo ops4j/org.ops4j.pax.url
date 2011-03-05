@@ -20,6 +20,7 @@ package org.ops4j.pax.url.war.internal;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PushbackInputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -60,6 +61,7 @@ public class WebBundleConnection extends WarConnection {
     protected InputStream createBundle(InputStream inputStream, Properties instructions, String warUri) throws IOException
     {
         BufferedInputStream bis = new BufferedInputStream(inputStream, 64 * 1024);
+        BufferedInputStream backupStream = new BufferedInputStream(inputStream, 64 * 1024);
         bis.mark(64 * 1024);
         boolean isBundle = false;
         try
@@ -73,7 +75,7 @@ public class WebBundleConnection extends WarConnection {
             JarEntry entry;
             List<String> webXmlImports = new ArrayList<String>();
             while ((entry = jis.getNextJarEntry()) != null) {
-            	if ("web.xml".equalsIgnoreCase(((JarEntry)entry).getName())){
+            	if ("WEB-INF/web.xml".equalsIgnoreCase(((JarEntry)entry).getName())){
             		//Found the web.xml will try to get all "-class" attributes from it to import them
             		if (dbf == null) {
 	            		dbf = DocumentBuilderFactory.newInstance();
@@ -84,19 +86,12 @@ public class WebBundleConnection extends WarConnection {
             		Document doc = db.parse(jis);
             		
             		NodeList childNodes = doc.getDocumentElement().getChildNodes();
-            		for (int i = 0; i < childNodes.getLength(); i++) {
-						Node node = childNodes.item(i);
-						String nodeName = node.getNodeName();
-						if (nodeName.contains("-class")) {
-							//found a class attribute extract package
-							String lookupClass = node.getTextContent();
-							String packageName = lookupClass.substring(0, lookupClass.lastIndexOf("."));
-							webXmlImports.add(packageName);
-						}
-					}
+            		parseChildNodes(webXmlImports, childNodes);
             		
+            		break;
             	}
             }
+            
             //add extra ImportPackages from web.xml
             String importPackages = instructions.getProperty("Import-Package");
 
@@ -121,7 +116,13 @@ public class WebBundleConnection extends WarConnection {
 		}
         finally
         {
-            bis.reset();
+        	if (bis.markSupported()) {
+        		try {
+        			bis.reset();
+        		} catch (IOException ignore) {
+        			//Ignore since buffer is already resetted
+        		}
+        	}
         }
         if (isBundle)
         {
@@ -134,7 +135,7 @@ public class WebBundleConnection extends WarConnection {
         }
         
         //OSGi-Spec 128.3.1 WAB Definition
-        //The Context Path must always begin with a forward slash ( ‘/’).
+        //The Context Path must always begin with a forward slash ( ï¿½/ï¿½).
         if(instructions.get("Web-ContextPath") != null) {
 	        String ctxtPath = (String) instructions.get("Web-ContextPath");
 	        if (!ctxtPath.startsWith("/")) {
@@ -143,7 +144,27 @@ public class WebBundleConnection extends WarConnection {
 	        }
         }
         
-        return super.createBundle(bis, instructions, warUri, OverwriteMode.MERGE);
+        return super.createBundle(backupStream, instructions, warUri, OverwriteMode.MERGE);
     }
+
+	/**
+	 * @param webXmlImports
+	 * @param childNodes
+	 */
+	private void parseChildNodes(List<String> webXmlImports, NodeList childNodes) {
+		for (int i = 0; i < childNodes.getLength(); i++) {
+			Node node = childNodes.item(i);
+			NodeList subNodes = node.getChildNodes();
+			if (subNodes != null)
+				parseChildNodes(webXmlImports, subNodes);
+			String nodeName = node.getNodeName();
+			if (nodeName.contains("-class")) {
+				//found a class attribute extract package
+				String lookupClass = node.getTextContent();
+				String packageName = lookupClass.substring(0, lookupClass.lastIndexOf("."));
+				webXmlImports.add(packageName);
+			}
+		}
+	}
 
 }
