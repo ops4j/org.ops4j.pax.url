@@ -85,7 +85,7 @@ public class WebBundleConnection extends WarConnection {
         }
         
         //OSGi-Spec 128.3.1 WAB Definition
-        //The Context Path must always begin with a forward slash ( �/�).
+        //The Context Path must always begin with a forward slash ( ?/?).
         if(instructions.get("Web-ContextPath") != null) {
 	        String ctxtPath = (String) instructions.get("Web-ContextPath");
 	        if (!ctxtPath.startsWith("/")) {
