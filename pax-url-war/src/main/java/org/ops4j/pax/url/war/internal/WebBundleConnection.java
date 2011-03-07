@@ -46,7 +46,6 @@ public class WebBundleConnection extends WarConnection {
     protected InputStream createBundle(InputStream inputStream, Properties instructions, String warUri) throws IOException
     {
         BufferedInputStream bis = new BufferedInputStream(inputStream, 64 * 1024);
-        BufferedInputStream backupStream = new BufferedInputStream(inputStream, 64 * 1024);
         bis.mark(64 * 1024);
         boolean isBundle = false;
         try
@@ -94,7 +93,7 @@ public class WebBundleConnection extends WarConnection {
 	        }
         }
         
-        return super.createBundle(backupStream, instructions, warUri, OverwriteMode.MERGE);
+        return super.createBundle(bis, instructions, warUri, OverwriteMode.MERGE);
     }
 
 }

@@ -264,14 +264,14 @@ abstract class AbstractConnection
             	}
             }
 
-            //add extra ImportPackages from web.xml
-            String importPackages = instructions.getProperty("Import-Package");
-
+            StringBuffer buff = new StringBuffer(instructions.getProperty("Import-Package"));
+            
             for (String importPackage : webXmlImports) {
-            	importPackage += ","+importPackage;
+            	buff.append(",");
+            	buff.append(importPackage);
             }
 
-            instructions.setProperty("Import-Package", importPackages);
+            instructions.setProperty("Import-Package", buff.toString());
         } catch( ClassCastException e ) {
             throw new IOException( "Provided url [" + warUri + "] does not refer a valid war file", e );
         } catch (MalformedURLException e) {
