@@ -252,6 +252,12 @@ abstract class AbstractConnection
             		if (dbf == null) {
             			dbf = DocumentBuilderFactory.newInstance();
             			dbf.setNamespaceAware(true);
+            			dbf.setValidating(false);
+            			dbf.setAttribute("http://xml.org/sax/features/namespaces", true);
+            	        dbf.setAttribute("http://xml.org/sax/features/validation", false);
+            	        dbf.setAttribute("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
+            	        dbf.setAttribute("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+
             		}
             		DocumentBuilder db = dbf.newDocumentBuilder();
 
