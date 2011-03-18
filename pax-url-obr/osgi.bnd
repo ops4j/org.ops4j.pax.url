@@ -7,6 +7,9 @@ Bundle-Version:\
 Bundle-SymbolicName:\
   ${bundle.symbolicName}; singleton:=true  
   
+Export-Service:\
+  org.osgi.service.url.URLStreamHandlerService; url.handler.protocol=obr
+
 Import-Package:\
   ${bundle.namespace}; version="${pom.version}",\
   javax.net.ssl,\

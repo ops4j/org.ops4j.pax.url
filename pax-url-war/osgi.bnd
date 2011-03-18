@@ -7,6 +7,12 @@ Bundle-Version:\
 Bundle-SymbolicName:\
   ${bundle.symbolicName}; singleton:=true
 
+Export-Service:\
+  org.osgi.service.url.URLStreamHandlerService; url.handler.protocol=war, \
+  org.osgi.service.url.URLStreamHandlerService; url.handler.protocol=war-i, \
+  org.osgi.service.url.URLStreamHandlerService; url.handler.protocol=warref, \
+  org.osgi.service.url.URLStreamHandlerService; url.handler.protocol=webbundle
+
 Import-Package:\
   ${bundle.namespace}; version="${pom.version}",\
   ${bundle.namespace}ref; version="${pom.version}",\

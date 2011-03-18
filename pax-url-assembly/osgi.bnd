@@ -7,6 +7,10 @@ Bundle-Version:\
 Bundle-SymbolicName:\
   ${bundle.symbolicName}; singleton:=true
   
+Export-Service:\
+  org.osgi.service.url.URLStreamHandlerService; url.handler.protocol=assembly, \
+  org.osgi.service.url.URLStreamHandlerService; url.handler.protocol=assemblyref
+
 Import-Package:\
   ${bundle.namespace}; version="${pom.version}",\
   org.apache.commons.logging; version="1.0.4"; resolution:=optional,\
