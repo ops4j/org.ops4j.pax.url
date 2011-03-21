@@ -55,7 +55,7 @@ public class HandlerTest
         Properties props = (Properties) mth.invoke(conn);
         assertNotNull( props );
         assertNotNull( props.getProperty( "Import-Package" ) );
-        assertEquals("javax.servlet.jsp; version=\"[2.0,1000.0]\",javax.servlet.jsp.tagext; version=\"[2.0,1000.0]\",javax.servlet,javax.servlet.http", props.getProperty( "Import-Package" ));
+        assertEquals("javax.servlet.jsp; version=\"[2.0,1000.0]\",javax.servlet.jsp.tagext; version=\"[2.0,1000.0]\",javax.servlet,javax.servlet.http,org.apache.jasper.*;resolution:=optional,org.apache.taglibs.*;resolution:=optional,com.sun.el.*;resolution:=optional", props.getProperty( "Import-Package" ));
     }
     
     /**
@@ -75,7 +75,7 @@ public class HandlerTest
         Properties props = (Properties) mth.invoke(conn);
         assertNotNull( props );
         assertNotNull( props.getProperty( "Import-Package" ) );
-        assertEquals("javax.servlet.jsp; version=\"[2.0,1000.0]\",javax.servlet.jsp.tagext; version=\"[2.0,1000.0]\",javax.servlet,javax.servlet.http", props.getProperty( "Import-Package" ));
+        assertEquals("javax.servlet.jsp; version=\"[2.0,1000.0]\",javax.servlet.jsp.tagext; version=\"[2.0,1000.0]\",javax.servlet,javax.servlet.http,org.apache.jasper.*;resolution:=optional,org.apache.taglibs.*;resolution:=optional,com.sun.el.*;resolution:=optional", props.getProperty( "Import-Package" ));
     }    
     
     /**
@@ -95,7 +95,7 @@ public class HandlerTest
         Properties props = (Properties) mth.invoke(conn);
         assertNotNull( props );
         assertNotNull( props.getProperty( "Import-Package" ) );
-        assertEquals("javax.servlet.jsp; version=\"[2.0,1000.0]\",javax.servlet.jsp.tagext; version=\"[2.0,1000.0]\",javax.servlet.http,javax.servlet", props.getProperty( "Import-Package" ));
+        assertEquals("javax.servlet.jsp; version=\"[2.0,1000.0]\",javax.servlet.jsp.tagext; version=\"[2.0,1000.0]\",javax.servlet.http,javax.servlet,org.apache.jasper.*;resolution:=optional,org.apache.taglibs.*;resolution:=optional,com.sun.el.*;resolution:=optional", props.getProperty( "Import-Package" ));
     }    
 
     /**
@@ -115,7 +115,7 @@ public class HandlerTest
         Properties props = (Properties) mth.invoke(conn);
         assertNotNull( props );
         assertNotNull( props.getProperty( "Import-Package" ) );
-        assertEquals("javax.servlet.jsp; version=\"[2.0,1000.0]\",javax.servlet.jsp.tagext; version=\"[2.0,1000.0]\",javax.servlet;version=\"2.5\",javax.servlet.http", props.getProperty( "Import-Package" ));
+        assertEquals("javax.servlet.jsp; version=\"[2.0,1000.0]\",javax.servlet.jsp.tagext; version=\"[2.0,1000.0]\",javax.servlet;version=\"2.5\",javax.servlet.http,org.apache.jasper.*;resolution:=optional,org.apache.taglibs.*;resolution:=optional,com.sun.el.*;resolution:=optional", props.getProperty( "Import-Package" ));
     }    
     
     
