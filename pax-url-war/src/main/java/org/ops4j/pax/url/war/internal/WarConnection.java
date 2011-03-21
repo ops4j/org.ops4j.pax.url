@@ -36,6 +36,9 @@ public class WarConnection
 
     private static final String JAVAX_SERVLET_HTTP = "javax.servlet.http";
 	private static final String JAVAX_SERVLET = "javax.servlet";
+	private static final String APACHE_JASPER = "org.apache.jasper";
+	private static final String APACHE_TAGLIBS = "org.apache.taglibs";
+	private static final String SUN_EL = "com.sun.el";
 
 	/**
      * @see AbstractConnection#AbstractConnection(URL, Configuration)
@@ -59,11 +62,14 @@ public class WarConnection
         // war file to be processed
         instructions.setProperty( ServiceConstants.INSTR_WAR_URL, getURL().getPath() );
         // default import packages
-        if( !instructions.containsKey( "Import-Package" ) ) //TODO: merge the provided packages with the required ones.
+        if( !instructions.containsKey( "Import-Package" ) )
         {
             String packages = "javax.servlet,"
                 + "javax.servlet.http,"
                 + "javax.*; resolution:=optional,"
+                + "org.apache.jasper.*;resolution:=optional," //extra dependencies for JSP/JSF War Bundles
+                + "org.apache.taglibs.*;resolution:=optional,"
+                + "com.sun.el.*;resolution:=optional,"
                 + "org.xml.*; resolution:=optional,"
                 + "org.w3c.*; resolution:=optional";
             instructions.setProperty(
@@ -100,6 +106,18 @@ public class WarConnection
         		}
         	} else { //both are missing
         		importPackages += ","+JAVAX_SERVLET+","+JAVAX_SERVLET_HTTP;
+        	}
+        	
+        	if (!importPackages.contains(APACHE_JASPER)) {
+        		importPackages += ","+APACHE_JASPER+".*;resolution:=optional";
+        	}
+        	
+        	if (!importPackages.contains(APACHE_TAGLIBS)) {
+        		importPackages += ","+APACHE_TAGLIBS+".*;resolution:=optional";
+        	}
+        	
+        	if (!importPackages.contains(SUN_EL)) {
+        		importPackages += ","+SUN_EL+".*;resolution:=optional";
         	}
         	
         	instructions.setProperty("Import-Package", importPackages);
