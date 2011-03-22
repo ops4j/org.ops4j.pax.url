@@ -142,7 +142,7 @@ public class Connection
 
         LOG.debug( "Resolving [" + url.toExternalForm() + "]" );
 
-        return m_aetherBasedResolver.resolve( m_parser.getGroup(), m_parser.getArtifact(), m_parser.getType(), m_parser.getVersion() );
+        return m_aetherBasedResolver.resolve( m_parser.getGroup(), m_parser.getArtifact(), m_parser.getType(), m_parser.getVersion(), m_parser.getClassifier() );
     }
 
 
