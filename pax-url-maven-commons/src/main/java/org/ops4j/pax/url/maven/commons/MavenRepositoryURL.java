@@ -19,6 +19,7 @@ package org.ops4j.pax.url.maven.commons;
 
 import java.io.File;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import org.ops4j.lang.NullArgumentException;
@@ -102,9 +103,14 @@ public class MavenRepositoryURL
         if( m_repositoryURL.getProtocol().equals( "file" ) )
         {
             try {
-            	// You must transform to URI to decode the string (manage a path with a space or non us character)
+            	// You must transform to URI to decode the path (manage a path with a space or non us character)
             	// like D:/documents%20and%20Settings/SESA170017/.m2/repository
-				m_file = new File(m_repositoryURL.toURI().getPath());
+            	// the path can be store in path part or in scheme specific part (if is relatif path)
+				URI uri = m_repositoryURL.toURI();
+				String path = uri.getPath();
+				if (path == null)
+					path = uri.getSchemeSpecificPart();
+				m_file = new File(path);
 				
 			} catch (URISyntaxException e) {
 				throw new MalformedURLException(e.getMessage());

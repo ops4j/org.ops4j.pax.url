@@ -20,6 +20,20 @@ public class MavenRepositoryURLTest {
 		uri = localrepo.toURI().toASCIIString();
 		mavenRepo = new MavenRepositoryURL(uri);
 		assertEquals(localrepo, mavenRepo.getFile());
+		
+		String spec = "file:repository1/";
+		mavenRepo = new MavenRepositoryURL(spec);
+		assertEquals(new File("repository1/"), mavenRepo.getFile());
+		
+		
+		spec = "file:repositories/repository1/";
+		mavenRepo = new MavenRepositoryURL(spec);
+		assertEquals(new File("repositories/repository1/"), mavenRepo.getFile());
+		
+		spec = "file:r%C3%A9positories%20/r%C3%A9pository1";
+		mavenRepo = new MavenRepositoryURL(spec);
+		assertEquals(new File("répositories /répository1/"), mavenRepo.getFile());
+		
 	}
 
 }
