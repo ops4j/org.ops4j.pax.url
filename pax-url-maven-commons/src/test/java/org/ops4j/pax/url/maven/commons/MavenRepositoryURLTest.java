@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import java.net.MalformedURLException;
+import java.net.URL;
 
 import org.junit.Test;
 
@@ -29,6 +30,16 @@ public class MavenRepositoryURLTest {
 		spec = "file:repositories/repository1/";
 		mavenRepo = new MavenRepositoryURL(spec);
 		assertEquals(new File("repositories/repository1/"), mavenRepo.getFile());
+		
+		spec = "file:somewhere/localrepository\\";
+		mavenRepo = new MavenRepositoryURL(spec);
+		assertEquals(new File("somewhere/localrepository\\"), mavenRepo.getFile());
+		assertEquals(new URL(spec), mavenRepo.getURL());
+		
+		spec = "file:repository1\\";
+		mavenRepo = new MavenRepositoryURL(spec);
+		assertEquals(new File("repository1\\"), mavenRepo.getFile());
+		assertEquals(new URL(spec), mavenRepo.getURL());
 		
 		spec = "file:r%C3%A9positories%20/r%C3%A9pository1";
 		mavenRepo = new MavenRepositoryURL(spec);
