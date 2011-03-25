@@ -16,7 +16,7 @@ public class MavenRepositoryURLTest {
 		MavenRepositoryURL mavenRepo = new MavenRepositoryURL(uri);
 		assertEquals(localrepo, mavenRepo.getFile());
 		
-		localrepo = new File("myédir/repository").getAbsoluteFile();
+		localrepo = new File("myÃ©dir/repository").getAbsoluteFile();
 		uri = localrepo.toURI().toASCIIString();
 		mavenRepo = new MavenRepositoryURL(uri);
 		assertEquals(localrepo, mavenRepo.getFile());
@@ -32,7 +32,8 @@ public class MavenRepositoryURLTest {
 		
 		spec = "file:r%C3%A9positories%20/r%C3%A9pository1";
 		mavenRepo = new MavenRepositoryURL(spec);
-		assertEquals(new File("répositories /répository1/"), mavenRepo.getFile());
+		File expected = new File("rÃ©positories /rÃ©pository1/");
+		assertEquals(expected, mavenRepo.getFile());
 		
 	}
 
