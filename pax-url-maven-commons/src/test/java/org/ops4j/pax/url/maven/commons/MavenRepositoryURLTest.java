@@ -33,13 +33,21 @@ public class MavenRepositoryURLTest {
 		
 		spec = "file:somewhere/localrepository\\";
 		mavenRepo = new MavenRepositoryURL(spec);
-		assertEquals(new File("somewhere/localrepository\\"), mavenRepo.getFile());
+		assertEquals(new File("somewhere/localrepository/"), mavenRepo.getFile());
 		assertEquals(new URL(spec), mavenRepo.getURL());
 		
 		spec = "file:repository1\\";
 		mavenRepo = new MavenRepositoryURL(spec);
-		assertEquals(new File("repository1\\"), mavenRepo.getFile());
+		assertEquals(new File("repository1/"), mavenRepo.getFile());
 		assertEquals(new URL(spec), mavenRepo.getURL());
+		
+		spec = "file:somewhere/localrepository%5C";
+		mavenRepo = new MavenRepositoryURL(spec);
+		assertEquals(new URL(spec+"/"), mavenRepo.getURL());
+		
+		spec = "file:repository1%5C";
+		mavenRepo = new MavenRepositoryURL(spec);
+		assertEquals(new URL(spec+"/"), mavenRepo.getURL());
 		
 		spec = "file:r%C3%A9positories%20/r%C3%A9pository1";
 		mavenRepo = new MavenRepositoryURL(spec);
