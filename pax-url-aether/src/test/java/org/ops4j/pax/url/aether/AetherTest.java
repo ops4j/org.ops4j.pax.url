@@ -15,15 +15,15 @@
  */
 package org.ops4j.pax.url.aether;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
 import org.junit.Test;
-import org.ops4j.pax.url.aether.internal.AetherBasedResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonatype.aether.collection.DependencyCollectionException;
 import org.sonatype.aether.resolution.ArtifactResolutionException;
-
-import java.io.File;
-import java.io.IOException;
+import org.ops4j.pax.url.aether.internal.AetherBasedResolver;
 
 /**
  * Simply playing with aether api.
@@ -37,7 +37,7 @@ public class AetherTest {
         throws DependencyCollectionException, ArtifactResolutionException, IOException
     {
         String[] repos = "http://repo1.maven.org/maven2/,http://scm.ops4j.org/repos/ops4j/projects/pax/runner-repository/,".split( "," );
-        AetherBasedResolver aetherBasedResolver = new AetherBasedResolver( getCache(), repos );
+        AetherBasedResolver aetherBasedResolver = new AetherBasedResolver( getCache(), Arrays.asList( repos ) );
         aetherBasedResolver.resolve( "org.ops4j.pax.web", "pax-web-api", "jar", "0.7.2" ).close();
     }
 
@@ -46,7 +46,7 @@ public class AetherTest {
         throws DependencyCollectionException, ArtifactResolutionException, IOException
     {
         String[] repos = "http://repo1.maven.org/maven2/,http://scm.ops4j.org/repos/ops4j/projects/pax/runner-repository/,".split( "," );
-        AetherBasedResolver aetherBasedResolver = new AetherBasedResolver( getCache(), repos );
+        AetherBasedResolver aetherBasedResolver = new AetherBasedResolver( getCache(), Arrays.asList( repos ) );
         aetherBasedResolver.resolve( "org.ops4j.pax.web", "pax-web-api", "jar", "LATEST" ).close();
     }
 
@@ -55,11 +55,26 @@ public class AetherTest {
         throws DependencyCollectionException, ArtifactResolutionException, IOException
     {
         String[] repos = "http://repo1.maven.org/maven2/,http://scm.ops4j.org/repos/ops4j/projects/pax/runner-repository/,".split( "," );
-        AetherBasedResolver aetherBasedResolver = new AetherBasedResolver( getCache(), repos );
+        AetherBasedResolver aetherBasedResolver = new AetherBasedResolver( getCache(), Arrays.asList( repos ) );
         aetherBasedResolver.resolve( "org.ops4j.pax.runner.profiles", "ds", "composite", "LATEST" ).close();
     }
 
-    private String getCache()
+    @Test
+    public void testCachingOfRanges()
+        throws DependencyCollectionException, ArtifactResolutionException, IOException
+    {
+        String[] repos = "http://repo1.maven.org/maven2/,http://scm.ops4j.org/repos/ops4j/projects/pax/runner-repository/,".split( "," );
+        File cache = getCache();
+        AetherBasedResolver aetherBasedResolver = new AetherBasedResolver( cache, Arrays.asList( repos ) );
+        aetherBasedResolver.resolve( "org.ops4j.pax.web", "pax-web-api", "jar", "LATEST" ).close();
+
+        // now again:
+        // no repo
+        aetherBasedResolver = new AetherBasedResolver( cache, Arrays.asList( "" ) );
+        aetherBasedResolver.resolve( "org.ops4j.pax.web", "pax-web-api", "jar", "LATEST" ).close();
+    }
+
+    private File getCache()
         throws IOException
     {
         File base = new File( "target" );
@@ -68,7 +83,7 @@ public class AetherTest {
         f.delete();
         f.mkdirs();
         LOG.info( "Caching" + " to " + f.getAbsolutePath() );
-        return f.getAbsolutePath();
+        return f;
     }
 }
 

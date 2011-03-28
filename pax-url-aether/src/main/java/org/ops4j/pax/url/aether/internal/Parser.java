@@ -1,6 +1,7 @@
 /*
  * Copyright 2007 Alin Dreghiciu.
- *
+ * Copyright 2010,2011 Toni Menzel.
+ * 
  * Licensed  under the  Apache License,  Version 2.0  (the "License");
  * you may not use  this file  except in  compliance with the License.
  * You may obtain a copy of the License at
@@ -24,6 +25,8 @@ import org.ops4j.pax.url.maven.commons.MavenRepositoryURL;
  * Parser for aether: protocol.<br/>
  *
  * @author Alin Dreghiciu
+ * @author Toni Menzel
+ * 
  * @see Connection
  * @since August 10, 2007
  */

@@ -1,5 +1,7 @@
 /*
  * Copyright 2007 Alin Dreghiciu.
+ * Copyright 2010, 2011 Toni Menzel.
+
  *
  * Licensed  under the  Apache License,  Version 2.0  (the "License");
  * you may not use  this file  except in  compliance with the License.
@@ -29,6 +31,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * An URLConnextion that supports aether: protocol.<br/>
@@ -65,22 +68,12 @@ import java.util.ArrayList;
  * @since September 10, 2010
  */
 public class Connection
-    extends URLConnection
-{
+    extends URLConnection {
 
     /**
      * Logger.
      */
     private static final Log LOG = LogFactory.getLog( Connection.class );
-    /**
-     * 2 spacess indent;
-     */
-    private static final String Ix2 = "  ";
-    /**
-     * 4 spacess indent;
-     */
-    private static final String Ix4 = "    ";
-
     /**
      * Parsed url.
      */
@@ -101,23 +94,26 @@ public class Connection
         super( url );
         NullArgumentException.validateNotNull( url, "URL cannot be null" );
         NullArgumentException.validateNotNull( configuration, "Service configuration" );
+
         m_parser = new Parser( url.getPath() );
 
-        ArrayList<String> r = new ArrayList<String>();
+        m_aetherBasedResolver = new AetherBasedResolver(
+            configuration.getLocalRepository().getFile(),
+            getRemoteRepositories( configuration )
+        );
+    }
 
-        for( MavenRepositoryURL s : configuration.getRepositories() )
-        {
-            if( !s.isFileRepository() )
-            {
+    private List<String> getRemoteRepositories( MavenConfiguration configuration )
+        throws MalformedURLException
+    {
+        List<String> r = new ArrayList<String>();
+
+        for( MavenRepositoryURL s : configuration.getRepositories() ) {
+            if( !s.isFileRepository() ) {
                 r.add( s.getURL().toExternalForm() );
             }
         }
-
-        //String[] repos = "http://repo1.maven.org/maven2/".split(",");
-
-        String local = configuration.getLocalRepository().getFile().getAbsolutePath();
-
-        m_aetherBasedResolver = new AetherBasedResolver( local, r.toArray( new String[r.size()] ) );
+        return r;
     }
 
     /**
