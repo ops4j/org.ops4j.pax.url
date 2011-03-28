@@ -218,7 +218,7 @@
       </modules>
     </profile>
     <profile>
-      <id>release</id>
+      <id>other</id>
       <modules>
         <module>pax-url-assembly</module>
         <module>pax-url-cache</module>
