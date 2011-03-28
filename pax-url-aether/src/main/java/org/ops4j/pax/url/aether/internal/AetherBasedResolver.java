@@ -120,7 +120,7 @@ public class AetherBasedResolver {
     {
         try {
 
-            resolveLatestVersionRange( session, artifact );
+            artifact = resolveLatestVersionRange( session, artifact );
             //  Metadata metadata = new DefaultMetadata( artifact.getGroupId(), artifact.getArtifactId(), MAVEN_METADATA_XML, Metadata.Nature.RELEASE_OR_SNAPSHOT );
             //  List<MetadataResult> metadataResults = m_repoSystem.resolveMetadata( session, Arrays.asList( new MetadataRequest( metadata ) ) );
 
@@ -130,18 +130,19 @@ public class AetherBasedResolver {
         }
     }
 
-    private void resolveLatestVersionRange( RepositorySystemSession session, Artifact artifact )
+    private Artifact resolveLatestVersionRange( RepositorySystemSession session, Artifact artifact )
         throws VersionRangeResolutionException
     {
         if( artifact.getVersion().equals( "LATEST" ) ) {
-            artifact.setVersion( LATEST_VERSION_RANGE );
+            artifact = artifact.setVersion( LATEST_VERSION_RANGE );
 
             VersionRangeResult versionResult = m_repoSystem.resolveVersionRange( session, new VersionRangeRequest( artifact, m_remoteRepos, null ) );
             if( versionResult != null ) {
                 Version v = versionResult.getHighestVersion();
-                artifact.setVersion( v.toString() );
+                artifact = artifact.setVersion( v.toString() );
             }
         }
+        return artifact;
     }
 
     private RepositorySystemSession newSession( RepositorySystem system )
