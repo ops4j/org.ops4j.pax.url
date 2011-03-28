@@ -83,6 +83,12 @@ public class MavenSettingsImpl
      */
     private static final String PROXY_TAG = "proxies/proxy";
    
+    
+    /**
+     * Path to mirror tag.
+     */
+    private static final String MIRROR_TAG = "mirrors/mirror";
+   
     /**
      * Fallback Maven repositories.
      */
@@ -118,6 +124,11 @@ public class MavenSettingsImpl
      * Map of known proxies for various protocols
      */
     private Map<String, Map<String, String>> m_proxySettings;
+    
+    /**
+     * Map of known mirrors mirrorOf -> url
+     */
+	private Map<String, Map<String, String>> m_mirrorsSettings;
 
     /**
      * Creates new settings with the following resolution:<br/>
@@ -482,7 +493,8 @@ public class MavenSettingsImpl
                             proxyDetails.put( "port", getSetting( proxy, "port", "8080" ) );
 
                             proxyDetails.put( "nonProxyHosts", getSetting( proxy, "nonProxyHosts", "" ) );
-
+                            proxyDetails.put( "protocol", protocol);
+                            
                             m_proxySettings.put( protocol, proxyDetails );
                         }
                     }
@@ -491,5 +503,37 @@ public class MavenSettingsImpl
         }
 
         return Collections.unmodifiableMap( m_proxySettings );
+    }
+    
+    public Map<String, Map<String, String>> getMirrorSettings() {
+    	if (m_mirrorsSettings == null)
+    	{
+    		m_mirrorsSettings = new HashMap<String, Map<String, String>>();
+    		readSettings();
+            if( m_document != null )
+            {
+            	
+            	List<Element> mirrors = XmlUtils.getElements( m_document, MIRROR_TAG );
+                if( mirrors != null )
+                {
+                    for( Element mirror : mirrors )
+                    {
+                    	String id = getSetting( mirror, "id", "" );
+                        if (!m_mirrorsSettings.containsKey(id)) 
+                        {
+                        	Map<String, String> proxyDetails = new HashMap<String, String>();
+
+                        	proxyDetails.put( "id", id );
+                            proxyDetails.put( "url", getSetting( mirror, "url", "" ) );
+                            proxyDetails.put( "mirrorOf", getSetting( mirror, "mirrorOf", "default" ) );
+                            proxyDetails.put( "layout", getSetting( mirror, "layout", "" ) );
+                            proxyDetails.put( "mirrorOfLayouts", getSetting( mirror, "mirrorOfLayouts", "" ) );
+                            m_mirrorsSettings.put(id, proxyDetails);
+                        }
+                    }
+                }
+            }
+    	}
+    	return Collections.unmodifiableMap( m_mirrorsSettings );
     }
 }
