@@ -106,7 +106,9 @@ public class MavenRepositoryURL
             	// You must transform to URI to decode the path (manage a path with a space or non us character)
             	// like D:/documents%20and%20Settings/SESA170017/.m2/repository
             	// the path can be store in path part or in scheme specific part (if is relatif path)
-				URI uri = m_repositoryURL.toURI();
+            	// the anti-slash character is not a valid character for uri.
+                spec = spec.replaceAll("\\\\", "/");
+                URI uri = new URI(spec);
 				String path = uri.getPath();
 				if (path == null)
 					path = uri.getSchemeSpecificPart();
