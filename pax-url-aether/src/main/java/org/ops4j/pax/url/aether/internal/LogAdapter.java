@@ -44,7 +44,7 @@ public class LogAdapter implements Logger
 
     public boolean isWarnEnabled()
     {
-        return false;
+        return LOG.isWarnEnabled();
     }
 
     public void warn( String s )
