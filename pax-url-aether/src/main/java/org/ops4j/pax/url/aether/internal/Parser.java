@@ -33,6 +33,11 @@ import org.ops4j.pax.url.maven.commons.MavenRepositoryURL;
 public class Parser
 {
 
+     /**
+     * Default version if none present in the url.
+     */
+    public static final String VERSION_LATEST = "LATEST";
+
     /**
      * Syntax for the url; to be shown on exception messages.
      */
@@ -46,10 +51,7 @@ public class Parser
      * Artifact definition segments separator.
      */
     private static final String ARTIFACT_SEPARATOR = "/";
-    /**
-     * Default version if none present in the url.
-     */
-    private static final String VERSION_LATEST = "LATEST";
+
     /**
      * Snapshot version
      */

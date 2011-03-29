@@ -50,6 +50,8 @@ import org.sonatype.aether.util.repository.DefaultMirrorSelector;
 import org.sonatype.aether.util.repository.DefaultProxySelector;
 import org.sonatype.aether.version.Version;
 
+import static org.ops4j.pax.url.aether.internal.Parser.VERSION_LATEST;
+
 /**
  * Aether based, drop in replacement for mvn protocol
  */
@@ -142,10 +144,22 @@ public class AetherBasedResolver {
         }
     }
 
+    /**
+     * Tries to resolve versions = LATEST using an open range version query.
+     * If it succeeds, version of artifact is set to the highest available version.
+     *
+     * @param session  to be used.
+     * @param artifact to be used
+     *
+     * @return an artifact with version set properly (highest if available)
+     *
+     * @throws org.sonatype.aether.resolution.VersionRangeResolutionException
+     *          in case of resolver errors.
+     */
     private Artifact resolveLatestVersionRange( RepositorySystemSession session, Artifact artifact )
         throws VersionRangeResolutionException
     {
-        if( artifact.getVersion().equals( "LATEST" ) ) {
+        if( artifact.getVersion().equals( VERSION_LATEST ) ) {
             artifact = artifact.setVersion( LATEST_VERSION_RANGE );
 
             VersionRangeResult versionResult = m_repoSystem.resolveVersionRange( session, new VersionRangeRequest( artifact, m_remoteRepos, null ) );
