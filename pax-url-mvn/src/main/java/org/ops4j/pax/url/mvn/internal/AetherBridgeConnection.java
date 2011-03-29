@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Okidokiteam
+ * Copyright (C) 2010 Toni Menzel
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,7 +57,7 @@ public class AetherBridgeConnection extends URLConnection {
 
         try {
 
-            return new URL(url.toExternalForm().replaceFirst("mvn", "aether")).openStream();
+            return new URL( url.toExternalForm().replaceFirst("mvn", "aether")).openStream();
         } catch (MalformedURLException e) {
             LOG.debug("Ather URL Handler not available. Using mvn fallback to resolve " + url.toExternalForm());
         } catch (Exception e) {
