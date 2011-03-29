@@ -176,36 +176,37 @@ public class AetherBasedResolver {
         LocalRepository localRepo = new LocalRepository( local );
         session.setLocalRepositoryManager( system.newLocalRepositoryManager( localRepo ) );
 
-        if( m_config != null ) {
-            // configure mirror
-            DefaultMirrorSelector mirrorSelector = (DefaultMirrorSelector) session.getMirrorSelector();
-            Map<String, Map<String, String>> mirrors = m_config.getMirrors();
-            int i = 1;
-            for( Map<String, String> mirror : mirrors.values() ) {
-                //The fields are id, url, mirrorOf, layout, mirrorOfLayouts.
-                String mirrorOf = mirror.get( "mirrorOf" );
-                String url = mirror.get( "url" );
-                // type can be null in this implementation (1.11)
-                mirrorSelector.add( "mirrorId_" + i, url, null, false, mirrorOf, "*" );
-                i++;
-            }
-
-            //configure proxies
-            DefaultProxySelector proxySelector = (DefaultProxySelector) session.getProxySelector();
-            Map<String, Map<String, String>> proxies = m_config.getProxySettings();
-            for( Map<String, String> proxy : proxies.values() ) {
-                //The fields are user, pass, host, port, nonProxyHosts, protocol.
-                String nonProxyHosts = proxy.get( "nonProxyHosts" );
-                Proxy proxyObj = new Proxy( proxy.get( "protocol" ),
-                                            proxy.get( "host" ), toInt( proxy.get( "port" ) ), getAuth( proxy )
-                );
-                proxySelector.add( proxyObj, nonProxyHosts );
-            }
+        // configure mirror
+        DefaultMirrorSelector mirrorSelector = (DefaultMirrorSelector) session.getMirrorSelector();
+        Map<String, Map<String, String>> mirrors = m_config.getMirrors();
+        int i = 1;
+        for( Map<String, String> mirror : mirrors.values() ) {
+            //The fields are id, url, mirrorOf, layout, mirrorOfLayouts.
+            String mirrorOf = mirror.get( "mirrorOf" );
+            String url = mirror.get( "url" );
+            // type can be null in this implementation (1.11)
+            mirrorSelector.add( "mirrorId_" + i, url, null, false, mirrorOf, "*" );
+            i++;
         }
+
+        //configure proxies
+        DefaultProxySelector proxySelector = (DefaultProxySelector) session.getProxySelector();
+        Map<String, Map<String, String>> proxies = m_config.getProxySettings();
+        for( Map<String, String> proxy : proxies.values() ) {
+            //The fields are user, pass, host, port, nonProxyHosts, protocol.
+            String nonProxyHosts = proxy.get( "nonProxyHosts" );
+            Proxy proxyObj = new Proxy( proxy.get( "protocol" ),
+                                        proxy.get( "host" ),
+                                        toInt( proxy.get( "port" ) ),
+                                        getAuthentication( proxy )
+            );
+            proxySelector.add( proxyObj, nonProxyHosts );
+        }
+
         return session;
     }
 
-    private Authentication getAuth( Map<String, String> proxy )
+    private Authentication getAuthentication( Map<String, String> proxy )
     {
         // user, pass
         if( proxy.containsKey( "user" ) ) {
