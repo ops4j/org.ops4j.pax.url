@@ -32,7 +32,9 @@ import org.ops4j.util.property.PropertiesPropertyResolver;
  * {@link URLStreamHandler} implementation for "aether:" protocol.
  *
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
- * @since 0.5.0, March 12, 2009
+ * @author Toni Menzel (adreghiciu@gmail.com)
+
+ * @since 1.3.0, March 28, 2011 (usable since)
  */
 public class Handler
     extends URLStreamHandler
@@ -48,8 +50,8 @@ public class Handler
         final MavenConfigurationImpl config = new MavenConfigurationImpl(
             new PropertiesPropertyResolver( System.getProperties() ), ServiceConstants.PID
         );
+        
         config.setSettings( new MavenSettingsImpl( config.getSettingsFileUrl(), config.useFallbackRepositories() ) );
-
         return new Connection( url, config );
     }
 
