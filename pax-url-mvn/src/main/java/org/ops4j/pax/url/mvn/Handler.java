@@ -34,8 +34,7 @@ import org.ops4j.util.property.PropertiesPropertyResolver;
  * @since 0.5.0, March 12, 2009
  */
 public class Handler
-    extends URLStreamHandler
-{
+    extends URLStreamHandler {
 
     /**
      * {@inheritDoc}
@@ -47,8 +46,9 @@ public class Handler
         final MavenConfigurationImpl config = new MavenConfigurationImpl(
             new PropertiesPropertyResolver( System.getProperties() ), ServiceConstants.PID
         );
+
         config.setSettings( new MavenSettingsImpl( config.getSettingsFileUrl(), config.useFallbackRepositories() ) );
-        return new AetherBridgeConnection(url,new Connection( url, config ));
+        return new AetherBridgeConnection( url, new Connection( url, config ) );
     }
 
 }

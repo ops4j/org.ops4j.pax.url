@@ -64,7 +64,6 @@ public class MirrorTest {
 		try {
 			c.getInputStream().read();
 		} catch (Exception e) {
-			e.printStackTrace();
 			return;
 		}
 		

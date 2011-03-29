@@ -40,7 +40,7 @@ import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 /**
- * Default implementation of Settings.
+ * Default implementation of Settings. It actually parses a given settings.xml file.
  *
  * @author Alin Dreghiciu
  * @see MavenSettings
@@ -487,10 +487,10 @@ public class MavenSettingsImpl
                         {
                             Map<String, String> proxyDetails = new HashMap<String, String>();
 
-                            proxyDetails.put( "user", getSetting( proxy, "username", "" ) );
-                            proxyDetails.put( "pass", getSetting( proxy, "password", "" ) );
+                            proxyDetails.put( "user", getSetting( proxy, "username", null ) );
+                            proxyDetails.put( "pass", getSetting( proxy, "password", null ) );
                             proxyDetails.put( "host", getSetting( proxy, "host", "127.0.0.1" ) );
-                            proxyDetails.put( "port", getSetting( proxy, "port", "8080" ) );
+                            proxyDetails.put( "port", getSetting( proxy, "port", "80" ) );
 
                             proxyDetails.put( "nonProxyHosts", getSetting( proxy, "nonProxyHosts", "" ) );
                             proxyDetails.put( "protocol", protocol);

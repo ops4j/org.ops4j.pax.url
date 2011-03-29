@@ -99,7 +99,6 @@ public class Connection
 
         m_aetherBasedResolver = new AetherBasedResolver(
         	configuration,
-            configuration.getLocalRepository().getFile(),
             getRemoteRepositories( configuration )
         );
     }

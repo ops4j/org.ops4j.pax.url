@@ -48,7 +48,7 @@ public class HandlerTest
         throws IOException
     {
         System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
-        new URL("aether:org.ops4j.pax.runner.profiles/log/1.5.1/composite").openStream().close();
+        new URL("aether:org.ops4j.pax.runner.profiles/log/1.6.1/composite").openStream().close();
 
     }
 
