@@ -6,6 +6,7 @@
     final private RepositorySystem m_repoSystem;    final private List<RemoteRepository> m_remoteRepos;    final private MavenConfiguration  m_config;    /**     * Create a AetherBasedResolver     *      * @param configuration (can be null)     * @param local (must be not null)     * @param repos (must be not null)     */    public AetherBasedResolver( MavenConfiguration configuration, File local, List<String> repos )    {        m_localRepo = local;
         m_repoSystem = newRepositorySystem();
         m_config = configuration;                m_remoteRepos = new ArrayList<RemoteRepository>();        int i = 0;
+
         // aether does not really like no remote repo at all ..
 
         for( String r : repos ) {            String id = "repo" + ( i++ );
@@ -48,28 +49,29 @@
         throws IOException
     {        try {
 
-            resolveLatestVersionRange( session, artifact );
+            artifact = resolveLatestVersionRange( session, artifact );
             //  Metadata metadata = new DefaultMetadata( artifact.getGroupId(), artifact.getArtifactId(), MAVEN_METADATA_XML, Metadata.Nature.RELEASE_OR_SNAPSHOT );
             //  List<MetadataResult> metadataResults = m_repoSystem.resolveMetadata( session, Arrays.asList( new MetadataRequest( metadata ) ) );
             return m_repoSystem.resolveArtifact( session, new ArtifactRequest( artifact, m_remoteRepos, null ) ).getArtifact().getFile();
         } catch( RepositoryException e ) {
             throw new IOException( "Aether Error.", e );
-        }    }    private void resolveLatestVersionRange( RepositorySystemSession session, Artifact artifact )
+        }    }    private Artifact resolveLatestVersionRange( RepositorySystemSession session, Artifact artifact )
         throws VersionRangeResolutionException
     {        if( artifact.getVersion().equals( "LATEST" ) ) {
-            artifact.setVersion( LATEST_VERSION_RANGE );
+            artifact = artifact.setVersion( LATEST_VERSION_RANGE );
 
             VersionRangeResult versionResult = m_repoSystem.resolveVersionRange( session, new VersionRangeRequest( artifact, m_remoteRepos, null ) );
             if( versionResult != null ) {
                 Version v = versionResult.getHighestVersion();
-                artifact.setVersion( v.toString() );
+                artifact = artifact.setVersion( v.toString() );
             }
-        }    }    private RepositorySystemSession newSession( RepositorySystem system )    {        assert m_localRepo != null : "local repository cannot be null";
+        }        return artifact;
+    }    private RepositorySystemSession newSession( RepositorySystem system )    {        assert m_localRepo != null : "local repository cannot be null";
         assert m_localRepo.exists() : "local repository must exist (" + m_localRepo + ").";
 
         MavenRepositorySystemSession session = new MavenRepositorySystemSession();        //session.setOffline( true );
 
-        LocalRepository localRepo = new LocalRepository( m_localRepo );        session.setLocalRepositoryManager( system.newLocalRepositoryManager( localRepo ) );                if (m_config != null) {			// configure mirror        	DefaultMirrorSelector mirrorSelector = (DefaultMirrorSelector) session.getMirrorSelector();            Map<String, Map<String, String>> mirrors = m_config.getMirrors();			int i = 1;			for (Map<String, String> mirror : mirrors.values()) {				//The fields are id, url, mirrorOf, layout, mirrorOfLayouts.				String mirrorOf = mirror.get("mirrorOf");				String url = mirror.get("url");				// type can be null in this implementation (1.11)				mirrorSelector.add("mirrorId_" + i, url, null, false, mirrorOf,						"*");				i++;			}						//configure proxies			DefaultProxySelector proxySelector = (DefaultProxySelector) session.getProxySelector();			Map<String, Map<String, String>> proxies = m_config.getProxySettings();			for (Map<String, String> proxy : proxies.values()) {				//The fields are user, pass, host, port, nonProxyHosts, protocol.				String nonProxyHosts = proxy.get("nonProxyHosts");				Proxy proxyObj = new Proxy(proxy.get("protocol"), 						proxy.get("host"), toInt(proxy.get("port")), getAuth(proxy));				proxySelector.add(proxyObj, nonProxyHosts);			}		}		return session;    }    private Authentication getAuth(Map<String, String> proxy) {		// user, pass    	if (proxy.containsKey("user")) {    		return new Authentication(proxy.get("user"), proxy.get("pass"));    	}		return null;	}	private int toInt(String intStr) {		return Integer.parseInt(intStr);	}	private RepositorySystem newRepositorySystem()
+        LocalRepository localRepo = new LocalRepository( m_localRepo );        session.setLocalRepositoryManager( system.newLocalRepositoryManager( localRepo ) );                if (m_config != null) {			// configure mirror        	DefaultMirrorSelector mirrorSelector = (DefaultMirrorSelector) session.getMirrorSelector();            Map<String, Map<String, String>> mirrors = m_config.getMirrors();			int i = 1;			for (Map<String, String> mirror : mirrors.values()) {				//The fields are id, url, mirrorOf, layout, mirrorOfLayouts.				String mirrorOf = mirror.get("mirrorOf");				String url = mirror.get("url");				// type can be null in this implementation (1.11)				mirrorSelector.add("mirrorId_" + i, url, null, false, mirrorOf,						"*");				i++;			}						//configure proxies			DefaultProxySelector proxySelector = (DefaultProxySelector) session.getProxySelector();			Map<String, Map<String, String>> proxies = m_config.getProxySettings();			for (Map<String, String> proxy : proxies.values()) {				//The fields are user, pass, host, port, nonProxyHosts, protocol.				String nonProxyHosts = proxy.get("nonProxyHosts");				Proxy proxyObj = new Proxy(proxy.get("protocol"), 						proxy.get("host"), toInt(proxy.get("port")), getAuth(proxy));				proxySelector.add(proxyObj, nonProxyHosts);			}		}		return session;    }    private Authentication getAuth(Map<String, String> proxy) {		// user, pass    	if (proxy.containsKey("user")) {    		return new Authentication(proxy.get("user"), proxy.get("pass"));    	}		return null;	}	private int toInt(String intStr) {		return Integer.parseInt(intStr);	}	private RepositorySystem newRepositorySystem()
     {        DefaultServiceLocator locator = new DefaultServiceLocator();
 
         locator.setServices( WagonProvider.class, new ManualWagonProvider() );
@@ -77,4 +79,4 @@
         locator.setService( Logger.class, LogAdapter.class );
 
         return locator.getService( RepositorySystem.class );
-    }}
+    }}

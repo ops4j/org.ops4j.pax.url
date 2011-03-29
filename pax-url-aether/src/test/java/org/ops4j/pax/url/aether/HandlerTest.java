@@ -48,12 +48,7 @@ public class HandlerTest
         throws IOException
     {
         System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
-        //org.ops4j.pax.runner.profiles:log:composite:(0.0,]
-
-       // new URL( "aether:org.ops4j/peaberry/1.1.1" ).openStream().close();
-
-        //org/sonatype/sisu/inject/cglib/2.2.1/
-        new URL("aether:org.ops4j.pax.runner.profiles/log/LATEST/composite").openStream().close();
+        new URL("aether:org.ops4j.pax.runner.profiles/log/1.5.1/composite").openStream().close();
 
     }
 
