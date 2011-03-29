@@ -40,7 +40,7 @@ import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 /**
- * Default implementation of Settings.
+ * Default implementation of Settings. It actually parses a given settings.xml file.
  *
  * @author Alin Dreghiciu
  * @see MavenSettings
