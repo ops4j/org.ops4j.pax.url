@@ -20,6 +20,7 @@ package org.ops4j.pax.url.maven.commons;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Handler configuration.
@@ -86,4 +87,20 @@ public interface MavenConfiguration
      * @return true if aether should be disabled
      */
     Boolean isAetherDisabled();
+    
+    /**
+     * Returns the active proxy settings from settings.xml
+     * The fields are user, pass, host, port, nonProxyHosts, protocol.
+     * 
+     * @return the active proxy settings
+     */
+    Map<String, Map<String, String>> getProxySettings();
+    
+    /**
+     * Returns the mirror settings from settings.xml.
+     * The fields are id, url, mirrorOf, layout, mirrorOfLayouts.
+     *
+     * @return the mirror settings
+     */
+    Map<String, Map<String, String>> getMirrors();
 }

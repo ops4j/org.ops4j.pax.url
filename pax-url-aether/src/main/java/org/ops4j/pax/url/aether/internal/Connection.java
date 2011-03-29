@@ -98,6 +98,7 @@ public class Connection
         m_parser = new Parser( url.getPath() );
 
         m_aetherBasedResolver = new AetherBasedResolver(
+        	configuration,
             configuration.getLocalRepository().getFile(),
             getRemoteRepositories( configuration )
         );

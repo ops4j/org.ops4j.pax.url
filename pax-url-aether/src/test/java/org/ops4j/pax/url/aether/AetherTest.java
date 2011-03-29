@@ -37,7 +37,7 @@ public class AetherTest {
         throws DependencyCollectionException, ArtifactResolutionException, IOException
     {
         String[] repos = "http://repo1.maven.org/maven2/,http://scm.ops4j.org/repos/ops4j/projects/pax/runner-repository/,".split( "," );
-        AetherBasedResolver aetherBasedResolver = new AetherBasedResolver( getCache(), Arrays.asList( repos ) );
+        AetherBasedResolver aetherBasedResolver = new AetherBasedResolver( null, getCache(), Arrays.asList( repos ) );
         aetherBasedResolver.resolve( "org.ops4j.pax.web", "pax-web-api", "jar", "0.7.2" ).close();
     }
 
@@ -46,7 +46,7 @@ public class AetherTest {
         throws DependencyCollectionException, ArtifactResolutionException, IOException
     {
         String[] repos = "http://repo1.maven.org/maven2/,http://scm.ops4j.org/repos/ops4j/projects/pax/runner-repository/,".split( "," );
-        AetherBasedResolver aetherBasedResolver = new AetherBasedResolver( getCache(), Arrays.asList( repos ) );
+        AetherBasedResolver aetherBasedResolver = new AetherBasedResolver( null, getCache(), Arrays.asList( repos ) );
         aetherBasedResolver.resolve( "org.ops4j.pax.web", "pax-web-api", "jar", "LATEST" ).close();
     }
 
@@ -55,7 +55,7 @@ public class AetherTest {
         throws DependencyCollectionException, ArtifactResolutionException, IOException
     {
         String[] repos = "http://repo1.maven.org/maven2/,http://scm.ops4j.org/repos/ops4j/projects/pax/runner-repository/,".split( "," );
-        AetherBasedResolver aetherBasedResolver = new AetherBasedResolver( getCache(), Arrays.asList( repos ) );
+        AetherBasedResolver aetherBasedResolver = new AetherBasedResolver( null, getCache(), Arrays.asList( repos ) );
         aetherBasedResolver.resolve( "org.ops4j.pax.runner.profiles", "ds", "composite", "LATEST" ).close();
     }
 
@@ -65,12 +65,12 @@ public class AetherTest {
     {
         String[] repos = "http://repo1.maven.org/maven2/,http://scm.ops4j.org/repos/ops4j/projects/pax/runner-repository/,".split( "," );
         File cache = getCache();
-        AetherBasedResolver aetherBasedResolver = new AetherBasedResolver( cache, Arrays.asList( repos ) );
+        AetherBasedResolver aetherBasedResolver = new AetherBasedResolver( null, cache, Arrays.asList( repos ) );
         aetherBasedResolver.resolve( "org.ops4j.pax.web", "pax-web-api", "jar", "LATEST" ).close();
 
         // now again:
         // no repo
-        aetherBasedResolver = new AetherBasedResolver( cache, Arrays.asList( "" ) );
+        aetherBasedResolver = new AetherBasedResolver( null, cache, Arrays.asList( "" ) );
         aetherBasedResolver.resolve( "org.ops4j.pax.web", "pax-web-api", "jar", "LATEST" ).close();
     }
 

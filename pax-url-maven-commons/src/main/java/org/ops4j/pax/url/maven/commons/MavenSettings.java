@@ -45,8 +45,17 @@ public interface MavenSettings
 
     /**
      * Returns the active proxy settings from settings.xml
+     * The fields are user, pass, host, port, nonProxyHosts, protocol.
      *
      * @return the active proxy settings
      */
     Map<String, Map<String, String>> getProxySettings();
+    
+    /**
+     * Returns the mirror settings from settings.xml.
+     * The fields are id, url, mirrorOf, layout, mirrorOfLayouts.
+     *
+     * @return the mirror settings
+     */
+    Map<String, Map<String, String>> getMirrorSettings();
 }

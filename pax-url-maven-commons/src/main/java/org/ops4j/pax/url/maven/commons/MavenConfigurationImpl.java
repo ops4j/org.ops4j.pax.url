@@ -23,6 +23,7 @@ import java.net.MalformedURLException;
 import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -181,6 +182,7 @@ public class MavenConfigurationImpl
                 m_propertyResolver.get( m_pid + MavenConstants.PROPERTY_DEFAULT_REPOSITORIES );
             // build repositories list
             final List<MavenRepositoryURL> defaultRepositoriesProperty = new ArrayList<MavenRepositoryURL>();
+            // TODO : localRepository is never used.
             MavenRepositoryURL localRepository = getLocalRepository();
             if( defaultRepositoriesProp != null && defaultRepositoriesProp.trim().length() > 0 )
             {
@@ -383,6 +385,18 @@ public class MavenConfigurationImpl
             );
         }
         return get( m_pid + MavenConstants.PROPERTY_DISABLE_AETHER);
+    }
+    
+    public Map<String, Map<String, String>> getProxySettings() {
+    	if (m_settings == null)
+    		return Collections.emptyMap();
+    	return m_settings.getProxySettings();
+    }
+    
+    public Map<String, Map<String, String>> getMirrors() {
+    	if (m_settings == null)
+    		return Collections.emptyMap();
+    	return m_settings.getMirrorSettings();
     }
 
 }
