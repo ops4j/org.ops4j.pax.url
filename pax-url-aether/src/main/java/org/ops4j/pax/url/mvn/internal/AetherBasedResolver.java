@@ -136,9 +136,9 @@ public class AetherBasedResolver {
         List<MavenRepositoryURL> r = new ArrayList<MavenRepositoryURL>();
 
         for( MavenRepositoryURL s : configuration.getRepositories() ) {
-            if( !s.isFileRepository() ) {
+            //if( !s.isFileRepository() ) {
                 r.add( s );
-            }
+            //}
         }
         return r;
     }
