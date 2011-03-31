@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Alin Dreghiciu.
+ * Copyright 2008 Alin Dreghiciu, Achim Nierbeck.
  *
  * Licensed  under the  Apache License,  Version 2.0  (the "License");
  * you may not use  this file  except in  compliance with the License.
@@ -36,7 +36,7 @@ import org.osgi.framework.Constants;
  * @author Guillaume Nodet
  */
 public class WebBundleConnection extends WarConnection {
-
+	
     public WebBundleConnection(URL url, Configuration config) throws MalformedURLException
     {
         super(url, config);
@@ -56,6 +56,7 @@ public class WebBundleConnection extends WarConnection {
             {
                 isBundle = true;
             }
+
         }
         catch (IOException e)
         {
@@ -64,7 +65,13 @@ public class WebBundleConnection extends WarConnection {
         }
         finally
         {
-            bis.reset();
+        	if (bis.markSupported()) {
+        		try {
+        			bis.reset();
+        		} catch (IOException ignore) {
+        			//Ignore since buffer is already resetted
+        		}
+        	}
         }
         if (isBundle)
         {
@@ -77,7 +84,7 @@ public class WebBundleConnection extends WarConnection {
         }
         
         //OSGi-Spec 128.3.1 WAB Definition
-        //The Context Path must always begin with a forward slash ( ‘/’).
+        //The Context Path must always begin with a forward slash ( ?/?).
         if(instructions.get("Web-ContextPath") != null) {
 	        String ctxtPath = (String) instructions.get("Web-ContextPath");
 	        if (!ctxtPath.startsWith("/")) {

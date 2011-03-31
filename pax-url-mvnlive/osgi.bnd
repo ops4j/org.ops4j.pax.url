@@ -7,6 +7,9 @@ Bundle-Version:\
 Bundle-SymbolicName:\
   ${bundle.symbolicName}; singleton:=true
 
+Export-Service:\
+  org.osgi.service.url.URLStreamHandlerService; url.handler.protocol=mvnlive
+
 Import-Package:\
   ${bundle.namespace}; version="${pom.version}",\
   javax.xml.parsers,\
