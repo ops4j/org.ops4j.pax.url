@@ -147,4 +147,17 @@ public class RepositoryURLTest
         assertTrue( "Computed ID", new MavenRepositoryURL( spec).getId().startsWith( "repo_" ) );
     }
 
+    /**
+     * Test the repository id given in the url with <code>@id</code>.
+     *
+     * @throws MalformedURLException not expected
+     */
+    @Test
+    public void testRepositoryWithID()
+        throws MalformedURLException
+    {
+        final MavenRepositoryURL repositoryURL = new MavenRepositoryURL( "file:some/dir@id=repository1" );
+        assertEquals( "Releases enabled", "repository1", repositoryURL.getId());
+    }
+
 }
