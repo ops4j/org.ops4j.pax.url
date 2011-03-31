@@ -139,4 +139,12 @@ public class RepositoryURLTest
         );
     }
 
+    @Test
+    public void testRepositoryWithoutIDFallback()
+        throws MalformedURLException
+    {
+        String spec = "file:some/dir" ;
+        assertTrue( "Computed ID", new MavenRepositoryURL( spec).getId().startsWith( "repo_" ) );
+    }
+
 }

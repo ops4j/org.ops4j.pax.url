@@ -107,19 +107,14 @@ public class MavenRepositoryURL
                 urlBuilder.append( segments[ i ] );
             }
         }
-        String spec = urlBuilder.toString().trim();
-        if( !spec.endsWith( "\\" ) && !spec.endsWith( "/" ) )
-        {
-            spec = spec + "/";
-        }
+        String spec = buildSpec( urlBuilder );
         m_repositoryURL = new URL( spec );
         m_snapshotsEnabled = snapshotEnabled;
         m_releasesEnabled = releasesEnabled;
         if (name == null) {
             String warn = "Repository spec " + spec + " does not contain an identifier. This is deprecated & discouraged & just evil.";
             LOG.warn( warn );
-            name = "" + spec.hashCode();
-            throw new RuntimeException( warn );
+            name = "repo_" + spec.hashCode();
         }
         m_id = name;
         if( m_repositoryURL.getProtocol().equals( "file" ) )
@@ -144,6 +139,16 @@ public class MavenRepositoryURL
         {
             m_file = null;
         }
+    }
+
+    private String buildSpec( StringBuilder urlBuilder )
+    {
+        String spec = urlBuilder.toString().trim();
+        if( !spec.endsWith( "\\" ) && !spec.endsWith( "/" ) )
+        {
+            spec = spec + "/";
+        }
+        return spec;
     }
 
     /**
