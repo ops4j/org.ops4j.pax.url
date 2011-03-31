@@ -28,8 +28,7 @@ import java.util.Map;
  * @author Alin Dreghiciu
  * @since August 11, 2007
  */
-public interface MavenConfiguration
-{
+public interface MavenConfiguration {
 
     /**
      * Returns true if the certificate should be checked on SSL connection, false otherwise.
@@ -87,15 +86,17 @@ public interface MavenConfiguration
      * @return true if aether should be disabled
      */
     Boolean isAetherDisabled();
-    
+
     /**
      * Returns the active proxy settings from settings.xml
      * The fields are user, pass, host, port, nonProxyHosts, protocol.
-     * 
+     *
+     * @param protocols protocols to be recognized.
+     *
      * @return the active proxy settings
      */
-    Map<String, Map<String, String>> getProxySettings();
-    
+    Map<String, Map<String, String>> getProxySettings( String... protocols );
+
     /**
      * Returns the mirror settings from settings.xml.
      * The fields are id, url, mirrorOf, layout, mirrorOfLayouts.

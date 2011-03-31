@@ -19,19 +19,15 @@
  */
 package org.ops4j.pax.url.aether.internal;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.ops4j.lang.NullArgumentException;
-import org.ops4j.pax.url.maven.commons.MavenConfiguration;
-import org.ops4j.pax.url.maven.commons.MavenRepositoryURL;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.List;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.ops4j.lang.NullArgumentException;
+import org.ops4j.pax.url.maven.commons.MavenConfiguration;
 
 /**
  * An URLConnextion that supports aether: protocol.<br/>
@@ -96,25 +92,10 @@ public class Connection
         NullArgumentException.validateNotNull( configuration, "Service configuration" );
 
         m_parser = new Parser( url.getPath() );
-
-        m_aetherBasedResolver = new AetherBasedResolver(
-        	configuration,
-            getRemoteRepositories( configuration )
-        );
+        m_aetherBasedResolver = new AetherBasedResolver( configuration );
     }
 
-    private List<String> getRemoteRepositories( MavenConfiguration configuration )
-        throws MalformedURLException
-    {
-        List<String> r = new ArrayList<String>();
 
-        for( MavenRepositoryURL s : configuration.getRepositories() ) {
-            if( !s.isFileRepository() ) {
-                r.add( s.getURL().toExternalForm() );
-            }
-        }
-        return r;
-    }
 
     /**
      * Does nothing.
@@ -135,11 +116,7 @@ public class Connection
         throws IOException
     {
         connect();
-
         LOG.debug( "Resolving [" + url.toExternalForm() + "]" );
-
         return m_aetherBasedResolver.resolve( m_parser.getGroup(), m_parser.getArtifact(), m_parser.getType(), m_parser.getVersion() );
     }
-
-
 }

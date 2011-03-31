@@ -23,8 +23,7 @@ package org.ops4j.pax.url.maven.commons;
  * @author Alin Dreghiciu
  * @since August 26, 2007
  */
-public interface MavenConstants
-{
+public interface MavenConstants {
 
     /**
      * Certificate check configuration property name.
@@ -61,13 +60,26 @@ public interface MavenConstants
     /**
      * Option to mark repository as allowing snapshots.
      */
-    String OPTION_ALLOW_SNAPSHOTS = "snapshots";
+    static String OPTION_ALLOW_SNAPSHOTS = "snapshots";
     /**
      * Option to mark repository as not allowing releases.
      */
-    String OPTION_DISALLOW_RELEASES = "noreleases";
+    static String OPTION_DISALLOW_RELEASES = "noreleases";
     /**
      * Options separator in repository url.
      */
-    String SEPARATOR_OPTIONS = "@";
+    static String SEPARATOR_OPTIONS = "@";
+    /**
+     * Proxies given via property.
+     * Expected layout: http:host=foo,port=8080;https:host=bar,port=9090
+     */
+    static String PROPERTY_PROXIES = ".proxies";
+    /**
+     * Default enable proxies or not if property PROPERTY_PROXY_SUPPORT is not set at all.
+     */
+    static boolean PROPERTY_PROXY_SUPPORT_DEFAULT = true;
+    /**
+     * segment in repository spec that gives the name of the repo. Crucial for Aether handler.
+     */
+    static final String OPTION_ID = "id";
 }

@@ -130,7 +130,7 @@ public class ConfigurationImplTest
         throws MalformedURLException
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
-        expect( propertyResolver.get( "test.pid.repositories" ) ).andReturn( "file:repository1/" );
+        expect( propertyResolver.get( "test.pid.repositories" ) ).andReturn( "file:repository1/@id=repository1" );
         expect( propertyResolver.get( "test.pid.localRepository" ) ).andReturn( null );
         replay( propertyResolver );
         MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
@@ -146,7 +146,7 @@ public class ConfigurationImplTest
         throws MalformedURLException
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
-        expect( propertyResolver.get( "test.pid.repositories" ) ).andReturn( "file:repository1" );
+        expect( propertyResolver.get( "test.pid.repositories" ) ).andReturn( "file:repository1@id=repository1" );
         expect( propertyResolver.get( "test.pid.localRepository" ) ).andReturn( null );
         replay( propertyResolver );
         MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
@@ -162,7 +162,7 @@ public class ConfigurationImplTest
         throws MalformedURLException
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
-        expect( propertyResolver.get( "test.pid.repositories" ) ).andReturn( "file:repository1/" );
+        expect( propertyResolver.get( "test.pid.repositories" ) ).andReturn( "file:repository1/@id=repository1" );
         expect( propertyResolver.get( "test.pid.localRepository" ) ).andReturn( null );
         replay( propertyResolver );
         MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
@@ -178,7 +178,7 @@ public class ConfigurationImplTest
         throws MalformedURLException
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
-        expect( propertyResolver.get( "test.pid.repositories" ) ).andReturn( "file:repository1\\" );
+        expect( propertyResolver.get( "test.pid.repositories" ) ).andReturn( "file:repository1\\@id=repository1" );
         expect( propertyResolver.get( "test.pid.localRepository" ) ).andReturn( null );
         replay( propertyResolver );
         MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
@@ -195,7 +195,7 @@ public class ConfigurationImplTest
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
         expect( propertyResolver.get( "test.pid.repositories" ) ).andReturn(
-            "http:repository1@snapshots@noreleases"
+            "http:repository1@snapshots@noreleases@id=repository1"
         );
         expect( propertyResolver.get( "test.pid.localRepository" ) ).andReturn( null );
         replay( propertyResolver );
@@ -212,7 +212,7 @@ public class ConfigurationImplTest
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
         expect( propertyResolver.get( "test.pid.repositories" ) ).andReturn(
-            "http:repository1@snapshots"
+            "http:repository1@snapshots@id=repository1"
         );
         expect( propertyResolver.get( "test.pid.localRepository" ) ).andReturn( null );
         replay( propertyResolver );
@@ -229,7 +229,7 @@ public class ConfigurationImplTest
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
         expect( propertyResolver.get( "test.pid.repositories" ) ).andReturn(
-            "http:repository1@noreleases"
+            "http:repository1@noreleases@id=repository1"
         );
         expect( propertyResolver.get( "test.pid.localRepository" ) ).andReturn( null );
         replay( propertyResolver );
@@ -246,7 +246,7 @@ public class ConfigurationImplTest
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
         expect( propertyResolver.get( "test.pid.repositories" ) ).andReturn(
-            "file:repository1/,file:repository2/"
+            "file:repository1/@id=repository1,file:repository2/@id=repository2"
         );
         expect( propertyResolver.get( "test.pid.localRepository" ) ).andReturn( null );
         replay( propertyResolver );
@@ -267,7 +267,7 @@ public class ConfigurationImplTest
         expect( propertyResolver.get( "test.pid.repositories" ) ).andReturn( null );
         expect( propertyResolver.get( "test.pid.localRepository" ) ).andReturn( null );
         MavenSettings settings = createMock( MavenSettings.class );
-        expect( settings.getRepositories() ).andReturn( "file:repository1/" );
+        expect( settings.getRepositories() ).andReturn( "file:repository1/@id=repository1" );
         expect( settings.getLocalRepository() ).andReturn( null );
         replay( propertyResolver, settings );
         MavenConfigurationImpl config = new MavenConfigurationImpl( propertyResolver, PID );
@@ -284,10 +284,10 @@ public class ConfigurationImplTest
         throws MalformedURLException
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
-        expect( propertyResolver.get( "test.pid.repositories" ) ).andReturn( "+file:repository1/" );
+        expect( propertyResolver.get( "test.pid.repositories" ) ).andReturn( "+file:repository1/@id=repository1" );
         expect( propertyResolver.get( "test.pid.localRepository" ) ).andReturn( null );
         MavenSettings settings = createMock( MavenSettings.class );
-        expect( settings.getRepositories() ).andReturn( "file:repository2/" );
+        expect( settings.getRepositories() ).andReturn( "file:repository2/@id=repository2" );
         expect( settings.getLocalRepository() ).andReturn( null );
         replay( propertyResolver, settings );
         MavenConfigurationImpl config = new MavenConfigurationImpl( propertyResolver, PID );
@@ -305,7 +305,7 @@ public class ConfigurationImplTest
         throws MalformedURLException
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
-        expect( propertyResolver.get( "test.pid.repositories" ) ).andReturn( "file:repository1/" );
+        expect( propertyResolver.get( "test.pid.repositories" ) ).andReturn( "file:repository1/@id=repository1" );
         expect( propertyResolver.get( "test.pid.localRepository" ) ).andReturn(
             "file:localRepository/"
         );

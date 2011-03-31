@@ -29,11 +29,11 @@ public class MirrorTest {
 		Properties properties = new Properties();
 		String repoPath = "target/localrepo_"+UUID.randomUUID();
 		properties.setProperty(TEST_PID + MavenConstants.PROPERTY_LOCAL_REPOSITORY, repoPath);
-		properties.setProperty(TEST_PID + MavenConstants.PROPERTY_REPOSITORIES, "http://qfdqfqfqf.fra/repo");
+		properties.setProperty(TEST_PID + MavenConstants.PROPERTY_REPOSITORIES, "http://google.com/repo@id=fake");
 		PropertiesPropertyResolver propertyResolver = new PropertiesPropertyResolver(properties );
 		MavenConfigurationImpl config = new MavenConfigurationImpl(propertyResolver, TEST_PID);
 		
-		MavenSettings settings = new MavenSettingsImpl(new File("target/test-classes/settings-mirror1.xml").toURL());
+		MavenSettings settings = new MavenSettingsImpl(getClass().getResource( "/settings-mirror1.xml") );
 		config.setSettings(settings );
 		File localRepo = config.getLocalRepository().getFile();
 		// you must exist.
@@ -51,7 +51,7 @@ public class MirrorTest {
 		
 		Properties properties = new Properties();
 		properties.setProperty(TEST_PID + MavenConstants.PROPERTY_LOCAL_REPOSITORY, "target/localrepo2");
-		properties.setProperty(TEST_PID + MavenConstants.PROPERTY_REPOSITORIES, "http://qfdqfqfqf.fra/repo");
+		properties.setProperty(TEST_PID + MavenConstants.PROPERTY_REPOSITORIES, "http://qfdqfqfqf.fra/repo@id=fake");
 		PropertiesPropertyResolver propertyResolver = new PropertiesPropertyResolver(properties );
 		MavenConfigurationImpl config = new MavenConfigurationImpl(propertyResolver, TEST_PID);
 		

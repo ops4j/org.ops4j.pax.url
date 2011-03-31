@@ -22,6 +22,9 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import sun.util.LocaleServiceProviderPool;
 import org.ops4j.lang.NullArgumentException;
 
 /**
@@ -33,10 +36,12 @@ import org.ops4j.lang.NullArgumentException;
 public class MavenRepositoryURL
 {
 
+    private static final Log LOG = LogFactory.getLog( MavenRepositoryURL.class );
+
     /**
      * Repository Id.
      */
-    private String m_id;
+    private final String m_id;
     /**
      * Repository URL.
      */
@@ -72,6 +77,9 @@ public class MavenRepositoryURL
         final StringBuilder urlBuilder = new StringBuilder();
         boolean snapshotEnabled = false;
         boolean releasesEnabled = true;
+
+        String name = null;
+
         for( int i = 0; i < segments.length; i++ )
         {
             if( segments[ i ].trim().equalsIgnoreCase( MavenConstants.OPTION_ALLOW_SNAPSHOTS ) )
@@ -82,6 +90,14 @@ public class MavenRepositoryURL
             {
                 releasesEnabled = false;
             }
+             else if( segments[ i ].trim().startsWith( MavenConstants.OPTION_ID ) )
+            {
+                try {
+                    name = segments[ i ].split( "=" )[1].trim();
+                }catch (Exception e) {
+                    LOG.warn( "Problem with segment " + segments[i] + " in " + repositorySpec );
+                }
+            }
             else
             {
                 if( i > 0 )
@@ -91,7 +107,7 @@ public class MavenRepositoryURL
                 urlBuilder.append( segments[ i ] );
             }
         }
-        String spec = urlBuilder.toString();
+        String spec = urlBuilder.toString().trim();
         if( !spec.endsWith( "\\" ) && !spec.endsWith( "/" ) )
         {
             spec = spec + "/";
@@ -99,7 +115,13 @@ public class MavenRepositoryURL
         m_repositoryURL = new URL( spec );
         m_snapshotsEnabled = snapshotEnabled;
         m_releasesEnabled = releasesEnabled;
-        m_id = "" + spec.hashCode();
+        if (name == null) {
+            String warn = "Repository spec " + spec + " does not contain an identifier. This is deprecated & discouraged & just evil.";
+            LOG.warn( warn );
+            name = "" + spec.hashCode();
+            throw new RuntimeException( warn );
+        }
+        m_id = name;
         if( m_repositoryURL.getProtocol().equals( "file" ) )
         {
             try {
@@ -113,7 +135,7 @@ public class MavenRepositoryURL
 				if (path == null)
 					path = uri.getSchemeSpecificPart();
 				m_file = new File(path);
-				
+
 			} catch (URISyntaxException e) {
 				throw new MalformedURLException(e.getMessage());
 			}

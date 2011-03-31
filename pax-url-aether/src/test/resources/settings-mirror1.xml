@@ -4,11 +4,13 @@
           xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
 
   <mirrors>
+
     <mirror>
       <id>mirror1</id>
       <name>Mirror 1</name>
       <url>file:target/test-classes/repo2</url>
       <mirrorOf>external:*</mirrorOf>
     </mirror>
+   
   </mirrors>
 </settings>

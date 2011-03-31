@@ -35,7 +35,7 @@ public class HandlerTest
      *
      * @throws java.io.IOException - Unexpected
      */
-    @Test
+    //@Test
     public void use()
         throws IOException
     {
@@ -43,12 +43,33 @@ public class HandlerTest
         new URL( "aether:group/artifact/0.1.0" );
     }
 
-    @Test
+   @Test
     public void cacheTest()
         throws IOException
     {
         System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
-        new URL("aether:org.ops4j.pax.runner.profiles/log/1.6.1/composite").openStream().close();
+        
+       System.setProperty( "http.proxyHost", "proxy.bb.poda.cz" );
+           System.setProperty( "http.proxyPort", "8080" );
+
+      //  System.setProperty( "org.ops4j.pax.url.aether.proxies","http:host=proxy.bb.poda.cz,port=3128" );
+
+        new URL("aether:org.ops4j.pax.runner.profiles/log/LATEST/composite").openStream().close();
+
+    }
+
+     @Test
+    public void sane()
+        throws IOException
+    {
+ //       System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
+
+        System.setProperty( "http.proxyHost", "proxy.bb.poda.cz" );
+               System.setProperty( "http.proxyPort", "8080" );
+
+      //  System.setProperty( "org.ops4j.pax.url.aether.proxies","http:host=proxy.bb.poda.cz,port=3128" );
+
+        new URL("http://google.com").openStream().close();
 
     }
 

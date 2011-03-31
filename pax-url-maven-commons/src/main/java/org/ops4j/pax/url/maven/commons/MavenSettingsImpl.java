@@ -93,11 +93,11 @@ public class MavenSettingsImpl
      * Fallback Maven repositories.
      */
     private static final String FALLBACK_REPOSITORIES =
-    	"http://osgi.sonatype.org/content/groups/pax-runner,"
-        + "http://repo1.maven.org/maven2,"
-        + "http://repository.ops4j.org/maven2,"
-        + "http://repository.springsource.com/maven/bundles/release,"
-        + "http://repository.springsource.com/maven/bundles/external";
+    	"http://osgi.sonatype.org/content/groups/pax-runner@id=paxrunner,"
+        + "http://repo1.maven.org/maven2@id=central,"
+        + "http://repository.ops4j.org/maven2@id=ops4j-releases,"
+        + "http://repository.springsource.com/maven/bundles/release@id=springsource-bundles-release,"
+        + "http://repository.springsource.com/maven/bundles/external@id=springsource-bundles-external";
 
     /**
      * The settings.xml DOM Document. Null if there is no settings.xml.
@@ -201,6 +201,7 @@ public class MavenSettingsImpl
             {
                 m_localRepository = System.getProperty( "user.home" ) + "/.m2/repository";
             }
+            m_localRepository = m_localRepository;
         }
         return m_localRepository;
     }
@@ -276,14 +277,14 @@ public class MavenSettingsImpl
                                                             }
                                                             if( snapshots != null && Boolean.valueOf( snapshots ) )
                                                             {
-                                                                url += MavenConstants.SEPARATOR_OPTIONS
-                                                                       + MavenConstants.OPTION_ALLOW_SNAPSHOTS;
+                                                                url += MavenConstants.SEPARATOR_OPTIONS + MavenConstants.OPTION_ALLOW_SNAPSHOTS;
                                                             }
                                                             if( releases != null && !Boolean.valueOf( releases ) )
                                                             {
-                                                                url += MavenConstants.SEPARATOR_OPTIONS
-                                                                       + MavenConstants.OPTION_DISALLOW_RELEASES;
+                                                                url += MavenConstants.SEPARATOR_OPTIONS + MavenConstants.OPTION_DISALLOW_RELEASES;
                                                             }
+                                                            url += MavenConstants.SEPARATOR_OPTIONS + MavenConstants.OPTION_ID + "=" + id;
+
                                                             repositories.put( id, url );
                                                             order.add( id );
                                                         }

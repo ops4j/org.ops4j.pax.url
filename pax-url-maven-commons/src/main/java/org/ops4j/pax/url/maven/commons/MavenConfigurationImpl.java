@@ -24,9 +24,9 @@ import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ops4j.lang.NullArgumentException;
@@ -42,8 +42,7 @@ import org.ops4j.util.property.PropertyStore;
  */
 public class MavenConfigurationImpl
     extends PropertyStore
-    implements MavenConfiguration
-{
+    implements MavenConfiguration {
 
     /**
      * Logger.
@@ -103,8 +102,7 @@ public class MavenConfigurationImpl
      */
     public Boolean getCertificateCheck()
     {
-        if( !contains( m_pid + MavenConstants.PROPERTY_CERTIFICATE_CHECK ) )
-        {
+        if( !contains( m_pid + MavenConstants.PROPERTY_CERTIFICATE_CHECK ) ) {
             return set( m_pid + MavenConstants.PROPERTY_CERTIFICATE_CHECK,
                         Boolean.valueOf( m_propertyResolver.get( m_pid + MavenConstants.PROPERTY_CERTIFICATE_CHECK ) )
             );
@@ -120,31 +118,21 @@ public class MavenConfigurationImpl
      */
     public URL getSettingsFileUrl()
     {
-        if( !contains( m_pid + MavenConstants.PROPERTY_SETTINGS_FILE ) )
-        {
+        if( !contains( m_pid + MavenConstants.PROPERTY_SETTINGS_FILE ) ) {
             String spec = m_propertyResolver.get( m_pid + MavenConstants.PROPERTY_SETTINGS_FILE );
-            if( spec != null )
-            {
-                try
-                {
+            if( spec != null ) {
+                try {
                     return set( m_pid + MavenConstants.PROPERTY_SETTINGS_FILE, new URL( spec ) );
-                }
-                catch( MalformedURLException e )
-                {
+                } catch( MalformedURLException e ) {
                     File file = new File( spec );
-                    if( file.exists() )
-                    {
-                        try
-                        {
+                    if( file.exists() ) {
+                        try {
                             return set( m_pid + MavenConstants.PROPERTY_SETTINGS_FILE, file.toURL() );
-                        }
-                        catch( MalformedURLException ignore )
-                        {
+                        } catch( MalformedURLException ignore ) {
                             // ignore as it usually should not happen since we already have a file
                         }
                     }
-                    else
-                    {
+                    else {
                         LOGGER.warn( "Settings file [" + spec
                                      + "] cannot be used and will be skipped (malformed url or file does not exist)"
                         );
@@ -175,8 +163,7 @@ public class MavenConfigurationImpl
     public List<MavenRepositoryURL> getDefaultRepositories()
         throws MalformedURLException
     {
-        if( !contains( m_pid + MavenConstants.PROPERTY_DEFAULT_REPOSITORIES ) )
-        {
+        if( !contains( m_pid + MavenConstants.PROPERTY_DEFAULT_REPOSITORIES ) ) {
             // look for repositories property
             String defaultRepositoriesProp =
                 m_propertyResolver.get( m_pid + MavenConstants.PROPERTY_DEFAULT_REPOSITORIES );
@@ -184,11 +171,9 @@ public class MavenConfigurationImpl
             final List<MavenRepositoryURL> defaultRepositoriesProperty = new ArrayList<MavenRepositoryURL>();
             // TODO : localRepository is never used.
             MavenRepositoryURL localRepository = getLocalRepository();
-            if( defaultRepositoriesProp != null && defaultRepositoriesProp.trim().length() > 0 )
-            {
+            if( defaultRepositoriesProp != null && defaultRepositoriesProp.trim().length() > 0 ) {
                 String[] repositories = defaultRepositoriesProp.split( REPOSITORIES_SEPARATOR );
-                for( String repositoryURL : repositories )
-                {
+                for( String repositoryURL : repositories ) {
                     defaultRepositoriesProperty.add( new MavenRepositoryURL( repositoryURL ) );
                 }
             }
@@ -217,23 +202,18 @@ public class MavenConfigurationImpl
     public List<MavenRepositoryURL> getRepositories()
         throws MalformedURLException
     {
-        if( !contains( m_pid + MavenConstants.PROPERTY_REPOSITORIES ) )
-        {
+        if( !contains( m_pid + MavenConstants.PROPERTY_REPOSITORIES ) ) {
             // look for repositories property
             String repositoriesProp = m_propertyResolver.get( m_pid + MavenConstants.PROPERTY_REPOSITORIES );
             // if not set or starting with a plus (+) get repositories from settings xml
             if( ( repositoriesProp == null || repositoriesProp.startsWith( REPOSITORIES_APPEND_SIGN ) )
-                && m_settings != null )
-            {
+                && m_settings != null ) {
                 String settingsRepos = m_settings.getRepositories();
-                if( settingsRepos != null )
-                {
-                    if( repositoriesProp == null )
-                    {
+                if( settingsRepos != null ) {
+                    if( repositoriesProp == null ) {
                         repositoriesProp = settingsRepos;
                     }
-                    else
-                    {
+                    else {
                         // apend repositories from settings xml and get rid of +
                         repositoriesProp = repositoriesProp.substring( 1 ) + REPOSITORIES_SEPARATOR + settingsRepos;
                     }
@@ -242,15 +222,12 @@ public class MavenConfigurationImpl
             // build repositories list
             final List<MavenRepositoryURL> repositoriesProperty = new ArrayList<MavenRepositoryURL>();
             MavenRepositoryURL localRepository = getLocalRepository();
-            if( localRepository != null )
-            {
+            if( localRepository != null ) {
                 repositoriesProperty.add( localRepository );
             }
-            if( repositoriesProp != null && repositoriesProp.trim().length() > 0 )
-            {
+            if( repositoriesProp != null && repositoriesProp.trim().length() > 0 ) {
                 String[] repositories = repositoriesProp.split( REPOSITORIES_SEPARATOR );
-                for( String repositoryURL : repositories )
-                {
+                for( String repositoryURL : repositories ) {
                     repositoriesProperty.add( new MavenRepositoryURL( repositoryURL ) );
                 }
             }
@@ -271,37 +248,28 @@ public class MavenConfigurationImpl
      */
     public MavenRepositoryURL getLocalRepository()
     {
-        if( !contains( m_pid + MavenConstants.PROPERTY_LOCAL_REPOSITORY ) )
-        {
+        if( !contains( m_pid + MavenConstants.PROPERTY_LOCAL_REPOSITORY ) ) {
             // look for a local repository property
             String spec = m_propertyResolver.get( m_pid + MavenConstants.PROPERTY_LOCAL_REPOSITORY );
             // if not set get local repository from maven settings
-            if( spec == null && m_settings != null )
-            {
+            if( spec == null && m_settings != null ) {
                 spec = m_settings.getLocalRepository();
             }
-            if( spec != null )
-            {
-                if( !spec.toLowerCase().contains( "@snapshots" ) )
-                {
+            if( spec != null ) {
+                if( !spec.toLowerCase().contains( "@snapshots" ) ) {
                     spec += "@snapshots";
                 }
+                spec += "@id=local";
                 // check if we have a valid url
-                try
-                {
+                try {
                     return set( m_pid + MavenConstants.PROPERTY_LOCAL_REPOSITORY, new MavenRepositoryURL( spec ) );
-                }
-                catch( MalformedURLException e )
-                {
+                } catch( MalformedURLException e ) {
                     // maybe is just a file?
-                    try
-                    {
+                    try {
                         return set( m_pid + MavenConstants.PROPERTY_LOCAL_REPOSITORY,
                                     new MavenRepositoryURL( new File( spec ).toURI().toASCIIString() )
                         );
-                    }
-                    catch( MalformedURLException ignore )
-                    {
+                    } catch( MalformedURLException ignore ) {
                         LOGGER.warn( "Local repository [" + spec + "] cannot be used and will be skipped" );
                         return set( m_pid + MavenConstants.PROPERTY_LOCAL_REPOSITORY, null );
                     }
@@ -317,11 +285,10 @@ public class MavenConfigurationImpl
      */
     public Boolean useFallbackRepositories()
     {
-        if( !contains( m_pid + MavenConstants.PROPERTY_USE_FALLBACK_REPOSITORIES ) )
-        {
+        if( !contains( m_pid + MavenConstants.PROPERTY_USE_FALLBACK_REPOSITORIES ) ) {
             String useFallbackRepoProp = m_propertyResolver.get( m_pid + MavenConstants.PROPERTY_USE_FALLBACK_REPOSITORIES );
             return set( m_pid + MavenConstants.PROPERTY_USE_FALLBACK_REPOSITORIES,
-                        Boolean.valueOf(useFallbackRepoProp == null ? "true" : useFallbackRepoProp)
+                        Boolean.valueOf( useFallbackRepoProp == null ? "true" : useFallbackRepoProp )
             );
         }
         return get( m_pid + MavenConstants.PROPERTY_USE_FALLBACK_REPOSITORIES );
@@ -329,31 +296,21 @@ public class MavenConfigurationImpl
 
     /**
      * Enables the proxy server for a given URL.
+     *
+     * @deprecated This method has side-effects and is only used in the "old" resolver.
      */
     public void enableProxy( URL url )
     {
-        final String proxySupport = m_propertyResolver.get( m_pid + MavenConstants.PROPERTY_PROXY_SUPPORT );
-        if( "false".equalsIgnoreCase( proxySupport ) )
-        {
-            return; // automatic proxy support disabled
-        }
-
         final String protocol = url.getProtocol();
-        if( protocol == null || protocol.equals( get( m_pid + MavenConstants.PROPERTY_PROXY_SUPPORT ) ) )
-        {
-            return; // already have this proxy enabled
-        }
 
-        Map<String, String> proxyDetails = m_settings.getProxySettings().get( protocol );
-        if( proxyDetails != null )
-        {
+        Map<String, String> proxyDetails = getProxySettings( url.getProtocol() ).get( protocol );
+        if( proxyDetails != null ) {
             LOGGER.trace( "Enabling proxy [" + proxyDetails + "]" );
 
             final String user = proxyDetails.get( "user" );
             final String pass = proxyDetails.get( "pass" );
 
-            Authenticator.setDefault( new Authenticator()
-            {
+            Authenticator.setDefault( new Authenticator() {
                 @Override
                 protected PasswordAuthentication getPasswordAuthentication()
                 {
@@ -371,32 +328,118 @@ public class MavenConfigurationImpl
         }
     }
 
+    private boolean isProtocolSupportEnabled( String... protocols )
+    {
+        final String proxySupport = m_propertyResolver.get( m_pid + MavenConstants.PROPERTY_PROXY_SUPPORT );
+        if( proxySupport == null ) {
+            return MavenConstants.PROPERTY_PROXY_SUPPORT_DEFAULT;
+        }
+
+        // simple cases:
+        if( "true".equalsIgnoreCase( proxySupport ) ) {
+            return true;
+        }
+        if( "false".equalsIgnoreCase( proxySupport ) ) {
+            return false;
+        }
+
+        // giving no protocols to test against, default to true.
+        if (protocols.length == 0) {
+            return true;
+        }
+        
+        // differentiate by protocol:
+        for( String protocol : protocols ) {
+            if( proxySupport.contains( protocol ) ) {
+                return true;
+            }
+        }
+        // not in list appearingly.
+        return false;
+    }
+
     /**
      * {@inheritDoc}
      */
     public Boolean isAetherDisabled()
     {
-        if( !contains( m_pid + MavenConstants.PROPERTY_DISABLE_AETHER) )
-        {
+        if( !contains( m_pid + MavenConstants.PROPERTY_DISABLE_AETHER ) ) {
             return set( m_pid + MavenConstants.PROPERTY_DISABLE_AETHER,
                         Boolean.valueOf(
-                            m_propertyResolver.get( m_pid + MavenConstants.PROPERTY_DISABLE_AETHER)
+                            m_propertyResolver.get( m_pid + MavenConstants.PROPERTY_DISABLE_AETHER )
                         )
             );
         }
-        return get( m_pid + MavenConstants.PROPERTY_DISABLE_AETHER);
+        return get( m_pid + MavenConstants.PROPERTY_DISABLE_AETHER );
     }
-    
-    public Map<String, Map<String, String>> getProxySettings() {
-    	if (m_settings == null)
-    		return Collections.emptyMap();
-    	return m_settings.getProxySettings();
+
+    public Map<String, Map<String, String>> getProxySettings( String... protocols )
+    {
+        Map<String, Map<String, String>> pr = new HashMap<String, Map<String, String>>();
+
+        if( isProtocolSupportEnabled( protocols ) ) {
+
+            parseSystemWideProxySettings( pr );
+            parseProxiesFromProperty( m_propertyResolver.get( m_pid + MavenConstants.PROPERTY_PROXIES ), pr );
+
+            if( pr.isEmpty() ) {
+                if( m_settings == null ) { return Collections.emptyMap(); }
+
+                return m_settings.getProxySettings();
+            }
+        }
+        return pr;
     }
-    
-    public Map<String, Map<String, String>> getMirrors() {
-    	if (m_settings == null)
-    		return Collections.emptyMap();
-    	return m_settings.getMirrorSettings();
+
+    private void parseSystemWideProxySettings( Map<String, Map<String, String>> pr )
+    {
+        String httpHost = m_propertyResolver.get( "http.proxyHost" );
+        String httpPort = m_propertyResolver.get( "http.proxyPort" );
+
+        if( httpHost != null ) {
+            parseProxiesFromProperty( "http:host=" + httpHost + ",port=" + httpPort, pr );
+        }
+    }
+
+    // example: http:host=foo,port=8080;https:host=bar,port=9090
+    private void parseProxiesFromProperty( String proxySettings, Map<String, Map<String, String>> pr )
+    {
+        // TODO maybe make the parsing more clever via regex ;) Or not.
+        try {
+            if( proxySettings != null ) {
+                String[] protocols = proxySettings.split( ";" );
+
+                for( String protocolSection : protocols ) {
+                    String[] section = protocolSection.split( ":" );
+                    String protocolName = section[ 0 ];
+                    Map<String, String> keyvalue = new HashMap<String, String>();
+                    // set some defaults:
+                    keyvalue.put( "protocol", protocolName );
+                    keyvalue.put( "nonProxyHosts", "" );
+                    keyvalue.put( "host", "localhost" );
+                    keyvalue.put( "port", "80" );
+
+                    keyvalue.put( "nonProxyHosts", "" );
+
+                    for( String keyvalueList : section[ 1 ].split( "," ) ) {
+                        String[] kv = keyvalueList.split( "=" );
+                        String key = kv[ 0 ];
+                        String value = kv[ 1 ];
+                        keyvalue.put( key, value );
+                    }
+                    pr.put( protocolName, keyvalue );
+                }
+            }
+        } catch( ArrayIndexOutOfBoundsException ex ) {
+            throw new IllegalArgumentException( "Proxy setting is set to " + proxySettings + ". But it should have this format: <protocol>:<key>=<value>,<key=value>;protocol:<key>=<value>,.." );
+        }
+    }
+
+    public Map<String, Map<String, String>> getMirrors()
+    {
+        // DO support mirrors via properties (just like we do for proxies.
+        if( m_settings == null ) { return Collections.emptyMap(); }
+        return m_settings.getMirrorSettings();
     }
 
 }

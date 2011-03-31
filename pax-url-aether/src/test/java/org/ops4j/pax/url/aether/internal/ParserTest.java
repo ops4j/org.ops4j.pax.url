@@ -79,7 +79,7 @@ public class ParserTest
         throws MalformedURLException
     {
         Parser parser;
-        parser = new Parser( "http://repository!group/artifact" );
+        parser = new Parser( "http://repository@id=fake!group/artifact" );
         assertTrue(parser.getRepositoryURL().isSnapshotsEnabled());
         assertTrue(parser.getRepositoryURL().isReleasesEnabled());
     }
@@ -88,7 +88,7 @@ public class ParserTest
     public void urlWithRepositoryAndGroupArtifact()
         throws MalformedURLException
     {
-        Parser parser = new Parser( "http://repository!group/artifact" );
+        Parser parser = new Parser( "http://repository@id=fake!group/artifact" );
         assertEquals( "Group", "group", parser.getGroup() );
         assertEquals( "Artifact", "artifact", parser.getArtifact() );
         assertEquals( "Version", "LATEST", parser.getVersion() );
@@ -116,7 +116,7 @@ public class ParserTest
     public void urlWithRepositoryAndGroupArtifactVersionType()
         throws MalformedURLException
     {
-        Parser parser = new Parser( "http://repository!group/artifact/version/type" );
+        Parser parser = new Parser( "http://repository@id=fake!group/artifact/version/type" );
         assertEquals( "Group", "group", parser.getGroup() );
         assertEquals( "Artifact", "artifact", parser.getArtifact() );
         assertEquals( "Version", "version", parser.getVersion() );
@@ -130,7 +130,7 @@ public class ParserTest
     public void urlWithRepositoryAndGroupArtifactVersionTypeClassifier()
         throws MalformedURLException
     {
-        Parser parser = new Parser( "http://repository!group/artifact/version/type/classifier" );
+        Parser parser = new Parser( "http://repository@id=fake!group/artifact/version/type/classifier" );
         assertEquals( "Group", "group", parser.getGroup() );
         assertEquals( "Artifact", "artifact", parser.getArtifact() );
         assertEquals( "Version", "version", parser.getVersion() );
@@ -224,13 +224,25 @@ public class ParserTest
     public void urlWithJarRepository()
         throws MalformedURLException
     {
-        Parser parser = new Parser( "jar:http://repository/repository.jar!/!group/artifact/0.1.0" );
+        Parser parser = new Parser( "jar:http://repository/repository.jar!/@id=fake!group/artifact/0.1.0" );
         assertEquals( "Artifact path", "group/artifact/0.1.0/artifact-0.1.0.jar", parser.getArtifactPath() );
         assertEquals( "repository",
                       new URL( "jar:http://repository/repository.jar!/" ),
                       parser.getRepositoryURL().getURL()
         );
     }
+
+    @Test
+       public void trailingSpace()
+           throws MalformedURLException
+       {
+           Parser parser = new Parser( " http://repository/repository@id=fake!group/artifact/0.1.0" );
+           assertEquals( "Artifact path", "group/artifact/0.1.0/artifact-0.1.0.jar", parser.getArtifactPath() );
+           assertEquals( "repository",
+                         new URL( "http://repository/repository/" ),
+                         parser.getRepositoryURL().getURL()
+           );
+       }
 
     @Test
     public void snapshotPath()
