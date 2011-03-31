@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 Alin Dreghiciu.
+ * Copyright 2011 Toni Menzel.
  *
  * Licensed  under the  Apache License,  Version 2.0  (the "License");
  * you may not use  this file  except in  compliance with the License.
@@ -29,9 +29,9 @@ public interface ServiceConstants
     /**
      * Service PID used for configuration.
      */
-    static final String PID = "org.ops4j.pax.url.aether";
+    static final String PID = "org.ops4j.pax.url.mvn";
     /**
      * The protocol name.
      */
-    static final String PROTOCOL = "aether";
+    static final String PROTOCOL = "mvn";
 }
