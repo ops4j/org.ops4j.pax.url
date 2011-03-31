@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.url.aether.internal;
+package org.ops4j.pax.url.mvn.internal;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -26,11 +26,11 @@ import org.ops4j.pax.url.commons.handler.HandlerActivator;
 import org.ops4j.pax.url.maven.commons.MavenConfiguration;
 import org.ops4j.pax.url.maven.commons.MavenConfigurationImpl;
 import org.ops4j.pax.url.maven.commons.MavenSettingsImpl;
-import org.ops4j.pax.url.aether.ServiceConstants;
+import org.ops4j.pax.url.mvn.ServiceConstants;
 import org.ops4j.util.property.PropertyResolver;
 
 /**
- * Bundle activator for aether: protocol handler
+ * Bundle activator for mvn: protocol handler
  */
 public final class Activator
     extends HandlerActivator<MavenConfiguration>

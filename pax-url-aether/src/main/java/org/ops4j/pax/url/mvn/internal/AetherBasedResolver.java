@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.url.aether.internal;
+package org.ops4j.pax.url.mvn.internal;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -57,7 +57,7 @@ import org.sonatype.aether.version.Version;
 import org.ops4j.pax.url.maven.commons.MavenConfiguration;
 import org.ops4j.pax.url.maven.commons.MavenRepositoryURL;
 
-import static org.ops4j.pax.url.aether.internal.Parser.*;
+import static org.ops4j.pax.url.mvn.internal.Parser.*;
 
 /**
  * Aether based, drop in replacement for mvn protocol
@@ -143,8 +143,8 @@ public class AetherBasedResolver {
         return r;
     }
 
-    // This is because aether does not like unresolvable hosts at all.
-    // Once aether fixes this (if so) we can remove this eviction.
+    // This is because mvn does not like unresolvable hosts at all.
+    // Once mvn fixes this (if so) we can remove this eviction.
     private void evictNonAvailableRepos()
     {
         for( Iterator<RemoteRepository> it = m_remoteRepos.iterator(); it.hasNext(); ) {

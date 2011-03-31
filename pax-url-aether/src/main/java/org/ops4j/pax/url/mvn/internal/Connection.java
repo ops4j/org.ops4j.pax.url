@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.url.aether.internal;
+package org.ops4j.pax.url.mvn.internal;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,9 +30,9 @@ import org.ops4j.lang.NullArgumentException;
 import org.ops4j.pax.url.maven.commons.MavenConfiguration;
 
 /**
- * An URLConnextion that supports aether: protocol.<br/>
+ * An URLConnextion that supports mvn: protocol.<br/>
  * Syntax:<br>
- * aether:[repository_url!]groupId/artifactId[/version[/type]]<br/>
+ * mvn:[repository_url!]groupId/artifactId[/version[/type]]<br/>
  * where:<br/>
  * - repository_url = an url that points to a maven 2 repository; optional, if not sepecified the repositories are
  * resolved based on the repository/localRepository.<br/>
@@ -43,20 +43,20 @@ import org.ops4j.pax.url.maven.commons.MavenConfiguration;
  * metadata<br/>
  * - type = type of maven artifact; optional, if not specified uses JAR<br/>
  * Examples:<br>
- * aether:http://repository.ops4j.org/aether-releases!org.ops4j.pax.runner/runner/0.4.0 - an artifact from an http repository<br/>
- * aether:http://user:password@repository.ops4j.org/aether-releases!org.ops4j.pax.runner/runner/0.4.0 - an artifact from an http
+ * mvn:http://repository.ops4j.org/mvn-releases!org.ops4j.pax.runner/runner/0.4.0 - an artifact from an http repository<br/>
+ * mvn:http://user:password@repository.ops4j.org/mvn-releases!org.ops4j.pax.runner/runner/0.4.0 - an artifact from an http
  * repository with authentication<br/>
- * aether:file://c:/localRepo!org.ops4j.pax.runner/runner/0.4.0 - an artifact from a directory<br/>
- * aether:jar:file://c:/repo.zip!/repository!org.ops4j.pax.runner/runner/0.4.0 - an artifact from a zip file<br/>
- * aether:org.ops4j.pax.runner/runner/0.4.0 - an artifact that will be resolved based on the configured repositories<br/>
+ * mvn:file://c:/localRepo!org.ops4j.pax.runner/runner/0.4.0 - an artifact from a directory<br/>
+ * mvn:jar:file://c:/repo.zip!/repository!org.ops4j.pax.runner/runner/0.4.0 - an artifact from a zip file<br/>
+ * mvn:org.ops4j.pax.runner/runner/0.4.0 - an artifact that will be resolved based on the configured repositories<br/>
  * <br/>
  * The service can be configured in two ways: via configuration admin if available and via framework/system properties
  * where the configuration via config admin has priority.<br/>
  * Service configuration:<br/>
- * - org.ops4j.pax.url.aether.settings = the path to settings.xml;<br/>
- * - org.ops4j.pax.url.aether.localRepository = the path to local repository directory;<br>
- * - org.ops4j.pax.url.aether.repository =  a comma separated list for repositories urls;<br/>
- * - org.ops4j.pax.url.aether.certicateCheck = true/false if the SSL certificate check should be done.
+ * - org.ops4j.pax.url.mvn.settings = the path to settings.xml;<br/>
+ * - org.ops4j.pax.url.mvn.localRepository = the path to local repository directory;<br>
+ * - org.ops4j.pax.url.mvn.repository =  a comma separated list for repositories urls;<br/>
+ * - org.ops4j.pax.url.mvn.certicateCheck = true/false if the SSL certificate check should be done.
  * Default false.
  *
  * @author Toni Menzel

@@ -21,8 +21,8 @@
     </description>
 
     <properties>
-        <bundle.symbolicName>org.ops4j.pax.url.aether</bundle.symbolicName>
-        <bundle.namespace>org.ops4j.pax.url.aether</bundle.namespace>
+        <bundle.symbolicName>org.ops4j.pax.url.mvn</bundle.symbolicName>
+        <bundle.namespace>org.ops4j.pax.url.mvn</bundle.namespace>
         <aetherVersion>1.11</aetherVersion>
         <mavenVersion>3.0.3</mavenVersion>
         <wagonVersion>1.0-beta-7</wagonVersion>
@@ -103,7 +103,7 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- aether stuff -->
+        <!-- mvn stuff -->
         <dependency>
             <groupId>org.sonatype.aether</groupId>
             <artifactId>aether-api</artifactId>

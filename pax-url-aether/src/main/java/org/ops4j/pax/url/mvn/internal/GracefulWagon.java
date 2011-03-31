@@ -1,4 +1,4 @@
-package org.ops4j.pax.url.aether.internal;
+package org.ops4j.pax.url.mvn.internal;
 
 import java.io.File;
 import java.util.List;

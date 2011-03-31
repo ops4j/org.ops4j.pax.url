@@ -1,7 +1,6 @@
-package org.ops4j.pax.url.aether.internal;
+package org.ops4j.pax.url.mvn.internal;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.util.Properties;
 import java.util.UUID;

@@ -16,13 +16,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.url.aether.internal;
+package org.ops4j.pax.url.mvn.internal;
 
 import java.net.MalformedURLException;
 import org.ops4j.pax.url.maven.commons.MavenRepositoryURL;
 
 /**
- * Parser for aether: protocol.<br/>
+ * Parser for mvn: protocol.<br/>
  *
  * @author Alin Dreghiciu
  * @author Toni Menzel
@@ -41,7 +41,7 @@ public class Parser
     /**
      * Syntax for the url; to be shown on exception messages.
      */
-    private static final String SYNTAX = "aether:[repository_url!]groupId/artifactId[/[version]/[type]]";
+    private static final String SYNTAX = "mvn:[repository_url!]groupId/artifactId[/[version]/[type]]";
 
     /**
      * Separator between repository and artifact definition.
@@ -122,7 +122,7 @@ public class Parser
     /**
      * Creates a new protocol parser.
      *
-     * @param path the path part of the url (without starting aether:)
+     * @param path the path part of the url (without starting mvn:)
      *
      * @throws MalformedURLException if provided path does not comply to expected syntax or an malformed repository URL
      */

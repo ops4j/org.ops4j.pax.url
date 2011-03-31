@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.url.aether;
+package org.ops4j.pax.url.mvn;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,14 +23,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonatype.aether.collection.DependencyCollectionException;
 import org.sonatype.aether.resolution.ArtifactResolutionException;
-import org.ops4j.pax.url.aether.internal.AetherBasedResolver;
+import org.ops4j.pax.url.mvn.internal.AetherBasedResolver;
 import org.ops4j.pax.url.maven.commons.MavenConfiguration;
 import org.ops4j.pax.url.maven.commons.MavenConfigurationImpl;
 import org.ops4j.pax.url.maven.commons.MavenConstants;
 import org.ops4j.util.property.PropertiesPropertyResolver;
 
 /**
- * Simply playing with aether api.
+ * Simply playing with mvn api.
  */
 public class AetherTest {
 

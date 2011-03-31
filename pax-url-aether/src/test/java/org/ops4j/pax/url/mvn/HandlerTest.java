@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.url.aether;
+package org.ops4j.pax.url.mvn;
 
 import java.io.IOException;
 import java.net.URL;
@@ -40,7 +40,7 @@ public class HandlerTest
         throws IOException
     {
         System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
-        new URL( "aether:group/artifact/0.1.0" );
+        new URL( "mvn:group/artifact/0.1.0" );
     }
 
    @Test
@@ -52,9 +52,9 @@ public class HandlerTest
        System.setProperty( "http.proxyHost", "proxy.bb.poda.cz" );
        System.setProperty( "http.proxyPort", "8080" );
 
-      //  System.setProperty( "org.ops4j.pax.url.aether.proxies","http:host=proxy.bb.poda.cz,port=3128" );
+      //  System.setProperty( "org.ops4j.pax.url.mvn.proxies","http:host=proxy.bb.poda.cz,port=3128" );
 
-        new URL("aether:org.ops4j.pax.runner.profiles/log/LATEST/composite").openStream().close();
+        new URL("mvn:org.ops4j.pax.runner.profiles/log/LATEST/composite").openStream().close();
 
     }
 }

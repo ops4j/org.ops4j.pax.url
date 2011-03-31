@@ -1,20 +1,16 @@
-package org.ops4j.pax.url.aether.internal;
+package org.ops4j.pax.url.mvn.internal;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
 
 import junit.framework.Assert;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.ops4j.pax.url.maven.commons.MavenConfigurationImpl;
 import org.ops4j.pax.url.maven.commons.MavenConstants;
-import org.ops4j.pax.url.maven.commons.MavenRepositoryURL;
 import org.ops4j.pax.url.maven.commons.MavenSettings;
 import org.ops4j.pax.url.maven.commons.MavenSettingsImpl;
 import org.ops4j.util.property.PropertiesPropertyResolver;

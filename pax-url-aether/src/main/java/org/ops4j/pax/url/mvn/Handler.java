@@ -15,21 +15,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.url.aether;
+package org.ops4j.pax.url.mvn;
 
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
 
-import org.ops4j.pax.url.aether.internal.AetherBasedResolver;
 import org.ops4j.pax.url.maven.commons.MavenConfigurationImpl;
 import org.ops4j.pax.url.maven.commons.MavenSettingsImpl;
-import org.ops4j.pax.url.aether.internal.Connection;
+import org.ops4j.pax.url.mvn.internal.Connection;
 import org.ops4j.util.property.PropertiesPropertyResolver;
 
 /**
- * {@link URLStreamHandler} implementation for "aether:" protocol.
+ * {@link URLStreamHandler} implementation for "mvn:" protocol.
  *
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @author Toni Menzel (adreghiciu@gmail.com)
