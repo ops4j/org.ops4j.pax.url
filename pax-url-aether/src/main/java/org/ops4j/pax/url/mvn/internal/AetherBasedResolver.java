@@ -239,13 +239,13 @@ public class AetherBasedResolver {
         return false;
     }
 
-    public InputStream resolve( String groupId, String artifactId, String extension, String version )
+    public InputStream resolve( String groupId, String artifactId, String classifier, String extension, String version )
         throws IOException
     {
         // version = mapLatestToRange( version );
         RepositorySystemSession session = newSession();
 
-        Artifact artifact = new DefaultArtifact( groupId, artifactId, extension, version );
+        Artifact artifact = new DefaultArtifact( groupId, artifactId, classifier, extension, version );
         File resolved = resolve( session, artifact );
 
         LOG.info( "Resolved (" + artifact.toString() + ") as " + resolved.getAbsolutePath() );

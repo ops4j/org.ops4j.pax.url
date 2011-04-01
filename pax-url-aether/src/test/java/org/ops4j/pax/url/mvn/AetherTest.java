@@ -41,7 +41,7 @@ public class AetherTest {
         throws DependencyCollectionException, ArtifactResolutionException, IOException
     {
         AetherBasedResolver aetherBasedResolver = new AetherBasedResolver( getDummyConfig() );
-        aetherBasedResolver.resolve( "org.ops4j.pax.web", "pax-web-api", "jar", "0.7.2" ).close();
+        aetherBasedResolver.resolve( "org.ops4j.pax.web", "pax-web-api", "", "jar", "0.7.2" ).close();
     }
 
     @Test
@@ -49,7 +49,7 @@ public class AetherTest {
         throws DependencyCollectionException, ArtifactResolutionException, IOException
     {
         AetherBasedResolver aetherBasedResolver = new AetherBasedResolver( getDummyConfig() );
-        aetherBasedResolver.resolve( "org.ops4j.pax.web", "pax-web-api", "jar", "LATEST" ).close();
+        aetherBasedResolver.resolve( "org.ops4j.pax.web", "pax-web-api", "", "jar", "LATEST" ).close();
     }
 
     @Test
@@ -60,12 +60,12 @@ public class AetherTest {
         MavenConfiguration config = getDummyConfig();
 
         AetherBasedResolver aetherBasedResolver = new AetherBasedResolver( config );
-        aetherBasedResolver.resolve( "org.ops4j.pax.web", "pax-web-api", "jar", "LATEST" ).close();
+        aetherBasedResolver.resolve( "org.ops4j.pax.web", "pax-web-api", "", "jar", "LATEST" ).close();
 
         // now again:
         // no repo
         aetherBasedResolver = new AetherBasedResolver( config );
-        aetherBasedResolver.resolve( "org.ops4j.pax.web", "pax-web-api", "jar", "LATEST" ).close();
+        aetherBasedResolver.resolve( "org.ops4j.pax.web", "pax-web-api", "", "jar", "LATEST" ).close();
     }
 
     private MavenConfiguration getDummyConfig()
