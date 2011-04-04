@@ -23,7 +23,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.logging.Log;
@@ -91,8 +90,6 @@ public class AetherBasedResolver {
         m_mirrorSelector = selectMirrors();
         m_proxySelector = selectProxies();
         assignProxyAndMirrors();
-
-        // evictNonAvailableRepos();
     }
 
     private void assignProxyAndMirrors()
@@ -106,7 +103,7 @@ public class AetherBasedResolver {
             r.setProxy( m_proxySelector.getProxy( r ) );
 
             RemoteRepository mirror = m_mirrorSelector.getMirror( r );
-            if (mirror != null) {
+            if( mirror != null ) {
                 String key = mirror.getId();
                 naming.put( key, mirror );
                 if( !map.containsKey( key ) ) {
@@ -125,7 +122,7 @@ public class AetherBasedResolver {
                 mirroedRepos.add( naming.get( rep ) );
             }
             mirror.setMirroredRepositories( mirroedRepos );
-            m_remoteRepos.add(0,mirror);
+            m_remoteRepos.add( 0, mirror );
         }
 
     }
@@ -134,27 +131,10 @@ public class AetherBasedResolver {
         throws MalformedURLException
     {
         List<MavenRepositoryURL> r = new ArrayList<MavenRepositoryURL>();
-
         for( MavenRepositoryURL s : configuration.getRepositories() ) {
-            //if( !s.isFileRepository() ) {
-                r.add( s );
-            //}
+            r.add( s );
         }
         return r;
-    }
-
-    // This is because mvn does not like unresolvable hosts at all.
-    // Once mvn fixes this (if so) we can remove this eviction.
-    private void evictNonAvailableRepos()
-    {
-        for( Iterator<RemoteRepository> it = m_remoteRepos.iterator(); it.hasNext(); ) {
-            RemoteRepository r = it.next();
-
-            if( !isAvailable( r.getUrl() ) ) {
-                //     r.setUrl( "file:///foo/bar" );
-                //it.remove();
-            }
-        }
     }
 
     private ProxySelector selectProxies()
@@ -172,14 +152,6 @@ public class AetherBasedResolver {
             proxySelector.add( proxyObj, nonProxyHosts );
         }
         return proxySelector;
-        /**
-
-         for (RemoteRepository r : m_remoteRepos) {
-         Proxy proxy = proxySelector.getProxy(r);
-         r.setProxy(proxy);
-         }
-         *
-         */
     }
 
     private MirrorSelector selectMirrors()
@@ -257,8 +229,6 @@ public class AetherBasedResolver {
     {
         try {
             artifact = resolveLatestVersionRange( session, artifact );
-            //  Metadata metadata = new DefaultMetadata( artifact.getGroupId(), artifact.getArtifactId(), MAVEN_METADATA_XML, Metadata.Nature.RELEASE_OR_SNAPSHOT );
-            //  List<MetadataResult> metadataResults = m_repoSystem.resolveMetadata( session, Arrays.asList( new MetadataRequest( metadata ) ) );
             return m_repoSystem.resolveArtifact( session, new ArtifactRequest( artifact, m_remoteRepos, null ) ).getArtifact().getFile();
         } catch( RepositoryException e ) {
             throw new IOException( "Aether Error.", e );
@@ -302,11 +272,8 @@ public class AetherBasedResolver {
     {
         assert m_config != null : "local repository cannot be null";
         File local = m_config.getLocalRepository().getFile();
-        // assert local.exists() : "local repository must exist (" + local + ").";
 
         MavenRepositorySystemSession session = new MavenRepositorySystemSession();
-
-        //session.setOffline( true );
 
         LocalRepository localRepo = new LocalRepository( local );
 
