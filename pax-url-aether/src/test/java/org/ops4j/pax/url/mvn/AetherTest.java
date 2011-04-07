@@ -23,10 +23,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonatype.aether.collection.DependencyCollectionException;
 import org.sonatype.aether.resolution.ArtifactResolutionException;
-import org.ops4j.pax.url.mvn.internal.AetherBasedResolver;
 import org.ops4j.pax.url.maven.commons.MavenConfiguration;
 import org.ops4j.pax.url.maven.commons.MavenConfigurationImpl;
 import org.ops4j.pax.url.maven.commons.MavenConstants;
+import org.ops4j.pax.url.mvn.internal.AetherBasedResolver;
 import org.ops4j.util.property.PropertiesPropertyResolver;
 
 /**
@@ -91,6 +91,23 @@ public class AetherTest {
         f.mkdirs();
         LOG.info( "Caching" + " to " + f.getAbsolutePath() );
         return f;
+    }
+
+    @Test
+    public void testResolveRDF()
+        throws DependencyCollectionException, ArtifactResolutionException, IOException
+    {
+        Properties p = new Properties();
+        p.setProperty( ServiceConstants.PID + MavenConstants.PROPERTY_LOCAL_REPOSITORY, getCache().toURI().toASCIIString() );
+        p.setProperty( ServiceConstants.PID + MavenConstants.PROPERTY_REPOSITORIES,
+                       "https://repository.jboss.org/nexus/content/repositories/thirdparty-releases@id=jboss"
+
+        );
+        MavenConfigurationImpl conf = new MavenConfigurationImpl( new PropertiesPropertyResolver( p ), ServiceConstants.PID );
+
+        AetherBasedResolver aetherBasedResolver = new AetherBasedResolver( conf );
+        aetherBasedResolver.resolve( "org.openrdf", "openrdf-model", "", "jar", "2.0.1" ).close();
+
     }
 }
 
