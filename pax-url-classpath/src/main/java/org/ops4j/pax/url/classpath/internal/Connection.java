@@ -183,10 +183,13 @@ public class Connection
      *
      * @param symbolicName a specific bundle symbolic name
      *
-     * @return an array of bundles
+     * @return an array of bundles or null if not found
      */
     private Bundle[] getBundles( final String symbolicName )
     {
+    	if (m_bundleContext == null) 
+    		return null;
+    	
         final Bundle[] bundles = m_bundleContext.getBundles();
         if( bundles != null )
         {

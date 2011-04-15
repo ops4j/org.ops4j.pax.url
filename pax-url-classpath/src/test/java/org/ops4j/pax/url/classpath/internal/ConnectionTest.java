@@ -104,5 +104,13 @@ public class ConnectionTest
         InputStream is = new Connection( new URL( "http:nonExisting" ), context ).getInputStream();
         verify( context );
     }
+    
+    @Test()
+    public void standeloneRun()
+        throws IOException
+    {
+    	System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
+		new URL("classpath:foo/bar");
+    }
 
 }
