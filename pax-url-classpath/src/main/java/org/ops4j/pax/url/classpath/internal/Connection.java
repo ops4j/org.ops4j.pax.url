@@ -54,7 +54,7 @@ public class Connection
      * Creates a new connection.
      *
      * @param url           the url; cannot be null
-     * @param bundleContext the bundle context; cannot be null
+     * @param bundleContext the bundle context; can be null for standalone use 
      *
      * @throws java.net.MalformedURLException in case of a malformed url
      */
@@ -63,7 +63,6 @@ public class Connection
     {
         super( url );
         NullArgumentException.validateNotNull( url, "URL" );
-        NullArgumentException.validateNotNull( bundleContext, "Bundle context" );
         m_bundleContext = bundleContext;
         m_parser = new Parser( url.getPath() );
     }

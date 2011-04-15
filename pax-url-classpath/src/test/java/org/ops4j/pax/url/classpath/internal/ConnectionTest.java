@@ -38,7 +38,7 @@ public class ConnectionTest
         new Connection( null, createMock( BundleContext.class ) );
     }
 
-    @Test( expected = IllegalArgumentException.class )
+    @Test()
     public void constructorWithNullBundleContext()
         throws MalformedURLException
     {
@@ -110,7 +110,7 @@ public class ConnectionTest
         throws IOException
     {
     	System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
-		new URL("classpath:foo/bar");
+		new URL("classpath:connection/resource").openConnection();
     }
 
 }
