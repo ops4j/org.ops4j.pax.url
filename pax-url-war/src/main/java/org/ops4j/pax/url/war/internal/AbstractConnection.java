@@ -323,7 +323,7 @@ abstract class AbstractConnection
 			if (nodeName.contains("-class")) {
 				//found a class attribute extract package
 				String lookupClass = node.getTextContent();
-				String packageName = lookupClass.substring(0, lookupClass.lastIndexOf("."));
+				String packageName = lookupClass.substring(0, lookupClass.lastIndexOf(".")).trim();
 				webXmlImports.add(packageName);
 			}
 		}
