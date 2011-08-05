@@ -194,6 +194,15 @@
       </roles>
       <timezone>UTC+1</timezone>
     </developer>
+    <developer>
+      <id>hwellmann</id>
+      <name>Harald Wellmann</name>
+      <email>harald.wellmann@gmx.de</email>
+      <roles>
+        <role>Developer</role>
+      </roles>
+      <timezone>UTC+1</timezone>
+    </developer>
   </developers>
 
   <profiles>
@@ -203,6 +212,7 @@
         <activeByDefault>true</activeByDefault>
       </activation>
       <modules>
+        <module>pax-url-aether</module>
         <module>pax-url-assembly</module>
         <module>pax-url-cache</module>
         <module>pax-url-classpath</module>
@@ -212,14 +222,15 @@
         <module>pax-url-maven-commons</module>
         <module>pax-url-mvn</module>
         <module>pax-url-obr</module>
+        <module>pax-url-reference</module>
         <module>pax-url-war</module>
         <module>pax-url-wrap</module>
-        <module>pax-url-aether</module>
       </modules>
     </profile>
     <profile>
       <id>release</id>
       <modules>
+        <module>pax-url-aether</module>
         <module>pax-url-assembly</module>
         <module>pax-url-cache</module>
         <module>pax-url-classpath</module>
@@ -229,9 +240,9 @@
         <module>pax-url-maven-commons</module>
         <module>pax-url-mvn</module>
         <module>pax-url-obr</module>
+        <module>pax-url-reference</module>
         <module>pax-url-war</module>
         <module>pax-url-wrap</module>
-        <module>pax-url-aether</module>
       </modules>
     </profile>
     <profile>
@@ -243,6 +254,5 @@
       </modules>
     </profile>
   </profiles>
-
 </project>
 
