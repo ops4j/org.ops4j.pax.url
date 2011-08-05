@@ -8,6 +8,10 @@
   </parent>
   <groupId>org.ops4j.pax.url</groupId>
   <artifactId>pax-url-reference</artifactId>
+  <name>OPS4J Pax Url - reference:</name>
+  <description>
+    OPS4J Pax Url - reference: protocol handler.
+  </description>
 
   <properties>
     <bundle.symbolicName>org.ops4j.pax.url.reference</bundle.symbolicName>
@@ -68,16 +72,6 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.easymock</groupId>
-      <artifactId>easymock</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.ops4j.base</groupId>
-      <artifactId>ops4j-base-io</artifactId>
       <scope>test</scope>
     </dependency>
 
