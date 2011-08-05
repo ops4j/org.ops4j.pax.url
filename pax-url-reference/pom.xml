@@ -1,0 +1,85 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>url</artifactId>
+    <groupId>org.ops4j.pax</groupId>
+    <version>1.3.5-SNAPSHOT</version>
+    <relativePath>..</relativePath>
+  </parent>
+  <groupId>org.ops4j.pax.url</groupId>
+  <artifactId>pax-url-reference</artifactId>
+
+  <properties>
+    <bundle.symbolicName>org.ops4j.pax.url.reference</bundle.symbolicName>
+    <bundle.namespace>org.ops4j.pax.url.reference</bundle.namespace>
+  </properties>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
+
+  <dependencies>
+
+    <!-- Embeded dependencies (not transitive) -->
+    <dependency>
+      <groupId>org.ops4j.base</groupId>
+      <artifactId>ops4j-base-lang</artifactId>
+      <scope>compile</scope>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.ops4j.base</groupId>
+      <artifactId>ops4j-base-util-property</artifactId>
+      <scope>compile</scope>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.ops4j.pax.swissbox</groupId>
+      <artifactId>pax-swissbox-optional-jcl</artifactId>
+      <scope>compile</scope>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.ops4j.pax.url</groupId>
+      <artifactId>pax-url-commons</artifactId>
+      <version>1.3.5-SNAPSHOT</version>
+      <scope>compile</scope>
+      <optional>true</optional>
+    </dependency>
+
+    <!-- Provided dependencies (not transitive) -->
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.core</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.compendium</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- Test dependencies -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.easymock</groupId>
+      <artifactId>easymock</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.ops4j.base</groupId>
+      <artifactId>ops4j-base-io</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
+</project>
