@@ -2,9 +2,22 @@ h1. Release paxurl
 
 If you have all required rights to release pax-url follow these steps:
 
-1) add this into your ~/.m2/settings.xml
+1) add this into your ~/.m2/settings.xml and fill in your credentials
+and local paths:
 
 {code}
+
+<server>
+  <id>sonatype.staging.snapshots.deploy</id>
+  <username>YOURNAME</username>
+  <password>SECRET</password>
+</server>
+<server>
+  <id>sonatype.staging.releases.deploy</id>
+  <username>YOURNAME</username>
+  <password>SECRET</password>
+</server>
+
 <profile>
   <id>release</id>
   <properties>
@@ -45,5 +58,8 @@ mvn -Prelease,repos.sonatype.staging  source:jar javadoc:jar deploy
 git push
 {code}
 
-8) go to oss.sonatype.org and push pax-url to central
+8) go to oss.sonatype.org and push pax-url to central:
+Select Staging Repositories, org.ops4j, Close and finally Release.
+The new artifacts will appear on Maven Central within an hour or so.
+
 
