@@ -36,6 +36,8 @@ public class WarConnection
 
     private static final String JAVAX_SERVLET_HTTP = "javax.servlet.http";
 	private static final String JAVAX_SERVLET = "javax.servlet";
+	private static final String JAVAX_JSP = "javax.servlet.jsp";
+	private static final String JAVAX_JSP_JSTL = "javax.servlet.jsp.jstl";
 	private static final String APACHE_JASPER = "org.apache.jasper";
 	private static final String APACHE_TAGLIBS = "org.apache.taglibs";
 	private static final String SUN_EL = "com.sun.el";
@@ -67,6 +69,9 @@ public class WarConnection
             String packages = "javax.servlet,"
                 + "javax.servlet.http,"
                 + "javax.*; resolution:=optional,"
+                + "javax.servlet.jsp; resolution:=optional,"
+                + "javax.servlet.jsp.el; resolution:=optional,"
+                + "javax.servlet.jsp.jstl.*; resolution:=optional,"
                 + "org.apache.jasper.*;resolution:=optional," //extra dependencies for JSP/JSF War Bundles
                 + "org.apache.taglibs.*;resolution:=optional,"
                 + "com.sun.el.*;resolution:=optional,"
@@ -106,6 +111,12 @@ public class WarConnection
         		}
         	} else { //both are missing
         		importPackages += ","+JAVAX_SERVLET+","+JAVAX_SERVLET_HTTP;
+        	}
+        	
+       		if (!importPackages.contains(JAVAX_JSP)) {
+       			importPackages += ","+JAVAX_JSP+";resolution:=optional";
+       			importPackages += ","+JAVAX_JSP+".el;resolution:=optional";
+        		importPackages += ","+JAVAX_JSP_JSTL+".*;resolution:=optional";
         	}
         	
         	if (!importPackages.contains(APACHE_JASPER)) {
