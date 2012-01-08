@@ -48,11 +48,12 @@ public interface ConnectionFactory<T>
         throws IOException;
 
     /**
-     * Creates a handler specific configuration.
+     * Creates a handler specific configuration. Returns null if there is
+     * insufficient configuration information in the resolver.
      *
      * @param propertyResolver configuration propertyResolver
      *
-     * @return T protocol specific configuration
+     * @return T protocol specific configuration or null
      */
     T createConfiguration( PropertyResolver propertyResolver );
 

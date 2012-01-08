@@ -66,16 +66,4 @@ public class Activator extends HandlerActivator<Configuration>
         );
     }
 
-    @Override
-    public void start( BundleContext bundleContext )
-    {
-        super.start( bundleContext );
-
-    }
-
-    @Override
-    public void stop( BundleContext bundleContext )
-    {
-        super.stop( bundleContext );
-    }
 }

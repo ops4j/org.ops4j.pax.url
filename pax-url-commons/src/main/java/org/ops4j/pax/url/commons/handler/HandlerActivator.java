@@ -118,7 +118,6 @@ public class HandlerActivator<T>
         NullArgumentException.validateNotNull( bundleContext, "Bundle context" );
         m_bundleContext = bundleContext;
         registerManagedService();
-        registerHandler();
         LOG.debug( "Handler for protocols " + Arrays.deepToString( m_protocols ) + " started" );
     }
 
@@ -136,10 +135,12 @@ public class HandlerActivator<T>
         if ( m_handlerReg != null )
         {
             m_handlerReg.unregister();
+            m_handlerReg = null;
         }
         if ( m_managedServiceReg != null )
         {
             m_managedServiceReg.unregister();
+            m_managedServiceReg = null;
         }
         m_bundleContext = null;
         LOG.debug( "Handler for protocols " + Arrays.deepToString( m_protocols ) + " stopped" );
@@ -195,6 +196,15 @@ public class HandlerActivator<T>
     {
         m_propertyResolver = propertyResolver;
         m_configuration = m_connectionFactory.createConfiguration( propertyResolver );
+        if ( m_configuration != null && m_handlerReg == null )
+        {
+            registerHandler();
+        }
+        else if ( m_configuration == null && m_handlerReg != null )
+        {
+            m_handlerReg.unregister();
+            m_handlerReg = null;
+        }
     }
 
     /**

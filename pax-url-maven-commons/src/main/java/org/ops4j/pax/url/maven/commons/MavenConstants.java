@@ -24,7 +24,10 @@ package org.ops4j.pax.url.maven.commons;
  * @since August 26, 2007
  */
 public interface MavenConstants {
-
+    /**
+     * Warning: use only in framework properties.  If present, do not accept configuration, wait for one without this flag.
+     */
+    static final String REQUIRE_CONFIG_ADMIN_CONFIG = ".require.config.admin.config";
     /**
      * Certificate check configuration property name.
      */

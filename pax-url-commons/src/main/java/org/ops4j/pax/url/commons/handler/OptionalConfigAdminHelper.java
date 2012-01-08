@@ -77,12 +77,7 @@ class OptionalConfigAdminHelper
                 }
                 else
                 {
-                    handlerActivator.setResolver(
-                        new DictionaryPropertyResolver(
-                            config,
-                            new BundleContextPropertyResolver( bundleContext )
-                        )
-                    );
+                    handlerActivator.setResolver( new DictionaryPropertyResolver( config ) );
                 }
             }
 

@@ -87,6 +87,10 @@ public class MavenConfigurationImpl
         m_propertyResolver = propertyResolver;
     }
 
+    public boolean isValid() {
+        return m_propertyResolver.get( m_pid + MavenConstants.REQUIRE_CONFIG_ADMIN_CONFIG ) == null;
+    }
+
     /**
      * Sets maven settings abstraction.
      *

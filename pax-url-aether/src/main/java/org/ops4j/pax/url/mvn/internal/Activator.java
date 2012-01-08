@@ -65,6 +65,10 @@ public final class Activator
                 {
                     final MavenConfigurationImpl config =
                         new MavenConfigurationImpl( propertyResolver, ServiceConstants.PID );
+                    if (!config.isValid())
+                    {
+                        return null;
+                    }
                     config.setSettings(
                         new MavenSettingsImpl( config.getSettingsFileUrl(), config.useFallbackRepositories() )
                     );
