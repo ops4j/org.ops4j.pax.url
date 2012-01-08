@@ -178,7 +178,7 @@ public class MavenConfigurationImpl
             if( defaultRepositoriesProp != null && defaultRepositoriesProp.trim().length() > 0 ) {
                 String[] repositories = defaultRepositoriesProp.split( REPOSITORIES_SEPARATOR );
                 for( String repositoryURL : repositories ) {
-                    defaultRepositoriesProperty.add( new MavenRepositoryURL( repositoryURL ) );
+                    defaultRepositoriesProperty.add( new MavenRepositoryURL( repositoryURL.trim() ) );
                 }
             }
             LOGGER.trace( "Using repositories [" + defaultRepositoriesProperty + "]" );
@@ -232,7 +232,7 @@ public class MavenConfigurationImpl
             if( repositoriesProp != null && repositoriesProp.trim().length() > 0 ) {
                 String[] repositories = repositoriesProp.split( REPOSITORIES_SEPARATOR );
                 for( String repositoryURL : repositories ) {
-                    repositoriesProperty.add( new MavenRepositoryURL( repositoryURL ) );
+                    repositoriesProperty.add( new MavenRepositoryURL( repositoryURL.trim() ) );
                 }
             }
             LOGGER.trace( "Using repositories [" + repositoriesProperty + "]" );
