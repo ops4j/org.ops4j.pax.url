@@ -122,6 +122,7 @@ public class AetherBasedResolver {
                 mirroedRepos.add( naming.get( rep ) );
             }
             mirror.setMirroredRepositories( mirroedRepos );
+            m_remoteRepos.removeAll(mirroedRepos);
             m_remoteRepos.add( 0, mirror );
         }
 
