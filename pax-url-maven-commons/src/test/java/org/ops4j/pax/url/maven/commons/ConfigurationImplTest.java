@@ -24,6 +24,7 @@ import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -126,12 +127,25 @@ public class ConfigurationImplTest
     }
 
     @Test
+    public void getGetLocalRepository()
+        throws MalformedURLException
+    {
+        PropertyResolver propertyResolver = createMock( PropertyResolver.class );
+        expect( propertyResolver.get( "test.pid.localRepository" ) ).andReturn( "file:/user/home/.m2/repository" );
+        replay( propertyResolver );
+        MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
+        MavenRepositoryURL localRepo = config.getLocalRepository();
+        assertNotNull( localRepo );
+        verify( propertyResolver );
+    }
+
+    @Test
     public void getRepositoriesWithOneRepository()
         throws MalformedURLException
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
         expect( propertyResolver.get( "test.pid.repositories" ) ).andReturn( "file:repository1/@id=repository1" );
-        expect( propertyResolver.get( "test.pid.localRepository" ) ).andReturn( null );
+        expect( propertyResolver.get( "test.pid.defaultLocalRepoAsRemote" ) ).andReturn( null );
         replay( propertyResolver );
         MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
         List<MavenRepositoryURL> repositories = config.getRepositories();
@@ -147,7 +161,7 @@ public class ConfigurationImplTest
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
         expect( propertyResolver.get( "test.pid.repositories" ) ).andReturn( "file:repository1@id=repository1" );
-        expect( propertyResolver.get( "test.pid.localRepository" ) ).andReturn( null );
+        expect( propertyResolver.get( "test.pid.defaultLocalRepoAsRemote" ) ).andReturn( null );
         replay( propertyResolver );
         MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
         List<MavenRepositoryURL> repositories = config.getRepositories();
@@ -163,7 +177,7 @@ public class ConfigurationImplTest
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
         expect( propertyResolver.get( "test.pid.repositories" ) ).andReturn( "file:repository1/@id=repository1" );
-        expect( propertyResolver.get( "test.pid.localRepository" ) ).andReturn( null );
+        expect( propertyResolver.get( "test.pid.defaultLocalRepoAsRemote" ) ).andReturn( null );
         replay( propertyResolver );
         MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
         List<MavenRepositoryURL> repositories = config.getRepositories();
@@ -179,7 +193,7 @@ public class ConfigurationImplTest
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
         expect( propertyResolver.get( "test.pid.repositories" ) ).andReturn( "file:repository1\\@id=repository1" );
-        expect( propertyResolver.get( "test.pid.localRepository" ) ).andReturn( null );
+        expect( propertyResolver.get( "test.pid.defaultLocalRepoAsRemote" ) ).andReturn( null );
         replay( propertyResolver );
         MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
         List<MavenRepositoryURL> repositories = config.getRepositories();
@@ -197,7 +211,7 @@ public class ConfigurationImplTest
         expect( propertyResolver.get( "test.pid.repositories" ) ).andReturn(
             "http:repository1@snapshots@noreleases@id=repository1"
         );
-        expect( propertyResolver.get( "test.pid.localRepository" ) ).andReturn( null );
+        expect( propertyResolver.get( "test.pid.defaultLocalRepoAsRemote" ) ).andReturn( null );
         replay( propertyResolver );
         MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
         List<MavenRepositoryURL> repositories = config.getRepositories();
@@ -214,7 +228,7 @@ public class ConfigurationImplTest
         expect( propertyResolver.get( "test.pid.repositories" ) ).andReturn(
             "http:repository1@snapshots@id=repository1"
         );
-        expect( propertyResolver.get( "test.pid.localRepository" ) ).andReturn( null );
+        expect( propertyResolver.get( "test.pid.defaultLocalRepoAsRemote" ) ).andReturn( null );
         replay( propertyResolver );
         MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
         List<MavenRepositoryURL> repositories = config.getRepositories();
@@ -231,7 +245,7 @@ public class ConfigurationImplTest
         expect( propertyResolver.get( "test.pid.repositories" ) ).andReturn(
             "http:repository1@noreleases@id=repository1"
         );
-        expect( propertyResolver.get( "test.pid.localRepository" ) ).andReturn( null );
+        expect( propertyResolver.get( "test.pid.defaultLocalRepoAsRemote" ) ).andReturn( null );
         replay( propertyResolver );
         MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
         List<MavenRepositoryURL> repositories = config.getRepositories();
@@ -248,7 +262,7 @@ public class ConfigurationImplTest
         expect( propertyResolver.get( "test.pid.repositories" ) ).andReturn(
             "file:repository1/@id=repository1,file:repository2/@id=repository2"
         );
-        expect( propertyResolver.get( "test.pid.localRepository" ) ).andReturn( null );
+        expect( propertyResolver.get( "test.pid.defaultLocalRepoAsRemote" ) ).andReturn( null );
         replay( propertyResolver );
         MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
         List<MavenRepositoryURL> repositories = config.getRepositories();
@@ -265,7 +279,7 @@ public class ConfigurationImplTest
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
         expect( propertyResolver.get( "test.pid.repositories" ) ).andReturn( null );
-        expect( propertyResolver.get( "test.pid.localRepository" ) ).andReturn( null );
+        expect( propertyResolver.get( "test.pid.defaultLocalRepoAsRemote" ) ).andReturn( null );
         MavenSettings settings = createMock( MavenSettings.class );
         expect( settings.getRepositories() ).andReturn( "file:repository1/@id=repository1" );
         expect( settings.getLocalRepository() ).andReturn( null );
@@ -285,7 +299,7 @@ public class ConfigurationImplTest
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
         expect( propertyResolver.get( "test.pid.repositories" ) ).andReturn( "+file:repository1/@id=repository1" );
-        expect( propertyResolver.get( "test.pid.localRepository" ) ).andReturn( null );
+        expect( propertyResolver.get( "test.pid.defaultLocalRepoAsRemote" ) ).andReturn( null );
         MavenSettings settings = createMock( MavenSettings.class );
         expect( settings.getRepositories() ).andReturn( "file:repository2/@id=repository2" );
         expect( settings.getLocalRepository() ).andReturn( null );
@@ -309,14 +323,15 @@ public class ConfigurationImplTest
         expect( propertyResolver.get( "test.pid.localRepository" ) ).andReturn(
             "file:localRepository/"
         );
+        expect( propertyResolver.get( "test.pid.defaultLocalRepoAsRemote" ) ).andReturn( null );
         replay( propertyResolver );
         MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
         List<MavenRepositoryURL> repositories = config.getRepositories();
         assertNotNull( "Repositories is null", repositories );
-        assertEquals( "Repositories size", 2, repositories.size() );
-        assertEquals( "Local repository", new URL( "file:localRepository/" ), repositories.get( 0 ).getURL()
+        assertEquals( "Repositories size", 1, repositories.size() );
+        assertEquals( "Local repository", new URL( "file:localRepository/" ), config.getLocalRepository().getURL()
         );
-        assertEquals( "Repository", new URL( "file:repository1/" ), repositories.get( 1 ).getURL() );
+        assertEquals( "Repository", new URL( "file:repository1/" ), repositories.get( 0 ).getURL() );
         verify( propertyResolver );
     }
 

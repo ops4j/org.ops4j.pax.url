@@ -225,9 +225,11 @@ public class MavenConfigurationImpl
             }
             // build repositories list
             final List<MavenRepositoryURL> repositoriesProperty = new ArrayList<MavenRepositoryURL>();
-            MavenRepositoryURL localRepository = getLocalRepository();
-            if( localRepository != null ) {
-                repositoriesProperty.add( localRepository );
+            if (m_propertyResolver.get(m_pid + MavenConstants.PROPERTY_LOCAL_REPO_AS_REMOTE) != null) {
+                MavenRepositoryURL localRepository = getDefaultLocalRepository();
+                if( localRepository != null ) {
+                    repositoriesProperty.add( localRepository );
+                }
             }
             if( repositoriesProp != null && repositoriesProp.trim().length() > 0 ) {
                 String[] repositories = repositoriesProp.split( REPOSITORIES_SEPARATOR );
@@ -282,6 +284,30 @@ public class MavenConfigurationImpl
             }
         }
         return get( m_pid + MavenConstants.PROPERTY_LOCAL_REPOSITORY );
+    }
+
+    public MavenRepositoryURL getDefaultLocalRepository() {
+        if (m_settings != null) {
+            String spec = m_settings.getLocalRepository();
+            if (!spec.toLowerCase().contains("@snapshots")) {
+                spec += "@snapshots";
+            }
+            spec += "@id=defaultlocal";
+            // check if we have a valid url
+            try {
+                return new MavenRepositoryURL(spec);
+            } catch (MalformedURLException e) {
+                // maybe is just a file?
+                try {
+                    return new MavenRepositoryURL(new File(spec).toURI().toASCIIString());
+                } catch (MalformedURLException ignore) {
+                    LOGGER.warn("Local repository [" + spec + "] cannot be used and will be skipped");
+                    return null;
+                }
+
+            }
+        }
+        return null;
     }
 
     /**

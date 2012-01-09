@@ -27,7 +27,12 @@ public interface MavenConstants {
     /**
      * Warning: use only in framework properties.  If present, do not accept configuration, wait for one without this flag.
      */
-    static final String REQUIRE_CONFIG_ADMIN_CONFIG = ".require.config.admin.config";
+    static final String REQUIRE_CONFIG_ADMIN_CONFIG = ".requireConfigAdminConfig";
+    /**
+     * Add the default local repo (e.g. ~/.m2/repository) as a remote repo.  Useful when setting the local repo to be e.g. karaf system repo.
+     * BE CAREFUL! if you are using mirrors, do not mirror local repos!  e.g. use <mirrorOf>external:*</mirrorOf>
+     */
+    static final String PROPERTY_LOCAL_REPO_AS_REMOTE = ".defaultLocalRepoAsRemote";
     /**
      * Certificate check configuration property name.
      */

@@ -18,6 +18,7 @@
 package org.ops4j.pax.url.mvn;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import org.junit.Test;
 
@@ -45,14 +46,11 @@ public class HandlerTest
 
    @Test
     public void cacheTest()
-        throws IOException
-    {
+           throws IOException, URISyntaxException {
         System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
-        
-       System.setProperty( "http.proxyHost", "proxy.bb.poda.cz" );
-       System.setProperty( "http.proxyPort", "8080" );
 
-      //  System.setProperty( "org.ops4j.pax.url.mvn.proxies","http:host=proxy.bb.poda.cz,port=3128" );
+        //avoid depending on local settings property
+        System.setProperty("org.ops4j.pax.url.mvn.settings", getClass().getResource("/settings-no-mirror.xml").toURI().getPath());
 
         new URL("mvn:org.ops4j.pax.runner.profiles/log/LATEST/composite").openStream().close();
 
