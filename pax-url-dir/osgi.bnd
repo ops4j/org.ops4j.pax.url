@@ -22,7 +22,8 @@ Import-Package:\
   org.w3c.dom; resolution:=optional,\
   org.xml.sax; resolution:=optional,\
   javax.xml.transform,\
-  javax.xml.transform.stream
+  javax.xml.transform.stream,\
+  *
   
 Export-Package:\
   ${bundle.namespace}; version="${pom.version}"

@@ -20,7 +20,10 @@ package org.ops4j.pax.url.mvn;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 /**
  * Unit test for {@link Handler}.
@@ -30,13 +33,15 @@ import org.junit.Test;
  */
 public class HandlerTest
 {
-
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+    
     /**
      * Protocol handler can be used.
      *
      * @throws java.io.IOException - Unexpected
      */
-    //@Test
+    @Test
     public void use()
         throws IOException
     {
@@ -44,15 +49,30 @@ public class HandlerTest
         new URL( "mvn:group/artifact/0.1.0" );
     }
 
-   @Test
+    @Test
     public void cacheTest()
            throws IOException, URISyntaxException {
         System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
 
         //avoid depending on local settings property
         System.setProperty("org.ops4j.pax.url.mvn.settings", getClass().getResource("/settings-no-mirror.xml").toURI().getPath());
+        System.setProperty("org.ops4j.pax.url.mvn.useFallbackRepositories", "true");
 
         new URL("mvn:org.ops4j.pax.runner.profiles/log/LATEST/composite").openStream().close();
 
+    }
+
+    @Test
+    public void noFallbackRepositoryTest()
+           throws IOException, URISyntaxException {
+        System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
+
+        //avoid depending on local settings property
+        System.setProperty("org.ops4j.pax.url.mvn.settings", getClass().getResource("/settings-no-mirror.xml").toURI().getPath());
+        System.getProperties().remove("org.ops4j.pax.url.mvn.useFallbackRepositories");
+
+        thrown.expect( IOException.class );
+        thrown.expectMessage( "Aether Error" );
+        new URL("mvn:org.ops4j.pax.runner.profiles/log/LATEST/composite").openStream().close();
     }
 }
