@@ -318,7 +318,7 @@ public class MavenConfigurationImpl
         if( !contains( m_pid + MavenConstants.PROPERTY_USE_FALLBACK_REPOSITORIES ) ) {
             String useFallbackRepoProp = m_propertyResolver.get( m_pid + MavenConstants.PROPERTY_USE_FALLBACK_REPOSITORIES );
             return set( m_pid + MavenConstants.PROPERTY_USE_FALLBACK_REPOSITORIES,
-                        Boolean.valueOf( useFallbackRepoProp == null ? "true" : useFallbackRepoProp )
+                        Boolean.valueOf( useFallbackRepoProp == null ? "false" : useFallbackRepoProp )
             );
         }
         return get( m_pid + MavenConstants.PROPERTY_USE_FALLBACK_REPOSITORIES );

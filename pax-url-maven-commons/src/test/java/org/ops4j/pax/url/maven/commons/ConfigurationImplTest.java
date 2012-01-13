@@ -505,7 +505,7 @@ public class ConfigurationImplTest
         expect( propertyResolver.get( "test.pid.useFallbackRepositories" ) ).andReturn( null );
         replay( propertyResolver );
         MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
-        assertEquals("Use Fallback Repositories", true, config.useFallbackRepositories());
+        assertEquals("Use Fallback Repositories", false, config.useFallbackRepositories());
         verify( propertyResolver );
     }
 
