@@ -23,6 +23,7 @@ Import-Package:\
   org.xml.sax; resolution:=optional,\
   javax.xml.transform,\
   javax.xml.transform.stream,\
+  !org.slf4j.impl,\
   *
   
 Export-Package:\
