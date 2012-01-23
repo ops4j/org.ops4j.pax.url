@@ -28,8 +28,7 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+
 import org.apache.maven.mercury.artifact.Artifact;
 import org.apache.maven.mercury.artifact.ArtifactMetadata;
 import org.apache.maven.mercury.artifact.Quality;
@@ -46,6 +45,8 @@ import org.apache.maven.mercury.transport.api.Server;
 import org.ops4j.lang.NullArgumentException;
 import org.ops4j.pax.url.maven.commons.MavenConfiguration;
 import org.ops4j.pax.url.maven.commons.MavenRepositoryURL;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An URLConnextion that supports maven: protocol.
@@ -60,7 +61,7 @@ public class Connection
     /**
      * Logger.
      */
-    private static final Log LOG = LogFactory.getLog( Connection.class );
+    private static final Logger LOG = LoggerFactory.getLogger( Connection.class );
     /**
      * Service configuration.
      */

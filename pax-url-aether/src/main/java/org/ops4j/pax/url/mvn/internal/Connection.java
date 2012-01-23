@@ -24,10 +24,11 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+
 import org.ops4j.lang.NullArgumentException;
 import org.ops4j.pax.url.maven.commons.MavenConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An URLConnextion that supports mvn: protocol.<br/>
@@ -69,7 +70,7 @@ public class Connection
     /**
      * Logger.
      */
-    private static final Log LOG = LogFactory.getLog( Connection.class );
+    private static final Logger LOG = LoggerFactory.getLogger( Connection.class );
     /**
      * Parsed url.
      */

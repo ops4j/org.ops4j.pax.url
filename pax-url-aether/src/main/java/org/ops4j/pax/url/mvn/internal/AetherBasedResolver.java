@@ -15,6 +15,8 @@
  */
 package org.ops4j.pax.url.mvn.internal;
 
+import static org.ops4j.pax.url.mvn.internal.Parser.VERSION_LATEST;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -25,10 +27,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+
 import org.apache.maven.repository.internal.DefaultServiceLocator;
 import org.apache.maven.repository.internal.MavenRepositorySystemSession;
+import org.ops4j.pax.url.maven.commons.MavenConfiguration;
+import org.ops4j.pax.url.maven.commons.MavenRepositoryURL;
+import org.slf4j.LoggerFactory;
 import org.sonatype.aether.RepositoryException;
 import org.sonatype.aether.RepositorySystem;
 import org.sonatype.aether.RepositorySystemSession;
@@ -53,17 +57,13 @@ import org.sonatype.aether.util.artifact.DefaultArtifact;
 import org.sonatype.aether.util.repository.DefaultMirrorSelector;
 import org.sonatype.aether.util.repository.DefaultProxySelector;
 import org.sonatype.aether.version.Version;
-import org.ops4j.pax.url.maven.commons.MavenConfiguration;
-import org.ops4j.pax.url.maven.commons.MavenRepositoryURL;
-
-import static org.ops4j.pax.url.mvn.internal.Parser.*;
 
 /**
  * Aether based, drop in replacement for mvn protocol
  */
 public class AetherBasedResolver {
 
-    private static final Log LOG = LogFactory.getLog( AetherBasedResolver.class );
+    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger( AetherBasedResolver.class );
     private static final String LATEST_VERSION_RANGE = "(0.0,]";
     private static final String REPO_TYPE = "default";
 
@@ -221,7 +221,7 @@ public class AetherBasedResolver {
         Artifact artifact = new DefaultArtifact( groupId, artifactId, classifier, extension, version );
         File resolved = resolve( session, artifact );
 
-        LOG.info( "Resolved (" + artifact.toString() + ") as " + resolved.getAbsolutePath() );
+        LOG.info( "Resolved ({}) as {}", artifact.toString(), resolved.getAbsolutePath() );
         return new FileInputStream( resolved );
     }
 

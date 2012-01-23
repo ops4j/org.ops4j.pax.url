@@ -23,10 +23,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+
 import org.ops4j.io.Pipe;
 import org.ops4j.lang.NullArgumentException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This impplements the mvnlive handler as follows:
@@ -53,7 +54,7 @@ public class Connection extends URLConnection {
     /**
      * Logger.
      */
-    private static final Log LOG = LogFactory.getLog(Connection.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Connection.class);
 
     private Parser m_parser;
     private static final int MAVEN_TIMEOUT = 60000;

@@ -22,10 +22,10 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import sun.util.LocaleServiceProviderPool;
+
 import org.ops4j.lang.NullArgumentException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An URL of Maven repository that knows if it contains SNAPSHOT versions and/or releases.
@@ -36,7 +36,7 @@ import org.ops4j.lang.NullArgumentException;
 public class MavenRepositoryURL
 {
 
-    private static final Log LOG = LogFactory.getLog( MavenRepositoryURL.class );
+    private static final Logger LOG = LoggerFactory.getLogger( MavenRepositoryURL.class );
 
     /**
      * Repository Id.

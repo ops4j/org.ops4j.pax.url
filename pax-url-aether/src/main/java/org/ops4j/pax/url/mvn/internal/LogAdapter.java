@@ -15,8 +15,7 @@
  */
 package org.ops4j.pax.url.mvn.internal;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.LoggerFactory;
 import org.sonatype.aether.spi.log.Logger;
 
 /**
@@ -25,7 +24,7 @@ import org.sonatype.aether.spi.log.Logger;
 public class LogAdapter implements Logger
 {
 
-    private static final Log LOG = LogFactory.getLog( LogAdapter.class );
+    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger( LogAdapter.class );
 
     public boolean isDebugEnabled()
     {

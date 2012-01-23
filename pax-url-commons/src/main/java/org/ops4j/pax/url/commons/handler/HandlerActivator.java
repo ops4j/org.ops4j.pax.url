@@ -23,17 +23,18 @@ import java.net.URLConnection;
 import java.util.Arrays;
 import java.util.Dictionary;
 import java.util.Hashtable;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+
+import org.ops4j.lang.NullArgumentException;
+import org.ops4j.pax.swissbox.property.BundleContextPropertyResolver;
+import org.ops4j.util.property.PropertyResolver;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.url.AbstractURLStreamHandlerService;
 import org.osgi.service.url.URLConstants;
 import org.osgi.service.url.URLStreamHandlerService;
-import org.ops4j.lang.NullArgumentException;
-import org.ops4j.pax.swissbox.property.BundleContextPropertyResolver;
-import org.ops4j.util.property.PropertyResolver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Bundle activator for protocol handlers.
@@ -48,7 +49,7 @@ public class HandlerActivator<T>
     /**
      * Logger.
      */
-    private static final Log LOG = LogFactory.getLog( HandlerActivator.class );
+    private static final Logger LOG = LoggerFactory.getLogger( HandlerActivator.class );
 
     /**
      * Array of handled protocols.

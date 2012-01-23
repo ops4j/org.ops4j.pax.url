@@ -20,7 +20,6 @@ Import-Package:\
   org.osgi.service.log; resolution:=optional,\
   org.w3c.dom; resolution:=optional,\
   org.xml.sax; resolution:=optional,\
-  org.apache.commons.logging; version="1.0.4"; resolution:=optional,\
   org.osgi.framework; version="[1.0.0,2.0.0)",\
   org.osgi.service.cm; version="[1.0.0,2.0.0)"; resolution:=optional,\
   org.osgi.service.url; version="[1.0.0,2.0.0)",\
@@ -32,11 +31,6 @@ Export-Package:\
   
 Private-Package:\
   ${bundle.namespace}.internal.*
-
-Embed-Dependency:\
-  *; scope=compile; type=!pom; inline=true
-
-Embed-Transitive: true
 
 -removeheaders:\
   Include-Resource,\

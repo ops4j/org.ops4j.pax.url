@@ -1,0 +1,21 @@
+Bundle-Activator:\
+  ${bundle.namespace}.internal.Activator
+
+Bundle-Version:\
+  ${pom.version}
+
+Bundle-SymbolicName:\
+  ${bundle.symbolicName}; singleton:=true  
+  
+Export-Service:\
+  org.osgi.service.url.URLStreamHandlerService; url.handler.protocol=reference
+
+Import-Package:\
+  !org.slf4j.impl,\
+  *
+
+-removeheaders:\
+  Include-Resource,\
+  Private-Package,\
+  Embed-Dependency,\
+  Embed-Transitive

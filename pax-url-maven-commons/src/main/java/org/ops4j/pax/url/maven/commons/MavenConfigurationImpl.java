@@ -27,11 +27,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+
 import org.ops4j.lang.NullArgumentException;
 import org.ops4j.util.property.PropertyResolver;
 import org.ops4j.util.property.PropertyStore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Service Configuration implementation.
@@ -47,7 +48,7 @@ public class MavenConfigurationImpl
     /**
      * Logger.
      */
-    private static final Log LOGGER = LogFactory.getLog( MavenConfigurationImpl.class );
+    private static final Logger LOGGER = LoggerFactory.getLogger( MavenConfigurationImpl.class );
 
     /**
      * The character that should be the first character in repositories property in order to be appended with the

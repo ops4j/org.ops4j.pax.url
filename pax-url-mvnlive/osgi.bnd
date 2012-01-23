@@ -14,7 +14,6 @@ Import-Package:\
   ${bundle.namespace}; version="${pom.version}",\
   javax.xml.parsers,\
   org.xml.sax.helpers,\
-  org.apache.commons.logging; version="1.0.4"; resolution:=optional,\
   org.osgi.framework; version="[1.0.0,2.0.0)",\
   org.osgi.service.cm; version="[1.0.0,2.0.0)"; resolution:=optional,\
   org.osgi.service.url; version="[1.0.0,2.0.0)",\

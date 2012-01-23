@@ -23,13 +23,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.ops4j.lang.NullArgumentException;
 import org.ops4j.net.URLUtils;
 import org.ops4j.pax.swissbox.tracker.ReplaceableService;
 import org.osgi.service.obr.RepositoryAdmin;
 import org.osgi.service.obr.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Url connection for obr protocol handler.
@@ -44,7 +44,7 @@ class Connection
     /**
      * Logger.
      */
-    private static final Log LOG = LogFactory.getLog( Connection.class );
+    private static final Logger LOG = LoggerFactory.getLogger( Connection.class );
 
     /**
      * Parsed url.

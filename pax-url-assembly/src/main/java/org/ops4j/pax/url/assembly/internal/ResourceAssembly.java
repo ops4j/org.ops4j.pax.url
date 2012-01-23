@@ -28,13 +28,14 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.zip.ZipFile;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+
 import org.ops4j.io.DirectoryLister;
 import org.ops4j.io.HierarchicalIOException;
 import org.ops4j.io.Lister;
 import org.ops4j.io.ZipLister;
 import org.ops4j.lang.NullArgumentException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * JAVADOC
@@ -49,7 +50,7 @@ class ResourceAssembly
     /**
      * Logger.
      */
-    private static final Log LOGGER = LogFactory.getLog( ResourceAssembly.class );
+    private static final Logger LOGGER = LoggerFactory.getLogger( ResourceAssembly.class );
 
     /**
      * Resources that makes up this assembly.

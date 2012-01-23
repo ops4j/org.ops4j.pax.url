@@ -19,9 +19,10 @@ package org.ops4j.pax.url.dir.internal;
 
 import java.io.File;
 import java.io.IOException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+
 import org.ops4j.lang.NullArgumentException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Finds resources of the current module under test just by given top-level parent (whatever that is)
@@ -34,7 +35,7 @@ public class FileTailImpl implements FileTail
 
 {
 
-    public static final Log logger = LogFactory.getLog( FileTailImpl.class );
+    public static final Logger logger = LoggerFactory.getLogger( FileTailImpl.class );
 
     private File m_topLevelDir;
 

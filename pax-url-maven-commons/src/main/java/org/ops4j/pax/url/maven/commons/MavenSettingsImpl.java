@@ -32,9 +32,9 @@ import java.util.regex.Matcher;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.ops4j.util.xml.XmlUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
@@ -53,7 +53,7 @@ public class MavenSettingsImpl
     /**
      * Logger.
      */
-    private static final Log LOGGER = LogFactory.getLog( MavenSettingsImpl.class );
+    private static final Logger LOGGER = LoggerFactory.getLogger( MavenSettingsImpl.class );
     /**
      * Path of local repository tag.
      */

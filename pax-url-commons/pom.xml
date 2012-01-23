@@ -11,13 +11,18 @@
 
   <groupId>org.ops4j.pax.url</groupId>
   <artifactId>pax-url-commons</artifactId>
-  <version>1.4-SNAPSHOT</version>
-  <packaging>jar</packaging>
+  <packaging>bundle</packaging>
 
   <name>OPS4J Pax Url - Commons</name>
   <description>
     OPS4J Pax Shared - Shared classes between protocol handlers.
   </description>
+
+  <properties>
+    <bundle.symbolicName>org.ops4j.pax.url.commons</bundle.symbolicName>
+    <bundle.namespace>org.ops4j.pax.url.commons</bundle.namespace>
+  </properties>
+
 
   <dependencies>
 
@@ -32,6 +37,10 @@
       <artifactId>pax-swissbox-property</artifactId>
       <scope>compile</scope>
     </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
 
     <!-- Provided dependencies (not transitive) -->
     <dependency>
@@ -42,11 +51,6 @@
     <dependency>
       <groupId>org.osgi</groupId>
       <artifactId>org.osgi.compendium</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.ops4j.pax.swissbox</groupId>
-      <artifactId>pax-swissbox-optional-jcl</artifactId>
       <scope>provided</scope>
     </dependency>
 
@@ -63,5 +67,14 @@
     </dependency>
 
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>

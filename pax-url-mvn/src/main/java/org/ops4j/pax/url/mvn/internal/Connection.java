@@ -27,17 +27,19 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.xml.sax.SAXException;
+
 import org.ops4j.lang.NullArgumentException;
 import org.ops4j.net.URLUtils;
 import org.ops4j.pax.url.maven.commons.MavenConfiguration;
 import org.ops4j.pax.url.maven.commons.MavenRepositoryURL;
 import org.ops4j.util.xml.XmlUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 
 /**
  * An URLConnextion that supports mvn: protocol.<br/>
@@ -79,7 +81,7 @@ public class Connection
     /**
      * Logger.
      */
-    private static final Log LOG = LogFactory.getLog( Connection.class );
+    private static final Logger LOG = LoggerFactory.getLogger( Connection.class );
     /**
      * 2 spacess indent;
      */
