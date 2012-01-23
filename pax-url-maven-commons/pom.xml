@@ -11,7 +11,6 @@
 
   <groupId>org.ops4j.pax.url</groupId>
   <artifactId>pax-url-maven-commons</artifactId>
-  <version>1.4-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>OPS4J Pax Url - Maven Commons</name>
