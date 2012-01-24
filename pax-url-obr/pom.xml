@@ -40,20 +40,17 @@
       <groupId>org.ops4j.base</groupId>
       <artifactId>ops4j-base-net</artifactId>
       <scope>compile</scope>
-      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.ops4j.pax.swissbox</groupId>
       <artifactId>pax-swissbox-tracker</artifactId>
       <scope>compile</scope>
-      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.ops4j.pax.url</groupId>
       <artifactId>pax-url-commons</artifactId>
       <version>1.4-SNAPSHOT</version>
       <scope>compile</scope>
-      <optional>true</optional>
     </dependency>
 
     <!-- Provided dependencies (not transitive) -->

@@ -74,14 +74,12 @@
             <artifactId>pax-url-commons</artifactId>
             <version>1.4-SNAPSHOT</version>
             <scope>compile</scope>
-            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.ops4j.pax.url</groupId>
             <artifactId>pax-url-maven-commons</artifactId>
             <version>1.4-SNAPSHOT</version>
             <scope>compile</scope>
-            <optional>true</optional>
         </dependency>
 
         <!-- Provided dependencies (not transitive) -->
