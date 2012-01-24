@@ -254,14 +254,6 @@
         <module>pax-url-wrap</module>
       </modules>
     </profile>
-    <profile>
-      <id>inprogress</id>
-      <modules>
-        <module>pax-url-mercury</module>
-        <module>pax-url-maven</module>
-        <module>pax-url-mvnlive</module>
-      </modules>
-    </profile>
   </profiles>
 </project>
 
