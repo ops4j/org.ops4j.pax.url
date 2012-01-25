@@ -43,7 +43,7 @@ Private-Package:\
   com.google.common.*
   
 Embed-Dependency:\
-  *; scope=compile; type=!pom; inline=true
+  *; scope=compile; type=!pom; inline=true; groupId=!org.slf4j
 
 Embed-Transitive: true
 
