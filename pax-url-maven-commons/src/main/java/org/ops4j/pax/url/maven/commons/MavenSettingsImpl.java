@@ -93,11 +93,7 @@ public class MavenSettingsImpl
      * Fallback Maven repositories.
      */
     private static final String FALLBACK_REPOSITORIES =
-    	"http://osgi.sonatype.org/content/groups/pax-runner@id=paxrunner,"
-        + "http://repo1.maven.org/maven2@id=central,"
-        + "http://repository.ops4j.org/maven2@id=ops4j-releases,"
-        + "http://repository.springsource.com/maven/bundles/release@id=springsource-bundles-release,"
-        + "http://repository.springsource.com/maven/bundles/external@id=springsource-bundles-external";
+        "http://repo1.maven.org/maven2@id=central";
 
     /**
      * The settings.xml DOM Document. Null if there is no settings.xml.

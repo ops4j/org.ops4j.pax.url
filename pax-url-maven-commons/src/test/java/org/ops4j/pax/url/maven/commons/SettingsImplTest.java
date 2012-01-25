@@ -91,11 +91,7 @@ public class SettingsImplTest
         MavenSettingsImpl settings =
             new MavenSettingsImpl( FileUtils.getFileFromClasspath( "settings/settingsEmpty.xml" ).toURL(), true );
         assertEquals( "Repositories",
-        		      "http://osgi.sonatype.org/content/groups/pax-runner@id=paxrunner,"
-                      + "http://repo1.maven.org/maven2@id=central,"
-                      + "http://repository.ops4j.org/maven2@id=ops4j-releases,"
-                      + "http://repository.springsource.com/maven/bundles/release@id=springsource-bundles-release,"
-                      + "http://repository.springsource.com/maven/bundles/external@id=springsource-bundles-external",
+        		      "http://repo1.maven.org/maven2@id=central",
                       settings.getRepositories()
         );
     }

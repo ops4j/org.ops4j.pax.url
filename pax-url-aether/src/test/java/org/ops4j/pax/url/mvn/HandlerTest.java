@@ -58,7 +58,7 @@ public class HandlerTest
         System.setProperty("org.ops4j.pax.url.mvn.settings", getClass().getResource("/settings-no-mirror.xml").toURI().getPath());
         System.setProperty("org.ops4j.pax.url.mvn.useFallbackRepositories", "true");
 
-        new URL("mvn:org.ops4j.pax.runner.profiles/log/LATEST/composite").openStream().close();
+        new URL("mvn:org.ops4j.base/ops4j-base-lang/1.1.0").openStream().close();
 
     }
 

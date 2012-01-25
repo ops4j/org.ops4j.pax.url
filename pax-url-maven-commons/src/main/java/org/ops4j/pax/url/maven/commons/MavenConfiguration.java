@@ -69,9 +69,9 @@ public interface MavenConfiguration {
 
     /**
      * Returns true if the fallback repositories should be used instead of default ones.
-     * Default value is false.
+     * Default value is true.
      *
-     * @return true if the fallback repositories should
+     * @return true if the fallback repositories should be used
      */
     Boolean useFallbackRepositories();
 
