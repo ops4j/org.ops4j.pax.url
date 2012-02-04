@@ -15,9 +15,7 @@
 	<packaging>pom</packaging>
 
 	<name>OPS4J Pax Url</name>
-	<description>
-    Pax Url - OSGi url handlers
-  </description>
+	<description>Pax Url - OSGi URL handlers</description>
 
 	<url>http://team.ops4j.org/wiki/display/paxurl</url>
 
@@ -35,8 +33,8 @@
 	<properties>
 		<release-paxurl-altGitURL>scm:git:ssh://git@github.com/ops4j/org.ops4j.pax.url.git</release-paxurl-altGitURL>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<dependency.base.version>1.3.0-SNAPSHOT</dependency.base.version>
-		<dependency.swissbox.version>1.5.0-SNAPSHOT</dependency.swissbox.version>
+		<dependency.base.version>1.3.0</dependency.base.version>
+		<dependency.swissbox.version>1.5.0</dependency.swissbox.version>
 		<dependency.slf4j.version>1.5.11</dependency.slf4j.version>
 	</properties>
 
@@ -179,7 +177,7 @@
 			<dependency>
 				<groupId>org.osgi</groupId>
 				<artifactId>org.osgi.core</artifactId>
-				<version>4.3.0</version>
+				<version>4.2.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.osgi</groupId>
@@ -201,29 +199,6 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-
-	<repositories>
-		<repository>
-			<id>ops4j.3rdparty</id>
-			<name>OPS4J 3rd Party Repository</name>
-			<url>http://repository.ops4j.org/mvn-3rdparty</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-		<!-- OPS4J SNAPSHOT repository -->
-		<repository>
-			<id>ops4j.sonatype.snapshots.deploy</id>
-			<name>OPS4J snapshot repository</name>
-			<url>https://oss.sonatype.org/content/repositories/ops4j-snapshots/</url>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
 
 	<developers>
 		<developer>
