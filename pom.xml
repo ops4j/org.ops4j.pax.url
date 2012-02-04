@@ -10,7 +10,7 @@
 
 	<groupId>org.ops4j.pax</groupId>
 	<artifactId>url</artifactId>
-	<version>1.4-SNAPSHOT</version>
+	<version>1.4.0.RC1</version>
 	<packaging>pom</packaging>
 
 	<name>OPS4J Pax Url</name>
