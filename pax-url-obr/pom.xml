@@ -35,22 +35,18 @@
 
   <dependencies>
 
-    <!-- Embeded dependencies (not transitive) -->
     <dependency>
       <groupId>org.ops4j.base</groupId>
       <artifactId>ops4j-base-net</artifactId>
-      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.ops4j.pax.swissbox</groupId>
       <artifactId>pax-swissbox-tracker</artifactId>
-      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.ops4j.pax.url</groupId>
       <artifactId>pax-url-commons</artifactId>
       <version>${project.version}</version>
-      <scope>compile</scope>
     </dependency>
 
     <!-- Provided dependencies (not transitive) -->

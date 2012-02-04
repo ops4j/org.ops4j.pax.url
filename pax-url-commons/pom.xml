@@ -26,16 +26,13 @@
 
   <dependencies>
 
-    <!-- Compile dependencies (transitive) -->
     <dependency>
       <groupId>org.ops4j.base</groupId>
       <artifactId>ops4j-base-lang</artifactId>
-      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.ops4j.pax.swissbox</groupId>
       <artifactId>pax-swissbox-property</artifactId>
-      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>

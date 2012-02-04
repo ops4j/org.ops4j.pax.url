@@ -23,22 +23,18 @@
     <dependency>
       <groupId>org.ops4j.base</groupId>
       <artifactId>ops4j-base-lang</artifactId>
-      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.ops4j.base</groupId>
       <artifactId>ops4j-base-util-property</artifactId>
-      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.ops4j.base</groupId>
       <artifactId>ops4j-base-util-xml</artifactId>
-      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <scope>compile</scope>
     </dependency>
 
     <!-- Test dependencies -->
