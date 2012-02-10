@@ -21,6 +21,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import org.osgi.framework.BundleContext;
+import org.ops4j.pax.url.api.ArtifactProvider;
 import org.ops4j.pax.url.commons.handler.ConnectionFactory;
 import org.ops4j.pax.url.commons.handler.HandlerActivator;
 import org.ops4j.pax.url.war.ServiceConstants;
@@ -85,6 +86,11 @@ public final class Activator
                 public Configuration createConfiguration( final PropertyResolver propertyResolver )
                 {
                     return new ConfigurationImpl( propertyResolver );
+                }
+
+                public ArtifactProvider apiProvider()
+                {
+                    return null;
                 }
 
             }

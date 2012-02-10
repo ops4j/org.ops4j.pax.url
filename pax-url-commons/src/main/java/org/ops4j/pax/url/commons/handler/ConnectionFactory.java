@@ -17,11 +17,11 @@
  */
 package org.ops4j.pax.url.commons.handler;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.io.IOException;
 import org.osgi.framework.BundleContext;
+import org.ops4j.pax.url.api.ArtifactProvider;
 import org.ops4j.util.property.PropertyResolver;
 
 /**
@@ -56,5 +56,12 @@ public interface ConnectionFactory<T>
      * @return T protocol specific configuration or null
      */
     T createConfiguration( PropertyResolver propertyResolver );
+
+    /**
+     * Optional Hook to be used with URL Registry.
+     *
+     * @return
+     */
+    ArtifactProvider apiProvider();
 
 }

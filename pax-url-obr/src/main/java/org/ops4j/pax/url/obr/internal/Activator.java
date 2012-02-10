@@ -22,6 +22,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import org.ops4j.pax.swissbox.tracker.ReplaceableService;
+import org.ops4j.pax.url.api.ArtifactProvider;
 import org.ops4j.pax.url.commons.handler.ConnectionFactory;
 import org.ops4j.pax.url.commons.handler.HandlerActivator;
 import org.ops4j.pax.url.obr.ServiceConstants;
@@ -104,6 +105,11 @@ public final class Activator
                 public Configuration createConfiguration( final PropertyResolver propertyResolver )
                 {
                     return new ConfigurationImpl( propertyResolver );
+                }
+
+                public ArtifactProvider apiProvider()
+                {
+                    return null;  //To change body of implemented methods use File | Settings | File Templates.
                 }
 
             }

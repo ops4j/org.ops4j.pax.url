@@ -26,6 +26,8 @@ import java.util.Hashtable;
 
 import org.ops4j.lang.NullArgumentException;
 import org.ops4j.pax.swissbox.property.BundleContextPropertyResolver;
+import org.ops4j.pax.url.api.ArtifactProvider;
+import org.ops4j.pax.url.api.ArtifactSource;
 import org.ops4j.util.property.PropertyResolver;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -96,7 +98,7 @@ public class HandlerActivator<T>
      */
     public HandlerActivator( final String[] protocols,
                              final String pid,
-                             final ConnectionFactory<T> connectionFactory )
+                             final ConnectionFactory<T> connectionFactory)
     {
         NullArgumentException.validateNotNull( protocols, "Protocols" );
         NullArgumentException.validateNotNull( pid, "PID" );
@@ -155,10 +157,19 @@ public class HandlerActivator<T>
         final Dictionary<String, Object> props = new Hashtable<String, Object>();
         props.put( URLConstants.URL_HANDLER_PROTOCOL, m_protocols );
         m_handlerReg = m_bundleContext.registerService(
-            URLStreamHandlerService.class.getName(),
+            new String[] { URLStreamHandlerService.class.getName() },
             new Handler(),
             props
         );
+        ArtifactProvider provider = m_connectionFactory.apiProvider();
+        if (provider != null) {
+            m_bundleContext.registerService(
+                new String[] { ArtifactProvider.class.getName() },
+                provider,
+                props
+            );
+        }
+
 
     }
 

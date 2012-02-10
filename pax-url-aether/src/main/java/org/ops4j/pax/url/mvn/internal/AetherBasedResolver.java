@@ -30,6 +30,11 @@ import java.util.Map;
 
 import org.apache.maven.repository.internal.DefaultServiceLocator;
 import org.apache.maven.repository.internal.MavenRepositorySystemSession;
+import org.ops4j.pax.url.api.ArtifactProvider;
+import org.ops4j.pax.url.api.ArtifactSource;
+import org.ops4j.pax.url.api.DefaultArtifactSource;
+import org.ops4j.pax.url.api.PaxURLException;
+import org.ops4j.pax.url.api.gav.GAV;
 import org.ops4j.pax.url.maven.commons.MavenConfiguration;
 import org.ops4j.pax.url.maven.commons.MavenRepositoryURL;
 import org.slf4j.LoggerFactory;
@@ -61,7 +66,7 @@ import org.sonatype.aether.version.Version;
 /**
  * Aether based, drop in replacement for mvn protocol
  */
-public class AetherBasedResolver {
+public class AetherBasedResolver implements ArtifactProvider<InputStream,GAV> {
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger( AetherBasedResolver.class );
     private static final String LATEST_VERSION_RANGE = "(0.0,]";
@@ -309,5 +314,14 @@ public class AetherBasedResolver {
         locator.setService( Logger.class, LogAdapter.class );
 
         return locator.getService( RepositorySystem.class );
+    }
+
+    public ArtifactSource<InputStream> resolve( GAV query )
+    {
+        try {
+            return new DefaultArtifactSource<InputStream>(resolve( query.groupId(),query.artifactId(),query.classifier(),query.extension(),query.version() ) );
+        } catch( IOException e ) {
+            throw new PaxURLException( e );
+        }
     }
 }

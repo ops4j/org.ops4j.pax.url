@@ -21,6 +21,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import org.osgi.framework.BundleContext;
+import org.ops4j.pax.url.api.ArtifactProvider;
 import org.ops4j.pax.url.commons.handler.ConnectionFactory;
 import org.ops4j.pax.url.commons.handler.HandlerActivator;
 import org.ops4j.pax.url.maven.commons.MavenConfiguration;
@@ -73,6 +74,11 @@ public final class Activator
                         new MavenSettingsImpl( config.getSettingsFileUrl(), config.useFallbackRepositories() )
                     );
                     return config;
+                }
+
+                public ArtifactProvider apiProvider()
+                {
+                    return null;
                 }
 
 

@@ -25,6 +25,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import org.osgi.framework.BundleContext;
+import org.ops4j.pax.url.api.ArtifactProvider;
 import org.ops4j.pax.url.commons.handler.ConnectionFactory;
 import org.ops4j.pax.url.commons.handler.HandlerActivator;
 import org.ops4j.pax.url.link.ServiceConstants;
@@ -70,6 +71,11 @@ public final class Activator
                 public Void createConfiguration( final PropertyResolver propertyResolver )
                 {
                     return null;
+                }
+
+                public ArtifactProvider apiProvider()
+                {
+                    return null;  //To change body of implemented methods use File | Settings | File Templates.
                 }
 
             }

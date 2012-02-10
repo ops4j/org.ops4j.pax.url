@@ -37,7 +37,11 @@
     </build>
 
     <dependencies>
-
+        <dependency>
+            <groupId>org.ops4j.pax.url</groupId>
+            <artifactId>pax-url-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <!-- Embeded dependencies (not transitive) -->
         <dependency>
             <groupId>org.ops4j.base</groupId>
