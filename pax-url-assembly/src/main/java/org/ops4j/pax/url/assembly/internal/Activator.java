@@ -52,14 +52,14 @@ public final class Activator
                 /**
                  * Creates an "assembly:" url connection.
                  *
-                 * @see ConnectionFactory#createConection(BundleContext, java.net.URL, Object)
+                 * @see ConnectionFactory#createConnection(BundleContext, java.net.URL, Object)
                  */
-                public URLConnection createConection( final BundleContext bundleContext,
-                                                      final URL url,
-                                                      final Void notUsed )
+                public URLConnection createConnection( final BundleContext bundleContext,
+                                                       final URL url,
+                                                       final Void notUsed )
                     throws IOException
                 {
-                    return createConnection( url );
+                    return org.ops4j.pax.url.assembly.internal.Activator.createConnection( url );
                 }
 
                 /**
@@ -73,7 +73,7 @@ public final class Activator
 
                 public ArtifactProvider apiProvider()
                 {
-                    return null;  //To change body of implemented methods use File | Settings | File Templates.
+                    return null;
                 }
 
             }

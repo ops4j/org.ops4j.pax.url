@@ -27,7 +27,6 @@ import java.util.Hashtable;
 import org.ops4j.lang.NullArgumentException;
 import org.ops4j.pax.swissbox.property.BundleContextPropertyResolver;
 import org.ops4j.pax.url.api.ArtifactProvider;
-import org.ops4j.pax.url.api.ArtifactSource;
 import org.ops4j.util.property.PropertyResolver;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -236,7 +235,7 @@ public class HandlerActivator<T>
         public URLConnection openConnection( final URL url )
             throws IOException
         {
-            return m_connectionFactory.createConection( m_bundleContext, url, m_configuration );
+            return m_connectionFactory.createConnection( m_bundleContext, url, m_configuration );
         }
 
     }

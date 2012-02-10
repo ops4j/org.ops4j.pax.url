@@ -44,7 +44,7 @@ public interface ConnectionFactory<T>
      *
      * @throws IOException if a malformed url is encountered. Protocol specific.
      */
-    URLConnection createConection( BundleContext bundleContext, URL url, T config )
+    URLConnection createConnection( BundleContext bundleContext, URL url, T config )
         throws IOException;
 
     /**

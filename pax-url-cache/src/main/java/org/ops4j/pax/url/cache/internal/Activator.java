@@ -51,14 +51,14 @@ public final class Activator
                 /**
                  * Creates a "cache" url connection.
                  *
-                 * @see ConnectionFactory#createConection(BundleContext, java.net.URL, Object)
+                 * @see ConnectionFactory#createConnection(BundleContext, java.net.URL, Object)
                  */
-                public URLConnection createConection( final BundleContext bundleContext,
-                                                      final URL url,
-                                                      final Configuration config )
+                public URLConnection createConnection( final BundleContext bundleContext,
+                                                       final URL url,
+                                                       final Configuration config )
                     throws IOException
                 {
-                    return createConnection( url, config );
+                    return org.ops4j.pax.url.cache.internal.Activator.createConnection( url, config );
                 }
 
                 /**

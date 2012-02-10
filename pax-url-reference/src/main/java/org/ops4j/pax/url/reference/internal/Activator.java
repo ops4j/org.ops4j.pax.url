@@ -52,11 +52,11 @@ public final class Activator
                 /**
                  * Creates a "link" url connection.
                  *
-                 * @see ConnectionFactory#createConection(BundleContext, URL, Object)
+                 * @see ConnectionFactory#createConnection(BundleContext, URL, Object)
                  */
-                public URLConnection createConection( final BundleContext bundleContext,
-                                                      final URL url,
-                                                      final Void notUsed )
+                public URLConnection createConnection( final BundleContext bundleContext,
+                                                       final URL url,
+                                                       final Void notUsed )
                     throws IOException
                 {
                     return new ReferenceUrlConnection(url);
