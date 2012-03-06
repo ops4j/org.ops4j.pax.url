@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.url.mvn.internal;
+package org.ops4j.pax.url.mvn;
 
 import java.net.MalformedURLException;
 import org.ops4j.pax.url.maven.commons.MavenRepositoryURL;
@@ -27,7 +27,7 @@ import org.ops4j.pax.url.maven.commons.MavenRepositoryURL;
  * @author Alin Dreghiciu
  * @author Toni Menzel
  * 
- * @see Connection
+ * @see org.ops4j.pax.url.mvn.internal.Connection
  * @since August 10, 2007
  */
 public class Parser
