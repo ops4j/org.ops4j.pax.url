@@ -226,7 +226,7 @@ public class AetherBasedResolver implements ArtifactProvider<InputStream,GAV> {
         Artifact artifact = new DefaultArtifact( groupId, artifactId, classifier, extension, version );
         File resolved = resolve( session, artifact );
 
-        LOG.info( "Resolved ({}) as {}", artifact.toString(), resolved.getAbsolutePath() );
+        LOG.debug( "Resolved ({}) as {}", artifact.toString(), resolved.getAbsolutePath() );
         return new FileInputStream( resolved );
     }
 
