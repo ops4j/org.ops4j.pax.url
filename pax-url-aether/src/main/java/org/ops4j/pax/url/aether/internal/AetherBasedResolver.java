@@ -72,7 +72,7 @@ public class AetherBasedResolver
 
             File resolved = m_repoSystem.resolveDependencies( session, node, null ).get( 0 ).getArtifact().getFile();
 
-            LOG.info( "Resolved (" + dependency.toString() + ") as " + resolved.getAbsolutePath() );
+            LOG.debug( "Resolved (" + dependency.toString() + ") as " + resolved.getAbsolutePath() );
             return new FileInputStream( resolved );
         } catch( FileNotFoundException e )
         {
@@ -89,7 +89,7 @@ public class AetherBasedResolver
 
     private CollectRequest prepareResolveRequest( Dependency dependency )
     {
-        LOG.info( "Resolving using Aether Session: " + dependency.toString() );
+        LOG.debug( "Resolving using Aether Session: " + dependency.toString() );
 
         CollectRequest collectRequest = new CollectRequest();
         collectRequest.setRoot( dependency );
