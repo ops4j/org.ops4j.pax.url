@@ -90,19 +90,13 @@ class OptionalConfigAdminHelper
             managedService,
             props
         );
-        synchronized ( handlerActivator )
-        {
-            if ( handlerActivator.getResolver() == null )
-            {
-                try
-                {
-                    managedService.updated( null );
-                }
-                catch ( ConfigurationException ignore )
-                {
-                    // this should never happen
-                    LOG.error( "Internal error. Cannot set initial configuration resolver.", ignore );
-                }
+
+        if (handlerActivator.getResolver() == null) {
+            try {
+                managedService.updated(null);
+            } catch (ConfigurationException ignore) {
+                // this should never happen
+                LOG.error("Internal error. Cannot set initial configuration resolver.", ignore);
             }
         }
         return registration;
