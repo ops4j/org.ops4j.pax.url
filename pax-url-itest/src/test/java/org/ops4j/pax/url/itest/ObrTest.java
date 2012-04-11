@@ -46,10 +46,10 @@ public class ObrTest
             // bundle under test and its dependencies
             mavenBundle("org.ops4j.pax.url", "pax-url-obr").versionAsInProject(),
             mavenBundle("org.ops4j.pax.url", "pax-url-commons").versionAsInProject(),
-            mavenBundle("org.ops4j.pax.swissbox", "pax-swissbox-lifecycle").versionAsInProject(),
+            //mavenBundle("org.ops4j.pax.swissbox", "pax-swissbox-lifecycle").versionAsInProject(),
             mavenBundle("org.ops4j.pax.swissbox", "pax-swissbox-property").versionAsInProject(),
             mavenBundle("org.ops4j.pax.swissbox", "pax-swissbox-tracker").versionAsInProject(),
-            mavenBundle("org.ops4j.base", "ops4j-base").versionAsInProject(),            
+            //mavenBundle("org.ops4j.base", "ops4j-base").versionAsInProject(),
             mavenBundle("org.apache.felix", "org.osgi.service.obr", "1.0.2"),
             
             // OBR RepositoryAdmin implementation

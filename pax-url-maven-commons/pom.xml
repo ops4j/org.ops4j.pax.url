@@ -11,12 +11,17 @@
 
   <groupId>org.ops4j.pax.url</groupId>
   <artifactId>pax-url-maven-commons</artifactId>
-  <packaging>jar</packaging>
+  <packaging>bundle</packaging>
 
   <name>OPS4J Pax Url - Maven Commons</name>
   <description>
     OPS4J Pax URL - Shared classes between maven protocol handlers.
   </description>
+
+  <properties>
+    <bundle.symbolicName>org.ops4j.pax.url.maven.commons</bundle.symbolicName>
+    <bundle.namespace>org.ops4j.pax.url.maven.commons</bundle.namespace>
+  </properties>
 
   <dependencies>
 
@@ -60,5 +65,14 @@
     </dependency>
 
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>
