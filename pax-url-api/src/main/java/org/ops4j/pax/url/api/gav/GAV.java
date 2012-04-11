@@ -20,7 +20,7 @@ public class GAV {
     private String m_classifier;
     private String m_extension;
 
-    private static final String DEFAULT_VERSION = "1";
+    private static final String DEFAULT_VERSION = "AUTO";
     private static final String DEFAULT_CLASSIFIER = "jar";
 
     public static GAV gav()
