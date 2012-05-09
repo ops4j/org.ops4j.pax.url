@@ -24,13 +24,20 @@ Import-Package:\
   javax.annotation,\
   javax.naming,\
   javax.net,\
-  org.xml.sax.helpers,
-  !org.slf4j.impl,
-  *
+  org.xml.sax.helpers,\
+  !org.slf4j.impl,\
+  javax.annotation.processing; resolution:=optional,\
+  javax.lang.model; resolution:=optional,\
+  javax.lang.model.element; resolution:=optional,\
+  javax.lang.model.util; resolution:=optional,\
+  javax.tools; resolution:=optional,\
+  org.junit; resolution:=optional,\
+  org.osgi.util.tracker,\
+  org.testng.annotations; resolution:=optional
 
 Export-Package:\
   ${bundle.namespace}; version="${pom.version}"
-  
+
 Private-Package:\
   ${bundle.namespace}.internal.*,\
   org.sonatype.*,\
@@ -41,7 +48,7 @@ Private-Package:\
   org.apache.commons.httpclient.util,\
   org.apache.maven.model;-split-package:=merge-first,\
   com.google.common.*
-  
+
 Embed-Dependency:\
   *; scope=compile; type=!pom; inline=true; groupId=!org.slf4j
 

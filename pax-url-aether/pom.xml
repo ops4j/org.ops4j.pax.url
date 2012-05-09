@@ -22,7 +22,7 @@
     <properties>
         <bundle.symbolicName>org.ops4j.pax.url.mvn</bundle.symbolicName>
         <bundle.namespace>org.ops4j.pax.url.mvn</bundle.namespace>
-        <aetherVersion>1.11</aetherVersion>
+        <aetherVersion>1.13.1</aetherVersion>
         <mavenVersion>3.0.3</mavenVersion>
         <wagonVersion>1.0-beta-7</wagonVersion>
     </properties>
