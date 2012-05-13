@@ -182,10 +182,10 @@ public class HandlerActivator<T>
      */
     synchronized PropertyResolver getResolver()
     {
-        if (m_propertyResolver == null)
-        {
-            setResolver(new BundleContextPropertyResolver(m_bundleContext));
-        }
+//        if (m_propertyResolver == null)
+//        {
+//            setResolver(new BundleContextPropertyResolver(m_bundleContext));
+//        }
         return m_propertyResolver;
     }
 
