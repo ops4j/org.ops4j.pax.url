@@ -118,7 +118,7 @@ public class MirrorTest {
                 propertyResolver, MirrorTest.TEST_PID);
 
         MavenSettings settings = new MavenSettingsImpl(new File(
-                "target/test-classes/settings-mirror2.xml").toURL());
+                "target/test-classes/settings-mirror2.xml").toURI().toURL());
         config.setSettings(settings);
         File localRepo = config.getLocalRepository().getFile();
         // you must exist.

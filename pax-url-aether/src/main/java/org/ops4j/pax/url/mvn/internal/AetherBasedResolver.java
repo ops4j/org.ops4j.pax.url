@@ -232,7 +232,7 @@ public class AetherBasedResolver {
             artifact = resolveLatestVersionRange( session, artifact );
             return m_repoSystem.resolveArtifact( session, new ArtifactRequest( artifact, m_remoteRepos, null ) ).getArtifact().getFile();
         } catch( RepositoryException e ) {
-            throw new IOException( "Aether Error.", e );
+            throw new IOException( "Error resolving artifact " + artifact.toString(), e );
         }
     }
 

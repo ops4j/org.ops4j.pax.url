@@ -72,7 +72,7 @@ public class HandlerTest
         System.getProperties().remove("org.ops4j.pax.url.mvn.useFallbackRepositories");
 
         thrown.expect( IOException.class );
-        thrown.expectMessage( "Aether Error" );
+        thrown.expectMessage( "Error resolving artifact");
         new URL("mvn:org.ops4j.pax.runner.profiles/log/LATEST/composite").openStream().close();
     }
 }
