@@ -43,13 +43,13 @@ import org.slf4j.LoggerFactory;
  * @since 0.1.0, January 13, 2007
  */
 public class HandlerActivator<T>
-        implements BundleActivator
+    implements BundleActivator
 {
 
     /**
      * Logger.
      */
-    private static final Logger LOG = LoggerFactory.getLogger(HandlerActivator.class);
+    private static final Logger LOG = LoggerFactory.getLogger( HandlerActivator.class );
 
     /**
      * Array of handled protocols.
@@ -88,37 +88,38 @@ public class HandlerActivator<T>
     /**
      * Creates a protocol handler.
      *
-     * @param protocols array of handled protocols. Cannot be null.
-     * @param pid service pid. Cannot be null.
+     * @param protocols         array of handled protocols. Cannot be null.
+     * @param pid               service pid. Cannot be null.
      * @param connectionFactory protocol specific connection factory. Cannot be null
      *
      * @throws NullArgumentException if any of the paramters is null
      */
-    public HandlerActivator(final String[] protocols,
-            final String pid,
-            final ConnectionFactory<T> connectionFactory)
+    public HandlerActivator( final String[] protocols,
+                             final String pid,
+                             final ConnectionFactory<T> connectionFactory )
     {
-        NullArgumentException.validateNotNull(protocols, "Protocols");
-        NullArgumentException.validateNotNull(pid, "PID");
-        NullArgumentException.validateNotNull(connectionFactory, "Connection factory");
+        NullArgumentException.validateNotNull( protocols, "Protocols" );
+        NullArgumentException.validateNotNull( pid, "PID" );
+        NullArgumentException.validateNotNull( connectionFactory, "Connection factory" );
         m_protocols = protocols;
         m_pid = pid;
         m_connectionFactory = connectionFactory;
     }
 
     /**
-     * Registers Handler as a wrap: protocol stream handler service and as a configuration managed service if possible.
+     * Registers Handler as a wrap: protocol stream handler service and as a configuration managed service if
+     * possible.
      *
      * @param bundleContext the bundle context.
      *
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
      */
-    public void start(final BundleContext bundleContext)
+    public void start( final BundleContext bundleContext )
     {
-        NullArgumentException.validateNotNull(bundleContext, "Bundle context");
+        NullArgumentException.validateNotNull( bundleContext, "Bundle context" );
         m_bundleContext = bundleContext;
         registerManagedService();
-        LOG.debug("Handler for protocols " + Arrays.deepToString(m_protocols) + " started");
+        LOG.debug( "Handler for protocols " + Arrays.deepToString( m_protocols ) + " started" );
     }
 
     /**
@@ -129,21 +130,21 @@ public class HandlerActivator<T>
      *
      * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
      */
-    public void stop(final BundleContext bundleContext)
+    public void stop( final BundleContext bundleContext )
     {
-        NullArgumentException.validateNotNull(bundleContext, "Bundle context");
-        if (m_handlerReg != null)
+        NullArgumentException.validateNotNull( bundleContext, "Bundle context" );
+        if ( m_handlerReg != null )
         {
             m_handlerReg.unregister();
             m_handlerReg = null;
         }
-        if (m_managedServiceReg != null)
+        if ( m_managedServiceReg != null )
         {
             m_managedServiceReg.unregister();
             m_managedServiceReg = null;
         }
         m_bundleContext = null;
-        LOG.debug("Handler for protocols " + Arrays.deepToString(m_protocols) + " stopped");
+        LOG.debug( "Handler for protocols " + Arrays.deepToString( m_protocols ) + " stopped" );
     }
 
     /**
@@ -152,12 +153,12 @@ public class HandlerActivator<T>
     private void registerHandler()
     {
         final Dictionary<String, Object> props = new Hashtable<String, Object>();
-        props.put(URLConstants.URL_HANDLER_PROTOCOL, m_protocols);
+        props.put( URLConstants.URL_HANDLER_PROTOCOL, m_protocols );
         m_handlerReg = m_bundleContext.registerService(
             URLStreamHandlerService.class.getName(),
             new Handler(),
             props
-            );
+        );
 
     }
 
@@ -168,9 +169,11 @@ public class HandlerActivator<T>
     {
         try
         {
-            m_managedServiceReg = OptionalConfigAdminHelper.registerManagedService(m_bundleContext, m_pid, this);
-        } catch (Throwable ignore)
+            m_managedServiceReg = OptionalConfigAdminHelper.registerManagedService( m_bundleContext, m_pid, this );
+        }
+        catch ( Throwable ignore )
         {
+            setResolver( new BundleContextPropertyResolver( m_bundleContext ) );
             m_managedServiceReg = null;
         }
     }
@@ -182,10 +185,6 @@ public class HandlerActivator<T>
      */
     synchronized PropertyResolver getResolver()
     {
-        if (m_propertyResolver == null)
-        {
-            setResolver(new BundleContextPropertyResolver(m_bundleContext));
-        }
         return m_propertyResolver;
     }
 
@@ -194,15 +193,15 @@ public class HandlerActivator<T>
      *
      * @param propertyResolver property resolver
      */
-    synchronized void setResolver(final PropertyResolver propertyResolver)
+    synchronized void setResolver( final PropertyResolver propertyResolver )
     {
         m_propertyResolver = propertyResolver;
-        m_configuration = m_connectionFactory.createConfiguration(propertyResolver);
-        if (m_configuration != null && m_handlerReg == null)
+        m_configuration = m_connectionFactory.createConfiguration( propertyResolver );
+        if ( m_configuration != null && m_handlerReg == null )
         {
             registerHandler();
         }
-        else if (m_configuration == null && m_handlerReg != null)
+        else if ( m_configuration == null && m_handlerReg != null )
         {
             m_handlerReg.unregister();
             m_handlerReg = null;
@@ -216,19 +215,20 @@ public class HandlerActivator<T>
      * @since 0.1.0, January 13, 2008
      */
     private class Handler
-            extends AbstractURLStreamHandlerService
+        extends AbstractURLStreamHandlerService
     {
 
         /**
          * @see org.osgi.service.url.URLStreamHandlerService#openConnection(java.net.URL)
          */
         @Override
-        public URLConnection openConnection(final URL url)
+        public URLConnection openConnection( final URL url )
             throws IOException
         {
-            return m_connectionFactory.createConection(m_bundleContext, url, m_configuration);
+            return m_connectionFactory.createConection( m_bundleContext, url, m_configuration );
         }
 
     }
+
 
 }

@@ -42,7 +42,7 @@ class OptionalConfigAdminHelper
     /**
      * Logger.
      */
-    private static final Logger LOG = LoggerFactory.getLogger(OptionalConfigAdminHelper.class);
+    private static final Logger LOG = LoggerFactory.getLogger( OptionalConfigAdminHelper.class );
 
     private OptionalConfigAdminHelper()
     {
@@ -52,15 +52,15 @@ class OptionalConfigAdminHelper
     /**
      * Registers a managed service to listen on configuration updates.
      *
-     * @param bundleContext bundle context to be used for registration
-     * @param pid PID to be used for registration
+     * @param bundleContext    bundle context to be used for registration
+     * @param pid              PID to be used for registration
      * @param handlerActivator handler activator doing registration
      *
      * @return service registration of registered service
      */
-    static ServiceRegistration registerManagedService(final BundleContext bundleContext,
-            final String pid,
-            final HandlerActivator<?> handlerActivator)
+    static ServiceRegistration registerManagedService( final BundleContext bundleContext,
+                                                       final String pid,
+                                                       final HandlerActivator<?> handlerActivator )
     {
         final ManagedService managedService = new ManagedService()
         {
@@ -69,27 +69,43 @@ class OptionalConfigAdminHelper
              *
              * @see org.osgi.service.cm.ManagedService#updated(java.util.Dictionary)
              */
-            public void updated(final Dictionary config)
+            public void updated( final Dictionary config )
                 throws ConfigurationException
             {
-                if (config == null)
+                if ( config == null )
                 {
-                    handlerActivator.setResolver(new BundleContextPropertyResolver(bundleContext));
+                    handlerActivator.setResolver( new BundleContextPropertyResolver( bundleContext ) );
                 }
                 else
                 {
-                    handlerActivator.setResolver(new DictionaryPropertyResolver(config));
+                    handlerActivator.setResolver( new DictionaryPropertyResolver( config ) );
                 }
             }
 
         };
         final Dictionary<String, String> props = new Hashtable<String, String>();
-        props.put(Constants.SERVICE_PID, pid);
+        props.put( Constants.SERVICE_PID, pid );
         ServiceRegistration registration = bundleContext.registerService(
             ManagedService.class.getName(),
             managedService,
             props
-            );
+        );
+        synchronized ( handlerActivator )
+        {
+            if ( handlerActivator.getResolver() == null )
+            {
+                try
+                {
+                    managedService.updated( null );
+                }
+                catch ( ConfigurationException ignore )
+                {
+                    // this should never happen
+                    LOG.error( "Internal error. Cannot set initial configuration resolver.", ignore );
+                }
+            }
+        }
         return registration;
     }
+
 }
