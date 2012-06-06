@@ -26,10 +26,14 @@ import java.util.Hashtable;
 
 import org.ops4j.lang.NullArgumentException;
 import org.ops4j.pax.swissbox.property.BundleContextPropertyResolver;
+import org.ops4j.util.property.DictionaryPropertyResolver;
 import org.ops4j.util.property.PropertyResolver;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceRegistration;
+import org.osgi.service.cm.ConfigurationException;
+import org.osgi.service.cm.ManagedService;
 import org.osgi.service.url.AbstractURLStreamHandlerService;
 import org.osgi.service.url.URLConstants;
 import org.osgi.service.url.URLStreamHandlerService;
@@ -118,6 +122,9 @@ public class HandlerActivator<T>
     {
         NullArgumentException.validateNotNull( bundleContext, "Bundle context" );
         m_bundleContext = bundleContext;
+        m_propertyResolver = new BundleContextPropertyResolver(bundleContext);
+        m_configuration = m_connectionFactory.createConfiguration(m_propertyResolver);
+        registerHandler();
         registerManagedService();
         LOG.debug( "Handler for protocols " + Arrays.deepToString( m_protocols ) + " started" );
     }
@@ -169,7 +176,34 @@ public class HandlerActivator<T>
     {
         try
         {
-            m_managedServiceReg = OptionalConfigAdminHelper.registerManagedService( m_bundleContext, m_pid, this );
+            final ManagedService managedService = new ManagedService()
+            {
+                /**
+                 * Sets the resolver on handler.
+                 *
+                 * @see org.osgi.service.cm.ManagedService#updated(java.util.Dictionary)
+                 */
+                public void updated( final Dictionary config )
+                    throws ConfigurationException
+                {
+                    if ( config == null )
+                    {
+                        setResolver(new BundleContextPropertyResolver(m_bundleContext));
+                    }
+                    else
+                    {
+                        setResolver(new DictionaryPropertyResolver(config));
+                    }
+                }
+
+            };
+            final Dictionary<String, String> props = new Hashtable<String, String>();
+            props.put(Constants.SERVICE_PID, m_pid);
+            m_managedServiceReg = m_bundleContext.registerService(
+                ManagedService.class.getName(),
+                managedService,
+                props
+            );
         }
         catch ( Throwable ignore )
         {
@@ -197,15 +231,6 @@ public class HandlerActivator<T>
     {
         m_propertyResolver = propertyResolver;
         m_configuration = m_connectionFactory.createConfiguration( propertyResolver );
-        if ( m_configuration != null && m_handlerReg == null )
-        {
-            registerHandler();
-        }
-        else if ( m_configuration == null && m_handlerReg != null )
-        {
-            m_handlerReg.unregister();
-            m_handlerReg = null;
-        }
     }
 
     /**
