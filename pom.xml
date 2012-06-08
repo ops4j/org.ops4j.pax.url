@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.ops4j</groupId>
 		<artifactId>master</artifactId>
-		<version>2.0.0</version>
+		<version>3.0.0</version>
 	</parent>
 
 	<groupId>org.ops4j.pax</groupId>
@@ -69,11 +69,6 @@
 							<_include>-osgi.bnd</_include>
 						</instructions>
 					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-release-plugin</artifactId>
-					<version>2.1</version>
 				</plugin>
 				<!--This plugin's configuration is used to store Eclipse m2e settings 
 					only. It has no influence on the Maven build itself. -->
@@ -227,46 +222,5 @@
 		</developer>
 	</developers>
 
-	<profiles>
-		<profile>
-			<id>default</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<modules>
-				<module>pax-url-aether</module>
-				<module>pax-url-assembly</module>
-				<module>pax-url-cache</module>
-				<module>pax-url-classpath</module>
-				<module>pax-url-commons</module>
-				<module>pax-url-dir</module>
-				<module>pax-url-link</module>
-				<module>pax-url-maven-commons</module>
-				<module>pax-url-obr</module>
-				<module>pax-url-reference</module>
-				<module>pax-url-war</module>
-				<module>pax-url-wrap</module>
-				<module>pax-url-itest</module>
-			</modules>
-		</profile>
-		<profile>
-			<id>release</id>
-			<modules>
-				<module>pax-url-aether</module>
-				<module>pax-url-assembly</module>
-				<module>pax-url-cache</module>
-				<module>pax-url-classpath</module>
-				<module>pax-url-commons</module>
-				<module>pax-url-dir</module>
-				<module>pax-url-link</module>
-				<module>pax-url-maven-commons</module>
-				<module>pax-url-obr</module>
-				<module>pax-url-reference</module>
-				<module>pax-url-war</module>
-				<module>pax-url-wrap</module>
-				<module>pax-url-itest</module>
-			</modules>
-		</profile>
-	</profiles>
 </project>
 
