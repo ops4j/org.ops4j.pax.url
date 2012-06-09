@@ -52,6 +52,7 @@
 		<dependency.swissbox.version>1.5.0</dependency.swissbox.version>
 		<dependency.slf4j.version>1.5.11</dependency.slf4j.version>
 		<dependency.paxexam.version>2.4.0</dependency.paxexam.version>
+		<dependency.paxrunner.version>1.7.6</dependency.paxrunner.version>
 	</properties>
 
 	<build>
