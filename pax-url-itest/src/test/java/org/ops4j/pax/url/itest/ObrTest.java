@@ -25,7 +25,7 @@ import org.osgi.framework.BundleException;
 
 /**
  * Tests the obr: protocol handler.
- * 
+ *
  * @author Harald Wellmann
  */
 @RunWith(JUnit4TestRunner.class)
@@ -33,16 +33,16 @@ public class ObrTest
 {
     @Inject
     private BundleContext bc;
-    
+
     @Configuration( )
     public Option[] config()
     {
         return options(
             frameworkProperty("osgi.console").value("6666"),
-            
+
             // OBR location
-            frameworkProperty("obr.repository.url").value("http://sigil.codecauldron.org/spring-external.obr"),
-            
+            frameworkProperty("obr.repository.url").value("http://www.knopflerfish.org/repo/bindex.xml"),
+
             // bundle under test and its dependencies
             mavenBundle("org.ops4j.pax.url", "pax-url-obr").versionAsInProject(),
             mavenBundle("org.ops4j.pax.url", "pax-url-commons").versionAsInProject(),
@@ -51,29 +51,29 @@ public class ObrTest
             mavenBundle("org.ops4j.pax.swissbox", "pax-swissbox-tracker").versionAsInProject(),
             //mavenBundle("org.ops4j.base", "ops4j-base").versionAsInProject(),
             mavenBundle("org.apache.felix", "org.osgi.service.obr", "1.0.2"),
-            
+
             // OBR RepositoryAdmin implementation
             mavenBundle("org.apache.felix", "org.apache.felix.bundlerepository", "1.6.6"),
-            
+
             junitBundles() );
     }
 
-    
-    
+
+
     @Test
     public void installFromObrUrl() throws IOException, BundleException {
         // check that obr: handler is available
-        URL url = new URL( "obr:com.springsource.org.apache.commons.lang/2.5.0" );
+        URL url = new URL("obr:org.knopflerfish.bundle.io/3.0.0");
         assertThat( url, is( notNullValue()) );
-        
+
         // open stream of OBR resource
         InputStream is = url.openStream();
         assertThat( is, is( notNullValue()) );
-        
+
         // install bundle from stream
         Bundle bundle = bc.installBundle( "local", is );
         assertThat( bundle, is(notNullValue()));
-        
+
         // bundle should be active
         assertThat( bundle.getState(), is(Bundle.ACTIVE));
     }
