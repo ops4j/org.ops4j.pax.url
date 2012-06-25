@@ -183,7 +183,7 @@ public class HandlerActivator<T>
                  *
                  * @see org.osgi.service.cm.ManagedService#updated(java.util.Dictionary)
                  */
-                public void updated( final Dictionary config )
+                public void updated( @SuppressWarnings("rawtypes") final Dictionary config )
                     throws ConfigurationException
                 {
                     if ( config == null )

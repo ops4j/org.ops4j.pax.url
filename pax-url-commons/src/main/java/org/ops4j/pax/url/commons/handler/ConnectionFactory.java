@@ -17,12 +17,12 @@
  */
 package org.ops4j.pax.url.commons.handler;
 
-import java.net.MalformedURLException;
+import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.io.IOException;
-import org.osgi.framework.BundleContext;
+
 import org.ops4j.util.property.PropertyResolver;
+import org.osgi.framework.BundleContext;
 
 /**
  * URL connection factory.

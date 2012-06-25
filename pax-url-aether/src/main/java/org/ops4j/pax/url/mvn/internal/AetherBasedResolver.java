@@ -22,14 +22,13 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.maven.repository.internal.DefaultServiceLocator;
 import org.apache.maven.repository.internal.MavenRepositorySystemSession;
+import org.apache.maven.repository.internal.MavenServiceLocator;
 import org.ops4j.pax.url.maven.commons.MavenConfiguration;
 import org.ops4j.pax.url.maven.commons.MavenRepositoryURL;
 import org.slf4j.LoggerFactory;
@@ -191,27 +190,6 @@ public class AetherBasedResolver {
         }
         return list;
     }
-
-    /**
-     * This is a workaround for Aether 1.11 failing if at least one remote repo is not available currently.
-     * Which is kind of bad.
-     *
-     * @param url to test for connection
-     *
-     * @return true if its available. Otherwise false.
-     */
-    private boolean isAvailable( String url )
-    {
-        try {
-
-            new URL( url ).openStream().close();
-            return true;
-        } catch( IOException e ) {
-            // e.printStackTrace();
-        }
-        return false;
-    }
-
     public InputStream resolve( String groupId, String artifactId, String classifier, String extension, String version )
         throws IOException
     {
@@ -300,7 +278,7 @@ public class AetherBasedResolver {
 
     private RepositorySystem newRepositorySystem()
     {
-        DefaultServiceLocator locator = new DefaultServiceLocator();
+        MavenServiceLocator locator = new MavenServiceLocator();
 
         locator.setServices( WagonProvider.class, new ManualWagonProvider() );
         locator.addService( RepositoryConnectorFactory.class, WagonRepositoryConnectorFactory.class );

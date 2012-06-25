@@ -64,7 +64,7 @@ public class ProxyTest {
 		PropertiesPropertyResolver propertyResolver = new PropertiesPropertyResolver(properties );
 		MavenConfigurationImpl config = new MavenConfigurationImpl(propertyResolver, TEST_PID);
 		
-		MavenSettings settings = new MavenSettingsImpl(new File("target/test-classes/settings-proxy1.xml").toURL());
+		MavenSettings settings = new MavenSettingsImpl(new File("target/test-classes/settings-proxy1.xml").toURI().toURL());
 		config.setSettings(settings );
 		File localRepo = config.getLocalRepository().getFile();
 		// you must exist.
