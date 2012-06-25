@@ -197,7 +197,6 @@ public class MavenSettingsImpl
             {
                 m_localRepository = System.getProperty( "user.home" ) + "/.m2/repository";
             }
-            m_localRepository = m_localRepository;
         }
         return m_localRepository;
     }
@@ -437,7 +436,7 @@ public class MavenSettingsImpl
             {
                 try
                 {
-                    return file.toURL();
+                    return file.toURI().toURL();
                 }
                 catch( MalformedURLException e )
                 {

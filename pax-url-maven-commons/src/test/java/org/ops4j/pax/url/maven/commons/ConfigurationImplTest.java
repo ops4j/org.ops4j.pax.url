@@ -24,7 +24,6 @@ import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -95,7 +94,7 @@ public class ConfigurationImplTest
         );
         replay( propertyResolver );
         MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
-        assertEquals( "Settings", validSettings.toURL(), config.getSettingsFileUrl() );
+        assertEquals( "Settings", validSettings.toURI().toURL(), config.getSettingsFileUrl() );
         verify( propertyResolver );
     }
 
@@ -398,7 +397,7 @@ public class ConfigurationImplTest
         replay( propertyResolver );
         MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
         assertEquals( "Local repository",
-                      valid.toURL(),
+                      valid.toURI().toURL(),
                       config.getLocalRepository().getURL()
         );
         verify( propertyResolver );
@@ -417,7 +416,7 @@ public class ConfigurationImplTest
         replay( propertyResolver );
         MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
         assertEquals( "Local repository",
-                      validWithSlash.toURL(),
+                      validWithSlash.toURI().toURL(),
                       config.getLocalRepository().getURL()
         );
         verify( propertyResolver );

@@ -132,7 +132,7 @@ public class MavenConfigurationImpl
                     File file = new File( spec );
                     if( file.exists() ) {
                         try {
-                            return set( m_pid + MavenConstants.PROPERTY_SETTINGS_FILE, file.toURL() );
+                            return set( m_pid + MavenConstants.PROPERTY_SETTINGS_FILE, file.toURI().toURL() );
                         } catch( MalformedURLException ignore ) {
                             // ignore as it usually should not happen since we already have a file
                         }
@@ -174,8 +174,6 @@ public class MavenConfigurationImpl
                 m_propertyResolver.get( m_pid + MavenConstants.PROPERTY_DEFAULT_REPOSITORIES );
             // build repositories list
             final List<MavenRepositoryURL> defaultRepositoriesProperty = new ArrayList<MavenRepositoryURL>();
-            // TODO : localRepository is never used.
-            MavenRepositoryURL localRepository = getLocalRepository();
             if( defaultRepositoriesProp != null && defaultRepositoriesProp.trim().length() > 0 ) {
                 String[] repositories = defaultRepositoriesProp.split( REPOSITORIES_SEPARATOR );
                 for( String repositoryURL : repositories ) {
