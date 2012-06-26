@@ -193,7 +193,8 @@ public class AetherBasedResolver {
 
     private void addSubDirs(List<RemoteRepository> list, File parentDir) {
         if (!parentDir.isDirectory()) {
-            throw new RuntimeException("Repository marked with @multi does not resolve to a directory: " + parentDir);
+            LOG.debug("Repository marked with @multi does not resolve to a directory: " + parentDir);
+            return;
         }
         for (File repo : parentDir.listFiles()) {
             if (repo.isDirectory()) {
