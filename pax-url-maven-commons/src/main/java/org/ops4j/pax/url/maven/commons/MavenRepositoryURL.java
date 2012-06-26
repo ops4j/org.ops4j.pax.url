@@ -59,6 +59,8 @@ public class MavenRepositoryURL
      */
     private final boolean m_releasesEnabled;
 
+    private final boolean m_multi;
+
     /**
      * Creates a maven repository URL bases on a string spec. The path can be marked with @snapshots and/or @noreleases
      * (not case sensitive).
@@ -77,20 +79,26 @@ public class MavenRepositoryURL
         final StringBuilder urlBuilder = new StringBuilder();
         boolean snapshotEnabled = false;
         boolean releasesEnabled = true;
+        boolean multi = false;
 
         String name = null;
 
         for( int i = 0; i < segments.length; i++ )
         {
-            if( segments[ i ].trim().equalsIgnoreCase( MavenConstants.OPTION_ALLOW_SNAPSHOTS ) )
+            String segment = segments[i].trim(); 
+            if( segment.equalsIgnoreCase( MavenConstants.OPTION_ALLOW_SNAPSHOTS ) )
             {
                 snapshotEnabled = true;
             }
-            else if( segments[ i ].trim().equalsIgnoreCase( MavenConstants.OPTION_DISALLOW_RELEASES ) )
+            else if( segment.equalsIgnoreCase( MavenConstants.OPTION_DISALLOW_RELEASES ) )
             {
                 releasesEnabled = false;
             }
-             else if( segments[ i ].trim().startsWith( MavenConstants.OPTION_ID ) )
+            else if( segment.equalsIgnoreCase( MavenConstants.OPTION_MULTI ) )
+            {
+                multi = true;
+            }
+            else if( segment.startsWith( MavenConstants.OPTION_ID ) )
             {
                 try {
                     name = segments[ i ].split( "=" )[1].trim();
@@ -111,6 +119,7 @@ public class MavenRepositoryURL
         m_repositoryURL = new URL( spec );
         m_snapshotsEnabled = snapshotEnabled;
         m_releasesEnabled = releasesEnabled;
+        m_multi = multi;
         if (name == null) {
             String warn = "Repository spec " + spec + " does not contain an identifier. This is deprecated & discouraged & just evil.";
             LOG.warn( warn );
@@ -200,6 +209,16 @@ public class MavenRepositoryURL
     public boolean isSnapshotsEnabled()
     {
         return m_snapshotsEnabled;
+    }
+    
+    /**
+     * Getter.
+     *
+     * @return true if the repository is a parent path of repos
+     */
+    public boolean isMulti()
+    {
+        return m_multi;
     }
 
     /**

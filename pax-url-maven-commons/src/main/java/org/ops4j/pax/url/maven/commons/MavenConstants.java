@@ -70,6 +70,13 @@ public interface MavenConstants {
      */
     static String OPTION_DISALLOW_RELEASES = "noreleases";
     /**
+     * Option to mark path as a parent directory of repo directories. 
+     * So at runtime the parent directory is scanned for subdirectories
+     * and each subdirectory is used as a remote repo
+     */
+    static String OPTION_MULTI = "multi";
+    
+    /**
      * Options separator in repository url.
      */
     static String SEPARATOR_OPTIONS = "@";

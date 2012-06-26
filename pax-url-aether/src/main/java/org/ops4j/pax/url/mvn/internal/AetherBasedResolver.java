@@ -67,7 +67,6 @@ public class AetherBasedResolver {
     private static final String REPO_TYPE = "default";
 
     final private RepositorySystem m_repoSystem;
-    final private List<RemoteRepository> m_remoteRepos;
     final private MavenConfiguration m_config;
     final private MirrorSelector m_mirrorSelector;
     final private ProxySelector m_proxySelector;
@@ -82,21 +81,18 @@ public class AetherBasedResolver {
     public AetherBasedResolver( final MavenConfiguration configuration )
         throws MalformedURLException
     {
-        m_repoSystem = newRepositorySystem();
         m_config = configuration;
-
-        m_remoteRepos = selectRepositories( getRemoteRepositories( configuration ) );
-        m_mirrorSelector = selectMirrors();
+        m_repoSystem = newRepositorySystem();
         m_proxySelector = selectProxies();
-        assignProxyAndMirrors();
+        m_mirrorSelector = selectMirrors();
     }
 
-    private void assignProxyAndMirrors()
+    private void assignProxyAndMirrors(List<RemoteRepository> remoteRepos)
     {
         Map<String, List<String>> map = new HashMap<String, List<String>>();
         Map<String, RemoteRepository> naming = new HashMap<String, RemoteRepository>();
 
-        for( RemoteRepository r : m_remoteRepos ) {
+        for( RemoteRepository r : remoteRepos ) {
             naming.put( r.getId(), r );
 
             r.setProxy( m_proxySelector.getProxy( r ) );
@@ -121,8 +117,8 @@ public class AetherBasedResolver {
                 mirroedRepos.add( naming.get( rep ) );
             }
             mirror.setMirroredRepositories( mirroedRepos );
-            m_remoteRepos.removeAll(mirroedRepos);
-            m_remoteRepos.add( 0, mirror );
+            remoteRepos.removeAll(mirroedRepos);
+            remoteRepos.add( 0, mirror );
         }
 
     }
@@ -186,29 +182,56 @@ public class AetherBasedResolver {
     {
         List<RemoteRepository> list = new ArrayList<RemoteRepository>();
         for( MavenRepositoryURL r : repos ) {
-            list.add( new RemoteRepository( r.getId(), REPO_TYPE, r.getURL().toExternalForm() ) );
+            if (r.isMulti()) {
+                addSubDirs(list, r.getFile());
+            } else {
+                addRepo(list, r);
+            }
         }
         return list;
+    }
+
+    private void addSubDirs(List<RemoteRepository> list, File parentDir) {
+        if (!parentDir.isDirectory()) {
+            throw new RuntimeException("Repository marked with @multi does not resolve to a directory: " + parentDir);
+        }
+        for (File repo : parentDir.listFiles()) {
+            if (repo.isDirectory()) {
+                try {
+                    String repoURI = repo.toURI().toString() + "@id=" + repo.getName();
+                    LOG.debug("Adding repo from inside multi dir: " + repoURI);
+                    addRepo(list, new MavenRepositoryURL(repoURI));
+                } catch (MalformedURLException e) {
+                    LOG.error("Error resolving repo url of a multi repo " + repo.toURI());
+                }
+            }
+        }
+    }
+
+    private void addRepo(List<RemoteRepository> list, MavenRepositoryURL repoUrl) {
+        list.add( new RemoteRepository( repoUrl.getId(), REPO_TYPE, repoUrl.getURL().toExternalForm() ) );
     }
     public InputStream resolve( String groupId, String artifactId, String classifier, String extension, String version )
         throws IOException
     {
+        List<RemoteRepository> remoteRepos = selectRepositories( getRemoteRepositories( m_config ) );
+        assignProxyAndMirrors(remoteRepos);
         // version = mapLatestToRange( version );
         RepositorySystemSession session = newSession();
 
         Artifact artifact = new DefaultArtifact( groupId, artifactId, classifier, extension, version );
-        File resolved = resolve( session, artifact );
+        File resolved = resolve( session, remoteRepos, artifact );
 
         LOG.debug( "Resolved ({}) as {}", artifact.toString(), resolved.getAbsolutePath() );
         return new FileInputStream( resolved );
     }
 
-    private File resolve( RepositorySystemSession session, Artifact artifact )
+    private File resolve( RepositorySystemSession session, List<RemoteRepository> remoteRepos, Artifact artifact )
         throws IOException
     {
         try {
-            artifact = resolveLatestVersionRange( session, artifact );
-            return m_repoSystem.resolveArtifact( session, new ArtifactRequest( artifact, m_remoteRepos, null ) ).getArtifact().getFile();
+            artifact = resolveLatestVersionRange( session, remoteRepos, artifact );
+            return m_repoSystem.resolveArtifact( session, new ArtifactRequest( artifact, remoteRepos, null ) ).getArtifact().getFile();
         } catch( RepositoryException e ) {
             throw new IOException( "Error resolving artifact " + artifact.toString(), e );
         }
@@ -226,13 +249,13 @@ public class AetherBasedResolver {
      * @throws org.sonatype.aether.resolution.VersionRangeResolutionException
      *          in case of resolver errors.
      */
-    private Artifact resolveLatestVersionRange( RepositorySystemSession session, Artifact artifact )
+    private Artifact resolveLatestVersionRange( RepositorySystemSession session, List<RemoteRepository> remoteRepos, Artifact artifact )
         throws VersionRangeResolutionException
     {
         if( artifact.getVersion().equals( VERSION_LATEST ) ) {
             artifact = artifact.setVersion( LATEST_VERSION_RANGE );
 
-            VersionRangeResult versionResult = m_repoSystem.resolveVersionRange( session, new VersionRangeRequest( artifact, m_remoteRepos, null ) );
+            VersionRangeResult versionResult = m_repoSystem.resolveVersionRange( session, new VersionRangeRequest( artifact, remoteRepos, null ) );
             if( versionResult != null ) {
                 Version v = versionResult.getHighestVersion();
                 if( v != null ) {
