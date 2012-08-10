@@ -91,8 +91,10 @@ public class ManualWagonProvider
 //					System.err.println("### username : " + username);
 //					System.err.println("### password : " + password);
 
-					getHttpHeaders().put(username, password);
-
+					if(username != null && password != null) {
+						getHttpHeaders().put(username, password);
+					}
+					
 					super.fillInputData(inputData);
 
 				}
