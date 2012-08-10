@@ -15,7 +15,16 @@
  */
 package org.ops4j.pax.url.mvn.internal;
 
+import java.io.File;
+import java.util.Properties;
+
+import org.apache.maven.wagon.ConnectionException;
+import org.apache.maven.wagon.InputData;
+import org.apache.maven.wagon.ResourceDoesNotExistException;
+import org.apache.maven.wagon.TransferFailedException;
 import org.apache.maven.wagon.Wagon;
+import org.apache.maven.wagon.authentication.AuthenticationException;
+import org.apache.maven.wagon.authorization.AuthorizationException;
 import org.apache.maven.wagon.providers.file.FileWagon;
 import org.apache.maven.wagon.providers.http.LightweightHttpWagon;
 import org.apache.maven.wagon.providers.http.LightweightHttpsWagon;
@@ -40,14 +49,64 @@ public class ManualWagonProvider
             return new LightweightHttpWagon();
         }else if( "https".equals( roleHint ) )
         {
-            return new LightweightHttpsWagon();
+            
+			return new LightweightHttpsWagon() {
+
+				/** 
+				 * construct equivalent of
+				 *  
+				 * @plexus.configuration 
+				 * private Properties httpHeaders;
+				 * 
+				 * which is injected from settings.xml during normal maven invocation 
+				 *
+						<server>
+							<id>server-id</id>
+							<configuration>
+								<httpHeaders>
+									<property>
+										<name>User-Agent</name>
+										<value>magic-value</value>
+									</property>
+								</httpHeaders>
+							</configuration>
+						</server>
+				 * 
+				 * which is one way for AWS S3 https authentication via "aws:UserAgent"
+				 * http://docs.amazonwebservices.com/AmazonS3/latest/dev/UsingIAMPolicies.html#AmazonS3PolicyKeys
+				 * 
+				 * see sample AWS S3 policy in 
+				 * /pax-url-aether/src/test/resources/amazon/s3-example-policy-with-user-agent.json
+				 * 
+				 */
+				@Override
+				public void fillInputData(final InputData inputData) throws 
+						TransferFailedException,
+						ResourceDoesNotExistException, 
+						AuthorizationException {
+
+					final String username = getRepository().getUsername();
+					final String password = getRepository().getPassword();
+
+//					System.err.println("### username : " + username);
+//					System.err.println("### password : " + password);
+
+					getHttpHeaders().put(username, password);
+
+					super.fillInputData(inputData);
+
+				}
+
+			};
+        	
         }
+        
         return null;
+        
     }
 
     public void release( Wagon wagon )
     {
-
     }
 
 }
