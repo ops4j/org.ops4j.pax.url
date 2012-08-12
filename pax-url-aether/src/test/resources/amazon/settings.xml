@@ -1,0 +1,39 @@
+
+<!-- Copyright (C) 2012 Andrei Pozolotin -->
+
+<settings>
+
+	<servers>
+
+		<!-- "username" and "password" will be injected in HTTP headers as "username: 
+			password" for HTTPS(SSL) sessions only; see : http://docs.amazonwebservices.com/AmazonS3/latest/dev/UsingIAMPolicies.html#AmazonS3PolicyKeys -->
+
+		<server>
+			<id>amazon-server-1</id>
+			<username>User-Agent</username>
+			<password>magic-token</password>
+		</server>
+
+	</servers>
+
+	<profiles>
+
+		<profile>
+			<id>amazon-profile-1</id>
+			<repositories>
+				<repository>
+					<id>amazon-server-1</id>
+					<url>https://localhost:11443</url>
+				</repository>
+			</repositories>
+		</profile>
+
+	</profiles>
+
+	<activeProfiles>
+
+		<activeProfile>amazon-profile-1</activeProfile>
+
+	</activeProfiles>
+
+</settings>

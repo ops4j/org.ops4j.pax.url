@@ -1,0 +1,49 @@
+{
+
+
+	"Copyright" : "Copyright (C) 2012 Andrei Pozolotin",
+
+	"Version": "2008-10-17",
+	"Id": "repository",
+	"Statement": [
+		{
+			"Sid": "Allow-Read-UserAgent-SecureTransport",
+			"Effect": "Allow",
+			"Principal": {
+				"AWS": "*"
+			},
+			"Action": "s3:GetObject",
+			"Resource": [
+				"arn:aws:s3:::repository.company.com",
+				"arn:aws:s3:::repository.company.com/*"
+			],
+			"Condition": {
+				"Bool": {
+					"aws:SecureTransport": true
+				},
+				"StringEquals": {
+					"aws:UserAgent": "magic-token"
+				}
+			}
+		},
+		{
+			"Sid": "Deny-All-Not-Mine",
+			"Effect": "Deny",
+			"NotPrincipal": {
+				"AWS": [
+					"arn:aws:iam::1234567812345678:root"
+				]
+			},
+			"Action": "s3:*",
+			"Resource": [
+				"arn:aws:s3:::repository.company.com",
+				"arn:aws:s3:::repository.company.com/*"
+			],
+			"Condition": {
+				"StringNotEquals": {
+					"aws:UserAgent": "magic-token"
+				}
+			}
+		}
+	]
+}
