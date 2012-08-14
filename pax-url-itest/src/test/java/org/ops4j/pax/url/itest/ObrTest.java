@@ -63,7 +63,7 @@ public class ObrTest
     @Test
     public void installFromObrUrl() throws IOException, BundleException {
         // check that obr: handler is available
-        URL url = new URL("obr:org.knopflerfish.bundle.io/3.0.0");
+        URL url = new URL("obr:org.knopflerfish.bundle.io/3.0.1");
         assertThat( url, is( notNullValue()) );
 
         // open stream of OBR resource
