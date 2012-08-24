@@ -17,28 +17,24 @@
  */
 package org.ops4j.pax.url.commons.handler;
 
+import org.ops4j.lang.NullArgumentException;
+import org.ops4j.pax.swissbox.property.BundleContextPropertyResolver;
+import org.ops4j.util.property.PropertyResolver;
+import org.osgi.framework.BundleActivator;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceRegistration;
+import org.osgi.service.url.AbstractURLStreamHandlerService;
+import org.osgi.service.url.URLConstants;
+import org.osgi.service.url.URLStreamHandlerService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Arrays;
 import java.util.Dictionary;
 import java.util.Hashtable;
-
-import org.ops4j.lang.NullArgumentException;
-import org.ops4j.pax.swissbox.property.BundleContextPropertyResolver;
-import org.ops4j.util.property.DictionaryPropertyResolver;
-import org.ops4j.util.property.PropertyResolver;
-import org.osgi.framework.BundleActivator;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.Constants;
-import org.osgi.framework.ServiceRegistration;
-import org.osgi.service.cm.ConfigurationException;
-import org.osgi.service.cm.ManagedService;
-import org.osgi.service.url.AbstractURLStreamHandlerService;
-import org.osgi.service.url.URLConstants;
-import org.osgi.service.url.URLStreamHandlerService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Bundle activator for protocol handlers.
@@ -176,34 +172,7 @@ public class HandlerActivator<T>
     {
         try
         {
-            final ManagedService managedService = new ManagedService()
-            {
-                /**
-                 * Sets the resolver on handler.
-                 *
-                 * @see org.osgi.service.cm.ManagedService#updated(java.util.Dictionary)
-                 */
-                public void updated( @SuppressWarnings("rawtypes") final Dictionary config )
-                    throws ConfigurationException
-                {
-                    if ( config == null )
-                    {
-                        setResolver(new BundleContextPropertyResolver(m_bundleContext));
-                    }
-                    else
-                    {
-                        setResolver(new DictionaryPropertyResolver(config));
-                    }
-                }
-
-            };
-            final Dictionary<String, String> props = new Hashtable<String, String>();
-            props.put(Constants.SERVICE_PID, m_pid);
-            m_managedServiceReg = m_bundleContext.registerService(
-                ManagedService.class.getName(),
-                managedService,
-                props
-            );
+            m_managedServiceReg = OptionalConfigAdminHelper.registerManagedService(m_pid, m_bundleContext, this);
         }
         catch ( Throwable ignore )
         {
