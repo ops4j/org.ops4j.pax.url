@@ -1,0 +1,13 @@
+<atlassian-ide-plugin>
+  <project-configuration>
+    <servers>
+      <jira>
+        <server-id>f7542663-9267-4c7d-8d78-9980ab19aa35</server-id>
+        <name>team.ops4j.org (JIRA Studio)</name>
+        <url>http://team.ops4j.org</url>
+        <shared>false</shared>
+      </jira>
+    </servers>
+    <default-jira-server>f7542663-9267-4c7d-8d78-9980ab19aa35</default-jira-server>
+  </project-configuration>
+</atlassian-ide-plugin>
