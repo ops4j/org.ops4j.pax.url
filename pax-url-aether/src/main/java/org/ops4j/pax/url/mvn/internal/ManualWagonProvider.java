@@ -37,6 +37,12 @@ public class ManualWagonProvider
     implements WagonProvider
 {
 
+    private int timeout;
+
+    public ManualWagonProvider(int timeout) {
+        this.timeout = timeout;
+    }
+
     public Wagon lookup( String roleHint )
         throws Exception
     {
@@ -46,11 +52,12 @@ public class ManualWagonProvider
         }
         else if( "http".equals( roleHint ) )
         {
-            return new LightweightHttpWagon();
+            LightweightHttpWagon lightweightHttpWagon = new LightweightHttpWagon();
+            lightweightHttpWagon.setTimeout(timeout );
+            return lightweightHttpWagon;
         }else if( "https".equals( roleHint ) )
         {
-            
-			return new LightweightHttpsWagon() {
+            LightweightHttpWagon lightweightHttpWagon = new LightweightHttpsWagon() {
 
 				/** 
 				 * construct equivalent of
@@ -98,9 +105,9 @@ public class ManualWagonProvider
 					super.fillInputData(inputData);
 
 				}
-
 			};
-        	
+            lightweightHttpWagon.setTimeout(timeout);
+            return lightweightHttpWagon;
         }
         
         return null;

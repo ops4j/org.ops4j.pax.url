@@ -304,7 +304,7 @@ public class AetherBasedResolver {
     {
         MavenServiceLocator locator = new MavenServiceLocator();
 
-        locator.setServices( WagonProvider.class, new ManualWagonProvider() );
+        locator.setServices( WagonProvider.class, new ManualWagonProvider(m_config.getTimeout()) );
         locator.addService( RepositoryConnectorFactory.class, WagonRepositoryConnectorFactory.class );
 
         locator.setService( LocalRepositoryManagerFactory.class, SimpleLocalRepositoryManagerFactory.class );

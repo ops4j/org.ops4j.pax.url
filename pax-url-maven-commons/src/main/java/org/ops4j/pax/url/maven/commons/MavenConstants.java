@@ -66,6 +66,11 @@ public interface MavenConstants {
      */
     static String OPTION_ALLOW_SNAPSHOTS = "snapshots";
     /**
+     * Option to configure the default timeout; use a default timeout of
+     * 5 secs by default.
+     */
+    static String PROPERTY_TIMEOUT = ".timeout";
+    /**
      * Option to mark repository as not allowing releases.
      */
     static String OPTION_DISALLOW_RELEASES = "noreleases";

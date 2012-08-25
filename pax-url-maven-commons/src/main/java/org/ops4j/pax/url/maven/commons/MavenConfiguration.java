@@ -76,6 +76,14 @@ public interface MavenConfiguration {
     Boolean useFallbackRepositories();
 
     /**
+     * Returns the timeout configured in case the maven artifact is retrieved from a
+     * remote location.
+     *
+     * @return the timeout in case artifacts are retrieved from a remote location
+     */
+    Integer getTimeout();
+
+    /**
      * @param url Enables the proxy server for a given URL.
      */
     void enableProxy( URL url );

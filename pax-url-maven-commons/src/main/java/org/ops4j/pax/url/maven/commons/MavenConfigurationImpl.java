@@ -59,7 +59,10 @@ public class MavenConfigurationImpl
      * Repositories separator.
      */
     private final static String REPOSITORIES_SEPARATOR = ",";
-
+    /**
+     * Use a default timeout of 5 seconds.
+     */
+    private final String DEFAULT_TIMEOUT = "5000";
     /**
      * Maven settings abstraction. Can be null.
      */
@@ -307,6 +310,16 @@ public class MavenConfigurationImpl
             }
         }
         return null;
+    }
+
+    public Integer getTimeout() {
+        if( !contains( m_pid + MavenConstants.PROPERTY_TIMEOUT ) ) {
+            String timeout = m_propertyResolver.get( m_pid + MavenConstants.PROPERTY_TIMEOUT);
+            return set( m_pid + MavenConstants.PROPERTY_TIMEOUT,
+                    Integer.valueOf( timeout == null ? DEFAULT_TIMEOUT : timeout )
+            );
+        }
+        return get( m_pid + MavenConstants.PROPERTY_TIMEOUT);
     }
 
     /**
