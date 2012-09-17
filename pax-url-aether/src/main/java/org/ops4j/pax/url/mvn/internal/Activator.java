@@ -20,64 +20,49 @@ package org.ops4j.pax.url.mvn.internal;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import org.osgi.framework.BundleContext;
+
+import org.apache.maven.settings.Settings;
 import org.ops4j.pax.url.commons.handler.ConnectionFactory;
 import org.ops4j.pax.url.commons.handler.HandlerActivator;
-import org.ops4j.pax.url.maven.commons.MavenConfiguration;
-import org.ops4j.pax.url.maven.commons.MavenConfigurationImpl;
-import org.ops4j.pax.url.maven.commons.MavenSettingsImpl;
 import org.ops4j.pax.url.mvn.ServiceConstants;
 import org.ops4j.util.property.PropertyResolver;
+import org.osgi.framework.BundleContext;
 
 /**
  * Bundle activator for mvn: protocol handler
  */
-public final class Activator
-    extends HandlerActivator<MavenConfiguration>
-{
+public final class Activator extends HandlerActivator<Settings> {
 
-    /**
-     * @see HandlerActivator#HandlerActivator(String[], String, org.ops4j.pax.url.commons.handler.ConnectionFactory)
-     */
-    public Activator()
-    {
-        super(
-            new String[]{ ServiceConstants.PROTOCOL },
-            ServiceConstants.PID,
-            new ConnectionFactory<MavenConfiguration>()
-            {
+	/**
+	 * @see HandlerActivator#HandlerActivator(String[], String,
+	 *      org.ops4j.pax.url.commons.handler.ConnectionFactory)
+	 */
+	public Activator() {
+		super(new String[] { ServiceConstants.PROTOCOL }, ServiceConstants.PID,
+				new ConnectionFactory<Settings>() {
 
-                /**
-                 * @see ConnectionFactory#createConection(BundleContext, URL, Object)
-                 */
-                public URLConnection createConection( final BundleContext bundleContext,
-                                                      final URL url,
-                                                      final MavenConfiguration config )
-                    throws MalformedURLException
-                {
-                    return new Connection( url, config );
-                }
+					/**
+					 * @see ConnectionFactory#createConection(BundleContext,
+					 *      URL, Object)
+					 */
+					public URLConnection createConection(
+							final BundleContext bundleContext, final URL url,
+							final Settings settings)
+							throws MalformedURLException {
+						return new Connection(url, settings);
+					}
 
-                /**
-                 * @see ConnectionFactory#createConfiguration(org.ops4j.util.property.PropertyResolver)
-                 */
-                public MavenConfiguration createConfiguration( final PropertyResolver propertyResolver )
-                {
-                    final MavenConfigurationImpl config =
-                        new MavenConfigurationImpl( propertyResolver, ServiceConstants.PID );
-                    if (!config.isValid())
-                    {
-                        return null;
-                    }
-                    config.setSettings(
-                        new MavenSettingsImpl( config.getSettingsFileUrl(), config.useFallbackRepositories() )
-                    );
-                    return config;
-                }
+					/**
+					 * @see ConnectionFactory#createConfiguration(org.ops4j.util.property.PropertyResolver)
+					 */
+					public Settings createConfiguration(
+							final PropertyResolver propertyResolver) {
+						final Settings settings = MavenSettingsReader
+								.readSettings();
+						return settings;
+					}
 
-
-            }
-        );
-    }
+				});
+	}
 
 }
