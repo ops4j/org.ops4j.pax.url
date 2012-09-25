@@ -29,8 +29,11 @@ import java.util.Map;
 
 import org.apache.maven.repository.internal.MavenRepositorySystemSession;
 import org.apache.maven.repository.internal.MavenServiceLocator;
-import org.ops4j.pax.url.maven.commons.MavenConfiguration;
-import org.ops4j.pax.url.maven.commons.MavenRepositoryURL;
+import org.apache.maven.settings.Mirror;
+import org.apache.maven.settings.Profile;
+import org.apache.maven.settings.Repository;
+import org.apache.maven.settings.Server;
+import org.apache.maven.settings.Settings;
 import org.slf4j.LoggerFactory;
 import org.sonatype.aether.RepositoryException;
 import org.sonatype.aether.RepositorySystem;
@@ -62,254 +65,248 @@ import org.sonatype.aether.version.Version;
  */
 public class AetherBasedResolver {
 
-    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger( AetherBasedResolver.class );
-    private static final String LATEST_VERSION_RANGE = "(0.0,]";
-    private static final String REPO_TYPE = "default";
+	private static final org.slf4j.Logger LOG = LoggerFactory
+			.getLogger(AetherBasedResolver.class);
+	private static final String LATEST_VERSION_RANGE = "(0.0,]";
+	private static final String REPO_TYPE = "default";
 
-    final private RepositorySystem m_repoSystem;
-    final private MavenConfiguration m_config;
-    final private MirrorSelector m_mirrorSelector;
-    final private ProxySelector m_proxySelector;
+	final private RepositorySystem m_repoSystem;
+	final private MirrorSelector m_mirrorSelector;
+	final private ProxySelector m_proxySelector;
+	final private Settings m_settings;
 
-    /**
-     * Create a AetherBasedResolver
-     *
-     * @param configuration (must be not null)
-     *
-     * @throws java.net.MalformedURLException in case of url problems in configuration.
-     */
-    public AetherBasedResolver( final MavenConfiguration configuration )
-        throws MalformedURLException
-    {
-        m_config = configuration;
-        m_repoSystem = newRepositorySystem();
-        m_proxySelector = selectProxies();
-        m_mirrorSelector = selectMirrors();
-    }
+	/**
+	 * Create a AetherBasedResolver
+	 * 
+	 * @param configuration
+	 *            (must be not null)
+	 * 
+	 * @throws java.net.MalformedURLException
+	 *             in case of url problems in configuration.
+	 */
+	public AetherBasedResolver(final Settings settings)
+			throws MalformedURLException {
+		m_settings = settings;
+		m_repoSystem = newRepositorySystem();
+		m_proxySelector = selectProxies();
+		m_mirrorSelector = selectMirrors();
+	}
 
-    private void assignProxyAndMirrors(List<RemoteRepository> remoteRepos)
-    {
-        Map<String, List<String>> map = new HashMap<String, List<String>>();
-        Map<String, RemoteRepository> naming = new HashMap<String, RemoteRepository>();
+	private void assignProxyAndMirrors(List<RemoteRepository> remoteRepos) {
+		Map<String, List<String>> map = new HashMap<String, List<String>>();
+		Map<String, RemoteRepository> naming = new HashMap<String, RemoteRepository>();
 
-        for( RemoteRepository r : remoteRepos ) {
-            naming.put( r.getId(), r );
+		for (RemoteRepository r : remoteRepos) {
+			naming.put(r.getId(), r);
 
-            r.setProxy( m_proxySelector.getProxy( r ) );
+			r.setProxy(m_proxySelector.getProxy(r));
 
-            RemoteRepository mirror = m_mirrorSelector.getMirror( r );
-            if( mirror != null ) {
-                String key = mirror.getId();
-                naming.put( key, mirror );
-                if( !map.containsKey( key ) ) {
-                    map.put( key, new ArrayList<String>() );
-                }
-                List<String> mirrored = map.get( key );
-                mirrored.add( r.getId() );
-            }
-        }
+			RemoteRepository mirror = m_mirrorSelector.getMirror(r);
+			if (mirror != null) {
+				String key = mirror.getId();
+				naming.put(key, mirror);
+				if (!map.containsKey(key)) {
+					map.put(key, new ArrayList<String>());
+				}
+				List<String> mirrored = map.get(key);
+				mirrored.add(r.getId());
+			}
+		}
 
-        for( String mirrorId : map.keySet() ) {
-            RemoteRepository mirror = naming.get( mirrorId );
-            List<RemoteRepository> mirroedRepos = new ArrayList<RemoteRepository>();
+		for (String mirrorId : map.keySet()) {
+			RemoteRepository mirror = naming.get(mirrorId);
+			List<RemoteRepository> mirroedRepos = new ArrayList<RemoteRepository>();
 
-            for( String rep : map.get( mirrorId ) ) {
-                mirroedRepos.add( naming.get( rep ) );
-            }
-            mirror.setMirroredRepositories( mirroedRepos );
-            remoteRepos.removeAll(mirroedRepos);
-            remoteRepos.add( 0, mirror );
-        }
+			for (String rep : map.get(mirrorId)) {
+				mirroedRepos.add(naming.get(rep));
+			}
+			mirror.setMirroredRepositories(mirroedRepos);
+			remoteRepos.removeAll(mirroedRepos);
+			remoteRepos.add(0, mirror);
+		}
+		
+		for (RemoteRepository remote : remoteRepos) {
+			remote.setAuthentication(getAuthentication(m_settings, remote.getId()));
+		}
 
-    }
+	}
 
-    private List<MavenRepositoryURL> getRemoteRepositories( MavenConfiguration configuration )
-        throws MalformedURLException
-    {
-        List<MavenRepositoryURL> r = new ArrayList<MavenRepositoryURL>();
-        for( MavenRepositoryURL s : configuration.getRepositories() ) {
-            r.add( s );
-        }
-        return r;
-    }
+	private List<Repository> getRemoteRepositories(Settings settings)
+			throws MalformedURLException {
+		List<Repository> repos = new ArrayList<Repository>();
+		for (Profile p : settings.getProfiles()) {
+			if (settings.getActiveProfiles().contains(p.getId())) {
+				for (Repository rep : p.getRepositories()) {
+					repos.add(rep);
+				}
+			}
+		}
+		return repos;
+	}
 
-    private ProxySelector selectProxies()
-    {
-        DefaultProxySelector proxySelector = new DefaultProxySelector();
-        Map<String, Map<String, String>> proxies = m_config.getProxySettings();
-        for( Map<String, String> proxy : proxies.values() ) {
-            //The fields are user, pass, host, port, nonProxyHosts, protocol.
-            String nonProxyHosts = proxy.get( "nonProxyHosts" );
-            Proxy proxyObj = new Proxy( proxy.get( "protocol" ),
-                                        proxy.get( "host" ),
-                                        toInt( proxy.get( "port" ) ),
-                                        getAuthentication( proxy )
-            );
-            proxySelector.add( proxyObj, nonProxyHosts );
-        }
-        return proxySelector;
-    }
+	private static Authentication getAuthentication(Settings s, String id) {
+		Server server = s.getServer(id);
+		if (server == null) {
+			return null;
+		}
 
-    private MirrorSelector selectMirrors()
-    {
-        // configure mirror
-        DefaultMirrorSelector selector = new DefaultMirrorSelector();
-        Map<String, Map<String, String>> mirrors = m_config.getMirrors();
+		return new Authentication(server.getUsername(), server.getPassword(),
+				server.getPrivateKey(), server.getPassphrase());
+	}
 
-        for( String mirrorName : mirrors.keySet() ) {
-            Map<String, String> mirror = mirrors.get( mirrorName );
-            //The fields are id, url, mirrorOf, layout, mirrorOfLayouts.
-            String mirrorOf = mirror.get( "mirrorOf" );
-            String url = mirror.get( "url" );
-            // type can be null in this implementation (1.11)
-            selector.add( mirrorName, url, null, false, mirrorOf, "*" );
-        }
-        return selector;
-        /**
-         Set<RemoteRepository> mirrorRepoList = new HashSet<RemoteRepository>();
-         for (RemoteRepository r : m_remoteRepos) {
-         RemoteRepository mirrorRepo = mirrorSelector.getMirror(r);
-         if (mirrorRepo != null)
-         {
-         mirrorRepoList.add(mirrorRepo);
-         }
-         }
-         return mirrorRepoList;
-         **/
-    }
+	private ProxySelector selectProxies() {
+		DefaultProxySelector proxySelector = new DefaultProxySelector();
+		List<org.apache.maven.settings.Proxy> proxies = m_settings.getProxies();
+		for (org.apache.maven.settings.Proxy proxy : proxies) {
+			// The fields are user, pass, host, port, nonProxyHosts, protocol.
+			String nonProxyHosts = proxy.getNonProxyHosts();
+			Proxy proxyObj = new Proxy(proxy.getProtocol(), proxy.getHost(),
+					proxy.getPort(), getAuthentication(proxy));
+			proxySelector.add(proxyObj, nonProxyHosts);
+		}
+		return proxySelector;
+	}
 
-    private List<RemoteRepository> selectRepositories( List<MavenRepositoryURL> repos )
-    {
-        List<RemoteRepository> list = new ArrayList<RemoteRepository>();
-        for( MavenRepositoryURL r : repos ) {
-            if (r.isMulti()) {
-                addSubDirs(list, r.getFile());
-            } else {
-                addRepo(list, r);
-            }
-        }
-        return list;
-    }
+	private MirrorSelector selectMirrors() {
+		// configure mirror
+		DefaultMirrorSelector selector = new DefaultMirrorSelector();
+		List<Mirror> mirrors = m_settings.getMirrors();
 
-    private void addSubDirs(List<RemoteRepository> list, File parentDir) {
-        if (!parentDir.isDirectory()) {
-            LOG.debug("Repository marked with @multi does not resolve to a directory: " + parentDir);
-            return;
-        }
-        for (File repo : parentDir.listFiles()) {
-            if (repo.isDirectory()) {
-                try {
-                    String repoURI = repo.toURI().toString() + "@id=" + repo.getName();
-                    LOG.debug("Adding repo from inside multi dir: " + repoURI);
-                    addRepo(list, new MavenRepositoryURL(repoURI));
-                } catch (MalformedURLException e) {
-                    LOG.error("Error resolving repo url of a multi repo " + repo.toURI());
-                }
-            }
-        }
-    }
+		for (Mirror m : mirrors) {
+			// The fields are id, url, mirrorOf, layout, mirrorOfLayouts.
+			String mirrorOf = m.getMirrorOf();
+			String url = m.getUrl();
+			// type can be null in this implementation (1.11)
+			selector.add(m.getId(), url, null, false, mirrorOf, "*");
+		}
+		return selector;
+		/**
+		 * Set<RemoteRepository> mirrorRepoList = new
+		 * HashSet<RemoteRepository>(); for (RemoteRepository r : m_remoteRepos)
+		 * { RemoteRepository mirrorRepo = mirrorSelector.getMirror(r); if
+		 * (mirrorRepo != null) { mirrorRepoList.add(mirrorRepo); } } return
+		 * mirrorRepoList;
+		 **/
+	}
 
-    private void addRepo(List<RemoteRepository> list, MavenRepositoryURL repoUrl) {
-        list.add( new RemoteRepository( repoUrl.getId(), REPO_TYPE, repoUrl.getURL().toExternalForm() ) );
-    }
-    public InputStream resolve( String groupId, String artifactId, String classifier, String extension, String version )
-        throws IOException
-    {
-        List<RemoteRepository> remoteRepos = selectRepositories( getRemoteRepositories( m_config ) );
-        assignProxyAndMirrors(remoteRepos);
-        // version = mapLatestToRange( version );
-        RepositorySystemSession session = newSession();
+	private List<RemoteRepository> selectRepositories(List<Repository> repos) {
+		List<RemoteRepository> list = new ArrayList<RemoteRepository>();
+		for (Repository r : repos) {
+			addRepo(list, r);
+		}
+		return list;
+	}
 
-        Artifact artifact = new DefaultArtifact( groupId, artifactId, classifier, extension, version );
-        File resolved = resolve( session, remoteRepos, artifact );
+	private void addRepo(List<RemoteRepository> list, Repository repo) {
+		list.add(new RemoteRepository(repo.getId(), REPO_TYPE, repo.getUrl())
+				.setAuthentication(getAuthentication(m_settings, repo.getId())));
+	}
 
-        LOG.debug( "Resolved ({}) as {}", artifact.toString(), resolved.getAbsolutePath() );
-        return new FileInputStream( resolved );
-    }
+	public InputStream resolve(String groupId, String artifactId,
+			String classifier, String extension, String version)
+			throws IOException {
+		List<RemoteRepository> remoteRepos = selectRepositories(getRemoteRepositories(m_settings));
+		assignProxyAndMirrors(remoteRepos);
+		// version = mapLatestToRange( version );
+		RepositorySystemSession session = newSession();
 
-    private File resolve( RepositorySystemSession session, List<RemoteRepository> remoteRepos, Artifact artifact )
-        throws IOException
-    {
-        try {
-            artifact = resolveLatestVersionRange( session, remoteRepos, artifact );
-            return m_repoSystem.resolveArtifact( session, new ArtifactRequest( artifact, remoteRepos, null ) ).getArtifact().getFile();
-        } catch( RepositoryException e ) {
-            throw new IOException( "Error resolving artifact " + artifact.toString(), e );
-        }
-    }
+		Artifact artifact = new DefaultArtifact(groupId, artifactId,
+				classifier, extension, version);
+		File resolved = resolve(session, remoteRepos, artifact);
 
-    /**
-     * Tries to resolve versions = LATEST using an open range version query.
-     * If it succeeds, version of artifact is set to the highest available version.
-     *
-     * @param session  to be used.
-     * @param artifact to be used
-     *
-     * @return an artifact with version set properly (highest if available)
-     *
-     * @throws org.sonatype.aether.resolution.VersionRangeResolutionException
-     *          in case of resolver errors.
-     */
-    private Artifact resolveLatestVersionRange( RepositorySystemSession session, List<RemoteRepository> remoteRepos, Artifact artifact )
-        throws VersionRangeResolutionException
-    {
-        if( artifact.getVersion().equals( VERSION_LATEST ) ) {
-            artifact = artifact.setVersion( LATEST_VERSION_RANGE );
+		LOG.debug("Resolved ({}) as {}", artifact.toString(),
+				resolved.getAbsolutePath());
+		return new FileInputStream(resolved);
+	}
 
-            VersionRangeResult versionResult = m_repoSystem.resolveVersionRange( session, new VersionRangeRequest( artifact, remoteRepos, null ) );
-            if( versionResult != null ) {
-                Version v = versionResult.getHighestVersion();
-                if( v != null ) {
+	private File resolve(RepositorySystemSession session,
+			List<RemoteRepository> remoteRepos, Artifact artifact)
+			throws IOException {
+		try {
+			artifact = resolveLatestVersionRange(session, remoteRepos, artifact);
+			return m_repoSystem
+					.resolveArtifact(session,
+							new ArtifactRequest(artifact, remoteRepos, null))
+					.getArtifact().getFile();
+		} catch (RepositoryException e) {
+			throw new IOException("Error resolving artifact "
+					+ artifact.toString(), e);
+		}
+	}
 
-                    artifact = artifact.setVersion( v.toString() );
-                }
-                else {
-                    throw new VersionRangeResolutionException( versionResult, "Not highest version found for " + artifact );
-                }
-            }
-        }
-        return artifact;
-    }
+	/**
+	 * Tries to resolve versions = LATEST using an open range version query. If
+	 * it succeeds, version of artifact is set to the highest available version.
+	 * 
+	 * @param session
+	 *            to be used.
+	 * @param artifact
+	 *            to be used
+	 * 
+	 * @return an artifact with version set properly (highest if available)
+	 * 
+	 * @throws org.sonatype.aether.resolution.VersionRangeResolutionException
+	 *             in case of resolver errors.
+	 */
+	private Artifact resolveLatestVersionRange(RepositorySystemSession session,
+			List<RemoteRepository> remoteRepos, Artifact artifact)
+			throws VersionRangeResolutionException {
+		if (artifact.getVersion().equals(VERSION_LATEST)) {
+			artifact = artifact.setVersion(LATEST_VERSION_RANGE);
 
-    private RepositorySystemSession newSession()
-    {
-        assert m_config != null : "local repository cannot be null";
-        File local = m_config.getLocalRepository().getFile();
+			VersionRangeResult versionResult = m_repoSystem
+					.resolveVersionRange(session, new VersionRangeRequest(
+							artifact, remoteRepos, null));
+			if (versionResult != null) {
+				Version v = versionResult.getHighestVersion();
+				if (v != null) {
 
-        MavenRepositorySystemSession session = new MavenRepositorySystemSession();
+					artifact = artifact.setVersion(v.toString());
+				} else {
+					throw new VersionRangeResolutionException(versionResult,
+							"Not highest version found for " + artifact);
+				}
+			}
+		}
+		return artifact;
+	}
 
-        LocalRepository localRepo = new LocalRepository( local );
+	private RepositorySystemSession newSession() {
+		assert m_settings != null : "local repository cannot be null";
+		String localRepository = m_settings.getLocalRepository();
+		if (localRepository == null) {
+			localRepository = System.getProperty("user.home")
+					+ "/.m2/repository";
+		}
+		File local = new File(localRepository);
 
-        session.setLocalRepositoryManager( m_repoSystem.newLocalRepositoryManager( localRepo ) );
-        session.setMirrorSelector( m_mirrorSelector );
-        session.setProxySelector( m_proxySelector );
-        return session;
-    }
+		MavenRepositorySystemSession session = new MavenRepositorySystemSession();
 
-    private Authentication getAuthentication( Map<String, String> proxy )
-    {
-        // user, pass
-        if( proxy.containsKey( "user" ) ) {
-            return new Authentication( proxy.get( "user" ), proxy.get( "pass" ) );
-        }
-        return null;
-    }
+		LocalRepository localRepo = new LocalRepository(local);
 
-    private int toInt( String intStr )
-    {
-        return Integer.parseInt( intStr );
-    }
+		session.setLocalRepositoryManager(m_repoSystem
+				.newLocalRepositoryManager(localRepo));
+		session.setMirrorSelector(m_mirrorSelector);
+		session.setProxySelector(m_proxySelector);
+		return session;
+	}
 
-    private RepositorySystem newRepositorySystem()
-    {
-        MavenServiceLocator locator = new MavenServiceLocator();
+	private Authentication getAuthentication(
+			org.apache.maven.settings.Proxy proxy) {
+		return new Authentication(proxy.getUsername(), proxy.getPassword());
+	}
 
-        locator.setServices( WagonProvider.class, new ManualWagonProvider(m_config.getTimeout()) );
-        locator.addService( RepositoryConnectorFactory.class, WagonRepositoryConnectorFactory.class );
+	private RepositorySystem newRepositorySystem() {
+		MavenServiceLocator locator = new MavenServiceLocator();
 
-        locator.setService( LocalRepositoryManagerFactory.class, SimpleLocalRepositoryManagerFactory.class );
-        locator.setService( Logger.class, LogAdapter.class );
+		locator.setServices(WagonProvider.class, new ManualWagonProvider(3000));
+		locator.addService(RepositoryConnectorFactory.class,
+				WagonRepositoryConnectorFactory.class);
 
-        return locator.getService( RepositorySystem.class );
-    }
+		locator.setService(LocalRepositoryManagerFactory.class,
+				SimpleLocalRepositoryManagerFactory.class);
+		locator.setService(Logger.class, LogAdapter.class);
+
+		return locator.getService(RepositorySystem.class);
+	}
 }

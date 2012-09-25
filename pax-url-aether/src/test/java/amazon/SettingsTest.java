@@ -17,14 +17,12 @@
  */
 package amazon;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.net.MalformedURLException;
-import static org.junit.Assert.*;
+
 import org.junit.Test;
-import org.ops4j.io.FileUtils;
-import org.ops4j.pax.url.maven.commons.MavenSettings;
-import org.ops4j.pax.url.maven.commons.MavenSettingsImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

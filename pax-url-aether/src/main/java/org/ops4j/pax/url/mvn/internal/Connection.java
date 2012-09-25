@@ -25,8 +25,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
+import org.apache.maven.settings.Settings;
 import org.ops4j.lang.NullArgumentException;
-import org.ops4j.pax.url.maven.commons.MavenConfiguration;
 import org.ops4j.pax.url.mvn.Parser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,15 +86,15 @@ public class Connection
      *
      * @throws MalformedURLException in case of a malformed url
      */
-    public Connection( final URL url, final MavenConfiguration configuration )
+    public Connection( final URL url, final Settings settings )
         throws MalformedURLException
     {
         super( url );
         NullArgumentException.validateNotNull( url, "URL cannot be null" );
-        NullArgumentException.validateNotNull( configuration, "Service configuration" );
+        NullArgumentException.validateNotNull( settings, "Service configuration" );
 
         m_parser = new Parser( url.getPath() );
-        m_aetherBasedResolver = new AetherBasedResolver( configuration );
+        m_aetherBasedResolver = new AetherBasedResolver( settings );
     }
 
 

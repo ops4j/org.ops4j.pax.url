@@ -17,10 +17,6 @@ import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.ops4j.pax.url.maven.commons.MavenConfigurationImpl;
-import org.ops4j.pax.url.maven.commons.MavenConstants;
-import org.ops4j.pax.url.maven.commons.MavenSettings;
-import org.ops4j.pax.url.maven.commons.MavenSettingsImpl;
 import org.ops4j.util.property.PropertiesPropertyResolver;
 
 public class MirrorTest {

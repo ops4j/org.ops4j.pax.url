@@ -22,9 +22,7 @@ import java.util.Properties;
 import junit.framework.Assert;
 
 import org.junit.Test;
-import org.ops4j.pax.url.maven.commons.MavenConfiguration;
-import org.ops4j.pax.url.maven.commons.MavenConfigurationImpl;
-import org.ops4j.pax.url.maven.commons.MavenConstants;
+import org.ops4j.pax.url.mvn.ServiceConstants;
 import org.ops4j.pax.url.mvn.internal.AetherBasedResolver;
 import org.ops4j.util.property.PropertiesPropertyResolver;
 import org.slf4j.Logger;

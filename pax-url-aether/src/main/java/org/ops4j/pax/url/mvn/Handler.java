@@ -22,10 +22,9 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
 
-import org.ops4j.pax.url.maven.commons.MavenConfigurationImpl;
-import org.ops4j.pax.url.maven.commons.MavenSettingsImpl;
+import org.apache.maven.settings.Settings;
 import org.ops4j.pax.url.mvn.internal.Connection;
-import org.ops4j.util.property.PropertiesPropertyResolver;
+import org.ops4j.pax.url.mvn.internal.MavenSettingsReader;
 
 /**
  * {@link URLStreamHandler} implementation for "mvn:" protocol.
@@ -46,12 +45,9 @@ public class Handler
     protected URLConnection openConnection( final URL url )
         throws IOException
     {
-        final MavenConfigurationImpl config = new MavenConfigurationImpl(
-            new PropertiesPropertyResolver( System.getProperties() ), ServiceConstants.PID
-        );
+        final Settings settings = MavenSettingsReader.readSettings();
         
-        config.setSettings( new MavenSettingsImpl( config.getSettingsFileUrl(), config.useFallbackRepositories() ) );
-        return new Connection( url, config );
+        return new Connection( url, settings );
     }
 
 }
