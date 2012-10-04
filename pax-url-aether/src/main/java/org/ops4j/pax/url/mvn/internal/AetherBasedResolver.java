@@ -46,6 +46,7 @@ import org.sonatype.aether.repository.Proxy;
 import org.sonatype.aether.repository.ProxySelector;
 import org.sonatype.aether.repository.RemoteRepository;
 import org.sonatype.aether.resolution.ArtifactRequest;
+import org.sonatype.aether.resolution.ArtifactResolutionException;
 import org.sonatype.aether.resolution.VersionRangeRequest;
 import org.sonatype.aether.resolution.VersionRangeResolutionException;
 import org.sonatype.aether.resolution.VersionRangeResult;
@@ -233,6 +234,14 @@ public class AetherBasedResolver {
         try {
             artifact = resolveLatestVersionRange( session, remoteRepos, artifact );
             return m_repoSystem.resolveArtifact( session, new ArtifactRequest( artifact, remoteRepos, null ) ).getArtifact().getFile();
+        } catch (ArtifactResolutionException e) {
+            /**
+             * Do not add root exception to avoid NotSerializableException on DefaultArtifact.
+             * To avoid loosing information log the root cause. We can remove this again as soon as
+             * DefaultArtifact is serializeable. See http://team.ops4j.org/browse/PAXURL-206
+             */
+            LOG.warn("Error resolving artifact + artifact.toString() :" + e.getMessage(), e);
+            throw new IOException( "Error resolving artifact " + artifact.toString() + ": " + e.getMessage());
         } catch( RepositoryException e ) {
             throw new IOException( "Error resolving artifact " + artifact.toString(), e );
         }
