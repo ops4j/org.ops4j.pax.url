@@ -100,7 +100,7 @@ public class AetherTest {
         Properties p = new Properties();
         p.setProperty( ServiceConstants.PID + MavenConstants.PROPERTY_LOCAL_REPOSITORY, getCache().toURI().toASCIIString() );
         p.setProperty( ServiceConstants.PID + MavenConstants.PROPERTY_REPOSITORIES,
-                       "https://repository.jboss.org/nexus/content/repositories/thirdparty-releases@id=jboss"
+                       "http://repository.jboss.org/nexus/content/repositories/thirdparty-releases@id=jboss"
 
         );
         MavenConfigurationImpl conf = new MavenConfigurationImpl( new PropertiesPropertyResolver( p ), ServiceConstants.PID );
