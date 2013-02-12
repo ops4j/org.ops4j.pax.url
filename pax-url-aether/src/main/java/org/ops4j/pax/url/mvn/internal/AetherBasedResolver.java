@@ -213,8 +213,16 @@ public class AetherBasedResolver {
     private void addRepo(List<RemoteRepository> list, MavenRepositoryURL repoUrl) {
         list.add( new RemoteRepository( repoUrl.getId(), REPO_TYPE, repoUrl.getURL().toExternalForm() ) );
     }
+    
     public InputStream resolve( String groupId, String artifactId, String classifier, String extension, String version )
-        throws IOException
+            throws IOException
+    {
+        File resolved = resolveFile(groupId, artifactId, classifier, extension, version);
+        return new FileInputStream( resolved );
+    }
+
+    public File resolveFile( String groupId, String artifactId, String classifier, String extension, String version )
+            throws IOException
     {
         List<RemoteRepository> remoteRepos = selectRepositories( getRemoteRepositories( m_config ) );
         assignProxyAndMirrors(remoteRepos);
@@ -225,7 +233,7 @@ public class AetherBasedResolver {
         File resolved = resolve( session, remoteRepos, artifact );
 
         LOG.debug( "Resolved ({}) as {}", artifact.toString(), resolved.getAbsolutePath() );
-        return new FileInputStream( resolved );
+        return resolved;
     }
 
     private File resolve( RepositorySystemSession session, List<RemoteRepository> remoteRepos, Artifact artifact )
@@ -240,7 +248,7 @@ public class AetherBasedResolver {
              * To avoid loosing information log the root cause. We can remove this again as soon as
              * DefaultArtifact is serializeable. See http://team.ops4j.org/browse/PAXURL-206
              */
-            LOG.warn("Error resolving artifact + artifact.toString() :" + e.getMessage(), e);
+            LOG.warn("Error resolving artifact" + artifact.toString() + ":" + e.getMessage(), e);
             throw new IOException( "Error resolving artifact " + artifact.toString() + ": " + e.getMessage());
         } catch( RepositoryException e ) {
             throw new IOException( "Error resolving artifact " + artifact.toString(), e );
@@ -283,6 +291,7 @@ public class AetherBasedResolver {
     private RepositorySystemSession newSession()
     {
         assert m_config != null : "local repository cannot be null";
+        
         File local = m_config.getLocalRepository().getFile();
 
         MavenRepositorySystemSession session = new MavenRepositorySystemSession();
@@ -292,6 +301,12 @@ public class AetherBasedResolver {
         session.setLocalRepositoryManager( m_repoSystem.newLocalRepositoryManager( localRepo ) );
         session.setMirrorSelector( m_mirrorSelector );
         session.setProxySelector( m_proxySelector );
+
+        String updatePolicy = m_config.getGlobalUpdatePolicy();
+        if( null != updatePolicy ){
+        	session.setUpdatePolicy(updatePolicy);
+        }
+        
         return session;
     }
 

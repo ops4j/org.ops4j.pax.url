@@ -33,6 +33,15 @@ public interface MavenConstants {
      * BE CAREFUL! if you are using mirrors, do not mirror local repos!  e.g. use <mirrorOf>external:*</mirrorOf>
      */
     static final String PROPERTY_LOCAL_REPO_AS_REMOTE = ".defaultLocalRepoAsRemote";
+	/**
+	 * Global update policy property name.
+	 * <p>
+	 * Provides <a href="http://maven.apache.org/settings.html">repository
+	 * update policy</a> which will be applied to all configured repositories.
+	 * <p>
+	 * See <a href="http://sonatype.github.com/sonatype-aether/apidocs/org/sonatype/aether/util/DefaultRepositorySystemSession.html#setUpdatePolicy%28java.lang.String%29">DefaultRepositorySystemSession</a>
+	 */
+	static final String PROPERTY_GLOBAL_UPDATE_POLICY = ".globalUpdatePolicy";
     /**
      * Certificate check configuration property name.
      */

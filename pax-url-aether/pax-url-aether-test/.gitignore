@@ -1,0 +1,9 @@
+
+#
+# Alternative maven repository used to deploy snapshots 
+# multiple times during ather tests.
+#
+# Do not store in ./target to preserve between builds. 
+#
+
+/test-repo

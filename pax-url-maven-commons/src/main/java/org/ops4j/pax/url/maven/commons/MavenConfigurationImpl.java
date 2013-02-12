@@ -245,6 +245,15 @@ public class MavenConfigurationImpl
         return get( m_pid + MavenConstants.PROPERTY_REPOSITORIES );
     }
 
+    public String getGlobalUpdatePolicy() {
+    	String propertyName = m_pid + MavenConstants.PROPERTY_GLOBAL_UPDATE_POLICY;
+    	if(contains(propertyName)){
+    		return get(propertyName);
+    	} else {
+        	return null;
+    	}
+    }
+    
     /**
      * Resolves local repository directory by using the following resolution:<br/>
      * 1. looks for a configuration property named localRepository;
