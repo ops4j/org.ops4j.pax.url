@@ -61,6 +61,15 @@ public interface MavenConfiguration {
         throws MalformedURLException;
 
     /**
+     * Global repository update policy. 
+     * 
+     * See {@link MavenConstants#PROPERTY_GLOBAL_UPDATE_POLICY}
+     * 
+     * @return repository update policy or null if not set
+     */
+    String getGlobalUpdatePolicy();
+
+    /**
      * Returns the url of local repository.
      *
      * @return url of local repository. Can be null if there is no local repository.

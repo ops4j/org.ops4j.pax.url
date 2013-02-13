@@ -27,75 +27,84 @@ public interface MavenConstants {
     /**
      * Warning: use only in framework properties.  If present, do not accept configuration, wait for one without this flag.
      */
-    static final String REQUIRE_CONFIG_ADMIN_CONFIG = ".requireConfigAdminConfig";
+    String REQUIRE_CONFIG_ADMIN_CONFIG = ".requireConfigAdminConfig";
     /**
      * Add the default local repo (e.g. ~/.m2/repository) as a remote repo.  Useful when setting the local repo to be e.g. karaf system repo.
      * BE CAREFUL! if you are using mirrors, do not mirror local repos!  e.g. use <mirrorOf>external:*</mirrorOf>
      */
-    static final String PROPERTY_LOCAL_REPO_AS_REMOTE = ".defaultLocalRepoAsRemote";
+    String PROPERTY_LOCAL_REPO_AS_REMOTE = ".defaultLocalRepoAsRemote";
+	/**
+	 * Global update policy property name.
+	 * <p>
+	 * Provides <a href="http://maven.apache.org/settings.html">repository
+	 * update policy</a> which will be applied to all configured repositories.
+	 * <p>
+	 * See <a href="http://sonatype.github.com/sonatype-aether/apidocs/org/sonatype/aether/util/DefaultRepositorySystemSession.html#setUpdatePolicy%28java.lang.String%29">DefaultRepositorySystemSession</a>
+	 */
+	String PROPERTY_GLOBAL_UPDATE_POLICY = ".globalUpdatePolicy";
     /**
      * Certificate check configuration property name.
      */
-    static final String PROPERTY_CERTIFICATE_CHECK = ".certificateCheck";
+    String PROPERTY_CERTIFICATE_CHECK = ".certificateCheck";
     /**
      * Maven settings file configuration property name.
      */
-    static final String PROPERTY_SETTINGS_FILE = ".settings";
+    String PROPERTY_SETTINGS_FILE = ".settings";
     /**
      * LocalRepository configuration property name.
      */
-    static final String PROPERTY_LOCAL_REPOSITORY = ".localRepository";
+    String PROPERTY_LOCAL_REPOSITORY = ".localRepository";
     /**
      * DefaultRepositories configuration property name
      */
-    static final String PROPERTY_DEFAULT_REPOSITORIES = ".defaultRepositories";
+    String PROPERTY_DEFAULT_REPOSITORIES = ".defaultRepositories";
     /**
      * Repositories configuration property name.
      */
-    static final String PROPERTY_REPOSITORIES = ".repositories";
+    String PROPERTY_REPOSITORIES = ".repositories";
     /**
      * Use fallback repositories switch configuration property name.
      */
-    static final String PROPERTY_USE_FALLBACK_REPOSITORIES = ".useFallbackRepositories";
+    String PROPERTY_USE_FALLBACK_REPOSITORIES = ".useFallbackRepositories";
     /**
      * Proxy support configuration property name.
      */
-    static final String PROPERTY_PROXY_SUPPORT = ".proxySupport";
+    String PROPERTY_PROXY_SUPPORT = ".proxySupport";
     /**
      * Option to mark repository as allowing snapshots.
      */
-    static String OPTION_ALLOW_SNAPSHOTS = "snapshots";
+    String OPTION_ALLOW_SNAPSHOTS = "snapshots";
     /**
      * Option to configure the default timeout; use a default timeout of
      * 5 secs by default.
      */
-    static String PROPERTY_TIMEOUT = ".timeout";
+    String PROPERTY_TIMEOUT = ".timeout";
     /**
      * Option to mark repository as not allowing releases.
      */
-    static String OPTION_DISALLOW_RELEASES = "noreleases";
+    String OPTION_DISALLOW_RELEASES = "noreleases";
     /**
      * Option to mark path as a parent directory of repo directories. 
      * So at runtime the parent directory is scanned for subdirectories
      * and each subdirectory is used as a remote repo
      */
-    static String OPTION_MULTI = "multi";
+    String OPTION_MULTI = "multi";
     
     /**
      * Options separator in repository url.
      */
-    static String SEPARATOR_OPTIONS = "@";
+    String SEPARATOR_OPTIONS = "@";
     /**
      * Proxies given via property.
      * Expected layout: http:host=foo,port=8080;https:host=bar,port=9090
      */
-    static String PROPERTY_PROXIES = ".proxies";
+    String PROPERTY_PROXIES = ".proxies";
     /**
      * Default enable proxies or not if property PROPERTY_PROXY_SUPPORT is not set at all.
      */
-    static boolean PROPERTY_PROXY_SUPPORT_DEFAULT = true;
+    boolean PROPERTY_PROXY_SUPPORT_DEFAULT = true;
     /**
      * segment in repository spec that gives the name of the repo. Crucial for Aether handler.
      */
-    static final String OPTION_ID = "id";
+    String OPTION_ID = "id";
 }
