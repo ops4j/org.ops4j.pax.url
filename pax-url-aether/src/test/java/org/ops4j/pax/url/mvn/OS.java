@@ -13,9 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.ops4j.pax.url.mvn;
 
-package dummy;
+/**
+ * Detect current Operating System.
+ */
+public enum OS {
 
-public class Dummy {
+	LINUX("linux"), //
+
+	MAC("mac"), //
+
+	WINDOWS("win"), //
+
+	;
+
+	private final String term;
+
+	private OS(String term) {
+		this.term = term;
+	}
+
+	/**
+	 * Find current O/S.
+	 */
+	public static OS current() {
+		String name = System.getProperty("os.name").toLowerCase();
+		for (OS known : OS.values()) {
+			if (name.contains(known.term)) {
+				return known;
+			}
+		}
+		throw new UnsupportedOperationException("Unknown O/S");
+	}
 
 }

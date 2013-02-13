@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Copyright (C) 2013 Andrei Pozolotin -->
+
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+
+	<!-- Emulate karaf settings. -->
+
+	<servers>
+		<server>
+			<id>server-ops4j-snapshots</id>
+		</server>
+	</servers>
+
+	<profiles>
+		<profile>
+			<id>profile-ops4j-snapshots</id>
+			<repositories>
+				<repository>
+					<id>server-ops4j-snapshots</id>
+					<name>Ops4j Snapshots</name>
+					<url>https://oss.sonatype.org/content/repositories/ops4j-snapshots</url>
+					<releases>
+						<enabled>true</enabled>
+					</releases>
+					<snapshots>
+						<enabled>true</enabled>
+					</snapshots>
+				</repository>
+			</repositories>
+		</profile>
+	</profiles>
+
+	<activeProfiles>
+		<activeProfile>profile-ops4j-snapshots</activeProfile>
+	</activeProfiles>
+
+</settings>

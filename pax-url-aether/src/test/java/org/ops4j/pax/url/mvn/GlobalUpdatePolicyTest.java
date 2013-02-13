@@ -18,17 +18,26 @@ package org.ops4j.pax.url.mvn;
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.util.Collections;
+import java.util.Properties;
+
+import org.apache.maven.shared.invoker.DefaultInvocationRequest;
+import org.apache.maven.shared.invoker.DefaultInvoker;
+import org.apache.maven.shared.invoker.InvocationRequest;
+import org.apache.maven.shared.invoker.InvocationResult;
+import org.apache.maven.shared.invoker.Invoker;
+import org.eclipse.jetty.util.log.Log;
 import org.junit.Test;
+import org.ops4j.pax.url.maven.commons.MavenConfiguration;
+import org.ops4j.pax.url.maven.commons.MavenConstants;
 import org.ops4j.pax.url.mvn.internal.AetherBasedResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Verify snapshot updates.
+ * Verify snapshot updates, with help of global repository update policy.
  */
 public class GlobalUpdatePolicyTest {
-
-	static Logger LOG = LoggerFactory.getLogger(GlobalUpdatePolicyTest.class);
 
 	/**
 	 * Test project used to deploy snapshots.
@@ -39,31 +48,97 @@ public class GlobalUpdatePolicyTest {
 	static final String TYPE = "jar";
 
 	/**
-	 * Location of test project sources.
+	 * Location of test project resources.
 	 */
 	static final File BASEDIR = new File(System.getProperty("user.dir"));
 	static final File PROJECT = new File(BASEDIR, ARTIFACT);
+	static final File REPO = new File(PROJECT, "test-repo");
+	static final File POM = new File(PROJECT, "pom.xml");
 
 	/**
-	 * Command to deploy snapshots, using alternative repository.
+	 * Provide URL of test project remote repository.
 	 */
-	static final String COMMAND = //
-	"mvn deploy --define maven.repo.local=test-repo";
+	static final File SETTINGS = new File("src/test/resources",
+			"settings-ops4j-snapshots-1.xml");
 
+	/**
+	 * Maven home system property.
+	 * <p>
+	 * During maven build, provided by maven-surefire-plugin.
+	 * <p>
+	 * During IDE guild, discovered from O/S PATH.
+	 */
+	static final String PROP_MAVEN_HOME = "maven.home";
+
+	protected final Logger LOG = LoggerFactory
+			.getLogger(GlobalUpdatePolicyTest.class);
+
+	/**
+	 * Deploy snapshot of test project to the remote repository.
+	 * <p>
+	 * Use alternative local repository different from default user repository.
+	 */
 	private void mavenDeploy() throws Exception {
-		UnitHelp.process(COMMAND, PROJECT);
+
+		InvocationRequest request = new DefaultInvocationRequest();
+		request.setLocalRepositoryDirectory(REPO);
+		request.setPomFile(POM);
+		request.setGoals(Collections.singletonList("deploy"));
+
+		Invoker invoker = new DefaultInvoker();
+
+		/** IDE invocation requires maven home discovery. */
+		if (System.getProperty(PROP_MAVEN_HOME) == null) {
+			File mavenHome = UnitHelp.getMavenHome();
+			System.setProperty(PROP_MAVEN_HOME, mavenHome.getAbsolutePath());
+			LOG.info("{} = {}", PROP_MAVEN_HOME, mavenHome);
+		}
+
+		InvocationResult result = invoker.execute(request);
+
+		assertTrue("deploy success", result.getExitCode() == 0);
+
 	}
 
+	/**
+	 * Use custom test settings.
+	 */
+	private MavenConfiguration testConfig() throws Exception {
+
+		final Properties props = new Properties();
+
+		/** Relax SSL requirements. */
+		props.setProperty(ServiceConstants.PID
+				+ MavenConstants.PROPERTY_CERTIFICATE_CHECK, "false");
+
+		/** Enable snapshot update on every resolve request. */
+		props.setProperty(ServiceConstants.PID
+				+ MavenConstants.PROPERTY_GLOBAL_UPDATE_POLICY, "always");
+
+		MavenConfiguration config = UnitHelp.getConfig(SETTINGS, props);
+
+		assertEquals(false, config.getCertificateCheck());
+		assertEquals("always", config.getGlobalUpdatePolicy());
+
+		return config;
+
+	}
+
+	/**
+	 * Deploy two snapshots in sequence, resolve and ensure proper time stamp
+	 * relations.
+	 */
 	@Test
-	public void resolveArtifact() throws Exception {
+	public void verifySnapshotUpdates() throws Exception {
 
 		final AetherBasedResolver resolver = new AetherBasedResolver(
-				UnitHelp.getUserConfig());
+				testConfig());
 
 		LOG.info("init");
 
 		final long time0 = System.currentTimeMillis();
 
+		LOG.info("first");
 		final long time1;
 		{
 			mavenDeploy();
@@ -74,8 +149,7 @@ public class GlobalUpdatePolicyTest {
 			time1 = file.lastModified();
 		}
 
-		LOG.info("deploy 1");
-
+		LOG.info("second");
 		final long time2;
 		{
 			mavenDeploy();
@@ -86,16 +160,16 @@ public class GlobalUpdatePolicyTest {
 			time2 = file.lastModified();
 		}
 
-		LOG.info("deploy 2");
+		LOG.info("verify");
 
 		assertTrue(time0 > 0);
 		assertTrue(time1 > 0);
 		assertTrue(time2 > 0);
 
-		assertTrue(time1 > time0);
-		assertTrue(time2 > time0);
+		assertTrue("first is fresh", time1 > time0);
+		assertTrue("second is fresh", time2 > time0);
 
-		assertTrue(time2 > time1);
+		assertTrue("second after frirst", time2 > time1);
 
 		LOG.info("done");
 

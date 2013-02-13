@@ -214,6 +214,9 @@ public class AetherBasedResolver {
         list.add( new RemoteRepository( repoUrl.getId(), REPO_TYPE, repoUrl.getURL().toExternalForm() ) );
     }
     
+    /**
+     * Resolve maven artifact as input stream.
+     */
     public InputStream resolve( String groupId, String artifactId, String classifier, String extension, String version )
             throws IOException
     {
@@ -221,6 +224,9 @@ public class AetherBasedResolver {
         return new FileInputStream( resolved );
     }
 
+    /**
+     * Resolve maven artifact as file in repository.
+     */
     public File resolveFile( String groupId, String artifactId, String classifier, String extension, String version )
             throws IOException
     {

@@ -246,12 +246,16 @@ public class MavenConfigurationImpl
     }
 
     public String getGlobalUpdatePolicy() {
-    	String propertyName = m_pid + MavenConstants.PROPERTY_GLOBAL_UPDATE_POLICY;
+    	final String propertyName = m_pid + MavenConstants.PROPERTY_GLOBAL_UPDATE_POLICY;
     	if(contains(propertyName)){
-    		return get(propertyName);
-    	} else {
-        	return null;
+    		return get(propertyName); 
     	}
+    	final String propertyValue = m_propertyResolver.get(propertyName);
+    	if(  propertyValue != null ){
+    		set(propertyName, propertyValue);
+    		return propertyValue;
+    	}
+   		return null;
     }
     
     /**
