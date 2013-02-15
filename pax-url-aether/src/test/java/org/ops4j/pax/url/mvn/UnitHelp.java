@@ -54,6 +54,28 @@ public class UnitHelp {
 	}
 
 	/**
+	 * Create folder if needed.
+	 */
+	public static void ensureFolder(File folder) {
+		if (folder.exists()) {
+			if (folder.isDirectory()) {
+				return;
+			} else {
+				throw new IllegalStateException(
+						"Entry exists but not a folder : " + folder);
+			}
+		} else {
+			folder.mkdirs();
+			if (folder.exists() && folder.isDirectory()) {
+				return;
+			} else {
+				throw new IllegalStateException(
+						"Failed to create folder : " + folder);
+			}
+		}
+	}
+
+	/**
 	 * Load settings.xml file and apply custom properties.
 	 */
 	public static MavenConfiguration getConfig(final File settingsFile,

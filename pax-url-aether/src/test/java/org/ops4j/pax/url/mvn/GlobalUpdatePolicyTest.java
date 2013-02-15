@@ -48,11 +48,15 @@ public class GlobalUpdatePolicyTest {
 	static final String TYPE = "jar";
 
 	/**
+	 * Well known file system locations.
+	 */
+	static final File WORK = new File(System.getProperty("user.dir"));
+	static final File HOME = new File(System.getProperty("user.home"));
+
+	/**
 	 * Location of test project resources.
 	 */
-	static final File BASEDIR = new File(System.getProperty("user.dir"));
-	static final File PROJECT = new File(BASEDIR, ARTIFACT);
-	static final File REPO = new File(PROJECT, "test-repo");
+	static final File PROJECT = new File(WORK, ARTIFACT);
 	static final File POM = new File(PROJECT, "pom.xml");
 
 	/**
@@ -60,6 +64,15 @@ public class GlobalUpdatePolicyTest {
 	 */
 	static final File SETTINGS = new File("src/test/resources",
 			"settings-ops4j-snapshots-1.xml");
+
+	/**
+	 * Alternative local maven repository used by test. Preserved between builds
+	 * and system restarts.
+	 */
+	static final File REPO = new File(HOME, "org.ops4j.pax.url/test-repo");
+	static {
+		UnitHelp.ensureFolder(REPO);
+	}
 
 	/**
 	 * Maven home system property.
