@@ -188,7 +188,6 @@
             <scope>compile</scope>
         </dependency>
 
-
         <!-- Test dependencies -->
         <dependency>
             <groupId>junit</groupId>
@@ -207,12 +206,22 @@
             <optional>true</optional>
         </dependency>
 
+        <!-- Emulate amazon s3 -->
         <dependency>
             <groupId>org.eclipse.jetty.aggregate</groupId>
             <artifactId>jetty-server</artifactId>
             <version>7.3.1.v20110307</version>
             <scope>test</scope>
         </dependency>
+
+		<!-- Invoke maven goals -->
+		<dependency>
+			<groupId>org.apache.maven.shared</groupId>
+			<artifactId>maven-invoker</artifactId>
+			<version>2.1.1</version>
+			<scope>test</scope>
+		</dependency>
+        
     </dependencies>
 
 </project>
