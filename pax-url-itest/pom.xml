@@ -3,7 +3,7 @@
     <parent>
         <artifactId>url</artifactId>
         <groupId>org.ops4j.pax</groupId>
-        <version>1.5.2</version>
+        <version>1.5.3-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
     <artifactId>pax-url-itest</artifactId>
