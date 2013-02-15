@@ -1,0 +1,31 @@
+<!--
+
+    Copyright 2013 Andrei Pozolotin 
+
+-->
+<project default="maven" basedir="./..">
+
+	<echo message="basedir : ${basedir}" />
+
+	<target name="maven">
+
+		<condition property="executable" value="mvn">
+			<os family="unix" />
+		</condition>
+		<condition property="executable" value="mvn.bat">
+			<os family="windows" />
+		</condition>
+
+		<exec executable="${executable}">
+
+			<arg value="clean" />
+			<arg value="install" />
+
+			<arg value="--define" />
+			<arg value="skipTests" />
+
+		</exec>
+
+	</target>
+
+</project>
