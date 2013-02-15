@@ -1,8 +1,21 @@
+#
+# Exclude IDEA metadata.
+#
 .idea
 *.iws
 *.iml
 *.ipr
-target
+
+#
+# Exclude Eclipse metadata. 
+#
 *.project
 *.classpath
-*.settings
+*.settings/
+
+#
+# Exclude Maven build and metatada.
+#
+target/
+release.properties
+pom.xml.releaseBackup
