@@ -380,9 +380,10 @@ public class MavenConfigurationImpl
     {
         String httpHost = m_propertyResolver.get( "http.proxyHost" );
         String httpPort = m_propertyResolver.get( "http.proxyPort" );
+        String httpnonProxyHosts = m_propertyResolver.get( "http.nonProxyHosts" );
 
         if( httpHost != null ) {
-            parseProxiesFromProperty( "http:host=" + httpHost + ",port=" + httpPort, pr );
+            parseProxiesFromProperty( "http:host=" + httpHost + ",port=" + httpPort + ",nonProxyHosts=" + httpnonProxyHosts, pr );
         }
     }
 
@@ -403,8 +404,6 @@ public class MavenConfigurationImpl
                     keyvalue.put( "nonProxyHosts", "" );
                     keyvalue.put( "host", "localhost" );
                     keyvalue.put( "port", "80" );
-
-                    keyvalue.put( "nonProxyHosts", "" );
 
                     for( String keyvalueList : section[ 1 ].split( "," ) ) {
                         String[] kv = keyvalueList.split( "=" );
