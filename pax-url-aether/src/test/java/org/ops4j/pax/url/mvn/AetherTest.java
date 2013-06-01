@@ -74,9 +74,7 @@ public class AetherTest {
         Properties p = new Properties();
         p.setProperty( ServiceConstants.PID + MavenConstants.PROPERTY_LOCAL_REPOSITORY, getCache().toURI().toASCIIString() );
         p.setProperty( ServiceConstants.PID + MavenConstants.PROPERTY_REPOSITORIES,
-                       "http://localhost:8081/nexus/content/groups/public/@id=nexus,"
-                       + "http://repo1.maven.org/maven2/@id=central,"
-                       + "http://scm.ops4j.org/repos/ops4j/projects/pax/runner-repository/@id=paxrunner"
+                       "http://repo1.maven.org/maven2/@id=central,"
         );
         return new MavenConfigurationImpl( new PropertiesPropertyResolver( p ), ServiceConstants.PID );
     }
