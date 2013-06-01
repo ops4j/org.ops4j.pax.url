@@ -16,9 +16,9 @@ import javax.inject.Inject;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.Configuration;
-import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.ops4j.pax.exam.junit.PaxExam;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
@@ -28,13 +28,13 @@ import org.osgi.framework.BundleException;
  *
  * @author Harald Wellmann
  */
-@RunWith(JUnit4TestRunner.class)
+@RunWith(PaxExam.class)
 public class ObrTest
 {
     @Inject
     private BundleContext bc;
 
-    @Configuration( )
+    @Configuration
     public Option[] config()
     {
         return options(
@@ -46,10 +46,7 @@ public class ObrTest
             // bundle under test and its dependencies
             mavenBundle("org.ops4j.pax.url", "pax-url-obr").versionAsInProject(),
             mavenBundle("org.ops4j.pax.url", "pax-url-commons").versionAsInProject(),
-            //mavenBundle("org.ops4j.pax.swissbox", "pax-swissbox-lifecycle").versionAsInProject(),
             mavenBundle("org.ops4j.pax.swissbox", "pax-swissbox-property").versionAsInProject(),
-            mavenBundle("org.ops4j.pax.swissbox", "pax-swissbox-tracker").versionAsInProject(),
-            //mavenBundle("org.ops4j.base", "ops4j-base").versionAsInProject(),
             mavenBundle("org.apache.felix", "org.osgi.service.obr", "1.0.2"),
 
             // OBR RepositoryAdmin implementation
