@@ -19,3 +19,8 @@
 target/
 release.properties
 pom.xml.releaseBackup
+
+# Exclude log and backup files
+*.log
+*~
+
