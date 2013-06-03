@@ -41,8 +41,7 @@ public class ObrTest
             frameworkProperty("osgi.console").value("6666"),
 
             // OBR location
-            frameworkProperty("obr.repository.url").value("http://www.knopflerfish.org/repo/bindex.xml"),
-
+            frameworkProperty("obr.repository.url").value("http://felix.apache.org/obr/releases.xml"),
             // bundle under test and its dependencies
             mavenBundle("org.ops4j.pax.url", "pax-url-obr").versionAsInProject(),
             mavenBundle("org.ops4j.pax.url", "pax-url-commons").versionAsInProject(),
@@ -60,7 +59,7 @@ public class ObrTest
     @Test
     public void installFromObrUrl() throws IOException, BundleException {
         // check that obr: handler is available
-        URL url = new URL("obr:org.knopflerfish.bundle.io/3.0.1");
+        URL url = new URL("obr:org.apache.felix.ipojo/1.8.0");
         assertThat( url, is( notNullValue()) );
 
         // open stream of OBR resource
