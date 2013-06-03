@@ -26,10 +26,11 @@ import java.util.Properties;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
 
-import aQute.lib.osgi.Analyzer;
 import org.ops4j.pax.swissbox.bnd.BndUtils;
 import org.ops4j.pax.swissbox.bnd.OverwriteMode;
 import org.osgi.framework.Constants;
+
+import aQute.bnd.osgi.Analyzer;
 
 /**
  * Url connection for webbundle protocol handler.
