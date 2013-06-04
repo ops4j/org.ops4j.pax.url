@@ -38,7 +38,7 @@ public abstract class TestBase
     {
 
         /** client setup */
-s
+
         /** TODO should work w/o this ? */
         Util.setupClientSSL();
 

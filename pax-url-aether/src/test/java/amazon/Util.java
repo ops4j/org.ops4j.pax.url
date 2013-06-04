@@ -42,7 +42,7 @@ public class Util
     {
         return "localhost";
     }
-s
+
     /** server port in settings.xml */
     static int getPort()
     {
