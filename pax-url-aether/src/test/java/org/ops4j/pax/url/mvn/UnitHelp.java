@@ -34,130 +34,150 @@ import org.ops4j.util.property.PropertiesPropertyResolver;
 /**
  * Provide unit test utilities.
  */
-public class UnitHelp {
+public class UnitHelp
+{
 
-	/**
-	 * Pattern for non printable characters.
-	 */
-	public static final Pattern SPACES = Pattern.compile("\\s+");
+    /**
+     * Pattern for non printable characters.
+     */
+    public static final Pattern SPACES = Pattern.compile( "\\s+" );
 
-	/**
-	 * Copy streams.
-	 */
-	public static void copy(final InputStream in, final OutputStream out)
-			throws Exception {
-		final byte[] array = new byte[8 * 1024];
-		int size = 0;
-		while ((size = in.read(array)) >= 0) {
-			out.write(array, 0, size);
-		}
-	}
+    /**
+     * Copy streams.
+     */
+    public static void copy( final InputStream in, final OutputStream out )
+        throws Exception
+    {
+        final byte[] array = new byte[8 * 1024];
+        int size = 0;
+        while( ( size = in.read( array ) ) >= 0 )
+        {
+            out.write( array, 0, size );
+        }
+    }
 
-	/**
-	 * Create folder if needed.
-	 */
-	public static void ensureFolder(File folder) {
-		if (folder.exists()) {
-			if (folder.isDirectory()) {
-				return;
-			} else {
-				throw new IllegalStateException(
-						"Entry exists but not a folder : " + folder);
-			}
-		} else {
-			folder.mkdirs();
-			if (folder.exists() && folder.isDirectory()) {
-				return;
-			} else {
-				throw new IllegalStateException(
-						"Failed to create folder : " + folder);
-			}
-		}
-	}
+    /**
+     * Create folder if needed.
+     */
+    public static void ensureFolder( File folder )
+    {
+        if( folder.exists() )
+        {
+            if( folder.isDirectory() )
+            {
+                return;
+            }
+            else
+            {
+                throw new IllegalStateException(
+                    "Entry exists but not a folder : " + folder );
+            }
+        }
+        else
+        {
+            folder.mkdirs();
+            if( folder.exists() && folder.isDirectory() )
+            {
+                return;
+            }
+            else
+            {
+                throw new IllegalStateException(
+                    "Failed to create folder : " + folder );
+            }
+        }
+    }
 
-	/**
-	 * Load settings.xml file and apply custom properties.
-	 */
-	public static MavenConfiguration getConfig(final File settingsFile,
-			final Properties props) throws Exception {
+    /**
+     * Load settings.xml file and apply custom properties.
+     */
+    public static MavenConfiguration getConfig( final File settingsFile,
+            final Properties props ) throws Exception
+    {
 
-		props.setProperty(ServiceConstants.PID
-				+ MavenConstants.PROPERTY_SETTINGS_FILE, settingsFile.toURI()
-				.toASCIIString());
+        props.setProperty( ServiceConstants.PID
+                + MavenConstants.PROPERTY_SETTINGS_FILE, settingsFile.toURI()
+            .toASCIIString() );
 
-		final MavenConfigurationImpl config = new MavenConfigurationImpl(
-				new PropertiesPropertyResolver(props), ServiceConstants.PID);
+        final MavenConfigurationImpl config = new MavenConfigurationImpl(
+            new PropertiesPropertyResolver( props ), ServiceConstants.PID );
 
-		final MavenSettings settings = new MavenSettingsImpl(settingsFile
-				.toURI().toURL());
+        final MavenSettings settings = new MavenSettingsImpl( settingsFile
+            .toURI().toURL() );
 
-		config.setSettings(settings);
+        config.setSettings( settings );
 
-		return config;
+        return config;
 
-	}
+    }
 
-	/**
-	 * Discover maven home from executable on PATH, using conventions.
-	 */
-	public static File getMavenHome() throws Exception {
-		final String command;
-		switch (OS.current()) {
-		case LINUX:
-		case MAC:
-			command = "mvn";
-			break;
-		case WINDOWS:
-			command = "mvn.bat";
-			break;
-		default:
-			throw new IllegalStateException("invalid o/s");
-		}
-		String pathVar = System.getenv("PATH");
-		String[] pathArray = pathVar.split(File.pathSeparator);
-		for (String path : pathArray) {
-			File file = new File(path, command);
-			if (file.exists() && file.isFile() && file.canExecute()) {
-				/** unwrap symbolic links */
-				File exec = file.getCanonicalFile();
-				/** assume ${maven.home}/bin/exec convention */
-				File home = exec.getParentFile().getParentFile();
-				return home;
-			}
-		}
-		throw new IllegalStateException("Maven home not found.");
-	}
+    /**
+     * Discover maven home from executable on PATH, using conventions.
+     */
+    public static File getMavenHome() throws Exception
+    {
+        final String command;
+        switch( OS.current() )
+        {
+            case LINUX:
+            case MAC:
+                command = "mvn";
+                break;
+            case WINDOWS:
+                command = "mvn.bat";
+                break;
+            default:
+                throw new IllegalStateException( "invalid o/s" );
+        }
+        String pathVar = System.getenv( "PATH" );
+        String[] pathArray = pathVar.split( File.pathSeparator );
+        for( String path : pathArray )
+        {
+            File file = new File( path, command );
+            if( file.exists() && file.isFile() && file.canExecute() )
+            {
+                /** unwrap symbolic links */
+                File exec = file.getCanonicalFile();
+                /** assume ${maven.home}/bin/exec convention */
+                File home = exec.getParentFile().getParentFile();
+                return home;
+            }
+        }
+        throw new IllegalStateException( "Maven home not found." );
+    }
 
-	/**
-	 * Load default user configuration form user settings.xml with custom
-	 * properties.
-	 */
-	public static MavenConfiguration getUserConfig(final Properties props)
-			throws Exception {
-		return getConfig(getUserSettings(), props);
-	}
+    /**
+     * Load default user configuration form user settings.xml with custom properties.
+     */
+    public static MavenConfiguration getUserConfig( final Properties props )
+        throws Exception
+    {
+        return getConfig( getUserSettings(), props );
+    }
 
-	/**
-	 * Load default maven settings from user home.
-	 */
-	public static File getUserSettings() throws IOException {
-		return new File(System.getProperty("user.home"), ".m2/settings.xml");
-	}
+    /**
+     * Load default maven settings from user home.
+     */
+    public static File getUserSettings() throws IOException
+    {
+        return new File( System.getProperty( "user.home" ), ".m2/settings.xml" );
+    }
 
-	/**
-	 * Invoke external process and wait for completion.
-	 */
-	public static void process(final String command, final File directory)
-			throws Exception {
-		final ProcessBuilder builder = new ProcessBuilder(SPACES.split(command));
-		builder.directory(directory);
-		builder.redirectErrorStream(true);
-		final Process process = builder.start();
-		copy(process.getInputStream(), System.out);
-		process.waitFor();
-	}
+    /**
+     * Invoke external process and wait for completion.
+     */
+    public static void process( final String command, final File directory )
+        throws Exception
+    {
+        final ProcessBuilder builder = new ProcessBuilder( SPACES.split( command ) );
+        builder.directory( directory );
+        builder.redirectErrorStream( true );
+        final Process process = builder.start();
+        copy( process.getInputStream(), System.out );
+        process.waitFor();
+    }
 
-	private UnitHelp() {
-	}
-
+    private UnitHelp()
+    {
+    }
 }

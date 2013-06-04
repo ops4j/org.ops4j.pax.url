@@ -30,30 +30,29 @@ import org.slf4j.LoggerFactory;
 
 /**
  */
-public class SettingsTest {
+public class SettingsTest
+{
 
-	protected Logger log = LoggerFactory.getLogger(getClass());
+    protected Logger log = LoggerFactory.getLogger( getClass() );
 
-	@Test
-	public void amazonSettings() throws Exception {
+    @Test
+    public void amazonSettings() throws Exception
+    {
+        File file = Util.getTestSettings();
 
-		File file = Util.getTestSettings();
+        MavenSettings settings = new MavenSettingsImpl( file.toURI().toURL() );
 
-		MavenSettings settings = new MavenSettingsImpl(file.toURI().toURL());
+        String repositories = settings.getRepositories();
 
-		String repositories = settings.getRepositories();
+        assertNotNull( "missing repositories", repositories );
 
-		assertNotNull("missing repositories", repositories);
+        String[] segments = repositories.split( "," );
 
-		String[] segments = repositories.split(",");
+        assertEquals( "repository counter", 1, segments.length );
 
-		assertEquals("repository counter", 1, segments.length);
-
-		assertEquals(
-				"amazon repository 1",
-				"https://User-Agent:magic-token@localhost:11443@id=amazon-server-1",
-				segments[0]);
-
-	}
-
+        assertEquals(
+            "amazon repository 1",
+            "https://User-Agent:magic-token@localhost:11443@id=amazon-server-1",
+            segments[0] );
+    }
 }

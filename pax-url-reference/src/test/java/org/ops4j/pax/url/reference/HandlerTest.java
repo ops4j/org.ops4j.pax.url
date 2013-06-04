@@ -37,61 +37,68 @@ import org.junit.rules.ExpectedException;
  * @author Harald Wellmann (harald.wellmann@gmx.de)
  * @since 1.3.5, Aug 5, 2011
  */
-public class HandlerTest {
-	
-	@Rule
-	public ExpectedException expectedException = ExpectedException.none();
+public class HandlerTest
+{
 
-	@Before
-	public void setUp() {
-		System.setProperty("java.protocol.handler.pkgs", "org.ops4j.pax.url");
-	}
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
-	@Test
-	public void openAndDereference() throws IOException {
-		URL url = new URL("reference:file:/tmp/pax/someDir/");
-		assertNotNull(url);
-		InputStream is = url.openStream();
-		assertTrue(is instanceof ReferenceInputStream);
+    @Before
+    public void setUp()
+    {
+        System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
+    }
 
-		ReferenceInputStream refStream = (ReferenceInputStream) is;
-		URL reference = refStream.getReference();
-		assertEquals("file:/tmp/pax/someDir/", reference.toString());
-	}
+    @Test
+    public void openAndDereference() throws IOException
+    {
+        URL url = new URL( "reference:file:/tmp/pax/someDir/" );
+        assertNotNull( url );
+        InputStream is = url.openStream();
+        assertTrue( is instanceof ReferenceInputStream );
 
-	@Test
-	public void exceptionOnWrongSubprotocol() throws IOException {
-		expectedException.expect(MalformedURLException.class);
-		expectedException.expectMessage("'file:'");
+        ReferenceInputStream refStream = (ReferenceInputStream) is;
+        URL reference = refStream.getReference();
+        assertEquals( "file:/tmp/pax/someDir/", reference.toString() );
+    }
 
-		URL url = new URL("reference:http://www.ops4j.org");
-		url.openStream();
-	}
+    @Test
+    public void exceptionOnWrongSubprotocol() throws IOException
+    {
+        expectedException.expect( MalformedURLException.class );
+        expectedException.expectMessage( "'file:'" );
 
-	@Test
-	public void exceptionOnNoSubprotocol() throws IOException {
-		expectedException.expect(MalformedURLException.class);
-		expectedException.expectMessage("'file:'");
+        URL url = new URL( "reference:http://www.ops4j.org" );
+        url.openStream();
+    }
 
-		URL url = new URL("reference:/road/to/nowhere");
-		url.openStream();
-	}
+    @Test
+    public void exceptionOnNoSubprotocol() throws IOException
+    {
+        expectedException.expect( MalformedURLException.class );
+        expectedException.expectMessage( "'file:'" );
 
-	@Test
-	public void exceptionIfEmpty() throws IOException {
-		expectedException.expect(MalformedURLException.class);
-		expectedException.expectMessage("empty");
+        URL url = new URL( "reference:/road/to/nowhere" );
+        url.openStream();
+    }
 
-		URL url = new URL("reference:");
-		url.openStream();
-	}
+    @Test
+    public void exceptionIfEmpty() throws IOException
+    {
+        expectedException.expect( MalformedURLException.class );
+        expectedException.expectMessage( "empty" );
 
-	@Test
-	public void exceptionIfBlank() throws IOException {
-		expectedException.expect(MalformedURLException.class);
-		expectedException.expectMessage("empty");
+        URL url = new URL( "reference:" );
+        url.openStream();
+    }
 
-		URL url = new URL("  reference:   ");
-		url.openStream();
-	}
+    @Test
+    public void exceptionIfBlank() throws IOException
+    {
+        expectedException.expect( MalformedURLException.class );
+        expectedException.expectMessage( "empty" );
+
+        URL url = new URL( "  reference:   " );
+        url.openStream();
+    }
 }

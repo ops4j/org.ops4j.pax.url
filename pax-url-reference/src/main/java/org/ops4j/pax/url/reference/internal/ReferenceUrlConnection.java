@@ -31,34 +31,42 @@ import org.ops4j.pax.url.reference.ReferenceInputStream;
  * @author Harald Wellmann (harald.wellmann@gmx.de)
  * @since 1.3.5, Aug 5, 2011
  */
-public class ReferenceUrlConnection extends URLConnection {
-	protected URL reference;
+public class ReferenceUrlConnection extends URLConnection
+{
+    protected URL reference;
 
-	public ReferenceUrlConnection(URL url) {
-		super(url);
-	}
+    public ReferenceUrlConnection( URL url )
+    {
+        super( url );
+    }
 
-	@Override
-	public void connect() throws IOException {
-		if (!connected) {
-			reference = new Parser(url.getPath()).getUrl();
-		}
+    @Override
+    public void connect() throws IOException
+    {
+        if( !connected )
+        {
+            reference = new Parser( url.getPath() ).getUrl();
+        }
 
-	}
+    }
 
-	public boolean getDoInput() {
-		return true;
-	}
+    public boolean getDoInput()
+    {
+        return true;
+    }
 
-	public boolean getDoOutput() {
-		return false;
-	}
+    public boolean getDoOutput()
+    {
+        return false;
+    }
 
-	public InputStream getInputStream() throws IOException {
-		if (!connected) {
-			connect();
-		}
+    public InputStream getInputStream() throws IOException
+    {
+        if( !connected )
+        {
+            connect();
+        }
 
-		return new ReferenceInputStream(reference);
-	}
+        return new ReferenceInputStream( reference );
+    }
 }

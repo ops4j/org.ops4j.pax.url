@@ -58,7 +58,7 @@ public class Parser
         }
         if( ! url.startsWith("file:") ) 
         {
-            throw new MalformedURLException( "URL requires 'file:' subprotocol. Syntax " + SYNTAX );        	
+            throw new MalformedURLException( "URL requires 'file:' subprotocol. Syntax " + SYNTAX );
         }
         
         m_url = new URL( url );

@@ -186,9 +186,9 @@ public class Connection
      */
     private Bundle[] getBundles( final String symbolicName )
     {
-    	if (m_bundleContext == null) 
-    		return null;
-    	
+        if( m_bundleContext == null )
+            return null;
+
         final Bundle[] bundles = m_bundleContext.getBundles();
         if( bundles != null )
         {

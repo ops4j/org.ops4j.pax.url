@@ -32,77 +32,87 @@ import org.slf4j.LoggerFactory;
 
 /**
  */
-public class Util {
+public class Util
+{
 
-	static Logger LOG = LoggerFactory.getLogger(Util.class);
+    static Logger LOG = LoggerFactory.getLogger( Util.class );
 
-	/** server host in settings.xml */
-	static String getHost() {
-		return "localhost";
-	}
+    /** server host in settings.xml */
+    static String getHost()
+    {
+        return "localhost";
+    }
+s
+    /** server port in settings.xml */
+    static int getPort()
+    {
+        return 11443;
+    }
 
-	/** server port in settings.xml */
-	static int getPort() {
-		return 11443;
-	}
+    static File getTestKeystore() throws IOException
+    {
+        return new File( "./src/test/resources/amazon/keystore.jks" );
+    }
 
-	static File getTestKeystore() throws IOException {
-		return new File("./src/test/resources/amazon/keystore.jks");
-	}
+    static String getTestKeystorePassword() throws IOException
+    {
+        return "wicket";
+    }
 
-	static String getTestKeystorePassword() throws IOException {
-		return "wicket";
-	}
+    static File getTestSettings() throws IOException
+    {
+        return new File( "./src/test/resources/amazon/settings.xml" );
+    }
 
-	static File getTestSettings() throws IOException {
-		return new File("./src/test/resources/amazon/settings.xml");
-	}
+    static File getTestRepo() throws IOException
+    {
 
-	static File getTestRepo() throws IOException {
+        File folder = new File( "./target" );
+        folder.mkdir();
 
-		File folder = new File("./target");
-		folder.mkdir();
+        File file = File.createTempFile( "test", ".repo", folder );
+        file.delete();
+        file.mkdirs();
 
-		File file = File.createTempFile("test", ".repo", folder);
-		file.delete();
-		file.mkdirs();
+        LOG.info( "test repo : " + file.getAbsolutePath() );
 
-		LOG.info("test repo : " + file.getAbsolutePath());
+        return file;
 
-		return file;
+    }
 
-	}
+    static void setupClientSSL() throws Exception
+    {
 
-	static void setupClientSSL() throws Exception {
+        KeyStore store = KeyStore.getInstance( KeyStore.getDefaultType() );
 
-		KeyStore store = KeyStore.getInstance(KeyStore.getDefaultType());
+        FileInputStream storeInput = new FileInputStream( getTestKeystore() );
 
-		FileInputStream storeInput = new FileInputStream(getTestKeystore());
+        char[] storePass = getTestKeystorePassword().toCharArray();
 
-		char[] storePass = getTestKeystorePassword().toCharArray();
+        store.load( storeInput, storePass );
 
-		store.load(storeInput, storePass);
+        TrustManagerFactory manager = TrustManagerFactory
+            .getInstance( TrustManagerFactory.getDefaultAlgorithm() );
 
-		TrustManagerFactory manager = TrustManagerFactory
-				.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+        manager.init( store );
 
-		manager.init(store);
+        SSLContext context = SSLContext.getInstance( "TLS" );
 
-		SSLContext context = SSLContext.getInstance("TLS");
+        context.init( null, manager.getTrustManagers(), null );
 
-		context.init(null, manager.getTrustManagers(), null);
+        SSLSocketFactory factory = context.getSocketFactory();
 
-		SSLSocketFactory factory = context.getSocketFactory();
+        HttpsURLConnection.setDefaultSSLSocketFactory( factory );
 
-		HttpsURLConnection.setDefaultSSLSocketFactory(factory);
+        HttpsURLConnection.setDefaultHostnameVerifier( new HostnameVerifier()
+        {
+            public boolean verify( //
+                    String hostname, SSLSession session )
+            {
+                return true;
+            }
+        } );
 
-		HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
-			public boolean verify(//
-					String hostname, SSLSession session) {
-				return true;
-			}
-		});
-
-	}
+    }
 
 }

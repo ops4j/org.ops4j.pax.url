@@ -77,11 +77,11 @@ public class SettingsImplTest
         throws MalformedURLException, FileNotFoundException
     {
         MavenSettingsImpl settings =
-            new MavenSettingsImpl( FileUtils.getFileFromClasspath( "settings/settingsEmpty.xml" ).toURI().toURL() );
-        assertEquals( "Repositories",   
-        		      null,
-                      settings.getRepositories()
-        );
+            new MavenSettingsImpl( FileUtils.getFileFromClasspath( "settings/settingsEmpty.xml" )
+                .toURI().toURL() );
+        assertEquals( "Repositories",
+            null,
+            settings.getRepositories() );
     }
 
     @Test
@@ -89,11 +89,11 @@ public class SettingsImplTest
         throws MalformedURLException, FileNotFoundException
     {
         MavenSettingsImpl settings =
-            new MavenSettingsImpl( FileUtils.getFileFromClasspath( "settings/settingsEmpty.xml" ).toURI().toURL(), true );
+            new MavenSettingsImpl( FileUtils.getFileFromClasspath( "settings/settingsEmpty.xml" )
+                .toURI().toURL(), true );
         assertEquals( "Repositories",
-        		      "http://repo1.maven.org/maven2@id=central",
-                      settings.getRepositories()
-        );
+            "http://repo1.maven.org/maven2@id=central",
+            settings.getRepositories() );
     }
 
     @Test
@@ -165,8 +165,8 @@ public class SettingsImplTest
                       segments[ 4 ]
         );
         assertEquals( "Repository 6",
-        		      "http://osgi.sonatype.org/content/groups/pax-runner@id=repository6",
-        		      segments[ 5 ]
+                      "http://osgi.sonatype.org/content/groups/pax-runner@id=repository6",
+                      segments[ 5 ]
         );
         assertEquals( "Repository 7",
                       "http://repo1.maven.org/maven2@id=repository7",
@@ -177,15 +177,12 @@ public class SettingsImplTest
                       segments[ 7 ]
         );
         assertEquals( "Repository 9",
-        		      "http://repository.springsource.com/maven/bundles/release@id=repository9",
+                      "http://repository.springsource.com/maven/bundles/release@id=repository9",
                       segments[ 8 ]
         );
         assertEquals( "Repository 10",
-        		      "http://repository.springsource.com/maven/bundles/external@id=repository10",
+                      "http://repository.springsource.com/maven/bundles/external@id=repository10",
                       segments[ 9 ]
         );
-
     }
-
-
 }

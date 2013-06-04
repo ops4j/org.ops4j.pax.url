@@ -28,22 +28,22 @@ import java.net.URLStreamHandler;
  * @author Harald Wellmann (harald.wellmann@gmx.de)
  * @since 1.3.5, Aug 5, 2011
  */
-public class ReferenceInputStream extends InputStream 
+public class ReferenceInputStream extends InputStream
 {
-	protected URL reference;
+    protected URL reference;
 
-	public ReferenceInputStream(URL reference) 
-	{
-		this.reference = reference;
-	}
+    public ReferenceInputStream( URL reference )
+    {
+        this.reference = reference;
+    }
 
-	public int read() throws IOException 
-	{
-		throw new IOException("cannot read from ReferenceInputStream");
-	}
+    public int read() throws IOException
+    {
+        throw new IOException( "cannot read from ReferenceInputStream" );
+    }
 
-	public URL getReference() 
-	{
-		return reference;
-	}
+    public URL getReference()
+    {
+        return reference;
+    }
 }

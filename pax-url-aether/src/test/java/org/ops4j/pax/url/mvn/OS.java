@@ -18,33 +18,35 @@ package org.ops4j.pax.url.mvn;
 /**
  * Detect current Operating System.
  */
-public enum OS {
+public enum OS
+{
 
-	LINUX("linux"), //
+    LINUX( "linux" ), //
+    MAC( "mac" ), //
+    WINDOWS( "win" ), //
+    ;
 
-	MAC("mac"), //
+    private final String term;
 
-	WINDOWS("win"), //
+    private OS( String term )
+    {
+        this.term = term;
+    }
 
-	;
-
-	private final String term;
-
-	private OS(String term) {
-		this.term = term;
-	}
-
-	/**
-	 * Find current O/S.
-	 */
-	public static OS current() {
-		String name = System.getProperty("os.name").toLowerCase();
-		for (OS known : OS.values()) {
-			if (name.contains(known.term)) {
-				return known;
-			}
-		}
-		throw new UnsupportedOperationException("Unknown O/S");
-	}
+    /**
+     * Find current O/S.
+     */
+    public static OS current()
+    {
+        String name = System.getProperty( "os.name" ).toLowerCase();
+        for( OS known : OS.values() )
+        {
+            if( name.contains( known.term ) )
+            {
+                return known;
+            }
+        }
+        throw new UnsupportedOperationException( "Unknown O/S" );
+    }
 
 }

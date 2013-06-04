@@ -42,46 +42,49 @@ import org.ops4j.util.property.PropertiesPropertyResolver;
 
 /**
  */
-public class AetherTest extends TestBase {
+public class AetherTest extends TestBase
+{
 
-	@Test
-	public void resolveArtifact() throws DependencyCollectionException,
-			ArtifactResolutionException, IOException {
+    @Test
+    public void resolveArtifact() throws DependencyCollectionException,
+        ArtifactResolutionException, IOException
+    {
 
-		AetherBasedResolver resolver = new AetherBasedResolver(getTestConfig());
+        AetherBasedResolver resolver = new AetherBasedResolver( getTestConfig() );
 
-		InputStream input = resolver.resolve("org.ops4j.pax.web",
-				"pax-web-api", "", "jar", "0.7.2");
+        InputStream input = resolver.resolve( "org.ops4j.pax.web",
+            "pax-web-api", "", "jar", "0.7.2" );
 
-		input.close();
+        input.close();
 
-	}
+    }
 
-	private MavenConfiguration getTestConfig() throws IOException {
+    private MavenConfiguration getTestConfig() throws IOException
+    {
 
-		Properties props = new Properties();
+        Properties props = new Properties();
 
-		props.setProperty( //
-				ServiceConstants.PID + MavenConstants.PROPERTY_LOCAL_REPOSITORY,//
-				Util.getTestRepo().toURI().toASCIIString() //
-		);
+        props.setProperty( //
+            ServiceConstants.PID + MavenConstants.PROPERTY_LOCAL_REPOSITORY,//
+            Util.getTestRepo().toURI().toASCIIString() //
+            );
 
-		props.setProperty( //
-				ServiceConstants.PID + MavenConstants.PROPERTY_SETTINGS_FILE, //
-				Util.getTestSettings().toURI().toASCIIString() //
-		);
+        props.setProperty( //
+            ServiceConstants.PID + MavenConstants.PROPERTY_SETTINGS_FILE, //
+            Util.getTestSettings().toURI().toASCIIString() //
+            );
 
-		MavenConfigurationImpl config = new MavenConfigurationImpl(
-				new PropertiesPropertyResolver(props), ServiceConstants.PID);
+        MavenConfigurationImpl config = new MavenConfigurationImpl(
+            new PropertiesPropertyResolver( props ), ServiceConstants.PID );
 
-		File file = Util.getTestSettings();
+        File file = Util.getTestSettings();
 
-		MavenSettings settings = new MavenSettingsImpl(file.toURI().toURL());
+        MavenSettings settings = new MavenSettingsImpl( file.toURI().toURL() );
 
-		config.setSettings(settings);
+        config.setSettings( settings );
 
-		return config;
+        return config;
 
-	}
+    }
 
 }

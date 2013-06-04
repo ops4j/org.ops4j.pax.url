@@ -38,32 +38,34 @@ import org.slf4j.LoggerFactory;
 
 /**
  */
-public class HandlerTest extends TestBase {
+public class HandlerTest extends TestBase
+{
 
-	@Test
-	public void test() throws Exception {
+    @Test
+    public void test() throws Exception
+    {
 
-		String settings = Util.getTestSettings().getAbsolutePath();
-		String localRepo = Util.getTestRepo().getAbsolutePath();
+        String settings = Util.getTestSettings().getAbsolutePath();
+        String localRepo = Util.getTestRepo().getAbsolutePath();
 
-		System.setProperty("java.protocol.handler.pkgs", "org.ops4j.pax.url");
+        System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
 
-		System.setProperty("org.ops4j.pax.url.mvn.settings", settings);
+        System.setProperty( "org.ops4j.pax.url.mvn.settings", settings );
 
-		System.setProperty("org.ops4j.pax.url.mvn.localRepository", localRepo);
+        System.setProperty( "org.ops4j.pax.url.mvn.localRepository", localRepo );
 
-		System.setProperty("org.ops4j.pax.url.mvn.certificateCheck", "false");
+        System.setProperty( "org.ops4j.pax.url.mvn.certificateCheck", "false" );
 
-		System.setProperty("org.ops4j.pax.url.mvn.useFallbackRepositories",
-				"false");
+        System.setProperty( "org.ops4j.pax.url.mvn.useFallbackRepositories",
+            "false" );
 
-		InputStream input = new URL("mvn:org.ops4j.base/ops4j-base-lang/1.1.0")
-				.openStream();
+        InputStream input = new URL( "mvn:org.ops4j.base/ops4j-base-lang/1.1.0" )
+            .openStream();
 
-		// Thread.sleep(100 * 1000);
+        // Thread.sleep(100 * 1000);
 
-		input.close();
+        input.close();
 
-	}
+    }
 
 }

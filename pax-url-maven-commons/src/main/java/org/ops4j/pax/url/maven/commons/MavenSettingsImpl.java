@@ -124,7 +124,7 @@ public class MavenSettingsImpl
     /**
      * Map of known mirrors mirrorOf -> url
      */
-	private Map<String, Map<String, String>> m_mirrorsSettings;
+    private Map<String, Map<String, String>> m_mirrorsSettings;
 
     /**
      * Creates new settings with the following resolution:<br/>
@@ -361,16 +361,16 @@ public class MavenSettingsImpl
             // PAXURL-92 Have the ability to only use a local repository, by
             // not requiring the use of a DEFAULT_REPOSITORY.  Helps with
             // users who have proxies and want to lockdown their repos.
-        	if( m_useFallbackRepositories )
-        	{
-           		if( m_repositories == null || m_repositories.length() == 0 )
-           		{
-           			m_repositories = FALLBACK_REPOSITORIES;
-            	} 
-           		else 
-           		{
-           			m_repositories = m_repositories + "," + FALLBACK_REPOSITORIES;
-           		}
+            if( m_useFallbackRepositories )
+            {
+                if( m_repositories == null || m_repositories.length() == 0 )
+                {
+                    m_repositories = FALLBACK_REPOSITORIES;
+                }
+                else
+                {
+                    m_repositories = m_repositories + "," + FALLBACK_REPOSITORIES;
+                }
             }
         }
         return m_repositories;
@@ -501,74 +501,80 @@ public class MavenSettingsImpl
         return Collections.unmodifiableMap( m_proxySettings );
     }
     
-    public Map<String, Map<String, String>> getMirrorSettings() {
-        if (m_mirrorsSettings == null)
-    	{
-    		m_mirrorsSettings = new HashMap<String, Map<String, String>>();
-    		readSettings();
+    public Map<String, Map<String, String>> getMirrorSettings()
+    {
+        if( m_mirrorsSettings == null )
+        {
+            m_mirrorsSettings = new HashMap<String, Map<String, String>>();
+            readSettings();
             if( m_document != null )
             {
-            	
-            	List<Element> mirrors = XmlUtils.getElements( m_document, MIRROR_TAG );
+
+                List<Element> mirrors = XmlUtils.getElements( m_document, MIRROR_TAG );
                 if( mirrors != null )
                 {
                     for( Element mirror : mirrors )
                     {
-                    	String id = getSetting( mirror, "id", "" );
-                        if (!m_mirrorsSettings.containsKey(id)) 
+                        String id = getSetting( mirror, "id", "" );
+                        if( !m_mirrorsSettings.containsKey( id ) )
                         {
-                        	Map<String, String> proxyDetails = new HashMap<String, String>();
+                            Map<String, String> proxyDetails = new HashMap<String, String>();
 
-                        	proxyDetails.put( "id", id );
-                        	String mirrorRepoUrl = getSetting( mirror, "url", "" );
-                        	List<Element> servers = XmlUtils.getElements( m_document, SERVER_TAG );
-                                if( servers != null )
+                            proxyDetails.put( "id", id );
+                            String mirrorRepoUrl = getSetting( mirror, "url", "" );
+                            List<Element> servers = XmlUtils.getElements( m_document, SERVER_TAG );
+                            if( servers != null )
+                            {
+                                for( Element server : servers )
                                 {
-                                    for( Element server : servers )
+                                    Element element = XmlUtils.getElement( server, "id" );
+                                    if( element != null )
                                     {
-                                        Element element = XmlUtils.getElement( server, "id" );
-                                        if( element != null )
+                                        String serverId = XmlUtils.getTextContent( element );
+                                        if( id.equals( serverId ) && mirrorRepoUrl.contains( "://" ) )
                                         {
-                                            String serverId = XmlUtils.getTextContent( element );
-                                            if( id.equals(serverId)  && mirrorRepoUrl.contains( "://" ) )
+                                            element = XmlUtils.getElement( server, "username" );
+                                            if( element != null )
                                             {
-                                                element = XmlUtils.getElement( server, "username" );
-                                                if( element != null )
+                                                String username = XmlUtils.getTextContent( element );
+                                                // if there is no username stop the search
+                                                if( username != null )
                                                 {
-                                                    String username = XmlUtils.getTextContent( element );
-                                                    // if there is no username stop the search
-                                                    if( username != null )
+
+                                                    element =
+                                                        XmlUtils.getElement( server, "password" );
+                                                    if( element != null )
                                                     {
-                                                        
-                                                        element = XmlUtils.getElement( server, "password" );
-                                                        if( element != null )
+                                                        String password =
+                                                            XmlUtils.getTextContent( element );
+                                                        if( password != null )
                                                         {
-                                                            String password = XmlUtils.getTextContent( element );
-                                                            if( password != null )
-                                                            {
-                                                                username = username + ":" + password;
-                                                            }
+                                                            username = username + ":" + password;
                                                         }
-                                                        
-                                                        String repo = "://" + username + "@";
-                                                        repo = Matcher.quoteReplacement(repo);
-                                                        mirrorRepoUrl = mirrorRepoUrl.replaceFirst("://", repo);
                                                     }
+
+                                                    String repo = "://" + username + "@";
+                                                    repo = Matcher.quoteReplacement( repo );
+                                                    mirrorRepoUrl =
+                                                        mirrorRepoUrl.replaceFirst( "://", repo );
                                                 }
                                             }
                                         }
                                     }
                                 }
-                            proxyDetails.put( "url",  mirrorRepoUrl);
-                            proxyDetails.put( "mirrorOf", getSetting( mirror, "mirrorOf", "default" ) );
+                            }
+                            proxyDetails.put( "url", mirrorRepoUrl );
+                            proxyDetails.put( "mirrorOf",
+                                getSetting( mirror, "mirrorOf", "default" ) );
                             proxyDetails.put( "layout", getSetting( mirror, "layout", "" ) );
-                            proxyDetails.put( "mirrorOfLayouts", getSetting( mirror, "mirrorOfLayouts", "" ) );
-                            m_mirrorsSettings.put(id, proxyDetails);
+                            proxyDetails.put( "mirrorOfLayouts",
+                                getSetting( mirror, "mirrorOfLayouts", "" ) );
+                            m_mirrorsSettings.put( id, proxyDetails );
                         }
                     }
                 }
             }
-    	}
-    	return Collections.unmodifiableMap( m_mirrorsSettings );
+        }
+        return Collections.unmodifiableMap( m_mirrorsSettings );
     }
 }

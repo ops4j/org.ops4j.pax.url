@@ -310,7 +310,7 @@ public class AetherBasedResolver {
 
         String updatePolicy = m_config.getGlobalUpdatePolicy();
         if( null != updatePolicy ){
-        	session.setUpdatePolicy(updatePolicy);
+            session.setUpdatePolicy(updatePolicy);
         }
         
         return session;

@@ -105,12 +105,12 @@ public class ConnectionTest
         verify( context );
     }
     
-    @Test()
+    @Test
     public void standeloneRun()
         throws IOException
     {
-    	System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
-		new URL("classpath:connection/resource").openConnection();
+        System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
+        new URL( "classpath:connection/resource" ).openConnection();
     }
 
 }

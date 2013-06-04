@@ -26,50 +26,53 @@ import org.slf4j.LoggerFactory;
 /**
  * emulate AWS S3
  */
-public abstract class TestBase {
+public abstract class TestBase
+{
 
-	protected Logger log = LoggerFactory.getLogger(getClass());
+    protected Logger log = LoggerFactory.getLogger( getClass() );
 
-	private Server server;
+    private Server server;
 
-	@Before
-	public void startHttp() throws Exception {
-		
-		/** client setup */
+    @Before
+    public void startHttp() throws Exception
+    {
 
-		/** TODO should work w/o this ? */
-		Util.setupClientSSL();
+        /** client setup */
+s
+        /** TODO should work w/o this ? */
+        Util.setupClientSSL();
 
-		/** server setup */
+        /** server setup */
 
-		server = new Server();
+        server = new Server();
 
-		final SslContextFactory factory = new SslContextFactory();
-		factory.setKeyStore(Util.getTestKeystore().getAbsolutePath());
-		factory.setKeyStorePassword(Util.getTestKeystorePassword());
-		factory.setTrustStore(Util.getTestKeystore().getAbsolutePath());
-		factory.setKeyManagerPassword(Util.getTestKeystorePassword());
+        final SslContextFactory factory = new SslContextFactory();
+        factory.setKeyStore( Util.getTestKeystore().getAbsolutePath() );
+        factory.setKeyStorePassword( Util.getTestKeystorePassword() );
+        factory.setTrustStore( Util.getTestKeystore().getAbsolutePath() );
+        factory.setKeyManagerPassword( Util.getTestKeystorePassword() );
 
-		final SslSocketConnector connector = new SslSocketConnector(factory);
-		connector.setPort(Util.getPort());
+        final SslSocketConnector connector = new SslSocketConnector( factory );
+        connector.setPort( Util.getPort() );
 
-		server.addConnector(connector);
+        server.addConnector( connector );
 
-		server.setHandler(new RepoHandler());
+        server.setHandler( new RepoHandler() );
 
-		server.start();
+        server.start();
 
-		log.info("init");
+        log.info( "init" );
 
-	}
+    }
 
-	@After
-	public void stopHttp() throws Exception {
+    @After
+    public void stopHttp() throws Exception
+    {
 
-		server.stop();
+        server.stop();
 
-		log.info("done");
+        log.info( "done" );
 
-	}
+    }
 
 }

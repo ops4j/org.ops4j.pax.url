@@ -126,24 +126,30 @@ public class MavenRepositoryURL
             name = "repo_" + spec.hashCode();
         }
         m_id = name;
+
         if( m_repositoryURL.getProtocol().equals( "file" ) )
         {
-            try {
-            	// You must transform to URI to decode the path (manage a path with a space or non us character)
-            	// like D:/documents%20and%20Settings/SESA170017/.m2/repository
-            	// the path can be store in path part or in scheme specific part (if is relatif path)
-            	// the anti-slash character is not a valid character for uri.
-                spec = spec.replaceAll("\\\\", "/");
-                spec = spec.replaceAll(" ", "%20");
-                URI uri = new URI(spec);
-				String path = uri.getPath();
-				if (path == null)
-					path = uri.getSchemeSpecificPart();
-				m_file = new File(path);
+            try
+            {
+                // You must transform to URI to decode the path (manage a path with a space or non
+                // us character)
+                // like D:/documents%20and%20Settings/SESA170017/.m2/repository
+                // the path can be store in path part or in scheme specific part (if is relatif
+                // path)
+                // the anti-slash character is not a valid character for uri.
+                spec = spec.replaceAll( "\\\\", "/" );
+                spec = spec.replaceAll( " ", "%20" );
+                URI uri = new URI( spec );
+                String path = uri.getPath();
+                if( path == null )
+                    path = uri.getSchemeSpecificPart();
+                m_file = new File( path );
 
-			} catch (URISyntaxException e) {
-				throw new MalformedURLException(e.getMessage());
-			}
+            }
+            catch ( URISyntaxException e )
+            {
+                throw new MalformedURLException( e.getMessage() );
+            }
         }
         else
         {

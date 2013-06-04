@@ -42,6 +42,6 @@ public class Handler
     protected URLConnection openConnection( final URL url )
         throws IOException
     {
-    	return new ReferenceUrlConnection(url);
+        return new ReferenceUrlConnection(url);
     }
 }

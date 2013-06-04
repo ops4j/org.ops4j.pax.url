@@ -103,7 +103,7 @@ class Connection
 
         if(repositoryAdmin == null)
         {
-        	throw new IllegalStateException("No RepositoryAdmin Service available" );
+            throw new IllegalStateException("No RepositoryAdmin Service available" );
         }        
         
         final Resource[] resources = repositoryAdmin.discoverResources( m_parser.getFilter() );

@@ -45,11 +45,11 @@ public final class Activator
      * Delegate.
      */
     private HandlerActivator<Configuration> m_activatorDelegate;
-	/**
+    /**
     * Bundle context. Valid only after start method has been called.
     */
     private BundleContext m_bundleContext;
-	/**
+    /**
      * Replaceable Service. Valid only after start method has been called.
      */
     private ReplaceableService<RepositoryAdmin> m_replaceableService;
@@ -118,8 +118,8 @@ public final class Activator
     public void start( final BundleContext bundleContext )
         throws Exception
     {
-    	m_bundleContext = bundleContext;
-    	m_replaceableService = new ReplaceableService<RepositoryAdmin>( bundleContext, RepositoryAdmin.class );
+        m_bundleContext = bundleContext;
+        m_replaceableService = new ReplaceableService<RepositoryAdmin>( bundleContext, RepositoryAdmin.class );
         m_activatorDelegate.start( bundleContext );
     }
 
