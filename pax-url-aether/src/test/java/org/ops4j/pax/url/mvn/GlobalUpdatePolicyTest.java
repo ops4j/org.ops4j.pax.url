@@ -62,16 +62,18 @@ public class GlobalUpdatePolicyTest {
 	/**
 	 * Provide URL of test project remote repository.
 	 */
-	static final File SETTINGS = new File("src/test/resources",
+	static final File SETTINGS = new File("target/test-classes",
 			"settings-ops4j-snapshots-1.xml");
 
 	/**
 	 * Alternative local maven repository used by test. Preserved between builds
 	 * and system restarts.
 	 */
-	static final File REPO = new File(HOME, "org.ops4j.pax.url/test-repo");
+        static final File REPO = new File(HOME, "org.ops4j.pax.url/test-repo");
+        static final File REMOTE_REPO = new File("target/remote-repo");
 	static {
-		UnitHelp.ensureFolder(REPO);
+            UnitHelp.ensureFolder(REPO);
+            UnitHelp.ensureFolder(REMOTE_REPO);
 	}
 
 	/**
@@ -97,6 +99,9 @@ public class GlobalUpdatePolicyTest {
 		request.setLocalRepositoryDirectory(REPO);
 		request.setPomFile(POM);
 		request.setGoals(Collections.singletonList("deploy"));
+		Properties properties = new Properties();
+		properties.setProperty("TEST_REPO", REMOTE_REPO.toURI().toURL().toString());
+		request.setProperties(properties);
 
 		Invoker invoker = new DefaultInvoker();
 

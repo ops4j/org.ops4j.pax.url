@@ -20,4 +20,17 @@
 		see /pax-url-aether/src/test/java/org/ops4j/pax/url/mvn/GlobalUpdatePolicyTest.java
 	</description>
 
+	<distributionManagement>
+		<repository>
+			<id>sonatype-nexus-staging</id>
+			<name>Nexus Release Repository</name>
+			<url>${TEST_REPO}</url>
+		</repository>
+		<snapshotRepository>
+			<id>sonatype-nexus-snapshots</id>
+			<name>Sonatype Nexus Snapshots</name>
+			<url>${TEST_REPO}</url>
+		</snapshotRepository>
+	</distributionManagement>
+
 </project>

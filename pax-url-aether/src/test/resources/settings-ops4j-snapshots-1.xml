@@ -21,7 +21,7 @@
 				<repository>
 					<id>server-ops4j-snapshots</id>
 					<name>Ops4j Snapshots</name>
-					<url>https://oss.sonatype.org/content/repositories/ops4j-snapshots</url>
+					<url>${TEST_REPO}</url>
 					<releases>
 						<enabled>true</enabled>
 					</releases>

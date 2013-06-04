@@ -25,9 +25,16 @@
         <aetherVersion>1.13.1</aetherVersion>
         <mavenVersion>3.0.4</mavenVersion>
         <wagonVersion>1.0</wagonVersion>
+        <TEST_REPO>file:${project.build.directory}/remote-repo</TEST_REPO>
     </properties>
 
     <build>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+            </testResource>
+        </testResources>
         <plugins>
             <plugin>
                 <groupId>org.apache.felix</groupId>
