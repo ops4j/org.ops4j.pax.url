@@ -13,24 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package amazon;
+package org.ops4j.pax.url.mvn.s3mock;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import org.eclipse.jetty.http.ssl.SslContextFactory;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.ssl.SslSocketConnector;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.sonatype.aether.collection.DependencyCollectionException;
-import org.sonatype.aether.resolution.ArtifactResolutionException;
-import org.ops4j.io.FileUtils;
 import org.ops4j.pax.url.maven.commons.MavenConfiguration;
 import org.ops4j.pax.url.maven.commons.MavenConfigurationImpl;
 import org.ops4j.pax.url.maven.commons.MavenConstants;
@@ -39,9 +29,9 @@ import org.ops4j.pax.url.maven.commons.MavenSettingsImpl;
 import org.ops4j.pax.url.mvn.ServiceConstants;
 import org.ops4j.pax.url.mvn.internal.AetherBasedResolver;
 import org.ops4j.util.property.PropertiesPropertyResolver;
+import org.sonatype.aether.collection.DependencyCollectionException;
+import org.sonatype.aether.resolution.ArtifactResolutionException;
 
-/**
- */
 public class AetherTest extends TestBase
 {
 

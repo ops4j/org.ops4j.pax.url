@@ -15,14 +15,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package amazon;
+package org.ops4j.pax.url.mvn.s3mock;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.net.MalformedURLException;
-import static org.junit.Assert.*;
+
 import org.junit.Test;
-import org.ops4j.io.FileUtils;
 import org.ops4j.pax.url.maven.commons.MavenSettings;
 import org.ops4j.pax.url.maven.commons.MavenSettingsImpl;
 import org.slf4j.Logger;

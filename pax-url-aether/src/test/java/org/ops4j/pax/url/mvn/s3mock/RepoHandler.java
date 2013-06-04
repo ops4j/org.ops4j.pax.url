@@ -1,4 +1,4 @@
-package amazon;
+package org.ops4j.pax.url.mvn.s3mock;
 
 import java.io.IOException;
 
