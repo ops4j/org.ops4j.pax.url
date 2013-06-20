@@ -18,16 +18,17 @@ package org.ops4j.pax.url.mvn;
 import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
+
+import org.eclipse.aether.collection.DependencyCollectionException;
+import org.eclipse.aether.resolution.ArtifactResolutionException;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.sonatype.aether.collection.DependencyCollectionException;
-import org.sonatype.aether.resolution.ArtifactResolutionException;
 import org.ops4j.pax.url.maven.commons.MavenConfiguration;
 import org.ops4j.pax.url.maven.commons.MavenConfigurationImpl;
 import org.ops4j.pax.url.maven.commons.MavenConstants;
 import org.ops4j.pax.url.mvn.internal.AetherBasedResolver;
 import org.ops4j.util.property.PropertiesPropertyResolver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Simply playing with mvn api.

@@ -27,36 +27,37 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.maven.repository.internal.MavenRepositorySystemSession;
-import org.apache.maven.repository.internal.MavenServiceLocator;
+import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
+import org.eclipse.aether.DefaultRepositorySystemSession;
+import org.eclipse.aether.RepositoryException;
+import org.eclipse.aether.RepositorySystem;
+import org.eclipse.aether.RepositorySystemSession;
+import org.eclipse.aether.artifact.Artifact;
+import org.eclipse.aether.artifact.DefaultArtifact;
+import org.eclipse.aether.connector.wagon.WagonProvider;
+import org.eclipse.aether.connector.wagon.WagonRepositoryConnectorFactory;
+import org.eclipse.aether.impl.DefaultServiceLocator;
+import org.eclipse.aether.internal.impl.SimpleLocalRepositoryManagerFactory;
+import org.eclipse.aether.repository.Authentication;
+import org.eclipse.aether.repository.LocalRepository;
+import org.eclipse.aether.repository.MirrorSelector;
+import org.eclipse.aether.repository.Proxy;
+import org.eclipse.aether.repository.ProxySelector;
+import org.eclipse.aether.repository.RemoteRepository;
+import org.eclipse.aether.resolution.ArtifactRequest;
+import org.eclipse.aether.resolution.ArtifactResolutionException;
+import org.eclipse.aether.resolution.VersionRangeRequest;
+import org.eclipse.aether.resolution.VersionRangeResolutionException;
+import org.eclipse.aether.resolution.VersionRangeResult;
+import org.eclipse.aether.spi.connector.RepositoryConnectorFactory;
+import org.eclipse.aether.spi.localrepo.LocalRepositoryManagerFactory;
+import org.eclipse.aether.util.repository.AuthenticationBuilder;
+import org.eclipse.aether.util.repository.DefaultMirrorSelector;
+import org.eclipse.aether.util.repository.DefaultProxySelector;
+import org.eclipse.aether.version.Version;
 import org.ops4j.pax.url.maven.commons.MavenConfiguration;
 import org.ops4j.pax.url.maven.commons.MavenRepositoryURL;
 import org.slf4j.LoggerFactory;
-import org.sonatype.aether.RepositoryException;
-import org.sonatype.aether.RepositorySystem;
-import org.sonatype.aether.RepositorySystemSession;
-import org.sonatype.aether.artifact.Artifact;
-import org.sonatype.aether.connector.wagon.WagonProvider;
-import org.sonatype.aether.connector.wagon.WagonRepositoryConnectorFactory;
-import org.sonatype.aether.impl.internal.SimpleLocalRepositoryManagerFactory;
-import org.sonatype.aether.repository.Authentication;
-import org.sonatype.aether.repository.LocalRepository;
-import org.sonatype.aether.repository.MirrorSelector;
-import org.sonatype.aether.repository.Proxy;
-import org.sonatype.aether.repository.ProxySelector;
-import org.sonatype.aether.repository.RemoteRepository;
-import org.sonatype.aether.resolution.ArtifactRequest;
-import org.sonatype.aether.resolution.ArtifactResolutionException;
-import org.sonatype.aether.resolution.VersionRangeRequest;
-import org.sonatype.aether.resolution.VersionRangeResolutionException;
-import org.sonatype.aether.resolution.VersionRangeResult;
-import org.sonatype.aether.spi.connector.RepositoryConnectorFactory;
-import org.sonatype.aether.spi.localrepo.LocalRepositoryManagerFactory;
-import org.sonatype.aether.spi.log.Logger;
-import org.sonatype.aether.util.artifact.DefaultArtifact;
-import org.sonatype.aether.util.repository.DefaultMirrorSelector;
-import org.sonatype.aether.util.repository.DefaultProxySelector;
-import org.sonatype.aether.version.Version;
 
 /**
  * Aether based, drop in replacement for mvn protocol
@@ -92,11 +93,14 @@ public class AetherBasedResolver {
     {
         Map<String, List<String>> map = new HashMap<String, List<String>>();
         Map<String, RemoteRepository> naming = new HashMap<String, RemoteRepository>();
+        
+        List<RemoteRepository> resultingRepos = new ArrayList<RemoteRepository>();
 
         for( RemoteRepository r : remoteRepos ) {
             naming.put( r.getId(), r );
 
-            r.setProxy( m_proxySelector.getProxy( r ) );
+            RemoteRepository rProxy = new RemoteRepository.Builder(r).setProxy( m_proxySelector.getProxy(r)).build();
+            resultingRepos.add(rProxy);
 
             RemoteRepository mirror = m_mirrorSelector.getMirror( r );
             if( mirror != null ) {
@@ -117,11 +121,13 @@ public class AetherBasedResolver {
             for( String rep : map.get( mirrorId ) ) {
                 mirroedRepos.add( naming.get( rep ) );
             }
-            mirror.setMirroredRepositories( mirroedRepos );
-            remoteRepos.removeAll(mirroedRepos);
-            remoteRepos.add( 0, mirror );
+            mirror = new RemoteRepository.Builder(mirror).setMirroredRepositories(mirroedRepos).build();
+            resultingRepos.removeAll(mirroedRepos);
+            resultingRepos.add( 0, mirror );
         }
 
+        remoteRepos.clear();
+        remoteRepos.addAll(resultingRepos);
     }
 
     private List<MavenRepositoryURL> getRemoteRepositories( MavenConfiguration configuration )
@@ -211,7 +217,7 @@ public class AetherBasedResolver {
     }
 
     private void addRepo(List<RemoteRepository> list, MavenRepositoryURL repoUrl) {
-        list.add( new RemoteRepository( repoUrl.getId(), REPO_TYPE, repoUrl.getURL().toExternalForm() ) );
+    	list.add( new RemoteRepository.Builder( repoUrl.getId(), REPO_TYPE, repoUrl.getURL().toExternalForm() ).build() );
     }
     
     /**
@@ -270,7 +276,7 @@ public class AetherBasedResolver {
      *
      * @return an artifact with version set properly (highest if available)
      *
-     * @throws org.sonatype.aether.resolution.VersionRangeResolutionException
+     * @throws org.eclipse.aether.resolution.VersionRangeResolutionException
      *          in case of resolver errors.
      */
     private Artifact resolveLatestVersionRange( RepositorySystemSession session, List<RemoteRepository> remoteRepos, Artifact artifact )
@@ -300,11 +306,11 @@ public class AetherBasedResolver {
         
         File local = m_config.getLocalRepository().getFile();
 
-        MavenRepositorySystemSession session = new MavenRepositorySystemSession();
+        DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
 
         LocalRepository localRepo = new LocalRepository( local );
 
-        session.setLocalRepositoryManager( m_repoSystem.newLocalRepositoryManager( localRepo ) );
+        session.setLocalRepositoryManager( m_repoSystem.newLocalRepositoryManager( session, localRepo ) );
         session.setMirrorSelector( m_mirrorSelector );
         session.setProxySelector( m_proxySelector );
 
@@ -320,7 +326,7 @@ public class AetherBasedResolver {
     {
         // user, pass
         if( proxy.containsKey( "user" ) ) {
-            return new Authentication( proxy.get( "user" ), proxy.get( "pass" ) );
+            return new AuthenticationBuilder().addUsername( proxy.get( "user" ) ).addPassword( proxy.get( "pass" ) ).build();
         }
         return null;
     }
@@ -332,13 +338,13 @@ public class AetherBasedResolver {
 
     private RepositorySystem newRepositorySystem()
     {
-        MavenServiceLocator locator = new MavenServiceLocator();
+    	DefaultServiceLocator locator = MavenRepositorySystemUtils.newServiceLocator();
 
         locator.setServices( WagonProvider.class, new ManualWagonProvider(m_config.getTimeout()) );
         locator.addService( RepositoryConnectorFactory.class, WagonRepositoryConnectorFactory.class );
 
         locator.setService( LocalRepositoryManagerFactory.class, SimpleLocalRepositoryManagerFactory.class );
-        locator.setService( Logger.class, LogAdapter.class );
+        // locator.setService( Logger.class, LogAdapter.class );
 
         return locator.getService( RepositorySystem.class );
     }
