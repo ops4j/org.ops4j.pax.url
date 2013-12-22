@@ -27,6 +27,7 @@ import java.util.UUID;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class CoordinatesTest
@@ -63,6 +64,7 @@ public class CoordinatesTest
     }
 
     @Test
+    @Ignore( "PAXURL-143" )
     public void resolveArtifactWithHalfOpenVersionRange() throws IOException
     {
         URL url = new URL( "mvn:org.ops4j.base/ops4j-base-lang/[1.2.0,1.3.0)" );
@@ -74,6 +76,7 @@ public class CoordinatesTest
     }
 
     @Test
+    @Ignore( "PAXURL-143" )
     public void resolveArtifactWithClosedVersionRange() throws IOException
     {
         URL url = new URL( "mvn:org.ops4j.base/ops4j-base-lang/[1.2.0,1.3.0]" );
