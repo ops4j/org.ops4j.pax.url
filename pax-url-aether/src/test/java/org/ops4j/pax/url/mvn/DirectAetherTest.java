@@ -1,5 +1,3 @@
-package org.ops4j.pax.url.mvn;
-
 /*
  * Copyright 2013 Harald Wellmann
  *
@@ -16,6 +14,8 @@ package org.ops4j.pax.url.mvn;
  *  limitations under the License.
  *
  */
+
+package org.ops4j.pax.url.mvn;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -91,7 +91,8 @@ public class DirectAetherTest {
             "plexus-interpolation-1.11.jar", //
             "plexus-container-default-1.0-alpha-9-stable-1.jar", //
             "junit-3.8.1.jar", //
-            "classworlds-1.1.jar" };
+            "classworlds-1.1.jar" // 
+        };
 
         assertThat( nlg.getFiles().size(), is( jars.length ) );
         int i = 0;
