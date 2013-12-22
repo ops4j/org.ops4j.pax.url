@@ -75,6 +75,8 @@ public class MavenConfigurationImpl
      * Property resolver. Cannot be null.
      */
     private final PropertyResolver m_propertyResolver;
+    
+    private Object settings;
 
     /**
      * Creates a new service configuration.
@@ -483,5 +485,14 @@ public class MavenConfigurationImpl
         if( m_settings == null ) { return Collections.emptyMap(); }
         return m_settings.getMirrorSettings();
     }
-
+    
+    public Object getSettings() 
+    {
+        return settings;
+    }
+    
+    public void setSettings(Object settings)
+    {
+        this.settings = settings;
+    }
 }

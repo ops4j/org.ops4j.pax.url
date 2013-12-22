@@ -21,6 +21,7 @@ import java.util.Properties;
 
 import junit.framework.Assert;
 
+import org.apache.maven.settings.Settings;
 import org.eclipse.aether.collection.DependencyCollectionException;
 import org.eclipse.aether.resolution.ArtifactResolutionException;
 import org.junit.Test;
@@ -51,13 +52,18 @@ public class AetherMultiTest {
         throws IOException
     {
         Properties p = new Properties();
-        p.setProperty( ServiceConstants.PID + MavenConstants.PROPERTY_LOCAL_REPOSITORY, getCache().toURI().toASCIIString() );
+        String localRepo = getCache().toURI().toASCIIString();
+        p.setProperty( ServiceConstants.PID + MavenConstants.PROPERTY_LOCAL_REPOSITORY, localRepo );
         
         File target = new File("target/test-classes/repomulti");
         Assert.assertTrue("Can not find test repo " + target.toURI().toString(), target.isDirectory());
         String multiRepo = target.toURI().toString() + "@id=multitest@multi";
         p.setProperty( ServiceConstants.PID + MavenConstants.PROPERTY_REPOSITORIES, multiRepo);
-        return new MavenConfigurationImpl( new PropertiesPropertyResolver( p ), ServiceConstants.PID );
+        MavenConfigurationImpl config = new MavenConfigurationImpl( new PropertiesPropertyResolver( p ), ServiceConstants.PID );
+        Settings settings = new Settings();
+        settings.setLocalRepository( localRepo );
+        config.setSettings( settings );
+        return config;
     }
 
     private File getCache()

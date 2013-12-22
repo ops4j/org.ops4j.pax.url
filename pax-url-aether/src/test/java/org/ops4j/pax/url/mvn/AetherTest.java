@@ -19,12 +19,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
 
+import org.apache.maven.settings.Profile;
+import org.apache.maven.settings.Repository;
+import org.apache.maven.settings.Settings;
 import org.eclipse.aether.collection.DependencyCollectionException;
 import org.eclipse.aether.resolution.ArtifactResolutionException;
 import org.junit.Test;
-import org.ops4j.pax.url.maven.commons.MavenConfiguration;
 import org.ops4j.pax.url.maven.commons.MavenConfigurationImpl;
-import org.ops4j.pax.url.maven.commons.MavenConstants;
 import org.ops4j.pax.url.mvn.internal.AetherBasedResolver;
 import org.ops4j.util.property.PropertiesPropertyResolver;
 import org.slf4j.Logger;
@@ -41,7 +42,7 @@ public class AetherTest {
     public void resolveArtifact()
         throws DependencyCollectionException, ArtifactResolutionException, IOException
     {
-        AetherBasedResolver aetherBasedResolver = new AetherBasedResolver( getDummyConfig() );
+        AetherBasedResolver aetherBasedResolver = new AetherBasedResolver( getConfig() );
         aetherBasedResolver.resolve( "org.ops4j.pax.web", "pax-web-api", "", "jar", "0.7.2" ).close();
     }
 
@@ -49,7 +50,7 @@ public class AetherTest {
     public void resolveRangeBased()
         throws DependencyCollectionException, ArtifactResolutionException, IOException
     {
-        AetherBasedResolver aetherBasedResolver = new AetherBasedResolver( getDummyConfig() );
+        AetherBasedResolver aetherBasedResolver = new AetherBasedResolver( getConfig() );
         aetherBasedResolver.resolve( "org.ops4j.pax.web", "pax-web-api", "", "jar", "LATEST" ).close();
     }
 
@@ -58,55 +59,70 @@ public class AetherTest {
         throws DependencyCollectionException, ArtifactResolutionException, IOException
     {
 
-        MavenConfiguration config = getDummyConfig();
-
-        AetherBasedResolver aetherBasedResolver = new AetherBasedResolver( config );
+        AetherBasedResolver aetherBasedResolver = new AetherBasedResolver( getConfig() );
         aetherBasedResolver.resolve( "org.ops4j.pax.web", "pax-web-api", "", "jar", "LATEST" ).close();
 
         // now again:
         // no repo
-        aetherBasedResolver = new AetherBasedResolver( config );
+        aetherBasedResolver = new AetherBasedResolver( getConfig() );
         aetherBasedResolver.resolve( "org.ops4j.pax.web", "pax-web-api", "", "jar", "LATEST" ).close();
     }
 
-    private MavenConfiguration getDummyConfig()
-        throws IOException
+    private Settings getSettings()        
     {
+        Settings settings = new Settings();
+        settings.setLocalRepository( getCache().toURI().toASCIIString() );
+        Profile centralProfile = new Profile();
+        centralProfile.setId( "central" );
+        Repository central = new Repository();
+        central.setId( "central" );
+        central.setUrl( "http://repo1.maven.org/maven2");
+        centralProfile.addRepository( central );
+        settings.addProfile( centralProfile );
+        settings.addActiveProfile( "central" );
+        return settings;
+    }
+    
+    private MavenConfigurationImpl getConfig() {
         Properties p = new Properties();
-        p.setProperty( ServiceConstants.PID + MavenConstants.PROPERTY_LOCAL_REPOSITORY, getCache().toURI().toASCIIString() );
-        p.setProperty( ServiceConstants.PID + MavenConstants.PROPERTY_REPOSITORIES,
-                       "http://repo1.maven.org/maven2/@id=central,"
-        );
-        return new MavenConfigurationImpl( new PropertiesPropertyResolver( p ), ServiceConstants.PID );
+        MavenConfigurationImpl config = new MavenConfigurationImpl( new PropertiesPropertyResolver( p ), ServiceConstants.PID );
+        config.setSettings( getSettings() );
+        return config;        
     }
 
-    private File getCache()
-        throws IOException
-    {
+    private File getCache() {
         File base = new File( "target" );
         base.mkdir();
-        File f = File.createTempFile( "aethertest", ".dir", base );
-        f.delete();
-        f.mkdirs();
-        LOG.info( "Caching" + " to " + f.getAbsolutePath() );
-        return f;
+        try {
+            File f = File.createTempFile( "aethertest", ".dir", base );
+            f.delete();
+            f.mkdirs();
+            LOG.info( "Caching" + " to " + f.getAbsolutePath() );
+            return f;
+        }
+        catch( IOException exc ) {
+            throw new AssertionError( "cannot create cache", exc );
+        }
     }
 
     @Test
     public void testResolveRDF()
         throws DependencyCollectionException, ArtifactResolutionException, IOException
     {
-        Properties p = new Properties();
-        p.setProperty( ServiceConstants.PID + MavenConstants.PROPERTY_LOCAL_REPOSITORY, getCache().toURI().toASCIIString() );
-        p.setProperty( ServiceConstants.PID + MavenConstants.PROPERTY_REPOSITORIES,
-                       "http://repository.jboss.org/nexus/content/repositories/thirdparty-releases@id=jboss"
+        Settings settings = getSettings();
+        Profile jbossProfile = new Profile();
+        jbossProfile.setId( "jboss" );
+        Repository jbossRepository = new Repository();
+        jbossRepository.setId( "jboss" );
+        jbossRepository.setUrl( "http://repository.jboss.org/nexus/content/repositories/thirdparty-releases");
+        jbossProfile.addRepository( jbossRepository );
+        settings.addProfile( jbossProfile );
+        settings.addActiveProfile( "jboss" );
 
-        );
-        MavenConfigurationImpl conf = new MavenConfigurationImpl( new PropertiesPropertyResolver( p ), ServiceConstants.PID );
-
-        AetherBasedResolver aetherBasedResolver = new AetherBasedResolver( conf );
+        MavenConfigurationImpl config = getConfig();
+        config.setSettings( settings );
+        AetherBasedResolver aetherBasedResolver = new AetherBasedResolver( config );
         aetherBasedResolver.resolve( "org.openrdf", "openrdf-model", "", "jar", "2.0.1" ).close();
-
     }
 }
 

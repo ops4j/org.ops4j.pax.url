@@ -19,6 +19,7 @@ import org.apache.maven.wagon.InputData;
 import org.apache.maven.wagon.ResourceDoesNotExistException;
 import org.apache.maven.wagon.TransferFailedException;
 import org.apache.maven.wagon.Wagon;
+import org.apache.maven.wagon.authentication.AuthenticationInfo;
 import org.apache.maven.wagon.authorization.AuthorizationException;
 import org.apache.maven.wagon.providers.file.FileWagon;
 import org.apache.maven.wagon.providers.http.LightweightHttpWagon;
@@ -87,15 +88,15 @@ public class ManualWagonProvider
 						ResourceDoesNotExistException, 
 						AuthorizationException {
 
-					final String username = getRepository().getUsername();
-					final String password = getRepository().getPassword();
+				        AuthenticationInfo authInfo = getAuthenticationInfo();
+                                        if (authInfo != null) {
+				            final String username = authInfo.getUserName();
+				            final String password = authInfo.getPassword();
 
-//					System.err.println("### username : " + username);
-//					System.err.println("### password : " + password);
-
-					if(username != null && password != null) {
-						getHttpHeaders().put(username, password);
-					}
+				            if(username != null && password != null) {
+				                getHttpHeaders().put(username, password);
+				            }
+                                        }
 					
 					super.fillInputData(inputData);
 

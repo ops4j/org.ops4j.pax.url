@@ -23,11 +23,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
+import org.apache.maven.settings.Mirror;
+import org.apache.maven.settings.Profile;
+import org.apache.maven.settings.Repository;
+import org.apache.maven.settings.Settings;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositoryException;
 import org.eclipse.aether.RepositorySystem;
@@ -75,6 +82,7 @@ public class AetherBasedResolver {
     final private MavenConfiguration m_config;
     final private MirrorSelector m_mirrorSelector;
     final private ProxySelector m_proxySelector;
+    final private Settings m_settings;
 
     /**
      * Create a AetherBasedResolver
@@ -88,6 +96,7 @@ public class AetherBasedResolver {
     public AetherBasedResolver( final MavenConfiguration configuration )
         throws MalformedURLException {
         m_config = configuration;
+        m_settings = (Settings) configuration.getSettings();
         m_repoSystem = newRepositorySystem();
         m_proxySelector = selectProxies();
         m_mirrorSelector = selectMirrors();
@@ -135,23 +144,29 @@ public class AetherBasedResolver {
         remoteRepos.addAll( resultingRepos );
     }
 
-    private List<MavenRepositoryURL> getRemoteRepositories( MavenConfiguration configuration )
+    private Collection<Repository> getRemoteRepositories( MavenConfiguration configuration )
         throws MalformedURLException {
-        List<MavenRepositoryURL> r = new ArrayList<MavenRepositoryURL>();
-        for( MavenRepositoryURL s : configuration.getRepositories() ) {
-            r.add( s );
+        Map<String, Repository> repoMap = new LinkedHashMap<String, Repository>();
+        List<String> activeProfiles = m_settings.getActiveProfiles();
+        for( String profileId : activeProfiles ) {
+            for( Profile profile : m_settings.getProfiles() ) {
+                if( profile.getId().equals( profileId ) ) {
+                    for( Repository repo : profile.getRepositories() ) {
+                        repoMap.put( repo.getId(), repo );
+                    }
+                }
+            }
         }
-        return r;
+
+        return repoMap.values();
     }
 
     private ProxySelector selectProxies() {
         DefaultProxySelector proxySelector = new DefaultProxySelector();
-        Map<String, Map<String, String>> proxies = m_config.getProxySettings();
-        for( Map<String, String> proxy : proxies.values() ) {
-            // The fields are user, pass, host, port, nonProxyHosts, protocol.
-            String nonProxyHosts = proxy.get( "nonProxyHosts" );
-            Proxy proxyObj = new Proxy( proxy.get( "protocol" ), proxy.get( "host" ),
-                toInt( proxy.get( "port" ) ), getAuthentication( proxy ) );
+        for( org.apache.maven.settings.Proxy proxy : m_settings.getProxies() ) {
+            String nonProxyHosts = proxy.getNonProxyHosts();
+            Proxy proxyObj = new Proxy( proxy.getProtocol(), proxy.getHost(), proxy.getPort(),
+                getAuthentication( proxy ) );
             proxySelector.add( proxyObj, nonProxyHosts );
         }
         return proxySelector;
@@ -160,28 +175,27 @@ public class AetherBasedResolver {
     private MirrorSelector selectMirrors() {
         // configure mirror
         DefaultMirrorSelector selector = new DefaultMirrorSelector();
-        Map<String, Map<String, String>> mirrors = m_config.getMirrors();
-
-        for( String mirrorName : mirrors.keySet() ) {
-            Map<String, String> mirror = mirrors.get( mirrorName );
-            // The fields are id, url, mirrorOf, layout, mirrorOfLayouts.
-            String mirrorOf = mirror.get( "mirrorOf" );
-            String url = mirror.get( "url" );
-            // type can be null in this implementation (1.11)
-            selector.add( mirrorName, url, null, false, mirrorOf, "*" );
+        for( Mirror mirror : m_settings.getMirrors() ) {
+            selector
+                .add( mirror.getName(), mirror.getUrl(), null, false, mirror.getMirrorOf(), "*" );
         }
         return selector;
-        /**
-         * Set<RemoteRepository> mirrorRepoList = new HashSet<RemoteRepository>(); for
-         * (RemoteRepository r : m_remoteRepos) { RemoteRepository mirrorRepo =
-         * mirrorSelector.getMirror(r); if (mirrorRepo != null) { mirrorRepoList.add(mirrorRepo); }
-         * } return mirrorRepoList;
-         **/
     }
 
-    private List<RemoteRepository> selectRepositories( List<MavenRepositoryURL> repos ) {
+    private List<RemoteRepository> selectRepositories( Collection<Repository> repos ) {
         List<RemoteRepository> list = new ArrayList<RemoteRepository>();
-        for( MavenRepositoryURL r : repos ) {
+        for( Repository r : repos ) {
+            addRepo( list, r );
+        }
+        
+        List<MavenRepositoryURL> urls = Collections.emptyList();
+        try {
+            urls = m_config.getRepositories();
+        }
+        catch( MalformedURLException exc ) {
+            LOG.error( "invalid repository URLs", exc );
+        }
+        for( MavenRepositoryURL r : urls ) {
             if( r.isMulti() ) {
                 addSubDirs( list, r.getFile() );
             }
@@ -189,9 +203,10 @@ public class AetherBasedResolver {
                 addRepo( list, r );
             }
         }
+        
         return list;
     }
-
+    
     private void addSubDirs( List<RemoteRepository> list, File parentDir ) {
         if( !parentDir.isDirectory() ) {
             LOG.debug( "Repository marked with @multi does not resolve to a directory: "
@@ -212,9 +227,16 @@ public class AetherBasedResolver {
         }
     }
 
-    private void addRepo( List<RemoteRepository> list, MavenRepositoryURL repoUrl ) {
-        list.add( new RemoteRepository.Builder( repoUrl.getId(), REPO_TYPE, repoUrl.getURL()
-            .toExternalForm() ).build() );
+    
+
+    private void addRepo( List<RemoteRepository> list, Repository repo ) {
+        RemoteRepository.Builder builder = new RemoteRepository.Builder( repo.getId(), REPO_TYPE, repo.getUrl() );
+        list.add( builder.build() );
+    }
+
+    private void addRepo( List<RemoteRepository> list, MavenRepositoryURL repo ) {
+        RemoteRepository.Builder builder = new RemoteRepository.Builder( repo.getId(), REPO_TYPE, repo.getURL().toExternalForm() );
+        list.add( builder.build() );
     }
 
     /**
@@ -305,9 +327,13 @@ public class AetherBasedResolver {
     }
 
     private RepositorySystemSession newSession() {
-        assert m_config != null : "local repository cannot be null";
-
-        File local = m_config.getLocalRepository().getFile();
+        File local;
+        if( m_settings.getLocalRepository() == null ) {
+            local = new File( System.getProperty( "user.home" ), ".m2/repository" );
+        }
+        else {
+            local = new File( m_settings.getLocalRepository() );
+        }
 
         DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
 
@@ -326,17 +352,13 @@ public class AetherBasedResolver {
         return session;
     }
 
-    private Authentication getAuthentication( Map<String, String> proxy ) {
+    private Authentication getAuthentication( org.apache.maven.settings.Proxy proxy ) {
         // user, pass
-        if( proxy.containsKey( "user" ) ) {
-            return new AuthenticationBuilder().addUsername( proxy.get( "user" ) )
-                .addPassword( proxy.get( "pass" ) ).build();
+        if( proxy.getUsername() != null ) {
+            return new AuthenticationBuilder().addUsername( proxy.getUsername() )
+                .addPassword( proxy.getPassword() ).build();
         }
         return null;
-    }
-
-    private int toInt( String intStr ) {
-        return Integer.parseInt( intStr );
     }
 
     private RepositorySystem newRepositorySystem() {

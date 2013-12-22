@@ -17,13 +17,23 @@
  */
 package org.ops4j.pax.url.mvn;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
+import java.util.Arrays;
 
+import org.apache.maven.settings.Profile;
+import org.apache.maven.settings.Repository;
+import org.apache.maven.settings.Settings;
+import org.apache.maven.settings.building.DefaultSettingsBuilder;
+import org.apache.maven.settings.building.DefaultSettingsBuilderFactory;
+import org.apache.maven.settings.building.DefaultSettingsBuildingRequest;
+import org.apache.maven.settings.building.SettingsBuildingException;
+import org.apache.maven.settings.building.SettingsBuildingRequest;
+import org.apache.maven.settings.building.SettingsBuildingResult;
 import org.ops4j.pax.url.maven.commons.MavenConfigurationImpl;
-import org.ops4j.pax.url.maven.commons.MavenSettingsImpl;
 import org.ops4j.pax.url.mvn.internal.Connection;
 import org.ops4j.util.property.PropertiesPropertyResolver;
 
@@ -50,8 +60,45 @@ public class Handler
             new PropertiesPropertyResolver( System.getProperties() ), ServiceConstants.PID
         );
         
-        config.setSettings( new MavenSettingsImpl( config.getSettingsFileUrl(), config.useFallbackRepositories() ) );
+        config.setSettings( buildSettings( getSettingsPath( config ), config.useFallbackRepositories() ) );
         return new Connection( url, config );
+    }
+    
+    private String getSettingsPath( MavenConfigurationImpl config ) {
+        URL url = config.getSettingsFileUrl();
+        return url == null ? null : url.toString();
+    }
+    
+    private Settings buildSettings( String settingsPath, boolean useFallbackRepositories ) {
+        Settings settings;
+        if( settingsPath == null ) {
+            settings = new Settings();
+        }
+        else {
+            DefaultSettingsBuilderFactory factory = new DefaultSettingsBuilderFactory();
+            DefaultSettingsBuilder builder = factory.newInstance();
+            SettingsBuildingRequest request = new DefaultSettingsBuildingRequest();
+            request.setUserSettingsFile( new File( settingsPath ) );
+            try {
+                SettingsBuildingResult result = builder.build( request );
+                settings = result.getEffectiveSettings();
+            }
+            catch( SettingsBuildingException exc ) {
+                throw new AssertionError( "cannot build settings", exc );
+            }
+
+        }
+        if( useFallbackRepositories ) {
+            Profile fallbackProfile = new Profile();
+            Repository central = new Repository();
+            central.setId( "central" );
+            central.setUrl( "http://repo1.maven.org/maven2" );
+            fallbackProfile.setId( "fallback" );
+            fallbackProfile.setRepositories( Arrays.asList( central ) );
+            settings.addProfile( fallbackProfile );
+            settings.addActiveProfile( "fallback" );
+        }
+        return settings;
     }
 
 }

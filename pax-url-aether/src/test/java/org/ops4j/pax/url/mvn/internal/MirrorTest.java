@@ -1,5 +1,9 @@
 package org.ops4j.pax.url.mvn.internal;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.Assert.assertThat;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -8,6 +12,15 @@ import java.util.UUID;
 
 import junit.framework.Assert;
 
+import org.apache.maven.settings.Profile;
+import org.apache.maven.settings.Repository;
+import org.apache.maven.settings.Settings;
+import org.apache.maven.settings.building.DefaultSettingsBuilder;
+import org.apache.maven.settings.building.DefaultSettingsBuilderFactory;
+import org.apache.maven.settings.building.DefaultSettingsBuildingRequest;
+import org.apache.maven.settings.building.SettingsBuildingException;
+import org.apache.maven.settings.building.SettingsBuildingRequest;
+import org.apache.maven.settings.building.SettingsBuildingResult;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.DefaultHandler;
@@ -18,32 +31,29 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.ops4j.pax.url.maven.commons.MavenConfigurationImpl;
-import org.ops4j.pax.url.maven.commons.MavenConstants;
-import org.ops4j.pax.url.maven.commons.MavenSettings;
-import org.ops4j.pax.url.maven.commons.MavenSettingsImpl;
+import org.ops4j.pax.url.mvn.ServiceConstants;
 import org.ops4j.util.property.PropertiesPropertyResolver;
 
 public class MirrorTest {
-    private static final String TEST_PID = "test.pid";
-    private Server              server;
+
+    private Server server;
 
     @Before
     public void startHttp() throws Exception {
         server = new Server();
         SelectChannelConnector connector = new SelectChannelConnector();
-        connector.setPort(8181);
-        server.addConnector(connector);
+        connector.setPort( 8181 );
+        server.addConnector( connector );
 
         ResourceHandler resource_handler = new ResourceHandler();
-        resource_handler.setDirectoriesListed(false);
-        resource_handler.setWelcomeFiles(new String[] {});
+        resource_handler.setDirectoriesListed( false );
+        resource_handler.setWelcomeFiles( new String[] {} );
 
-        resource_handler.setResourceBase("target/test-classes/repo2");
+        resource_handler.setResourceBase( "target/test-classes/repo2" );
 
         HandlerList handlers = new HandlerList();
-        handlers.setHandlers(new Handler[] { resource_handler,
-                new DefaultHandler() });
-        server.setHandler(handlers);
+        handlers.setHandlers( new Handler[] { resource_handler, new DefaultHandler() } );
+        server.setHandler( handlers );
 
         server.start();
     }
@@ -53,81 +63,91 @@ public class MirrorTest {
         server.stop();
     }
 
+    private Settings buildSettings( String settingsPath, String id, String url ) {
+        Settings settings = null;
+        if( settingsPath == null ) {
+            settings = new Settings();
+        }
+        else {
+            DefaultSettingsBuilderFactory factory = new DefaultSettingsBuilderFactory();
+            DefaultSettingsBuilder builder = factory.newInstance();
+            SettingsBuildingRequest request = new DefaultSettingsBuildingRequest();
+            request.setUserSettingsFile( new File( settingsPath ) );
+            try {
+                SettingsBuildingResult result = builder.build( request );
+                assertThat( result, is( notNullValue() ) );
+                assertThat( result.getProblems().isEmpty(), is( true ) );
+
+                settings = result.getEffectiveSettings();
+            }
+            catch( SettingsBuildingException exc ) {
+                throw new AssertionError( "cannot build settings", exc );
+            }
+        }
+
+        settings.setLocalRepository( "target/localrepo_" + UUID.randomUUID() );
+        Profile centralProfile = new Profile();
+        centralProfile.setId( "test" );
+        Repository remote = new Repository();
+        remote.setId( id );
+        remote.setUrl( url );
+        centralProfile.addRepository( remote );
+        settings.addProfile( centralProfile );
+        settings.addActiveProfile( "test" );
+        return settings;
+    }
+
+    private MavenConfigurationImpl getConfig( String settingsPath, String id, String url ) {
+        Properties p = new Properties();
+        MavenConfigurationImpl config = new MavenConfigurationImpl( new PropertiesPropertyResolver(
+            p ), ServiceConstants.PID );
+        config.setSettings( buildSettings( settingsPath, id, url ) );
+        return config;
+    }
+
     @Test
     public void mirror1() throws IOException, InterruptedException {
 
-        Properties properties = new Properties();
-        String repoPath = "target/localrepo_" + UUID.randomUUID();
-        properties.setProperty(TEST_PID + MavenConstants.PROPERTY_LOCAL_REPOSITORY, repoPath);
-        properties.setProperty(TEST_PID + MavenConstants.PROPERTY_REPOSITORIES, "http://google.com/repo@id=fake");
-        PropertiesPropertyResolver propertyResolver = new PropertiesPropertyResolver(properties );
-        MavenConfigurationImpl config = new MavenConfigurationImpl(propertyResolver, TEST_PID);
+        MavenConfigurationImpl config = getConfig( "src/test/resources/settings-mirror1.xml",
+            "fake", "http://google.com/repo" );
 
-        MavenSettings settings = new MavenSettingsImpl(getClass().getResource( "/settings-mirror1.xml") );
-        config.setSettings(settings);
-        File localRepo = config.getLocalRepository().getFile();
+        Settings settings = (Settings) config.getSettings();
+        File localRepo = new File( settings.getLocalRepository() );
         // you must exist.
         localRepo.mkdirs();
-        Assert.assertEquals(new File(repoPath).getAbsoluteFile(), localRepo);
 
-        Connection c = new Connection(new URL("file:ant/ant/1.5.1"), config);
+        Connection c = new Connection( new URL( "file:ant/ant/1.5.1" ), config );
         c.getInputStream();
-        Assert.assertEquals("the artifact must be downloaded", true, new File(localRepo, "ant/ant/1.5.1/ant-1.5.1.jar").exists());
+        Assert.assertEquals( "the artifact must be downloaded", true, new File( localRepo,
+            "ant/ant/1.5.1/ant-1.5.1.jar" ).exists() );
     }
 
-    @Test()
-    public void no_mirror_notfound() throws IOException
-    {
-
-        Properties properties = new Properties();
-        properties.setProperty(TEST_PID + MavenConstants.PROPERTY_LOCAL_REPOSITORY, "target/localrepo2");
-        properties.setProperty(TEST_PID + MavenConstants.PROPERTY_REPOSITORIES, "http://qfdqfqfqf.fra/repo@id=fake");
-        PropertiesPropertyResolver propertyResolver = new PropertiesPropertyResolver(properties );
-        MavenConfigurationImpl config = new MavenConfigurationImpl(propertyResolver, TEST_PID);
-
-        File localRepo = config.getLocalRepository().getFile();
+    @Test( expected = IOException.class )
+    public void no_mirror_notfound() throws IOException {
+        MavenConfigurationImpl config = getConfig( "src/test/resources/settings-mirror2.xml",
+            "fake", "http://qfdqfqfqf.fra/repo" );
+        Settings settings = (Settings) config.getSettings();
+        File localRepo = new File( settings.getLocalRepository() );
         // you must exist.
         localRepo.mkdirs();
-        Assert.assertEquals(new File("target/localrepo2").getAbsoluteFile(), localRepo);
 
-        Connection c = new Connection(new URL("file:test/test/1.5.1"), config);
-        try
-        {
-            c.getInputStream().read();
-        } catch (Exception e)
-        {
-            return;
-        }
-
-        Assert.fail("artifact found");
+        Connection c = new Connection( new URL( "file:test/test/1.5.1" ), config );
+        c.getInputStream().read();
     }
 
     @Test
-    public void mirror2() throws IOException, InterruptedException
-    {
-        Properties properties = new Properties();
-        String repoPath = "target/localrepo_" + UUID.randomUUID();
-        properties.setProperty(MirrorTest.TEST_PID
-                + MavenConstants.PROPERTY_LOCAL_REPOSITORY, repoPath);
-        properties.setProperty(MirrorTest.TEST_PID
-                + MavenConstants.PROPERTY_REPOSITORIES,
-                "http://qfdqfqfqf.fra/repo");
-        PropertiesPropertyResolver propertyResolver = new PropertiesPropertyResolver(
-                properties);
-        MavenConfigurationImpl config = new MavenConfigurationImpl(
-                propertyResolver, MirrorTest.TEST_PID);
+    public void mirror2() throws IOException, InterruptedException {
+        MavenConfigurationImpl config = getConfig( "src/test/resources/settings-mirror2.xml",
+            "fake", "http://qfdqfqfqf.fra/repo" );
 
-        MavenSettings settings = new MavenSettingsImpl(new File(
-                "target/test-classes/settings-mirror2.xml").toURI().toURL());
-        config.setSettings(settings);
-        File localRepo = config.getLocalRepository().getFile();
+        Settings settings = (Settings) config.getSettings();
+        File localRepo = new File( settings.getLocalRepository() );
         // you must exist.
         localRepo.mkdirs();
-        Assert.assertEquals(new File(repoPath).getAbsoluteFile(), localRepo);
 
-        Connection c = new Connection(new URL("file:ant/ant/1.5.1"), config);
+        Connection c = new Connection( new URL( "file:ant/ant/1.5.1" ), config );
         c.getInputStream();
-        Assert.assertEquals("the artifact must be downloaded", true, new File(
-                localRepo, "ant/ant/1.5.1/ant-1.5.1.jar").exists());
+        Assert.assertEquals( "the artifact must be downloaded", true, new File( localRepo,
+            "ant/ant/1.5.1/ant-1.5.1.jar" ).exists() );
     }
 }

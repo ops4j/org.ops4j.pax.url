@@ -25,11 +25,11 @@ class RepoHandler extends AbstractHandler
         log.info( "request : " + baseRequest );
 
         Assert.assertEquals( "this should work in https only",
-            baseRequest.getScheme(), "https" );
+            "https", baseRequest.getScheme()  );
 
         Assert.assertEquals(
             "username and password should be injected as a header",
-            request.getHeader( "User-Agent" ), "magic-token" );
+            "magic-token", request.getHeader( "User-Agent" ) );
 
         final String text = "hello there";
 
