@@ -12,6 +12,7 @@
 *.project
 *.classpath
 *.settings/
+.factorypath
 
 #
 # Exclude Maven build and metatada.
