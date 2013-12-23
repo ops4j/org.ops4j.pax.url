@@ -185,10 +185,6 @@ public class AetherBasedResolver {
 
     private List<RemoteRepository> selectRepositories( Collection<Repository> repos ) {
         List<RemoteRepository> list = new ArrayList<RemoteRepository>();
-        for( Repository r : repos ) {
-            addRepo( list, r );
-        }
-        
         List<MavenRepositoryURL> urls = Collections.emptyList();
         try {
             urls = m_config.getRepositories();
@@ -229,15 +225,6 @@ public class AetherBasedResolver {
     }
 
     
-
-    private void addRepo( List<RemoteRepository> list, Repository repo ) {
-        RemoteRepository.Builder builder = new RemoteRepository.Builder( repo.getId(), REPO_TYPE, repo.getUrl() );
-        Authentication authentication = getAuthentication( repo.getId() );
-        if (authentication != null) {
-            builder.setAuthentication( authentication );
-        }
-        list.add( builder.build() );
-    }
 
     private void addRepo( List<RemoteRepository> list, MavenRepositoryURL repo ) {
         RemoteRepository.Builder builder = new RemoteRepository.Builder( repo.getId(), REPO_TYPE, repo.getURL().toExternalForm() );

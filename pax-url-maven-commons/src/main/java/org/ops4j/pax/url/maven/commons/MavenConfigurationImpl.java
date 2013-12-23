@@ -28,6 +28,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.maven.settings.Profile;
+import org.apache.maven.settings.Settings;
 import org.ops4j.lang.NullArgumentException;
 import org.ops4j.util.property.PropertyResolver;
 import org.ops4j.util.property.PropertyStore;
@@ -76,7 +78,7 @@ public class MavenConfigurationImpl
      */
     private final PropertyResolver m_propertyResolver;
     
-    private Object settings;
+    private Settings settings;
 
     /**
      * Creates a new service configuration.
@@ -215,17 +217,23 @@ public class MavenConfigurationImpl
             String repositoriesProp = m_propertyResolver.get( m_pid + MavenConstants.PROPERTY_REPOSITORIES );
             // if not set or starting with a plus (+) get repositories from settings xml
             if( ( repositoriesProp == null || repositoriesProp.startsWith( REPOSITORIES_APPEND_SIGN ) )
-                && m_settings != null ) {
-                String settingsRepos = m_settings.getRepositories();
-                if( settingsRepos != null ) {
-                    if( repositoriesProp == null ) {
-                        repositoriesProp = settingsRepos;
-                    }
-                    else {
-                        // apend repositories from settings xml and get rid of +
-                        repositoriesProp = repositoriesProp.substring( 1 ) + REPOSITORIES_SEPARATOR + settingsRepos;
+                && settings != null ) {
+                
+                String init = (repositoriesProp == null) ? "" : repositoriesProp.substring( 1 ); 
+                StringBuilder builder = new StringBuilder(init);
+                Map<String, Profile> profiles = settings.getProfilesAsMap();
+                for (String activeProfile : settings.getActiveProfiles()) {
+                    for (org.apache.maven.settings.Repository repo : profiles.get( activeProfile ).getRepositories())
+                    {
+                        if (builder.length() > 0) {
+                            builder.append( REPOSITORIES_SEPARATOR );
+                        }
+                        builder.append( repo.getUrl() );
+                        builder.append( "@id=" );
+                        builder.append( repo.getId() );
                     }
                 }
+                repositoriesProp = builder.toString();
             }
             // build repositories list
             final List<MavenRepositoryURL> repositoriesProperty = new ArrayList<MavenRepositoryURL>();
@@ -491,7 +499,7 @@ public class MavenConfigurationImpl
         return settings;
     }
     
-    public void setSettings(Object settings)
+    public void setSettings(Settings settings)
     {
         this.settings = settings;
     }
