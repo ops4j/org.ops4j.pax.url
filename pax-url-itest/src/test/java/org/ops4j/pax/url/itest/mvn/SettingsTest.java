@@ -27,12 +27,11 @@ import java.util.UUID;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-public class InlineRepositoryTest
+public class SettingsTest
 {
 
     @Rule
@@ -55,18 +54,38 @@ public class InlineRepositoryTest
     {
         System.clearProperty( "java.protocol.handler.pkgs" );
         System.clearProperty( "org.ops4j.pax.url.mvn.localRepository" );
-        System.clearProperty( "org.ops4j.pax.url.mvn.repositories" );
+        System.clearProperty( "org.ops4j.pax.url.mvn.settings" );
     }
 
     @Test
-    @Ignore("PAXURL-236")
-    public void resolveArtifactFromInlineRepository() throws IOException
+    public void resolveArtifactViaActiveProfile() throws IOException
     {
-        URL url = new URL(
-            "mvn:http://www.knopflerfish.org/maven2@id=kf!org.knopflerfish/framework/7.0.1/pom" );
+        System.setProperty( "org.ops4j.pax.url.mvn.settings",  "src/test/resources/settings-knopflerfish.xml");
+        URL url = new URL("mvn:org.knopflerfish/framework/7.0.1/pom" );
         url.openStream().close();
 
         File artifact = new File( localRepo, "org/knopflerfish/framework/7.0.1/framework-7.0.1.pom" );
         assertThat( artifact.exists(), is( true ) );
+    }
+
+    @Test
+    public void resolveArtifactViaDefaultProfile() throws IOException
+    {
+        System.setProperty( "org.ops4j.pax.url.mvn.settings",  "src/test/resources/settings-knopflerfish-default.xml");
+        URL url = new URL("mvn:org.knopflerfish/framework/7.0.1/pom" );
+        url.openStream().close();
+
+        File artifact = new File( localRepo, "org/knopflerfish/framework/7.0.1/framework-7.0.1.pom" );
+        assertThat( artifact.exists(), is( true ) );
+    }
+
+    @Test
+    public void shouldNotResolveArtifactViaInactiveProfile() throws IOException
+    {
+        System.setProperty( "org.ops4j.pax.url.mvn.settings",  "src/test/resources/settings-knopflerfish-inactive.xml");
+        URL url = new URL("mvn:org.knopflerfish/framework/7.0.1/pom" );
+        
+        thrown.expect( IOException.class );
+        url.openStream().close();
     }
 }
