@@ -34,8 +34,10 @@ import org.apache.maven.settings.building.SettingsBuildingException;
 import org.apache.maven.settings.building.SettingsBuildingRequest;
 import org.apache.maven.settings.building.SettingsBuildingResult;
 import org.ops4j.pax.url.maven.commons.MavenConfigurationImpl;
+import org.ops4j.pax.url.maven.commons.MavenConstants;
 import org.ops4j.pax.url.mvn.internal.Connection;
 import org.ops4j.util.property.PropertiesPropertyResolver;
+import org.ops4j.util.property.PropertyResolver;
 
 /**
  * {@link URLStreamHandler} implementation for "mvn:" protocol.
@@ -56,20 +58,23 @@ public class Handler
     protected URLConnection openConnection( final URL url )
         throws IOException
     {
-        final MavenConfigurationImpl config = new MavenConfigurationImpl(
-            new PropertiesPropertyResolver( System.getProperties() ), ServiceConstants.PID
-        );
+        PropertiesPropertyResolver propertyResolver = new PropertiesPropertyResolver( System.getProperties() );
+        final MavenConfigurationImpl config = new MavenConfigurationImpl( propertyResolver, ServiceConstants.PID);
         
-        config.setSettings( buildSettings( getSettingsPath( config ), config.useFallbackRepositories() ) );
+        config.setSettings( buildSettings( getLocalRepoPath( propertyResolver ), getSettingsPath( config ), config.useFallbackRepositories() ) );
         return new Connection( url, config );
     }
     
     private String getSettingsPath( MavenConfigurationImpl config ) {
         URL url = config.getSettingsFileUrl();
-        return url == null ? null : url.toString();
+        return url == null ? null : url.getPath();
     }
     
-    private Settings buildSettings( String settingsPath, boolean useFallbackRepositories ) {
+    private String getLocalRepoPath(PropertyResolver props) {
+        return props.get( ServiceConstants.PID + MavenConstants.PROPERTY_LOCAL_REPOSITORY );
+    }
+    
+    private Settings buildSettings( String localRepoPath, String settingsPath, boolean useFallbackRepositories ) {
         Settings settings;
         if( settingsPath == null ) {
             settings = new Settings();
@@ -97,6 +102,9 @@ public class Handler
             fallbackProfile.setRepositories( Arrays.asList( central ) );
             settings.addProfile( fallbackProfile );
             settings.addActiveProfile( "fallback" );
+        }
+        if (localRepoPath != null) {
+            settings.setLocalRepository( localRepoPath );
         }
         return settings;
     }
