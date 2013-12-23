@@ -23,6 +23,7 @@ import org.apache.maven.wagon.authentication.AuthenticationInfo;
 import org.apache.maven.wagon.authorization.AuthorizationException;
 import org.apache.maven.wagon.providers.file.FileWagon;
 import org.apache.maven.wagon.providers.http.LightweightHttpWagon;
+import org.apache.maven.wagon.providers.http.LightweightHttpWagonAuthenticator;
 import org.apache.maven.wagon.providers.http.LightweightHttpsWagon;
 import org.eclipse.aether.transport.wagon.WagonProvider;
 
@@ -50,6 +51,7 @@ public class ManualWagonProvider
         {
             LightweightHttpWagon lightweightHttpWagon = new LightweightHttpWagon();
             lightweightHttpWagon.setTimeout(timeout );
+            lightweightHttpWagon.setAuthenticator( new LightweightHttpWagonAuthenticator() );
             return lightweightHttpWagon;
         }else if( "https".equals( roleHint ) )
         {

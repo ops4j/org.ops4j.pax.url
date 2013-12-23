@@ -111,15 +111,21 @@ public class UnitHelp
         DefaultSettingsBuilder builder = factory.newInstance();
         SettingsBuildingRequest request = new DefaultSettingsBuildingRequest();
         request.setUserSettingsFile( settingsFile );
+        Settings settings;
         try {
             SettingsBuildingResult result = builder.build( request );
-            Settings settings = result.getEffectiveSettings();
+            settings = result.getEffectiveSettings();
             config.setSettings( settings );
         }
         catch( SettingsBuildingException exc ) {
             throw new AssertionError( "cannot build settings", exc );
         }
 
+        String localRepo = props.getProperty( ServiceConstants.PID
+            + MavenConstants.PROPERTY_LOCAL_REPOSITORY );
+        if (localRepo != null) {
+            settings.setLocalRepository( localRepo );
+        }
         return config;
     }
 
