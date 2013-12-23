@@ -105,6 +105,7 @@ public class ManualWagonProvider
 				}
 			};
             lightweightHttpWagon.setTimeout(timeout);
+            lightweightHttpWagon.setAuthenticator( new LightweightHttpWagonAuthenticator() );
             return lightweightHttpWagon;
         }
         

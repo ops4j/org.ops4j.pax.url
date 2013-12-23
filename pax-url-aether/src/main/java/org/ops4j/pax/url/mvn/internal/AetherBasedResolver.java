@@ -34,6 +34,7 @@ import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.apache.maven.settings.Mirror;
 import org.apache.maven.settings.Profile;
 import org.apache.maven.settings.Repository;
+import org.apache.maven.settings.Server;
 import org.apache.maven.settings.Settings;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositoryException;
@@ -231,14 +232,22 @@ public class AetherBasedResolver {
 
     private void addRepo( List<RemoteRepository> list, Repository repo ) {
         RemoteRepository.Builder builder = new RemoteRepository.Builder( repo.getId(), REPO_TYPE, repo.getUrl() );
+        Authentication authentication = getAuthentication( repo.getId() );
+        if (authentication != null) {
+            builder.setAuthentication( authentication );
+        }
         list.add( builder.build() );
     }
 
     private void addRepo( List<RemoteRepository> list, MavenRepositoryURL repo ) {
         RemoteRepository.Builder builder = new RemoteRepository.Builder( repo.getId(), REPO_TYPE, repo.getURL().toExternalForm() );
+        Authentication authentication = getAuthentication( repo.getId() );
+        if (authentication != null) {
+            builder.setAuthentication( authentication );
+        }
         list.add( builder.build() );
     }
-
+    
     /**
      * Resolve maven artifact as input stream.
      */
@@ -357,6 +366,16 @@ public class AetherBasedResolver {
         if( proxy.getUsername() != null ) {
             return new AuthenticationBuilder().addUsername( proxy.getUsername() )
                 .addPassword( proxy.getPassword() ).build();
+        }
+        return null;
+    }
+
+    private Authentication getAuthentication( String repoId ) {
+        Server server = m_settings.getServer( repoId );
+        if (server != null && server.getUsername() != null) {
+            AuthenticationBuilder authBuilder = new AuthenticationBuilder();
+            authBuilder.addUsername( server.getUsername() ).addPassword( server.getPassword() );
+            return authBuilder.build();
         }
         return null;
     }
