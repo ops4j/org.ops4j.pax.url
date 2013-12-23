@@ -15,7 +15,6 @@ import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.ops4j.pax.url.maven.commons.MavenConfigurationImpl;
 import org.ops4j.pax.url.maven.commons.MavenConstants;
@@ -33,7 +32,7 @@ public class ProxyTest
     {
         server = new Server();
         SelectChannelConnector connector = new SelectChannelConnector();
-        connector.setPort( 8181 );
+        connector.setPort( 8778 );
         server.addConnector( connector );
 
         ResourceHandler resource_handler = new ResourceHandler();
@@ -56,7 +55,6 @@ public class ProxyTest
     }
 
     @Test
-    @Ignore
     public void proxy1() throws Exception
     {
         String repoPath = "target/localrepo_" + UUID.randomUUID();
@@ -64,7 +62,7 @@ public class ProxyTest
         Properties properties = new Properties();
         properties.setProperty( TEST_PID + MavenConstants.PROPERTY_LOCAL_REPOSITORY, repoPath );
         properties.setProperty( TEST_PID + MavenConstants.PROPERTY_REPOSITORIES,
-            "http://qfdqfqfqf.fra/repo" );
+            "http://qfdqfqfqf.fra@id=fake" );
         PropertiesPropertyResolver propertyResolver = new PropertiesPropertyResolver( properties );
         MavenConfigurationImpl config = new MavenConfigurationImpl( propertyResolver, TEST_PID );
 

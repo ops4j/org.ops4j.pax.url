@@ -6,8 +6,8 @@
   <proxies>
 	  <proxy>
 	  	<active>true</active>
-	  	<host>http://localhost</host>
-	  	<port>8181</port>
+	  	<host>localhost</host>
+	  	<port>8778</port>
 	  	<protocol>http</protocol>
 	  </proxy>
   </proxies>
