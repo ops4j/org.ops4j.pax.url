@@ -41,6 +41,15 @@
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                  <environmentVariables>
+                    <NEXUS_ROOT>http://oss.sonatype.org</NEXUS_ROOT>
+                  </environmentVariables>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
@@ -221,5 +230,7 @@
         </dependency>
 
     </dependencies>
+    
+    
 
 </project>
