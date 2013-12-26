@@ -16,4 +16,14 @@
         <module>itest-aether-osgi</module>
         <module>itest-obr</module>
     </modules>
+    
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>retrotranslator-maven-plugin</artifactId>
+                <inherited>false</inherited>
+            </plugin>
+        </plugins>
+    </build>
 </project>
