@@ -304,19 +304,19 @@ public class AetherBasedResolver {
         throws VersionRangeResolutionException {
         if( artifact.getVersion().equals( VERSION_LATEST ) ) {
             artifact = artifact.setVersion( LATEST_VERSION_RANGE );
+        }
 
-            VersionRangeResult versionResult = m_repoSystem.resolveVersionRange( session,
-                new VersionRangeRequest( artifact, remoteRepos, null ) );
-            if( versionResult != null ) {
-                Version v = versionResult.getHighestVersion();
-                if( v != null ) {
-
-                    artifact = artifact.setVersion( v.toString() );
-                }
-                else {
-                    throw new VersionRangeResolutionException( versionResult,
-                        "Not highest version found for " + artifact );
-                }
+        VersionRangeResult versionResult = m_repoSystem.resolveVersionRange( session,
+            new VersionRangeRequest( artifact, remoteRepos, null ) );
+        if( versionResult != null ) {
+            Version v = versionResult.getHighestVersion();
+            if( v != null ) {
+                
+                artifact = artifact.setVersion( v.toString() );
+            }
+            else {
+                throw new VersionRangeResolutionException( versionResult,
+                    "No highest version found for " + artifact );
             }
         }
         return artifact;

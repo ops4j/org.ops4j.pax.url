@@ -36,11 +36,16 @@ import org.eclipse.aether.repository.LocalRepository;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.resolution.DependencyRequest;
 import org.eclipse.aether.resolution.DependencyResolutionException;
+import org.eclipse.aether.resolution.VersionRangeRequest;
+import org.eclipse.aether.resolution.VersionRangeResolutionException;
+import org.eclipse.aether.resolution.VersionRangeResult;
 import org.eclipse.aether.spi.connector.RepositoryConnectorFactory;
 import org.eclipse.aether.spi.connector.transport.TransporterFactory;
 import org.eclipse.aether.transport.wagon.WagonProvider;
 import org.eclipse.aether.transport.wagon.WagonTransporterFactory;
 import org.eclipse.aether.util.graph.visitor.PreorderNodeListGenerator;
+import org.eclipse.aether.version.Version;
+import org.junit.Before;
 import org.junit.Test;
 import org.ops4j.pax.url.mvn.internal.ManualWagonProvider;
 
@@ -51,26 +56,50 @@ import org.ops4j.pax.url.mvn.internal.ManualWagonProvider;
  *
  */
 public class DirectAetherTest {
+    
+    private RepositorySystem system;
+    private DefaultRepositorySystemSession session;
+    private RemoteRepository central;
 
-    @Test
-    public void resolveArtifact() throws DependencyCollectionException,
-        DependencyResolutionException {
-        
+    @Before
+    public void before() {
         DefaultServiceLocator locator = MavenRepositorySystemUtils.newServiceLocator();
         locator
             .addService( RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class );
         locator.setServices( WagonProvider.class, new ManualWagonProvider( 10000 ) );
         locator.addService( TransporterFactory.class, WagonTransporterFactory.class );
-        RepositorySystem system = locator.getService( RepositorySystem.class );
+        system = locator.getService( RepositorySystem.class );
 
-        DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
+        session = MavenRepositorySystemUtils.newSession();
         LocalRepository localRepo = new LocalRepository( "target/local-repo" );
         session.setLocalRepositoryManager( system.newLocalRepositoryManager( session, localRepo ) );
 
+        central = new RemoteRepository.Builder( "central", "default",
+            "http://repo1.maven.org/maven2/" ).build();
+        
+    }
+    
+    @Test
+    public void resolveVersionRange() throws DependencyCollectionException,
+        DependencyResolutionException, VersionRangeResolutionException {
+
+        DefaultArtifact artifact = new DefaultArtifact("org.ops4j.base:ops4j-base-lang:[1.2.0,1.3.0)");
+        
+        VersionRangeRequest versionRangeRequest = new VersionRangeRequest();
+        versionRangeRequest.setArtifact( artifact );
+        versionRangeRequest.addRepository( central );
+        VersionRangeResult versionRangeResult = system.resolveVersionRange( session, versionRangeRequest );
+        
+        Version version = versionRangeResult.getHighestVersion();
+        assertThat(version.toString(), is("1.2.4"));
+    }
+    
+    @Test
+    public void resolveArtifact() throws DependencyCollectionException,
+        DependencyResolutionException {
+        
         Dependency dependency = new Dependency( new DefaultArtifact(
             "org.apache.maven:maven-profile:2.2.1" ), "compile" );
-        RemoteRepository central = new RemoteRepository.Builder( "central", "default",
-            "http://repo1.maven.org/maven2/" ).build();
 
         CollectRequest collectRequest = new CollectRequest();
         collectRequest.setRoot( dependency );
@@ -100,4 +129,5 @@ public class DirectAetherTest {
             assertThat( file.getName(), is( jars[i++] ) );
         }
     }
+    
 }
