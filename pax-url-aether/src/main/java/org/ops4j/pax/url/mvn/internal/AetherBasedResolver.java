@@ -83,7 +83,7 @@ public class AetherBasedResolver {
     final private MavenConfiguration m_config;
     final private MirrorSelector m_mirrorSelector;
     final private ProxySelector m_proxySelector;
-    final private Settings m_settings;
+    private Settings m_settings;
 
     /**
      * Create a AetherBasedResolver
