@@ -15,20 +15,17 @@
  */
 package org.ops4j.pax.url.mvn.internal;
 
-import java.io.File;
-import java.util.Properties;
-
-import org.apache.maven.wagon.ConnectionException;
 import org.apache.maven.wagon.InputData;
 import org.apache.maven.wagon.ResourceDoesNotExistException;
 import org.apache.maven.wagon.TransferFailedException;
 import org.apache.maven.wagon.Wagon;
-import org.apache.maven.wagon.authentication.AuthenticationException;
+import org.apache.maven.wagon.authentication.AuthenticationInfo;
 import org.apache.maven.wagon.authorization.AuthorizationException;
 import org.apache.maven.wagon.providers.file.FileWagon;
 import org.apache.maven.wagon.providers.http.LightweightHttpWagon;
+import org.apache.maven.wagon.providers.http.LightweightHttpWagonAuthenticator;
 import org.apache.maven.wagon.providers.http.LightweightHttpsWagon;
-import org.sonatype.aether.connector.wagon.WagonProvider;
+import org.eclipse.aether.transport.wagon.WagonProvider;
 
 /**
  * Simplistic wagon provider
@@ -54,6 +51,7 @@ public class ManualWagonProvider
         {
             LightweightHttpWagon lightweightHttpWagon = new LightweightHttpWagon();
             lightweightHttpWagon.setTimeout(timeout );
+            lightweightHttpWagon.setAuthenticator( new LightweightHttpWagonAuthenticator() );
             return lightweightHttpWagon;
         }else if( "https".equals( roleHint ) )
         {
@@ -92,21 +90,22 @@ public class ManualWagonProvider
 						ResourceDoesNotExistException, 
 						AuthorizationException {
 
-					final String username = getRepository().getUsername();
-					final String password = getRepository().getPassword();
+				        AuthenticationInfo authInfo = getAuthenticationInfo();
+                                        if (authInfo != null) {
+				            final String username = authInfo.getUserName();
+				            final String password = authInfo.getPassword();
 
-//					System.err.println("### username : " + username);
-//					System.err.println("### password : " + password);
-
-					if(username != null && password != null) {
-						getHttpHeaders().put(username, password);
-					}
+				            if(username != null && password != null) {
+				                getHttpHeaders().put(username, password);
+				            }
+                                        }
 					
 					super.fillInputData(inputData);
 
 				}
 			};
             lightweightHttpWagon.setTimeout(timeout);
+            lightweightHttpWagon.setAuthenticator( new LightweightHttpWagonAuthenticator() );
             return lightweightHttpWagon;
         }
         

@@ -15,7 +15,8 @@
  */
 package org.ops4j.pax.url.mvn;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.Collections;
@@ -26,7 +27,6 @@ import org.apache.maven.shared.invoker.DefaultInvoker;
 import org.apache.maven.shared.invoker.InvocationRequest;
 import org.apache.maven.shared.invoker.InvocationResult;
 import org.apache.maven.shared.invoker.Invoker;
-import org.eclipse.jetty.util.log.Log;
 import org.junit.Test;
 import org.ops4j.pax.url.maven.commons.MavenConfiguration;
 import org.ops4j.pax.url.maven.commons.MavenConstants;
@@ -154,8 +154,7 @@ public class GlobalUpdatePolicyTest
     public void verifySnapshotUpdates() throws Exception
     {
 
-        final AetherBasedResolver resolver = new AetherBasedResolver(
-            testConfig() );
+        final AetherBasedResolver resolver = new AetherBasedResolver( testConfig() );
 
         LOG.info( "init" );
 

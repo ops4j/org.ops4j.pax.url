@@ -16,15 +16,13 @@ import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.ops4j.pax.url.maven.commons.MavenConfigurationImpl;
+import org.ops4j.pax.url.maven.commons.MavenConfiguration;
 import org.ops4j.pax.url.maven.commons.MavenConstants;
-import org.ops4j.pax.url.maven.commons.MavenSettings;
-import org.ops4j.pax.url.maven.commons.MavenSettingsImpl;
-import org.ops4j.util.property.PropertiesPropertyResolver;
+import org.ops4j.pax.url.mvn.UnitHelp;
 
 public class ProxyTest
 {
-    private static final String TEST_PID = "test.pid";
+    private static final String TEST_PID = "org.ops4j.pax.url.mvn";
     private Server server;
 
     @Before
@@ -63,17 +61,12 @@ public class ProxyTest
         properties.setProperty( TEST_PID + MavenConstants.PROPERTY_LOCAL_REPOSITORY, repoPath );
         properties.setProperty( TEST_PID + MavenConstants.PROPERTY_REPOSITORIES,
             "http://qfdqfqfqf.fra@id=fake" );
-        PropertiesPropertyResolver propertyResolver = new PropertiesPropertyResolver( properties );
-        MavenConfigurationImpl config = new MavenConfigurationImpl( propertyResolver, TEST_PID );
 
-        MavenSettings settings =
-            new MavenSettingsImpl( new File( "target/test-classes/settings-proxy1.xml" ).toURI()
-                .toURL() );
-        config.setSettings( settings );
-        File localRepo = config.getLocalRepository().getFile();
+        File file = new File( "target/test-classes/settings-proxy1.xml" );
+        MavenConfiguration config = UnitHelp.getConfig( file, properties );
+        File localRepo = new File( repoPath );
         // you must exist.
         localRepo.mkdirs();
-        Assert.assertEquals( new File( repoPath ).getAbsoluteFile(), localRepo );
 
         Connection c = new Connection( new URL( "file:ant/ant/1.5.1" ), config );
         c.getInputStream();

@@ -114,4 +114,6 @@ public interface MavenConfiguration {
      * @return the mirror settings
      */
     Map<String, Map<String, String>> getMirrors();
+    
+    Object getSettings();
 }

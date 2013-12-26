@@ -17,15 +17,27 @@
  */
 package org.ops4j.pax.url.mvn;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
+import java.util.Arrays;
 
+import org.apache.maven.settings.Profile;
+import org.apache.maven.settings.Repository;
+import org.apache.maven.settings.Settings;
+import org.apache.maven.settings.building.DefaultSettingsBuilder;
+import org.apache.maven.settings.building.DefaultSettingsBuilderFactory;
+import org.apache.maven.settings.building.DefaultSettingsBuildingRequest;
+import org.apache.maven.settings.building.SettingsBuildingException;
+import org.apache.maven.settings.building.SettingsBuildingRequest;
+import org.apache.maven.settings.building.SettingsBuildingResult;
 import org.ops4j.pax.url.maven.commons.MavenConfigurationImpl;
-import org.ops4j.pax.url.maven.commons.MavenSettingsImpl;
+import org.ops4j.pax.url.maven.commons.MavenConstants;
 import org.ops4j.pax.url.mvn.internal.Connection;
 import org.ops4j.util.property.PropertiesPropertyResolver;
+import org.ops4j.util.property.PropertyResolver;
 
 /**
  * {@link URLStreamHandler} implementation for "mvn:" protocol.
@@ -46,12 +58,55 @@ public class Handler
     protected URLConnection openConnection( final URL url )
         throws IOException
     {
-        final MavenConfigurationImpl config = new MavenConfigurationImpl(
-            new PropertiesPropertyResolver( System.getProperties() ), ServiceConstants.PID
-        );
+        PropertiesPropertyResolver propertyResolver = new PropertiesPropertyResolver( System.getProperties() );
+        final MavenConfigurationImpl config = new MavenConfigurationImpl( propertyResolver, ServiceConstants.PID);
         
-        config.setSettings( new MavenSettingsImpl( config.getSettingsFileUrl(), config.useFallbackRepositories() ) );
+        config.setSettings( buildSettings( getLocalRepoPath( propertyResolver ), getSettingsPath( config ), config.useFallbackRepositories() ) );
         return new Connection( url, config );
+    }
+    
+    private String getSettingsPath( MavenConfigurationImpl config ) {
+        URL url = config.getSettingsFileUrl();
+        return url == null ? null : url.getPath();
+    }
+    
+    private String getLocalRepoPath(PropertyResolver props) {
+        return props.get( ServiceConstants.PID + MavenConstants.PROPERTY_LOCAL_REPOSITORY );
+    }
+    
+    private Settings buildSettings( String localRepoPath, String settingsPath, boolean useFallbackRepositories ) {
+        Settings settings;
+        if( settingsPath == null ) {
+            settings = new Settings();
+        }
+        else {
+            DefaultSettingsBuilderFactory factory = new DefaultSettingsBuilderFactory();
+            DefaultSettingsBuilder builder = factory.newInstance();
+            SettingsBuildingRequest request = new DefaultSettingsBuildingRequest();
+            request.setUserSettingsFile( new File( settingsPath ) );
+            try {
+                SettingsBuildingResult result = builder.build( request );
+                settings = result.getEffectiveSettings();
+            }
+            catch( SettingsBuildingException exc ) {
+                throw new AssertionError( "cannot build settings", exc );
+            }
+
+        }
+        if( useFallbackRepositories ) {
+            Profile fallbackProfile = new Profile();
+            Repository central = new Repository();
+            central.setId( "central" );
+            central.setUrl( "http://repo1.maven.org/maven2" );
+            fallbackProfile.setId( "fallback" );
+            fallbackProfile.setRepositories( Arrays.asList( central ) );
+            settings.addProfile( fallbackProfile );
+            settings.addActiveProfile( "fallback" );
+        }
+        if (localRepoPath != null) {
+            settings.setLocalRepository( localRepoPath );
+        }
+        return settings;
     }
 
 }

@@ -20,17 +20,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import org.eclipse.aether.collection.DependencyCollectionException;
+import org.eclipse.aether.resolution.ArtifactResolutionException;
 import org.junit.Test;
 import org.ops4j.pax.url.maven.commons.MavenConfiguration;
-import org.ops4j.pax.url.maven.commons.MavenConfigurationImpl;
 import org.ops4j.pax.url.maven.commons.MavenConstants;
-import org.ops4j.pax.url.maven.commons.MavenSettings;
-import org.ops4j.pax.url.maven.commons.MavenSettingsImpl;
 import org.ops4j.pax.url.mvn.ServiceConstants;
+import org.ops4j.pax.url.mvn.UnitHelp;
 import org.ops4j.pax.url.mvn.internal.AetherBasedResolver;
-import org.ops4j.util.property.PropertiesPropertyResolver;
-import org.sonatype.aether.collection.DependencyCollectionException;
-import org.sonatype.aether.resolution.ArtifactResolutionException;
 
 public class AetherTest extends TestBase
 {
@@ -64,16 +61,9 @@ public class AetherTest extends TestBase
             Util.getTestSettings().toURI().toASCIIString() //
             );
 
-        MavenConfigurationImpl config = new MavenConfigurationImpl(
-            new PropertiesPropertyResolver( props ), ServiceConstants.PID );
-
         File file = Util.getTestSettings();
 
-        MavenSettings settings = new MavenSettingsImpl( file.toURI().toURL() );
-
-        config.setSettings( settings );
-
-        return config;
+        return UnitHelp.getConfig( file, props );
 
     }
 

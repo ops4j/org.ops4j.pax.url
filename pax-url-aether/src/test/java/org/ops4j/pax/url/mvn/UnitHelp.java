@@ -24,11 +24,16 @@ import java.io.OutputStream;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
+import org.apache.maven.settings.Settings;
+import org.apache.maven.settings.building.DefaultSettingsBuilder;
+import org.apache.maven.settings.building.DefaultSettingsBuilderFactory;
+import org.apache.maven.settings.building.DefaultSettingsBuildingRequest;
+import org.apache.maven.settings.building.SettingsBuildingException;
+import org.apache.maven.settings.building.SettingsBuildingRequest;
+import org.apache.maven.settings.building.SettingsBuildingResult;
 import org.ops4j.pax.url.maven.commons.MavenConfiguration;
 import org.ops4j.pax.url.maven.commons.MavenConfigurationImpl;
 import org.ops4j.pax.url.maven.commons.MavenConstants;
-import org.ops4j.pax.url.maven.commons.MavenSettings;
-import org.ops4j.pax.url.maven.commons.MavenSettingsImpl;
 import org.ops4j.util.property.PropertiesPropertyResolver;
 
 /**
@@ -92,7 +97,7 @@ public class UnitHelp
      * Load settings.xml file and apply custom properties.
      */
     public static MavenConfiguration getConfig( final File settingsFile,
-            final Properties props ) throws Exception
+            final Properties props ) 
     {
 
         props.setProperty( ServiceConstants.PID
@@ -101,14 +106,27 @@ public class UnitHelp
 
         final MavenConfigurationImpl config = new MavenConfigurationImpl(
             new PropertiesPropertyResolver( props ), ServiceConstants.PID );
+        
+        DefaultSettingsBuilderFactory factory = new DefaultSettingsBuilderFactory();
+        DefaultSettingsBuilder builder = factory.newInstance();
+        SettingsBuildingRequest request = new DefaultSettingsBuildingRequest();
+        request.setUserSettingsFile( settingsFile );
+        Settings settings;
+        try {
+            SettingsBuildingResult result = builder.build( request );
+            settings = result.getEffectiveSettings();
+            config.setSettings( settings );
+        }
+        catch( SettingsBuildingException exc ) {
+            throw new AssertionError( "cannot build settings", exc );
+        }
 
-        final MavenSettings settings = new MavenSettingsImpl( settingsFile
-            .toURI().toURL() );
-
-        config.setSettings( settings );
-
+        String localRepo = props.getProperty( ServiceConstants.PID
+            + MavenConstants.PROPERTY_LOCAL_REPOSITORY );
+        if (localRepo != null) {
+            settings.setLocalRepository( localRepo );
+        }
         return config;
-
     }
 
     /**

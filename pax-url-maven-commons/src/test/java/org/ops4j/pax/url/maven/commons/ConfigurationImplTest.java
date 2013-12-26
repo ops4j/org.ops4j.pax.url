@@ -32,6 +32,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
+import org.apache.maven.settings.Profile;
+import org.apache.maven.settings.Repository;
+import org.apache.maven.settings.Settings;
 import org.junit.Test;
 import org.ops4j.io.FileUtils;
 import org.ops4j.util.property.PropertyResolver;
@@ -279,10 +282,8 @@ public class ConfigurationImplTest
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
         expect( propertyResolver.get( "test.pid.repositories" ) ).andReturn( null );
         expect( propertyResolver.get( "test.pid.defaultLocalRepoAsRemote" ) ).andReturn( null );
-        MavenSettings settings = createMock( MavenSettings.class );
-        expect( settings.getRepositories() ).andReturn( "file:repository1/@id=repository1" );
-        expect( settings.getLocalRepository() ).andReturn( null );
-        replay( propertyResolver, settings );
+        Settings settings = settingsForRepository( "repository1", "file:repository1" );
+        replay( propertyResolver );
         MavenConfigurationImpl config = new MavenConfigurationImpl( propertyResolver, PID );
         config.setSettings( settings );
         List<MavenRepositoryURL> repositories = config.getRepositories();
@@ -290,6 +291,20 @@ public class ConfigurationImplTest
         assertEquals( "Repositories size", 1, repositories.size() );
         assertEquals( "Repository", new URL( "file:repository1/" ), repositories.get( 0 ).getURL() );
         verify( propertyResolver );
+    }
+    
+    private Settings settingsForRepository(String id, String url) 
+    {
+        Settings settings = new Settings();
+        Profile profile = new Profile();
+        profile.setId( "test" );
+        Repository repo = new Repository();
+        repo.setId( id );
+        repo.setUrl( url );
+        profile.addRepository( repo );
+        settings.addProfile( profile );
+        settings.addActiveProfile( "test" );
+        return settings;        
     }
 
     @Test
@@ -299,10 +314,8 @@ public class ConfigurationImplTest
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
         expect( propertyResolver.get( "test.pid.repositories" ) ).andReturn( "+file:repository1/@id=repository1" );
         expect( propertyResolver.get( "test.pid.defaultLocalRepoAsRemote" ) ).andReturn( null );
-        MavenSettings settings = createMock( MavenSettings.class );
-        expect( settings.getRepositories() ).andReturn( "file:repository2/@id=repository2" );
-        expect( settings.getLocalRepository() ).andReturn( null );
-        replay( propertyResolver, settings );
+        Settings settings = settingsForRepository( "repository2", "file:repository2" );
+        replay( propertyResolver );
         MavenConfigurationImpl config = new MavenConfigurationImpl( propertyResolver, PID );
         config.setSettings( settings );
         List<MavenRepositoryURL> repositories = config.getRepositories();

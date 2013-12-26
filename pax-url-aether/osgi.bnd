@@ -18,21 +18,16 @@ Import-Package:\
   org.osgi.framework; version="[1.0.0,2.0.0)",\
   org.osgi.service.cm; version="[1.0.0,2.0.0)"; resolution:=optional,\
   org.osgi.service.url; version="[1.0.0,2.0.0)",\
-  org.w3c.dom,\
-  org.xml.sax,\
-  javax.annotation,\
-  javax.naming,\
-  javax.net,\
-  org.xml.sax.helpers,\
-  !org.slf4j.impl,\
   javax.annotation.processing; resolution:=optional,\
   javax.lang.model; resolution:=optional,\
   javax.lang.model.element; resolution:=optional,\
   javax.lang.model.util; resolution:=optional,\
   javax.tools; resolution:=optional,\
-  org.junit; resolution:=optional,\
   org.osgi.util.tracker,\
-  org.testng.annotations; resolution:=optional
+  org.testng.annotations; resolution:=optional,\
+  !org.junit.*,\
+  !junit.*,\
+  *
 
 Export-Package:\
   ${bundle.namespace}; version="${pom.version}"
@@ -90,4 +85,5 @@ Ignore-Package:\
   Include-Resource,\
   Private-Package,\
   Embed-Dependency,\
+  TEST_REPO,\
   Embed-Transitive
