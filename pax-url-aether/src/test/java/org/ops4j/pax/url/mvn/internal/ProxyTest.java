@@ -1,11 +1,14 @@
 package org.ops4j.pax.url.mvn.internal;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+
 import java.io.File;
 import java.net.URL;
 import java.util.Properties;
 import java.util.UUID;
-
-import junit.framework.Assert;
 
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
@@ -71,7 +74,10 @@ public class ProxyTest
         Connection c = new Connection( new URL( "file:ant/ant/1.5.1" ), config );
         c.getInputStream();
 
-        Assert.assertEquals( "the artifact must be downloaded", true, new File( localRepo,
+        assertEquals( "the artifact must be downloaded", true, new File( localRepo,
             "ant/ant/1.5.1/ant-1.5.1.jar" ).exists() );
+        
+        // test for PAXURL-209
+        assertThat( System.getProperty( "http.proxyHost" ), is( nullValue() ) );
     }
 }
