@@ -221,6 +221,13 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.eclipse.jetty.aggregate</groupId>
+            <artifactId>jetty-plus</artifactId>
+            <version>7.3.1.v20110307</version>
+            <scope>test</scope>
+        </dependency>
+
         <!-- Invoke maven goals -->
         <dependency>
             <groupId>org.apache.maven.shared</groupId>
