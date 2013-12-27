@@ -104,7 +104,7 @@ public class AetherBasedResolver {
     public AetherBasedResolver( final MavenConfiguration configuration )
         throws MalformedURLException {
         m_config = configuration;
-        m_settings = (Settings) configuration.getSettings();
+        m_settings = configuration.getSettings();
         m_repoSystem = newRepositorySystem();
         decryptSettings();
         m_proxySelector = selectProxies();

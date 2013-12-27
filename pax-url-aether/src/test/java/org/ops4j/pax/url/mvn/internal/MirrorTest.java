@@ -2,15 +2,13 @@ package org.ops4j.pax.url.mvn.internal;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Properties;
 import java.util.UUID;
-
-import junit.framework.Assert;
 
 import org.apache.maven.settings.Profile;
 import org.apache.maven.settings.Repository;
@@ -111,14 +109,14 @@ public class MirrorTest {
         MavenConfigurationImpl config = getConfig( "src/test/resources/settings-mirror1.xml",
             "fake", "http://google.com/repo" );
 
-        Settings settings = (Settings) config.getSettings();
+        Settings settings = config.getSettings();
         File localRepo = new File( settings.getLocalRepository() );
         // you must exist.
         localRepo.mkdirs();
 
         Connection c = new Connection( new URL( "file:ant/ant/1.5.1" ), config );
         c.getInputStream();
-        Assert.assertEquals( "the artifact must be downloaded", true, new File( localRepo,
+        assertEquals( "the artifact must be downloaded", true, new File( localRepo,
             "ant/ant/1.5.1/ant-1.5.1.jar" ).exists() );
     }
 
@@ -126,7 +124,7 @@ public class MirrorTest {
     public void no_mirror_notfound() throws IOException {
         MavenConfigurationImpl config = getConfig( "src/test/resources/settings-mirror2.xml",
             "fake", "http://qfdqfqfqf.fra/repo" );
-        Settings settings = (Settings) config.getSettings();
+        Settings settings = config.getSettings();
         File localRepo = new File( settings.getLocalRepository() );
         // you must exist.
         localRepo.mkdirs();
@@ -140,14 +138,14 @@ public class MirrorTest {
         MavenConfigurationImpl config = getConfig( "src/test/resources/settings-mirror2.xml",
             "fake", "http://qfdqfqfqf.fra/repo" );
 
-        Settings settings = (Settings) config.getSettings();
+        Settings settings = config.getSettings();
         File localRepo = new File( settings.getLocalRepository() );
         // you must exist.
         localRepo.mkdirs();
 
         Connection c = new Connection( new URL( "file:ant/ant/1.5.1" ), config );
         c.getInputStream();
-        Assert.assertEquals( "the artifact must be downloaded", true, new File( localRepo,
+        assertEquals( "the artifact must be downloaded", true, new File( localRepo,
             "ant/ant/1.5.1/ant-1.5.1.jar" ).exists() );
     }
 }

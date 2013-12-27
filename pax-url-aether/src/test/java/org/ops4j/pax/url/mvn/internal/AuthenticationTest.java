@@ -164,7 +164,7 @@ public class AuthenticationTest
     {
         MavenConfigurationImpl config = getConfig( "src/test/resources/settings-auth-fail.xml" );
 
-        Settings settings = (Settings) config.getSettings();
+        Settings settings = config.getSettings();
         File localRepo = new File( settings.getLocalRepository() );
         localRepo.mkdirs();
 
@@ -180,7 +180,7 @@ public class AuthenticationTest
     {
         MavenConfigurationImpl config = getConfig( "src/test/resources/settings-auth-pass.xml" );
 
-        Settings settings = (Settings) config.getSettings();
+        Settings settings = config.getSettings();
         File localRepo = new File( settings.getLocalRepository() );
         localRepo.mkdirs();
 
@@ -196,7 +196,7 @@ public class AuthenticationTest
         System.setProperty( DefaultSecDispatcher.SYSTEM_PROPERTY_SEC_LOCATION, "src/test/resources/settings-security.xml" );
         MavenConfigurationImpl config = getConfig( "src/test/resources/settings-auth-encrypted.xml" );
 
-        Settings settings = (Settings) config.getSettings();
+        Settings settings = config.getSettings();
         File localRepo = new File( settings.getLocalRepository() );
         localRepo.mkdirs();
 
@@ -211,7 +211,7 @@ public class AuthenticationTest
     {
         MavenConfigurationImpl config = getConfig( "src/test/resources/settings-auth-encrypted.xml" );
 
-        Settings settings = (Settings) config.getSettings();
+        Settings settings = config.getSettings();
         File localRepo = new File( settings.getLocalRepository() );
         // you must exist.
         localRepo.mkdirs();
