@@ -23,14 +23,23 @@ import java.net.MalformedURLException;
 import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.maven.settings.Profile;
+import org.apache.maven.settings.Repository;
 import org.apache.maven.settings.Settings;
+import org.apache.maven.settings.building.DefaultSettingsBuilder;
+import org.apache.maven.settings.building.DefaultSettingsBuilderFactory;
+import org.apache.maven.settings.building.DefaultSettingsBuildingRequest;
+import org.apache.maven.settings.building.SettingsBuildingException;
+import org.apache.maven.settings.building.SettingsBuildingRequest;
+import org.apache.maven.settings.building.SettingsBuildingResult;
 import org.ops4j.lang.NullArgumentException;
+import org.ops4j.pax.url.mvn.ServiceConstants;
 import org.ops4j.util.property.PropertyResolver;
 import org.ops4j.util.property.PropertyStore;
 import org.slf4j.Logger;
@@ -90,6 +99,7 @@ public class MavenConfigurationImpl
 
         m_pid = pid;
         m_propertyResolver = propertyResolver;
+        settings = buildSettings( getLocalRepoPath( propertyResolver ), getSettingsPath(), useFallbackRepositories() );         
     }
 
     public boolean isValid() {
@@ -473,6 +483,53 @@ public class MavenConfigurationImpl
             throw new IllegalArgumentException( "Proxy setting is set to " + proxySettings + ". But it should have this format: <protocol>:<key>=<value>,<key=value>;protocol:<key>=<value>,.." );
         }
     }
+    
+    private String getSettingsPath() {
+        URL url = getSettingsFileUrl();
+        return url == null ? null : url.getPath();
+    }
+    
+    private String getLocalRepoPath(PropertyResolver props) {
+        return props.get( ServiceConstants.PID + MavenConstants.PROPERTY_LOCAL_REPOSITORY );
+    }
+    
+    private Settings buildSettings( String localRepoPath, String settingsPath, boolean useFallbackRepositories ) {
+        Settings settings;
+        if( settingsPath == null ) {
+            settings = new Settings();
+        }
+        else {
+            DefaultSettingsBuilderFactory factory = new DefaultSettingsBuilderFactory();
+            DefaultSettingsBuilder builder = factory.newInstance();
+            SettingsBuildingRequest request = new DefaultSettingsBuildingRequest();
+            request.setUserSettingsFile( new File( settingsPath ) );
+            try {
+                SettingsBuildingResult result = builder.build( request );
+                settings = result.getEffectiveSettings();
+            }
+            catch( SettingsBuildingException exc ) {
+                throw new AssertionError( "cannot build settings", exc );
+            }
+
+        }
+        if( useFallbackRepositories ) {
+            Profile fallbackProfile = new Profile();
+            Repository central = new Repository();
+            central.setId( "central" );
+            central.setUrl( "http://repo1.maven.org/maven2" );
+            fallbackProfile.setId( "fallback" );
+            fallbackProfile.setRepositories( Arrays.asList( central ) );
+            settings.addProfile( fallbackProfile );
+            settings.addActiveProfile( "fallback" );
+        }
+        if (localRepoPath != null) {
+            settings.setLocalRepository( localRepoPath );
+        }
+        return settings;
+    }
+
+    
+    
 
     public Map<String, Map<String, String>> getMirrors()
     {
