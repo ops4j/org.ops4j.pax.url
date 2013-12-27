@@ -15,13 +15,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.url.maven.commons;
+package org.ops4j.pax.url.mvn.internal.config;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+
 import static org.junit.Assert.*;
+
 import org.junit.Test;
 import org.ops4j.lang.NullArgumentException;
+import org.ops4j.pax.url.mvn.internal.config.MavenRepositoryURL;
 
 public class RepositoryURLTest
 {

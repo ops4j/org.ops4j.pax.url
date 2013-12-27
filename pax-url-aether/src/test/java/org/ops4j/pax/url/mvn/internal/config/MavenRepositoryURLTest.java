@@ -1,4 +1,4 @@
-package org.ops4j.pax.url.maven.commons;
+package org.ops4j.pax.url.mvn.internal.config;
 
 import static org.junit.Assert.*;
 
@@ -7,6 +7,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.junit.Test;
+import org.ops4j.pax.url.mvn.internal.config.MavenRepositoryURL;
 
 public class MavenRepositoryURLTest
 {

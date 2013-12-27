@@ -19,9 +19,9 @@ import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.ops4j.pax.url.maven.commons.MavenConfiguration;
-import org.ops4j.pax.url.maven.commons.MavenConstants;
 import org.ops4j.pax.url.mvn.UnitHelp;
+import org.ops4j.pax.url.mvn.internal.config.MavenConfiguration;
+import org.ops4j.pax.url.mvn.internal.config.MavenConstants;
 
 public class ProxyTest
 {

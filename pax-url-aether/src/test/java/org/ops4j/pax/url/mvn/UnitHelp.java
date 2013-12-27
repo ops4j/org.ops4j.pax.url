@@ -31,9 +31,9 @@ import org.apache.maven.settings.building.DefaultSettingsBuildingRequest;
 import org.apache.maven.settings.building.SettingsBuildingException;
 import org.apache.maven.settings.building.SettingsBuildingRequest;
 import org.apache.maven.settings.building.SettingsBuildingResult;
-import org.ops4j.pax.url.maven.commons.MavenConfiguration;
-import org.ops4j.pax.url.maven.commons.MavenConfigurationImpl;
-import org.ops4j.pax.url.maven.commons.MavenConstants;
+import org.ops4j.pax.url.mvn.internal.config.MavenConfiguration;
+import org.ops4j.pax.url.mvn.internal.config.MavenConfigurationImpl;
+import org.ops4j.pax.url.mvn.internal.config.MavenConstants;
 import org.ops4j.util.property.PropertiesPropertyResolver;
 
 /**

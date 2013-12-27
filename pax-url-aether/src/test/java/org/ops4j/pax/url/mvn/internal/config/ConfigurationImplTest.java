@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.url.maven.commons;
+package org.ops4j.pax.url.mvn.internal.config;
 
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
@@ -37,6 +37,9 @@ import org.apache.maven.settings.Repository;
 import org.apache.maven.settings.Settings;
 import org.junit.Test;
 import org.ops4j.io.FileUtils;
+import org.ops4j.pax.url.mvn.internal.config.MavenConfiguration;
+import org.ops4j.pax.url.mvn.internal.config.MavenConfigurationImpl;
+import org.ops4j.pax.url.mvn.internal.config.MavenRepositoryURL;
 import org.ops4j.util.property.PropertyResolver;
 
 public class ConfigurationImplTest

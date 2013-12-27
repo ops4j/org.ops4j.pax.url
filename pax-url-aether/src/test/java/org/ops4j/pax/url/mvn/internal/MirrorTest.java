@@ -30,8 +30,8 @@ import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.ops4j.pax.url.maven.commons.MavenConfigurationImpl;
 import org.ops4j.pax.url.mvn.ServiceConstants;
+import org.ops4j.pax.url.mvn.internal.config.MavenConfigurationImpl;
 import org.ops4j.util.property.PropertiesPropertyResolver;
 
 public class MirrorTest {

@@ -28,9 +28,9 @@ import org.apache.maven.shared.invoker.InvocationRequest;
 import org.apache.maven.shared.invoker.InvocationResult;
 import org.apache.maven.shared.invoker.Invoker;
 import org.junit.Test;
-import org.ops4j.pax.url.maven.commons.MavenConfiguration;
-import org.ops4j.pax.url.maven.commons.MavenConstants;
 import org.ops4j.pax.url.mvn.internal.AetherBasedResolver;
+import org.ops4j.pax.url.mvn.internal.config.MavenConfiguration;
+import org.ops4j.pax.url.mvn.internal.config.MavenConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

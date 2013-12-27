@@ -23,11 +23,11 @@ import java.util.Properties;
 import org.eclipse.aether.collection.DependencyCollectionException;
 import org.eclipse.aether.resolution.ArtifactResolutionException;
 import org.junit.Test;
-import org.ops4j.pax.url.maven.commons.MavenConfiguration;
-import org.ops4j.pax.url.maven.commons.MavenConstants;
 import org.ops4j.pax.url.mvn.ServiceConstants;
 import org.ops4j.pax.url.mvn.UnitHelp;
 import org.ops4j.pax.url.mvn.internal.AetherBasedResolver;
+import org.ops4j.pax.url.mvn.internal.config.MavenConfiguration;
+import org.ops4j.pax.url.mvn.internal.config.MavenConstants;
 
 public class AetherTest extends TestBase
 {
