@@ -22,6 +22,8 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.maven.settings.Settings;
+
 /**
  * Handler configuration.
  *
@@ -115,5 +117,5 @@ public interface MavenConfiguration {
      */
     Map<String, Map<String, String>> getMirrors();
     
-    Object getSettings();
+    Settings getSettings();
 }

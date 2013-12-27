@@ -65,10 +65,7 @@ public class MavenConfigurationImpl
      * Use a default timeout of 5 seconds.
      */
     private final String DEFAULT_TIMEOUT = "5000";
-    /**
-     * Maven settings abstraction. Can be null.
-     */
-    private MavenSettings m_settings;
+
     /**
      * Configuration PID. Cannot be null or empty.
      */
@@ -97,16 +94,6 @@ public class MavenConfigurationImpl
 
     public boolean isValid() {
         return m_propertyResolver.get( m_pid + MavenConstants.REQUIRE_CONFIG_ADMIN_CONFIG ) == null;
-    }
-
-    /**
-     * Sets maven settings abstraction.
-     *
-     * @param settings maven settings abstraction
-     */
-    public void setSettings( final MavenSettings settings )
-    {
-        m_settings = settings;
     }
 
     /**
@@ -286,8 +273,8 @@ public class MavenConfigurationImpl
             // look for a local repository property
             String spec = m_propertyResolver.get( m_pid + MavenConstants.PROPERTY_LOCAL_REPOSITORY );
             // if not set get local repository from maven settings
-            if( spec == null && m_settings != null ) {
-                spec = m_settings.getLocalRepository();
+            if( spec == null && settings != null ) {
+                spec = settings.getLocalRepository();
             }
             if( spec != null ) {
                 if( !spec.toLowerCase().contains( "@snapshots" ) ) {
@@ -315,8 +302,8 @@ public class MavenConfigurationImpl
     }
 
     public MavenRepositoryURL getDefaultLocalRepository() {
-        if (m_settings != null) {
-            String spec = m_settings.getLocalRepository();
+        if (settings != null) {
+            String spec = settings.getLocalRepository();
             if (!spec.toLowerCase().contains("@snapshots")) {
                 spec += "@snapshots";
             }
@@ -435,11 +422,11 @@ public class MavenConfigurationImpl
             parseSystemWideProxySettings( pr );
             parseProxiesFromProperty( m_propertyResolver.get( m_pid + MavenConstants.PROPERTY_PROXIES ), pr );
 
-            if( pr.isEmpty() ) {
-                if( m_settings == null ) { return Collections.emptyMap(); }
-
-                return m_settings.getProxySettings();
-            }
+//            if( pr.isEmpty() ) {
+//                if( m_settings == null ) { return Collections.emptyMap(); }
+//
+//                return m_settings.getProxySettings();
+//            }
         }
         return pr;
     }
@@ -490,11 +477,12 @@ public class MavenConfigurationImpl
     public Map<String, Map<String, String>> getMirrors()
     {
         // DO support mirrors via properties (just like we do for proxies.
-        if( m_settings == null ) { return Collections.emptyMap(); }
-        return m_settings.getMirrorSettings();
+//        if( m_settings == null ) { return Collections.emptyMap(); }
+//        return m_settings.getMirrorSettings();
+        return Collections.emptyMap();
     }
     
-    public Object getSettings() 
+    public Settings getSettings() 
     {
         return settings;
     }

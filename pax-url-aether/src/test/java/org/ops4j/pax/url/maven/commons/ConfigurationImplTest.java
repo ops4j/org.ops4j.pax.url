@@ -487,7 +487,7 @@ public class ConfigurationImplTest
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
         expect( propertyResolver.get( "test.pid.localRepository" ) ).andReturn( null );
-        MavenSettings settings = createMock( MavenSettings.class );
+        Settings settings = createMock( Settings.class );
         expect( settings.getLocalRepository() ).andReturn( "file:somewhere/localrepository/" );
         replay( propertyResolver, settings );
         MavenConfigurationImpl config = new MavenConfigurationImpl( propertyResolver, PID );
