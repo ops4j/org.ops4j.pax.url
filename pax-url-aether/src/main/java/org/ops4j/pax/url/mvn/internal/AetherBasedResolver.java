@@ -36,6 +36,10 @@ import org.apache.maven.settings.Profile;
 import org.apache.maven.settings.Repository;
 import org.apache.maven.settings.Server;
 import org.apache.maven.settings.Settings;
+import org.apache.maven.settings.crypto.DefaultSettingsDecryptionRequest;
+import org.apache.maven.settings.crypto.SettingsDecrypter;
+import org.apache.maven.settings.crypto.SettingsDecryptionRequest;
+import org.apache.maven.settings.crypto.SettingsDecryptionResult;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositoryException;
 import org.eclipse.aether.RepositorySystem;
@@ -69,6 +73,8 @@ import org.eclipse.aether.version.Version;
 import org.ops4j.pax.url.maven.commons.MavenConfiguration;
 import org.ops4j.pax.url.maven.commons.MavenRepositoryURL;
 import org.slf4j.LoggerFactory;
+import org.sonatype.plexus.components.cipher.DefaultPlexusCipher;
+import org.sonatype.plexus.components.cipher.PlexusCipherException;
 
 /**
  * Aether based, drop in replacement for mvn protocol
@@ -84,6 +90,7 @@ public class AetherBasedResolver {
     final private MirrorSelector m_mirrorSelector;
     final private ProxySelector m_proxySelector;
     private Settings m_settings;
+    private ConfigurableSettingsDecrypter decrypter;
 
     /**
      * Create a AetherBasedResolver
@@ -99,8 +106,17 @@ public class AetherBasedResolver {
         m_config = configuration;
         m_settings = (Settings) configuration.getSettings();
         m_repoSystem = newRepositorySystem();
+        decryptSettings();
         m_proxySelector = selectProxies();
         m_mirrorSelector = selectMirrors();
+    }
+
+    private void decryptSettings()
+    {
+        SettingsDecryptionRequest request = new DefaultSettingsDecryptionRequest( m_settings );
+        SettingsDecryptionResult result = decrypter.decrypt( request );
+        m_settings.setProxies( result.getProxies() );
+        m_settings.setServers( result.getServers() );
     }
 
     private void assignProxyAndMirrors( List<RemoteRepository> remoteRepos ) {
@@ -375,6 +391,22 @@ public class AetherBasedResolver {
         locator
             .addService( RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class );
 
+        decrypter = new ConfigurableSettingsDecrypter();
+        ConfigurableSecDispatcher secDispatcher = new ConfigurableSecDispatcher();
+        try
+        {
+            secDispatcher.setCipher( new DefaultPlexusCipher() );
+        }
+        catch( PlexusCipherException exc )
+        {
+            throw new IllegalStateException( exc ); 
+        }
+        decrypter.setSecurityDispatcher( secDispatcher );
+        
+        locator.setServices( SettingsDecrypter.class, decrypter );
+        
+        
+        
         locator.setService( LocalRepositoryManagerFactory.class,
             SimpleLocalRepositoryManagerFactory.class );
         locator.setService( org.eclipse.aether.spi.log.LoggerFactory.class,

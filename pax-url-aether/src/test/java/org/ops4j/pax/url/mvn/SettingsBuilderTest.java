@@ -25,6 +25,7 @@ import static org.junit.Assume.assumeNotNull;
 import java.io.File;
 
 import org.apache.maven.settings.Mirror;
+import org.apache.maven.settings.Server;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.settings.building.DefaultSettingsBuilder;
 import org.apache.maven.settings.building.DefaultSettingsBuilderFactory;
@@ -32,7 +33,13 @@ import org.apache.maven.settings.building.DefaultSettingsBuildingRequest;
 import org.apache.maven.settings.building.SettingsBuildingException;
 import org.apache.maven.settings.building.SettingsBuildingRequest;
 import org.apache.maven.settings.building.SettingsBuildingResult;
+import org.apache.maven.settings.crypto.DefaultSettingsDecryptionRequest;
+import org.apache.maven.settings.crypto.SettingsDecryptionResult;
 import org.junit.Test;
+import org.ops4j.pax.url.mvn.internal.ConfigurableSecDispatcher;
+import org.ops4j.pax.url.mvn.internal.ConfigurableSettingsDecrypter;
+import org.sonatype.plexus.components.cipher.DefaultPlexusCipher;
+import org.sonatype.plexus.components.cipher.PlexusCipherException;
 
 public class SettingsBuilderTest {
 
@@ -59,4 +66,29 @@ public class SettingsBuilderTest {
         assertThat( mirror.getUrl(), is( System.getenv( "NEXUS_ROOT" ) + "/content/groups/public" ) );
     }
 
+    @Test
+    public void readSettingsWithEncryptedPassword() throws SettingsBuildingException, PlexusCipherException {
+
+        DefaultSettingsBuilderFactory factory = new DefaultSettingsBuilderFactory();
+        DefaultSettingsBuilder builder = factory.newInstance();
+        SettingsBuildingRequest request = new DefaultSettingsBuildingRequest();
+        request.setUserSettingsFile( new File( "src/test/resources", "settings-auth-encrypted.xml" ) );
+        
+        SettingsBuildingResult result = builder.build( request );
+        assertThat( result, is( notNullValue() ) );
+        assertThat( result.getProblems().isEmpty(), is( true ) );
+        
+        Settings settings = result.getEffectiveSettings();
+        
+        DefaultSettingsDecryptionRequest decryptionRequest = new DefaultSettingsDecryptionRequest( settings );
+        ConfigurableSettingsDecrypter decrypter = new ConfigurableSettingsDecrypter();
+        ConfigurableSecDispatcher secDispatcher = new ConfigurableSecDispatcher();
+        secDispatcher.setCipher( new DefaultPlexusCipher() );
+        secDispatcher.setConfigurationFile( "src/test/resources/settings-security.xml" );
+        decrypter.setSecurityDispatcher( secDispatcher );
+        
+        SettingsDecryptionResult decryptionResult = decrypter.decrypt( decryptionRequest );
+        Server server = decryptionResult.getServer();
+        assertThat( server.getPassword(), is( "ops4j" ) );
+    }
 }

@@ -13,6 +13,8 @@ Export-Service:\
 Import-Package:\
   ${bundle.namespace}; version="${pom.version}",\
   org.slf4j,\
+  javax.el; resolution:=optional,\
+  javax.interceptor; resolution:=optional,\
   javax.net.ssl,\
   javax.xml.parsers,\
   org.osgi.framework; version="[1.0.0,2.0.0)",\
@@ -26,6 +28,7 @@ Import-Package:\
   org.osgi.util.tracker,\
   org.testng.annotations; resolution:=optional,\
   !com.google.inject.*,\
+  !org.codehaus.classworlds.*,\
   !org.codehaus.plexus.*,\
   *
 

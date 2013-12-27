@@ -19,7 +19,8 @@ package org.ops4j.pax.url.mvn.internal;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 import java.io.File;
 import java.io.IOException;
@@ -52,6 +53,7 @@ import org.junit.rules.ExpectedException;
 import org.ops4j.pax.url.maven.commons.MavenConfigurationImpl;
 import org.ops4j.pax.url.mvn.ServiceConstants;
 import org.ops4j.util.property.PropertiesPropertyResolver;
+import org.sonatype.plexus.components.sec.dispatcher.DefaultSecDispatcher;
 
 public class AuthenticationTest
 {
@@ -61,9 +63,18 @@ public class AuthenticationTest
 
     private Server server;
 
+    @SuppressWarnings( "restriction" )
     @Before
     public void startHttp() throws Exception
     {
+        /*
+         * Oracle JDK specific workaround to disable HTTP authentication caching.
+         * See http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6626700.
+         * 
+         * The cache would break our tests for failing authentication.
+         */
+        sun.net.www.protocol.http.AuthCacheValue.setAuthCache( new sun.net.www.protocol.http.AuthCacheImpl() );
+        
         server = new Server();
         SelectChannelConnector connector = new SelectChannelConnector();
         connector.setPort( 8778 );
@@ -104,6 +115,7 @@ public class AuthenticationTest
     @After
     public void stopHttp() throws Exception
     {
+        System.clearProperty( DefaultSecDispatcher.SYSTEM_PROPERTY_SEC_LOCATION );
         server.stop();
     }
 
@@ -154,7 +166,6 @@ public class AuthenticationTest
 
         Settings settings = (Settings) config.getSettings();
         File localRepo = new File( settings.getLocalRepository() );
-        // you must exist.
         localRepo.mkdirs();
 
         Connection c = new Connection( new URL( "file:ant/ant/1.5.1" ), config );
@@ -171,7 +182,6 @@ public class AuthenticationTest
 
         Settings settings = (Settings) config.getSettings();
         File localRepo = new File( settings.getLocalRepository() );
-        // you must exist.
         localRepo.mkdirs();
 
         Connection c = new Connection( new URL( "file:ant/ant/1.5.1" ), config );
@@ -179,4 +189,36 @@ public class AuthenticationTest
         assertEquals( "the artifact must be downloaded", true, new File( localRepo,
             "ant/ant/1.5.1/ant-1.5.1.jar" ).exists() );
     }
+    
+    @Test
+    public void encryptedAuthenticationShouldPass() throws IOException, InterruptedException
+    {
+        System.setProperty( DefaultSecDispatcher.SYSTEM_PROPERTY_SEC_LOCATION, "src/test/resources/settings-security.xml" );
+        MavenConfigurationImpl config = getConfig( "src/test/resources/settings-auth-encrypted.xml" );
+
+        Settings settings = (Settings) config.getSettings();
+        File localRepo = new File( settings.getLocalRepository() );
+        localRepo.mkdirs();
+
+        Connection c = new Connection( new URL( "file:ant/ant/1.5.1" ), config );
+        c.getInputStream().close();
+        assertEquals( "the artifact must be downloaded", true, new File( localRepo,
+            "ant/ant/1.5.1/ant-1.5.1.jar" ).exists() );
+    }
+    
+    @Test
+    public void encryptedAuthenticationShouldFail() throws IOException, InterruptedException
+    {
+        MavenConfigurationImpl config = getConfig( "src/test/resources/settings-auth-encrypted.xml" );
+
+        Settings settings = (Settings) config.getSettings();
+        File localRepo = new File( settings.getLocalRepository() );
+        // you must exist.
+        localRepo.mkdirs();
+
+        Connection c = new Connection( new URL( "file:ant/ant/1.5.1" ), config );
+        thrown.expect( IOException.class );
+        thrown.expectMessage( "Access denied" );
+        c.getInputStream();
+    }    
 }
