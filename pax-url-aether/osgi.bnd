@@ -33,6 +33,7 @@ Import-Package:\
   *
 
 Export-Package:\
+  org.ops4j.pax.url.maven.commons; version="${pom.version}",\
   ${bundle.namespace}; version="${pom.version}"
 
 Private-Package:\

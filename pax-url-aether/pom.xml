@@ -92,12 +92,6 @@
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>org.ops4j.pax.url</groupId>
-            <artifactId>pax-url-maven-commons</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
 
         <!-- Provided dependencies (not transitive) -->
         <dependency>

@@ -26,7 +26,6 @@
 		<module>pax-url-commons</module>
 		<module>pax-url-dir</module>
 		<module>pax-url-link</module>
-		<module>pax-url-maven-commons</module>
 		<module>pax-url-obr</module>
 		<module>pax-url-reference</module>
 		<module>pax-url-war</module>
