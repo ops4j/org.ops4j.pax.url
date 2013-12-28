@@ -25,7 +25,6 @@
         <bundle.namespace>org.ops4j.pax.url.mvn</bundle.namespace>
         <aetherVersion>0.9.0.M3</aetherVersion>
         <mavenVersion>3.1.1</mavenVersion>
-        <wagonVersion>2.5</wagonVersion>
         <TEST_REPO>file:${project.build.directory}/remote-repo</TEST_REPO>
     </properties>
 
@@ -116,22 +115,18 @@
         <dependency>
             <groupId>org.eclipse.aether</groupId>
             <artifactId>aether-api</artifactId>
-            <version>${aetherVersion}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.aether</groupId>
             <artifactId>aether-spi</artifactId>
-            <version>${aetherVersion}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.aether</groupId>
             <artifactId>aether-util</artifactId>
-            <version>${aetherVersion}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.aether</groupId>
             <artifactId>aether-impl</artifactId>
-            <version>${aetherVersion}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.aether</groupId>
@@ -182,17 +177,14 @@
         <dependency>
             <groupId>org.apache.maven.wagon</groupId>
             <artifactId>wagon-provider-api</artifactId>
-            <version>${wagonVersion}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven.wagon</groupId>
             <artifactId>wagon-file</artifactId>
-            <version>${wagonVersion}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven.wagon</groupId>
             <artifactId>wagon-http-lightweight</artifactId>
-            <version>${wagonVersion}</version>
             <exclusions>
                 <exclusion>
                     <groupId>nekohtml</groupId>

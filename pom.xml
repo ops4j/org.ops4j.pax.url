@@ -49,12 +49,14 @@
     <properties>
         <release-paxurl-altGitURL>scm:git:ssh://git@github.com/ops4j/org.ops4j.pax.url.git</release-paxurl-altGitURL>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <dependency.aether.version>0.9.0.M3</dependency.aether.version>
         <dependency.base.version>1.4.0</dependency.base.version>
         <!-- higher versions of logback import slf4j 1.7  -->
         <dependency.logback.version>1.0.7</dependency.logback.version>
         <dependency.paxexam.version>3.4.0</dependency.paxexam.version>
         <dependency.swissbox.version>1.7.0</dependency.swissbox.version>
         <dependency.slf4j.version>1.6.6</dependency.slf4j.version>
+        <dependency.wagon.version>2.5</dependency.wagon.version>
     </properties>
 
     <build>
@@ -72,6 +74,28 @@
                             <embed>jdk14</embed>
                             <attach>true</attach>
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>1.2</version>
+                <executions>
+                    <execution>
+                        <id>enforce</id>
+                        <configuration>
+                            <rules>
+                                <requireMavenVersion>
+                                    <version>(3.0.0,)</version>
+                                    <message>This project requires Maven 3</message>
+                                </requireMavenVersion>
+                                <DependencyConvergence />
+                            </rules>
+                        </configuration>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
@@ -148,6 +172,55 @@
                 <artifactId>pax-swissbox-tracker</artifactId>
                 <version>${dependency.swissbox.version}</version>
             </dependency>
+            
+            <dependency>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-file</artifactId>
+                <version>${dependency.wagon.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-http-lightweight</artifactId>
+                <version>${dependency.wagon.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-provider-api</artifactId>
+                <version>${dependency.wagon.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-utils</artifactId>
+                <version>3.0.15</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>org.eclipse.aether</groupId>
+                <artifactId>aether-api</artifactId>
+                <version>${dependency.aether.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>org.eclipse.aether</groupId>
+                <artifactId>aether-impl</artifactId>
+                <version>${dependency.aether.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>org.eclipse.aether</groupId>
+                <artifactId>aether-spi</artifactId>
+                <version>${dependency.aether.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>org.eclipse.aether</groupId>
+                <artifactId>aether-util</artifactId>
+                <version>${dependency.aether.version}</version>
+            </dependency>
+            
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>

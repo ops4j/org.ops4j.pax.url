@@ -20,11 +20,7 @@ package org.ops4j.pax.url.itest.obr;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.ops4j.pax.exam.CoreOptions.frameworkProperty;
-import static org.ops4j.pax.exam.CoreOptions.junitBundles;
-import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
-import static org.ops4j.pax.exam.CoreOptions.options;
-import static org.ops4j.pax.exam.CoreOptions.systemProperty;
+import static org.ops4j.pax.exam.CoreOptions.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -62,19 +58,18 @@ public class ObrTest
             // OBR location
             frameworkProperty("obr.repository.url").value("http://felix.apache.org/obr/releases.xml"),
             // bundle under test and its dependencies
-            mavenBundle("org.ops4j.pax.url", "pax-url-obr").versionAsInProject(),
-            mavenBundle("org.ops4j.pax.url", "pax-url-commons").versionAsInProject(),
-            mavenBundle("org.ops4j.pax.swissbox", "pax-swissbox-property").versionAsInProject(),
-            mavenBundle("org.apache.felix", "org.osgi.service.obr", "1.0.2"),
-
+            bundle( "file:target/bundles/pax-url-obr.jar" ),
+            bundle( "file:target/bundles/pax-url-commons.jar" ),
+            bundle( "file:target/bundles/pax-swissbox-property.jar" ),
+            bundle( "file:target/bundles/org.osgi.service.obr.jar" ),
             // OBR RepositoryAdmin implementation
-            mavenBundle("org.apache.felix", "org.apache.felix.bundlerepository", "1.6.6"),
+            bundle( "file:target/bundles/org.apache.felix.bundlerepository.jar" ),
             
-            mavenBundle( "org.slf4j", "slf4j-api").versionAsInProject(),
-            mavenBundle( "ch.qos.logback", "logback-classic" ).versionAsInProject(),
-            mavenBundle( "ch.qos.logback", "logback-core" ).versionAsInProject(),
-
-            junitBundles() );
+            bundle( "file:target/bundles/slf4j-api.jar" ), //
+            bundle( "file:target/bundles/logback-classic.jar" ), //
+            bundle( "file:target/bundles/logback-core.jar" ), //
+            bundle( "file:target/bundles/org.ops4j.pax.tipi.junit.jar" ), //
+            bundle( "file:target/bundles/org.ops4j.pax.tipi.hamcrest.core.jar" ) );
     }
 
 
