@@ -345,11 +345,11 @@ public class AetherBasedResolver {
 
     private RepositorySystemSession newSession() {
         File local;
-        if( m_settings.getLocalRepository() == null ) {
+        if( m_config.getLocalRepository() == null ) {
             local = new File( System.getProperty( "user.home" ), ".m2/repository" );
         }
         else {
-            local = new File( m_settings.getLocalRepository() );
+            local = m_config.getLocalRepository().getFile();
         }
 
         DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();

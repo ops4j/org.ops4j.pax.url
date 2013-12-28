@@ -228,6 +228,13 @@ public class MavenConfigurationImpl
                         builder.append( repo.getUrl() );
                         builder.append( "@id=" );
                         builder.append( repo.getId() );
+                        
+                        if (repo.getReleases() != null && ! repo.getReleases().isEnabled()) {
+                            builder.append("@noreleases");
+                        }
+                        if (repo.getSnapshots() != null && repo.getSnapshots().isEnabled()) {
+                            builder.append("@snapshots");
+                        }
                     }
                 }
                 repositoriesProp = builder.toString();
