@@ -24,6 +24,7 @@ import static org.ops4j.pax.exam.CoreOptions.frameworkProperty;
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
+import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -55,6 +56,7 @@ public class ObrTest
     public Option[] config()
     {
         return options(
+            systemProperty( "logback.configurationFile" ).value( "src/test/resources/logback.xml" ),
             frameworkProperty("osgi.console").value("6666"),
 
             // OBR location
@@ -67,6 +69,10 @@ public class ObrTest
 
             // OBR RepositoryAdmin implementation
             mavenBundle("org.apache.felix", "org.apache.felix.bundlerepository", "1.6.6"),
+            
+            mavenBundle( "org.slf4j", "slf4j-api").versionAsInProject(),
+            mavenBundle( "ch.qos.logback", "logback-classic" ).versionAsInProject(),
+            mavenBundle( "ch.qos.logback", "logback-core" ).versionAsInProject(),
 
             junitBundles() );
     }
