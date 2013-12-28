@@ -57,12 +57,14 @@ public class MvnProtocolTest
     public Option[] config()
     {
         return options( frameworkProperty( "osgi.console" ).value( "6666" ), //
+            systemProperty( "logback.configurationFile" ).value( "src/test/resources/logback.xml" ),
             systemProperty( "org.ops4j.pax.url.mvn.localRepository" ). //
             value( "target/local-repo-" + UUID.randomUUID() ), //
 
             bundle( "file:target/bundles/pax-url-aether.jar" ), //
             bundle( "file:target/bundles/slf4j-api.jar" ), //
-            bundle( "file:target/bundles/slf4j-simple.jar" ).noStart(), //
+            bundle( "file:target/bundles/logback-classic.jar" ), //
+            bundle( "file:target/bundles/logback-core.jar" ), //
             bundle( "file:target/bundles/org.ops4j.pax.tipi.junit.jar" ), //
             bundle( "file:target/bundles/org.ops4j.pax.tipi.hamcrest.core.jar" ) );
     }

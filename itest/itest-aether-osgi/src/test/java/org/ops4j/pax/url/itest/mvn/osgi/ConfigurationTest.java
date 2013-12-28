@@ -23,6 +23,7 @@ import static org.junit.Assert.assertThat;
 import static org.ops4j.pax.exam.CoreOptions.bundle;
 import static org.ops4j.pax.exam.CoreOptions.frameworkProperty;
 import static org.ops4j.pax.exam.CoreOptions.options;
+import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 
 import java.io.File;
 import java.io.IOException;
@@ -56,11 +57,13 @@ public class ConfigurationTest
     public Option[] config()
     {
         return options( frameworkProperty( "osgi.console" ).value( "6666" ), //
+            systemProperty( "logback.configurationFile" ).value( "src/test/resources/logback.xml" ),
             bundle( "file:target/bundles/pax-url-aether.jar" ), //
             bundle( "file:target/bundles/pax-confman-propsloader.jar" ), //
             bundle( "file:target/bundles/org.apache.felix.configadmin.jar" ), //
             bundle( "file:target/bundles/slf4j-api.jar" ), //
-            bundle( "file:target/bundles/slf4j-simple.jar" ).noStart(), //
+            bundle( "file:target/bundles/logback-classic.jar" ), //
+            bundle( "file:target/bundles/logback-core.jar" ), //
             bundle( "file:target/bundles/org.ops4j.pax.tipi.junit.jar" ), //
             bundle( "file:target/bundles/org.ops4j.pax.tipi.hamcrest.core.jar" ) );
     }
