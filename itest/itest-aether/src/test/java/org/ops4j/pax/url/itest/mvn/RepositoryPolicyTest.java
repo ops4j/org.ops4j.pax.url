@@ -27,7 +27,6 @@ import java.util.UUID;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -71,7 +70,7 @@ public class RepositoryPolicyTest
     }
 
     @Test
-    @Ignore("PAXURL-235")
+    //@Ignore("PAXURL-235")
     public void doNotResolveReleaseWhenReleasesDisabled() throws IOException
     {
         System.setProperty( "org.ops4j.pax.url.mvn.repositories",
@@ -96,7 +95,7 @@ public class RepositoryPolicyTest
     }
 
     @Test
-    @Ignore("PAXURL-235")
+    //@Ignore("PAXURL-235")
     public void doNotResolveSnapshotWhenSnapshotsDisabled() throws IOException
     {
         System.setProperty( "org.ops4j.pax.url.mvn.repositories",

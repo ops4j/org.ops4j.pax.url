@@ -56,6 +56,7 @@ import org.eclipse.aether.repository.MirrorSelector;
 import org.eclipse.aether.repository.Proxy;
 import org.eclipse.aether.repository.ProxySelector;
 import org.eclipse.aether.repository.RemoteRepository;
+import org.eclipse.aether.repository.RepositoryPolicy;
 import org.eclipse.aether.resolution.ArtifactRequest;
 import org.eclipse.aether.resolution.ArtifactResolutionException;
 import org.eclipse.aether.resolution.VersionRangeRequest;
@@ -244,6 +245,10 @@ public class AetherBasedResolver {
 
     private void addRepo( List<RemoteRepository> list, MavenRepositoryURL repo ) {
         RemoteRepository.Builder builder = new RemoteRepository.Builder( repo.getId(), REPO_TYPE, repo.getURL().toExternalForm() );
+        RepositoryPolicy releasePolicy = new RepositoryPolicy( repo.isReleasesEnabled(), null, null );
+        builder.setReleasePolicy( releasePolicy );
+        RepositoryPolicy snapshotPolicy = new RepositoryPolicy( repo.isSnapshotsEnabled(), null, null );
+        builder.setSnapshotPolicy( snapshotPolicy );
         Authentication authentication = getAuthentication( repo.getId() );
         if (authentication != null) {
             builder.setAuthentication( authentication );
