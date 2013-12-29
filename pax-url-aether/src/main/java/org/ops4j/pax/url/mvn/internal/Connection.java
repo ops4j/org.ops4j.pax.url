@@ -24,10 +24,15 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Arrays;
 
 import org.ops4j.lang.NullArgumentException;
 import org.ops4j.pax.url.mvn.Parser;
+import org.ops4j.pax.url.mvn.ServiceConstants;
 import org.ops4j.pax.url.mvn.internal.config.MavenConfiguration;
+import org.ops4j.pax.url.mvn.internal.config.MavenConfigurationImpl;
+import org.ops4j.pax.url.mvn.internal.config.MavenConstants;
+import org.ops4j.pax.url.mvn.internal.config.MavenRepositoryURL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,6 +99,12 @@ public class Connection
         NullArgumentException.validateNotNull( configuration, "Service configuration" );
 
         m_parser = new Parser( url.getPath() );
+        MavenRepositoryURL repoUrl = m_parser.getRepositoryURL();
+        if ( repoUrl != null )
+        {
+            MavenConfigurationImpl config = (MavenConfigurationImpl) configuration;
+            config.set( ServiceConstants.PID + MavenConstants.PROPERTY_REPOSITORIES, Arrays.asList( repoUrl ) );
+        }
         m_aetherBasedResolver = new AetherBasedResolver( configuration );
     }
 

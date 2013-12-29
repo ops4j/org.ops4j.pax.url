@@ -59,7 +59,6 @@ public class InlineRepositoryTest
     }
 
     @Test
-    @Ignore("PAXURL-236")
     public void resolveArtifactFromInlineRepository() throws IOException
     {
         URL url = new URL(
