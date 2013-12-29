@@ -12,6 +12,14 @@
 			<id>amazon-server-1</id>
 			<username>User-Agent</username>
 			<password>magic-token</password>
+            <configuration>
+                <httpHeaders>
+                    <httpHeader>
+                       <name>User-Agent</name>
+                       <value>magic-token</value>
+                    </httpHeader>
+                </httpHeaders>
+            </configuration>
 		</server>
 
 	</servers>

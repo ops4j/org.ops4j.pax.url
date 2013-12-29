@@ -36,4 +36,6 @@
     <appender-ref ref="TEST_LOG"/>
   </root>
   
+  <logger name="org.eclipse.aether" level="WARN"/>
+  
 </configuration>
