@@ -69,8 +69,11 @@ public class RepositoryPolicyTest
         assertThat( artifact.exists(), is( true ) );
     }
 
+    /**
+     * Regression test for PAXURL-235.
+     * @throws IOException
+     */
     @Test
-    //@Ignore("PAXURL-235")
     public void doNotResolveReleaseWhenReleasesDisabled() throws IOException
     {
         System.setProperty( "org.ops4j.pax.url.mvn.repositories",
@@ -94,8 +97,28 @@ public class RepositoryPolicyTest
         assertThat( artifact.exists(), is( true ) );
     }
 
+    /**
+     * Regression test for PAXURL-178.
+     * @throws IOException
+     */
     @Test
-    //@Ignore("PAXURL-235")
+    public void resolveUniqueSnapshot() throws IOException
+    {
+        System.setProperty( "org.ops4j.pax.url.mvn.repositories",
+            "https://oss.sonatype.org/content/repositories/ops4j-snapshots@id=ops4j-snapshots@snapshots" );
+        URL url = new URL( "mvn:org.ops4j/master/2.0.1-20111205.161205-5/pom" );
+        url.openStream().close();
+
+        File artifact = new File( localRepo,
+            "org/ops4j/master/2.0.1-SNAPSHOT/master-2.0.1-20111205.161205-5.pom" );
+        assertThat( artifact.exists(), is( true ) );
+    }
+
+    /**
+     * Regression test for PAXURL-235.
+     * @throws IOException
+     */
+    @Test
     public void doNotResolveSnapshotWhenSnapshotsDisabled() throws IOException
     {
         System.setProperty( "org.ops4j.pax.url.mvn.repositories",
