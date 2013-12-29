@@ -43,6 +43,7 @@ public class LocalRepositoryTest
     {
         System.clearProperty( "java.protocol.handler.pkgs" );
         System.clearProperty( "org.ops4j.pax.url.mvn.localRepository" );
+        System.clearProperty( "org.ops4j.pax.url.mvn.settings" );
     }
 
     @Test
@@ -79,4 +80,21 @@ public class LocalRepositoryTest
 
         assertThat( artifact.exists(), is( true ) );
     }
+
+    @Test
+    public void resolveArtifactWithLocalRepoFromSettings() throws IOException
+    {
+        String localRepoPath = "target/local-repo-settings";
+        System.setProperty( "org.ops4j.pax.url.mvn.settings", "src/test/resources/settings-local-repo.xml" );
+        File localRepo = new File( localRepoPath );
+        localRepo.mkdirs();
+
+        URL url = new URL( "mvn:org.ops4j.base/ops4j-base-lang/1.0.0" );
+        url.openStream().close();
+
+        File artifact = new File( localRepo,
+            "org/ops4j/base/ops4j-base-lang/1.0.0/ops4j-base-lang-1.0.0.jar" );
+        assertThat( artifact.exists(), is( true ) );
+    }
+
 }
