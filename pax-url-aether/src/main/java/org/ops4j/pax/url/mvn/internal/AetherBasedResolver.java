@@ -40,6 +40,8 @@ import org.apache.maven.settings.crypto.DefaultSettingsDecryptionRequest;
 import org.apache.maven.settings.crypto.SettingsDecrypter;
 import org.apache.maven.settings.crypto.SettingsDecryptionRequest;
 import org.apache.maven.settings.crypto.SettingsDecryptionResult;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
+import org.eclipse.aether.ConfigurationProperties;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositoryException;
 import org.eclipse.aether.RepositorySystem;
@@ -147,14 +149,14 @@ public class AetherBasedResolver {
 
         for( String mirrorId : map.keySet() ) {
             RemoteRepository mirror = naming.get( mirrorId );
-            List<RemoteRepository> mirroedRepos = new ArrayList<RemoteRepository>();
+            List<RemoteRepository> mirroredRepos = new ArrayList<RemoteRepository>();
 
             for( String rep : map.get( mirrorId ) ) {
-                mirroedRepos.add( naming.get( rep ) );
+                mirroredRepos.add( naming.get( rep ) );
             }
-            mirror = new RemoteRepository.Builder( mirror ).setMirroredRepositories( mirroedRepos )
+            mirror = new RemoteRepository.Builder( mirror ).setMirroredRepositories( mirroredRepos )
                 .build();
-            resultingRepos.removeAll( mirroedRepos );
+            resultingRepos.removeAll( mirroredRepos );
             resultingRepos.add( 0, mirror );
         }
 
@@ -365,8 +367,29 @@ public class AetherBasedResolver {
         if( null != updatePolicy ) {
             session.setUpdatePolicy( updatePolicy );
         }
+        
+        for (Server server : m_settings.getServers()) {
+            if (server.getConfiguration() != null) {
+                addServerConfig(session, server);
+            }
+        }
 
         return session;
+    }
+
+    private void addServerConfig( DefaultRepositorySystemSession session, Server server )
+    {
+        Map<String,String> headers = new HashMap<String, String>();
+        Xpp3Dom configuration = (Xpp3Dom) server.getConfiguration();
+        Xpp3Dom httpHeaders = configuration.getChild( "httpHeaders" );
+        for (Xpp3Dom httpHeader : httpHeaders.getChildren( "httpHeader" )) {
+            Xpp3Dom name = httpHeader.getChild( "name" );
+            String headerName = name.getValue();
+            Xpp3Dom value = httpHeader.getChild( "value" );
+            String headerValue = value.getValue();
+            headers.put( headerName, headerValue );
+        }
+        session.setConfigProperty( String.format("%s.%s", ConfigurationProperties.HTTP_HEADERS, server.getId() ), headers );
     }
 
     private Authentication getAuthentication( org.apache.maven.settings.Proxy proxy ) {
