@@ -10,7 +10,7 @@
 
   <groupId>org.ops4j.pax</groupId>
   <artifactId>url</artifactId>
-  <version>1.3.7</version>
+  <version>1.3.8-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>OPS4J Pax Url</name>
@@ -29,7 +29,7 @@
     <connection>scm:git:git://github.com/ops4j/org.ops4j.pax.url.git</connection>
     <developerConnection>${release-paxurl-altGitURL}</developerConnection>
     <url>http://github.com/ops4j/org.ops4j.pax.url/tree/master</url>
-    <tag>url-1.3.7</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <properties>
