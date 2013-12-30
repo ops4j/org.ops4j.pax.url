@@ -78,6 +78,7 @@ import org.ops4j.pax.url.mvn.internal.config.MavenRepositoryURL;
 import org.slf4j.LoggerFactory;
 import org.sonatype.plexus.components.cipher.DefaultPlexusCipher;
 import org.sonatype.plexus.components.cipher.PlexusCipherException;
+import org.sonatype.plexus.components.sec.dispatcher.DefaultSecDispatcher;
 
 /**
  * Aether based, drop in replacement for mvn protocol
@@ -420,7 +421,7 @@ public class AetherBasedResolver {
             .addService( RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class );
 
         decrypter = new ConfigurableSettingsDecrypter();
-        ConfigurableSecDispatcher secDispatcher = new ConfigurableSecDispatcher();
+        DefaultSecDispatcher secDispatcher = new DefaultSecDispatcher();
         try
         {
             secDispatcher.setCipher( new DefaultPlexusCipher() );

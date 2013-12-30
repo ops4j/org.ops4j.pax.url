@@ -44,9 +44,9 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                  <environmentVariables>
-                    <NEXUS_ROOT>http://oss.sonatype.org</NEXUS_ROOT>
-                  </environmentVariables>
+                    <environmentVariables>
+                        <NEXUS_ROOT>http://oss.sonatype.org</NEXUS_ROOT>
+                    </environmentVariables>
                 </configuration>
             </plugin>
         </plugins>
@@ -149,22 +149,6 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.sisu</groupId>
-            <artifactId>org.eclipse.sisu.plexus</artifactId>
-            <version>0.1.1</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.codehaus.plexus</groupId>
-                    <artifactId>plexus-classworlds</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.plexus</groupId>
-            <artifactId>plexus-utils</artifactId>
-            <version>3.0.15</version>
-        </dependency>
-        <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-aether-provider</artifactId>
             <version>${mavenVersion}</version>
@@ -173,6 +157,17 @@
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-settings-builder</artifactId>
             <version>${mavenVersion}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.sonatype.plexus</groupId>
+                    <artifactId>plexus-sec-dispatcher</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.sonatype.plexus</groupId>
+            <artifactId>plexus-cipher</artifactId>
+            <version>1.7</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven.wagon</groupId>
@@ -181,11 +176,25 @@
         <dependency>
             <groupId>org.apache.maven.wagon</groupId>
             <artifactId>wagon-file</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-lang</groupId>
+                    <artifactId>commons-lang</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.maven.wagon</groupId>
             <artifactId>wagon-http-lightweight</artifactId>
             <exclusions>
+                <exclusion>
+                    <groupId>commons-lang</groupId>
+                    <artifactId>commons-lang</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.jsoup</groupId>
+                    <artifactId>jsoup</artifactId>
+                </exclusion>
                 <exclusion>
                     <groupId>nekohtml</groupId>
                     <artifactId>nekohtml</artifactId>
@@ -238,7 +247,7 @@
         </dependency>
 
     </dependencies>
-    
-    
+
+
 
 </project>

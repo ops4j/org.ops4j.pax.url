@@ -14,6 +14,7 @@ Import-Package:\
   ${bundle.namespace}; version="${pom.version}",\
   org.slf4j,\
   javax.el; resolution:=optional,\
+  javax.enterprise.inject; resolution:=optional,\
   javax.interceptor; resolution:=optional,\
   javax.net.ssl,\
   javax.xml.parsers,\
@@ -28,8 +29,10 @@ Import-Package:\
   org.osgi.util.tracker,\
   org.testng.annotations; resolution:=optional,\
   !com.google.inject.*,\
+  !org.apache.commons.lang.*,\
   !org.codehaus.classworlds.*,\
   !org.codehaus.plexus.*,\
+  !org.jsoup.*,\
   *
 
 Export-Package:\
