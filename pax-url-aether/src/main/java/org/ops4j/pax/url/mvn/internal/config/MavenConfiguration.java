@@ -118,4 +118,6 @@ public interface MavenConfiguration {
     Map<String, Map<String, String>> getMirrors();
     
     Settings getSettings();
+    
+    String getSecuritySettings();
 }

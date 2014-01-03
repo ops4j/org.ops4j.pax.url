@@ -555,4 +555,19 @@ public class MavenConfigurationImpl
     {
         this.settings = settings;
     }
+    
+    public String getSecuritySettings() 
+    {
+        String key = m_pid + MavenConstants.PROPERTY_SECURITY;
+        if( !contains( key ) ) 
+        {
+            String spec = m_propertyResolver.get( key );
+            if (spec == null )
+            {
+                spec = new File( System.getProperty( "user.home" ), ".m2/settings-security.xml").getPath(); 
+            }
+            return set( key, spec  );
+        }
+        return get( key );        
+    }
 }

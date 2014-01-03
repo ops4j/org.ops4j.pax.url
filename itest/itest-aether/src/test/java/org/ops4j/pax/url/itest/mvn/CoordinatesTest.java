@@ -64,7 +64,7 @@ public class CoordinatesTest
     @Test
     public void resolveArtifactWithHalfOpenVersionRange() throws IOException
     {
-        URL url = new URL( "mvn:org.ops4j.base/ops4j-base-lang/[1.2.0,1.3.0)" );
+        URL url = new URL( "mvn:org.ops4j.base/ops4j-base-lang/[1.2.0,1.2.5)" );
         url.openStream().close();
 
         File artifact = new File( localRepo,

@@ -83,7 +83,7 @@ public class DirectAetherTest {
     public void resolveVersionRange() throws DependencyCollectionException,
         DependencyResolutionException, VersionRangeResolutionException {
 
-        DefaultArtifact artifact = new DefaultArtifact("org.ops4j.base:ops4j-base-lang:[1.2.0,1.3.0)");
+        DefaultArtifact artifact = new DefaultArtifact("org.ops4j.base:ops4j-base-lang:[1.2.0,1.2.5)");
         
         VersionRangeRequest versionRangeRequest = new VersionRangeRequest();
         versionRangeRequest.setArtifact( artifact );

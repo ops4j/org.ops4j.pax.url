@@ -159,6 +159,16 @@ public class AuthenticationTest
         return config;
     }
 
+    private MavenConfigurationImpl getConfig( String settingsPath, String securityPath )
+    {
+        Properties p = new Properties();
+        p.put( "org.ops4j.pax.url.mvn.security", securityPath );
+        MavenConfigurationImpl config = new MavenConfigurationImpl( new PropertiesPropertyResolver(
+            p ), ServiceConstants.PID );
+        config.setSettings( buildSettings( settingsPath ) );
+        return config;
+    }
+
     @Test
     public void authenticationShouldFail() throws IOException, InterruptedException
     {
@@ -193,8 +203,7 @@ public class AuthenticationTest
     @Test
     public void encryptedAuthenticationShouldPass() throws IOException, InterruptedException
     {
-        System.setProperty( DefaultSecDispatcher.SYSTEM_PROPERTY_SEC_LOCATION, "src/test/resources/settings-security.xml" );
-        MavenConfigurationImpl config = getConfig( "src/test/resources/settings-auth-encrypted.xml" );
+        MavenConfigurationImpl config = getConfig( "src/test/resources/settings-auth-encrypted.xml", "src/test/resources/settings-security.xml" );
 
         Settings settings = config.getSettings();
         File localRepo = new File( settings.getLocalRepository() );

@@ -430,6 +430,7 @@ public class AetherBasedResolver {
         {
             throw new IllegalStateException( exc ); 
         }
+        secDispatcher.setConfigurationFile( m_config.getSecuritySettings() );
         decrypter.setSecurityDispatcher( secDispatcher );
         
         locator.setServices( SettingsDecrypter.class, decrypter );

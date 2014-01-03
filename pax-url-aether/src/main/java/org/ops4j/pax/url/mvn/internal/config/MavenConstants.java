@@ -83,6 +83,8 @@ public interface MavenConstants {
      */
     String PROPERTY_PROXY_SUPPORT = ".proxySupport";
     
+    String PROPERTY_SECURITY = ".security";
+    
     /**
      * Option to mark repository as allowing snapshots.
      */
