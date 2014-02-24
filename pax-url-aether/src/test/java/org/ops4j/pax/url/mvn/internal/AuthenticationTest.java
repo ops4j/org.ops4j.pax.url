@@ -53,7 +53,6 @@ import org.junit.rules.ExpectedException;
 import org.ops4j.pax.url.mvn.ServiceConstants;
 import org.ops4j.pax.url.mvn.internal.config.MavenConfigurationImpl;
 import org.ops4j.util.property.PropertiesPropertyResolver;
-import org.sonatype.plexus.components.sec.dispatcher.DefaultSecDispatcher;
 
 public class AuthenticationTest
 {
@@ -115,7 +114,7 @@ public class AuthenticationTest
     @After
     public void stopHttp() throws Exception
     {
-        System.clearProperty( DefaultSecDispatcher.SYSTEM_PROPERTY_SEC_LOCATION );
+        System.clearProperty( PaxUrlSecDispatcher.SYSTEM_PROPERTY_SEC_LOCATION );
         server.stop();
     }
 

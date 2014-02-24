@@ -37,9 +37,9 @@ import org.apache.maven.settings.crypto.DefaultSettingsDecryptionRequest;
 import org.apache.maven.settings.crypto.SettingsDecryptionResult;
 import org.junit.Test;
 import org.ops4j.pax.url.mvn.internal.ConfigurableSettingsDecrypter;
+import org.ops4j.pax.url.mvn.internal.PaxUrlSecDispatcher;
 import org.sonatype.plexus.components.cipher.DefaultPlexusCipher;
 import org.sonatype.plexus.components.cipher.PlexusCipherException;
-import org.sonatype.plexus.components.sec.dispatcher.DefaultSecDispatcher;
 
 public class SettingsBuilderTest {
 
@@ -82,7 +82,7 @@ public class SettingsBuilderTest {
         
         DefaultSettingsDecryptionRequest decryptionRequest = new DefaultSettingsDecryptionRequest( settings );
         ConfigurableSettingsDecrypter decrypter = new ConfigurableSettingsDecrypter();
-        DefaultSecDispatcher secDispatcher = new DefaultSecDispatcher();
+        PaxUrlSecDispatcher secDispatcher = new PaxUrlSecDispatcher();
         secDispatcher.setCipher( new DefaultPlexusCipher() );
         secDispatcher.setConfigurationFile( "src/test/resources/settings-security.xml" );
         decrypter.setSecurityDispatcher( secDispatcher );

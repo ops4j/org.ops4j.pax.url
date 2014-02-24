@@ -1,5 +1,6 @@
 /**
  * Copyright (c) 2008 Sonatype, Inc. All rights reserved.
+ * Copyright 2014 Harald Wellmann (modified for Pax URL, see end of file)
  *
  * This program is licensed to you under the Apache License Version 2.0,
  * and you may not use this file except in compliance with the Apache License Version 2.0.
@@ -11,7 +12,7 @@
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
  
-package org.sonatype.plexus.components.sec.dispatcher;
+package org.ops4j.pax.url.mvn.internal;
 
 
 import java.io.BufferedReader;
@@ -24,13 +25,17 @@ import java.util.StringTokenizer;
 import org.sonatype.plexus.components.cipher.DefaultPlexusCipher;
 import org.sonatype.plexus.components.cipher.PlexusCipher;
 import org.sonatype.plexus.components.cipher.PlexusCipherException;
+import org.sonatype.plexus.components.sec.dispatcher.PasswordDecryptor;
+import org.sonatype.plexus.components.sec.dispatcher.SecDispatcher;
+import org.sonatype.plexus.components.sec.dispatcher.SecDispatcherException;
+import org.sonatype.plexus.components.sec.dispatcher.SecUtil;
 import org.sonatype.plexus.components.sec.dispatcher.model.SettingsSecurity;
 
 /**
  * @plexus.component role-hint="default"
  * @author Oleg Gusakov</a>
  */
-public class DefaultSecDispatcher
+public class PaxUrlSecDispatcher
 implements SecDispatcher
 {
     public static final String SYSTEM_PROPERTY_SEC_LOCATION = "settings.security";
@@ -307,11 +312,11 @@ implements SecDispatcher
         System.out.println("\n");
         
         DefaultPlexusCipher dc = new DefaultPlexusCipher();
-        DefaultSecDispatcher dd = new DefaultSecDispatcher();
+        PaxUrlSecDispatcher dd = new PaxUrlSecDispatcher();
         dd._cipher = dc;
         
         if( showMaster )
-            System.out.println( dc.encryptAndDecorate( pass, DefaultSecDispatcher.SYSTEM_PROPERTY_SEC_LOCATION ) );
+            System.out.println( dc.encryptAndDecorate( pass, PaxUrlSecDispatcher.SYSTEM_PROPERTY_SEC_LOCATION ) );
         else
         {
             SettingsSecurity sec = dd.getSec();
@@ -320,6 +325,8 @@ implements SecDispatcher
     }
     //---------------------------------------------------------------
     //---------------------------------------------------------------
+    
+    // hwellmann: added getter and setter to avoid using Plexus Container
     
     public void setCipher( PlexusCipher cipher )
     {

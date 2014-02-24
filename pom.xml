@@ -198,6 +198,18 @@
             </dependency>
             
             <dependency>
+                <groupId>org.sonatype.plexus</groupId>
+                <artifactId>plexus-sec-dispatcher</artifactId>
+                <version>1.4</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>org.sonatype.plexus</groupId>
+                <artifactId>plexus-cipher</artifactId>
+                <version>1.7</version>
+            </dependency>
+            
+            <dependency>
                 <groupId>org.eclipse.aether</groupId>
                 <artifactId>aether-api</artifactId>
                 <version>${dependency.aether.version}</version>
