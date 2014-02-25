@@ -129,6 +129,15 @@ public class MavenConfigurationImpl
     {
         if( !contains( m_pid + MavenConstants.PROPERTY_SETTINGS_FILE ) ) {
             String spec = m_propertyResolver.get( m_pid + MavenConstants.PROPERTY_SETTINGS_FILE );
+            if (spec == null) {
+                spec = safeGetFile( System.getProperty( "user.home" ) + "/.m2/settings.xml" );
+            }
+            if (spec == null) {
+                spec = safeGetFile( System.getProperty( "maven.home" ) + "/conf/settings.xml" );
+            }
+            if (spec == null) {
+                spec = safeGetFile( System.getenv("M2_HOME") + "/conf/settings.xml" );
+            }
             if( spec != null ) {
                 try {
                     return set( m_pid + MavenConstants.PROPERTY_SETTINGS_FILE, new URL( spec ) );
@@ -151,6 +160,20 @@ public class MavenConfigurationImpl
             }
         }
         return get( m_pid + MavenConstants.PROPERTY_SETTINGS_FILE );
+    }
+
+    private String safeGetFile( String path ) {
+         if ( path != null ) {
+             File file = new File( path );
+             if ( file.exists() && file.canRead() && file.isFile() ) {
+                 try {
+                     return file.toURI().toURL().toExternalForm();
+                 } catch (MalformedURLException e) {
+                     // Ignore
+                 }
+             }
+         }
+         return null;
     }
 
     /**
@@ -321,6 +344,9 @@ public class MavenConfigurationImpl
     public MavenRepositoryURL getDefaultLocalRepository() {
         if (settings != null) {
             String spec = settings.getLocalRepository();
+            if (spec == null) {
+                spec =  System.getProperty("user.home") + "/.m2/repository";
+            }
             if (!spec.toLowerCase().contains("@snapshots")) {
                 spec += "@snapshots";
             }
