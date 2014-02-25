@@ -11,7 +11,6 @@ Export-Service:\
   org.osgi.service.url.URLStreamHandlerService; url.handler.protocol=wrap
 
 Import-Package:\
-  ${bundle.namespace}; version="${pom.version}",\
   javax.net.ssl,\
   javax.xml.transform; resolution:=optional,\
   javax.xml.transform.stream; resolution:=optional,\
@@ -20,9 +19,7 @@ Import-Package:\
   org.osgi.service.log; resolution:=optional,\
   org.w3c.dom; resolution:=optional,\
   org.xml.sax; resolution:=optional,\
-  org.osgi.framework; version="[1.0.0,2.0.0)",\
-  org.osgi.service.cm; version="[1.0.0,2.0.0)"; resolution:=optional,\
-  org.osgi.service.url; version="[1.0.0,2.0.0)",\
+  org.osgi.service.cm; resolution:=optional,\
   !org.slf4j.impl,\
   *
   

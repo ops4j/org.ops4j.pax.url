@@ -11,13 +11,8 @@ Export-Service:\
   org.osgi.service.url.URLStreamHandlerService; url.handler.protocol=obr
 
 Import-Package:\
-  ${bundle.namespace}; version="${pom.version}",\
-  javax.net.ssl,\
   org.osgi.service.obr; version="0.0.0",\
-  org.osgi.framework; version="[1.0.0,2.0.0)",\
-  org.osgi.service.cm; version="[1.0.0,2.0.0)"; resolution:=optional,\
-  org.osgi.service.url; version="[1.0.0,2.0.0)",\
-  org.osgi.util.tracker; version="[1.3.0,2.0.0)",\
+  org.osgi.service.cm; resolution:=optional,\
   *
 
 Export-Package:\

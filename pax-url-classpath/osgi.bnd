@@ -11,10 +11,7 @@ Export-Service:\
   org.osgi.service.url.URLStreamHandlerService; url.handler.protocol=classpath
 
 Import-Package:\
-  ${bundle.namespace}; version="${pom.version}",\
-  org.osgi.framework; version="[1.0.0,2.0.0)",\
-  org.osgi.service.cm; version="[1.0.0,2.0.0)"; resolution:=optional,\
-  org.osgi.service.url; version="[1.0.0,2.0.0)",\
+  org.osgi.service.cm; resolution:=optional,\
   !org.slf4j.impl,\
   *
   
