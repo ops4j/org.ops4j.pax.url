@@ -37,4 +37,5 @@ Private-Package:\
   Include-Resource,\
   Private-Package,\
   Embed-Dependency,\
-  Embed-Transitive  
+  Embed-Transitive,\
+  Ignore-Package

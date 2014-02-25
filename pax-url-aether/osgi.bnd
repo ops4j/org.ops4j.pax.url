@@ -89,4 +89,5 @@ Ignore-Package:\
   Private-Package,\
   Embed-Dependency,\
   TEST_REPO,\
-  Embed-Transitive
+  Embed-Transitive,\
+  Ignore-Package
