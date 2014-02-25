@@ -29,6 +29,20 @@
       <plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>uber</id>
+              <goals>
+                <goal>bundle</goal>
+              </goals>
+              <configuration>
+                <classifier>uber</classifier>
+                <instructions>
+                  <_include>-osgi-uber.bnd</_include>
+                </instructions>
+              </configuration>
+            </execution>
+          </executions>
       </plugin>
     </plugins>
   </build>
