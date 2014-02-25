@@ -316,6 +316,9 @@ public class MavenConfigurationImpl
             if( spec == null && settings != null ) {
                 spec = settings.getLocalRepository();
             }
+            if( spec == null ) {
+                spec =  System.getProperty("user.home") + "/.m2/repository";
+            }
             if( spec != null ) {
                 if( !spec.toLowerCase().contains( "@snapshots" ) ) {
                     spec += "@snapshots";

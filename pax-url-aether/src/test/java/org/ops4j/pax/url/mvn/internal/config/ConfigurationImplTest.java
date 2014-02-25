@@ -141,7 +141,9 @@ public class ConfigurationImplTest
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.settings" ) ).andReturn( null ).atLeastOnce();
         replay( propertyResolver );
         MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
-        assertEquals( "Settings", null, config.getSettingsFileUrl() );
+        URL settings = config.getSettingsFileUrl();
+        assertNotNull( settings );
+        assertEquals( "Settings", "file:" + System.getProperty("user.home") + "/.m2/settings.xml", settings.toExternalForm() );
         verify( propertyResolver );
     }
 
@@ -544,7 +546,9 @@ public class ConfigurationImplTest
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null ).atLeastOnce();
         replay( propertyResolver );
         MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
-        assertEquals( "Local repository", null, config.getLocalRepository() );
+        MavenRepositoryURL localRepo = config.getLocalRepository();
+        assertNotNull( localRepo );
+        assertEquals( "Local repository", System.getProperty("user.home") + "/.m2/repository", localRepo.getFile().toString() );
         verify( propertyResolver );
     }
 
