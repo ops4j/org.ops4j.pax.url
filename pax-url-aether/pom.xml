@@ -56,6 +56,44 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.2</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <artifactSet>
+                                <includes>
+                                    <include>null:null</include>
+                                </includes>
+                            </artifactSet>
+                            <relocations>
+                                <relocation>
+                                    <shadedPattern>shaded.</shadedPattern>
+                                    <includes>
+                                        <include>org.apache.commons.io.**</include>
+                                        <include>org.apache.maven.**</include>
+                                        <include>org.codehaus.plexus.**</include>
+                                        <include>org.eclipse.aether.**</include>
+                                        <include>org.ops4j.io.**</include>
+                                        <include>org.ops4j.lang.**</include>
+                                        <include>org.ops4j.net.**</include>
+                                        <include>org.ops4j.pax.swissbox.**</include>
+                                        <include>org.ops4j.util.**</include>
+                                        <include>org.ops4j.monitors.**</include>
+                                        <include>org.sonatype.plexus.**</include>
+                                    </includes>
+                                </relocation>
+                            </relocations>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <environmentVariables>

@@ -19,12 +19,7 @@ Import-Package:\
   javax.xml.parsers,\
   org.osgi.service.cm; resolution:=optional,\
   javax.annotation.processing; resolution:=optional,\
-  javax.lang.model; resolution:=optional,\
-  javax.lang.model.element; resolution:=optional,\
-  javax.lang.model.util; resolution:=optional,\
-  javax.tools; resolution:=optional,\
   org.osgi.util.tracker,\
-  org.testng.annotations; resolution:=optional,\
   !com.google.inject.*,\
   !org.apache.commons.lang.*,\
   !org.codehaus.classworlds.*,\
