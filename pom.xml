@@ -51,8 +51,9 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <dependency.aether.version>0.9.0.M4</dependency.aether.version>
         <dependency.base.version>1.4.0</dependency.base.version>
-        <!-- higher versions of logback import slf4j 1.7  -->
+        <!-- higher versions of logback import slf4j 1.7 -->
         <dependency.logback.version>1.0.7</dependency.logback.version>
+        <dependency.maven.version>3.1.1</dependency.maven.version>
         <dependency.paxexam.version>3.4.0</dependency.paxexam.version>
         <dependency.swissbox.version>1.7.0</dependency.swissbox.version>
         <dependency.slf4j.version>1.6.6</dependency.slf4j.version>
@@ -113,6 +114,11 @@
                         </instructions>
                     </configuration>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>2.2</version>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>
@@ -172,67 +178,102 @@
                 <artifactId>pax-swissbox-tracker</artifactId>
                 <version>${dependency.swissbox.version}</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>org.apache.maven.wagon</groupId>
                 <artifactId>wagon-file</artifactId>
                 <version>${dependency.wagon.version}</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>org.apache.maven.wagon</groupId>
                 <artifactId>wagon-http-lightweight</artifactId>
                 <version>${dependency.wagon.version}</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>org.apache.maven.wagon</groupId>
                 <artifactId>wagon-provider-api</artifactId>
                 <version>${dependency.wagon.version}</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-utils</artifactId>
                 <version>3.0.15</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>org.sonatype.plexus</groupId>
                 <artifactId>plexus-sec-dispatcher</artifactId>
                 <version>1.4</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>org.sonatype.plexus</groupId>
                 <artifactId>plexus-cipher</artifactId>
                 <version>1.7</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>org.eclipse.aether</groupId>
                 <artifactId>aether-api</artifactId>
                 <version>${dependency.aether.version}</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>org.eclipse.aether</groupId>
                 <artifactId>aether-impl</artifactId>
                 <version>${dependency.aether.version}</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>org.eclipse.aether</groupId>
                 <artifactId>aether-spi</artifactId>
                 <version>${dependency.aether.version}</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>org.eclipse.aether</groupId>
                 <artifactId>aether-util</artifactId>
                 <version>${dependency.aether.version}</version>
             </dependency>
-            
+
+            <dependency>
+                <groupId>org.eclipse.aether</groupId>
+                <artifactId>aether-connector-basic</artifactId>
+                <version>${dependency.aether.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.eclipse.aether</groupId>
+                <artifactId>aether-transport-wagon</artifactId>
+                <version>${dependency.aether.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.sonatype.sisu</groupId>
+                        <artifactId>sisu-inject-plexus</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.codehaus.plexus</groupId>
+                        <artifactId>plexus-classworlds</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-aether-provider</artifactId>
+                <version>${dependency.maven.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-settings-builder</artifactId>
+                <version>${dependency.maven.version}</version>
+            </dependency>
+
+
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
