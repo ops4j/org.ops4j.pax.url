@@ -35,6 +35,7 @@ import org.sonatype.plexus.components.sec.dispatcher.model.SettingsSecurity;
  * @plexus.component role-hint="default"
  * @author Oleg Gusakov</a>
  */
+@SuppressWarnings("all")
 public class PaxUrlSecDispatcher
 implements SecDispatcher
 {
