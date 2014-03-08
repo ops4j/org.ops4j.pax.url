@@ -7,7 +7,7 @@
     <mirror>
       <id>mirror1</id>
       <name>Mirror 1</name>
-      <url>http://localhost:8181</url>
+      <url>http://localhost:${jetty.http.port}</url>
       <mirrorOf>external:*</mirrorOf>
     </mirror>
   </mirrors>

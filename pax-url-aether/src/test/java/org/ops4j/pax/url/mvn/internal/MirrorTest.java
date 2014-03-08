@@ -40,7 +40,8 @@ public class MirrorTest {
     public void startHttp() throws Exception {
         server = new Server();
         SelectChannelConnector connector = new SelectChannelConnector();
-        connector.setPort( 8181 );
+        String portNumber = System.getProperty( "jetty.http.port", "8181" );
+        connector.setPort( Integer.parseInt( portNumber ) );
         server.addConnector( connector );
 
         ResourceHandler resource_handler = new ResourceHandler();
@@ -70,7 +71,7 @@ public class MirrorTest {
             DefaultSettingsBuilderFactory factory = new DefaultSettingsBuilderFactory();
             DefaultSettingsBuilder builder = factory.newInstance();
             SettingsBuildingRequest request = new DefaultSettingsBuildingRequest();
-            request.setUserSettingsFile( new File( settingsPath ) );
+            request.setUserSettingsFile( new File( "target/test-classes", settingsPath ) );
             try {
                 SettingsBuildingResult result = builder.build( request );
                 assertThat( result, is( notNullValue() ) );
@@ -106,7 +107,7 @@ public class MirrorTest {
     @Test
     public void mirror1() throws IOException, InterruptedException {
 
-        MavenConfigurationImpl config = getConfig( "src/test/resources/settings-mirror1.xml",
+        MavenConfigurationImpl config = getConfig( "settings-mirror1.xml",
             "fake", "http://google.com/repo" );
 
         Settings settings = config.getSettings();
@@ -122,7 +123,7 @@ public class MirrorTest {
 
     @Test( expected = IOException.class )
     public void no_mirror_notfound() throws IOException {
-        MavenConfigurationImpl config = getConfig( "src/test/resources/settings-mirror2.xml",
+        MavenConfigurationImpl config = getConfig( "settings-mirror2.xml",
             "fake", "http://qfdqfqfqf.fra/repo" );
         Settings settings = config.getSettings();
         File localRepo = new File( settings.getLocalRepository() );
@@ -135,7 +136,7 @@ public class MirrorTest {
 
     @Test
     public void mirror2() throws IOException, InterruptedException {
-        MavenConfigurationImpl config = getConfig( "src/test/resources/settings-mirror2.xml",
+        MavenConfigurationImpl config = getConfig( "settings-mirror2.xml",
             "fake", "http://qfdqfqfqf.fra/repo" );
 
         Settings settings = config.getSettings();

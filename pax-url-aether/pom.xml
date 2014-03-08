@@ -96,7 +96,28 @@
                     <environmentVariables>
                         <NEXUS_ROOT>http://oss.sonatype.org</NEXUS_ROOT>
                     </environmentVariables>
+                    <systemPropertyVariables>
+                        <jetty.http.port>${jetty.http.port}</jetty.http.port>
+                    </systemPropertyVariables>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>reserve-port</id>
+                        <goals>
+                            <goal>reserve-network-port</goal>
+                        </goals>
+                        <phase>validate</phase>
+                        <configuration>
+                            <portNames>
+                                <portName>jetty.http.port</portName>
+                            </portNames>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
