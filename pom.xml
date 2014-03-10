@@ -17,7 +17,7 @@
     <name>OPS4J Pax Url</name>
     <description>Pax Url - OSGi URL handlers</description>
 
-    <url>http://team.ops4j.org/wiki/display/paxurl</url>
+    <url>${wiki.url}</url>
 
     <modules>
         <module>pax-url-aether</module>
@@ -36,7 +36,7 @@
 
     <issueManagement>
         <system>jira</system>
-        <url>http://issues.ops4j.org/jira/browse/PAXURL</url>
+        <url>http://team.ops4j.org/browse/PAXURL</url>
     </issueManagement>
 
     <scm>
@@ -58,6 +58,7 @@
         <dependency.swissbox.version>1.7.0</dependency.swissbox.version>
         <dependency.slf4j.version>1.6.6</dependency.slf4j.version>
         <dependency.wagon.version>2.5</dependency.wagon.version>
+        <wiki.url>http://team.ops4j.org/wiki/display/paxurl</wiki.url>
     </properties>
 
     <build>
@@ -110,6 +111,7 @@
                     <extensions>true</extensions>
                     <configuration>
                         <instructions>
+                            <Bundle-DocURL>${wiki.url}</Bundle-DocURL>
                             <_include>-osgi.bnd</_include>
                         </instructions>
                     </configuration>

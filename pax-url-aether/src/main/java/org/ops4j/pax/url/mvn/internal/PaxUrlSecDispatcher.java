@@ -153,14 +153,14 @@ implements SecDispatcher
             if( attrs == null || attrs.length() < 1 )
                 return null;
             
-            Map res = null;
+            Map<String, String> res = null;
             
             StringTokenizer st = new StringTokenizer( attrs, ", " );
             
             while( st.hasMoreTokens() )
             {
                 if( res == null )
-                    res = new HashMap( st.countTokens() );
+                    res = new HashMap<String, String>( st.countTokens() );
                 
                 String pair = st.nextToken();
                 
