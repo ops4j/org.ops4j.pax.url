@@ -150,7 +150,7 @@ class ResourceAssembly
             // try out a zip from the file we have
             {
                 zip = new ZipFile( file );
-                baseUrl = file.toURL();
+                baseUrl = file.toURI().toURL();
             }
             else if( url != null )
             {

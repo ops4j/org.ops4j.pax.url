@@ -100,7 +100,7 @@ class FileResource
     {
         try
         {
-            return m_file.toURL();
+            return m_file.toURI().toURL();
         }
         catch( MalformedURLException e )
         {

@@ -31,7 +31,7 @@ public class ResourceAssembyTest
         throws IOException
     {
         final File dir = FileUtils.getFileFromClasspath( "assemblies/simple" );
-        final ResourceAssembly assembly = new ResourceAssembly(
+        new ResourceAssembly(
             new Source[]{ new PathEncodedSource( dir.getCanonicalPath() ) },
             MergePolicy.FIRST
         );
@@ -42,7 +42,7 @@ public class ResourceAssembyTest
         throws IOException
     {
         final File dir = FileUtils.getFileFromClasspath( "assemblies/simple.zip" );
-        final ResourceAssembly assembly = new ResourceAssembly(
+        new ResourceAssembly(
             new Source[]{ new PathEncodedSource( dir.getCanonicalPath() ) },
             MergePolicy.FIRST
         );
@@ -53,7 +53,7 @@ public class ResourceAssembyTest
         throws IOException
     {
         final File dir = FileUtils.getFileFromClasspath( "assemblies/simple.zip" );
-        final ResourceAssembly assembly = new ResourceAssembly(
+        new ResourceAssembly(
             new Source[]{ new PathEncodedSource( dir.getCanonicalPath() + "!/subdir/**" ) },
             MergePolicy.FIRST
         );
@@ -64,7 +64,7 @@ public class ResourceAssembyTest
         throws IOException
     {
         final File dir = FileUtils.getFileFromClasspath( "assemblies/simple.zip" );
-        final ResourceAssembly assembly = new ResourceAssembly(
+        new ResourceAssembly(
             new Source[]{ new PathEncodedSource( dir.getCanonicalPath() + "!/subdir/*.jar&&*.jar" ) },
             MergePolicy.FIRST
         );

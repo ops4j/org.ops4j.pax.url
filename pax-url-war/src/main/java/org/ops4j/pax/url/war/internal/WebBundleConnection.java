@@ -58,7 +58,7 @@ public class WebBundleConnection extends WarConnection {
             {
                 isBundle = true;
             }
-
+            jis.close();
         }
         catch (IOException e)
         {

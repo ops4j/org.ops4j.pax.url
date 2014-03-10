@@ -33,7 +33,7 @@ public class AssemblyDescriptorParserTest
         throws IOException
     {
         final File descriptor = FileUtils.getFileFromClasspath( "assemblies/simple.descriptor" );
-        final AssemblyDescriptorParser parser = new AssemblyDescriptorParser( descriptor.toURL().toExternalForm() );
+        final AssemblyDescriptorParser parser = new AssemblyDescriptorParser( descriptor.toURI().toURL().toExternalForm() );
         final String manifest = parser.manifest();
         final Source[] sources = parser.sources();
 

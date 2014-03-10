@@ -84,7 +84,7 @@ public class WarReferenceConnection
             final File instructionsFile = new File( getURL().getPath() );
             if( instructionsFile.exists() && instructionsFile.isFile() )
             {
-                return instructionsFile.toURL();
+                return instructionsFile.toURI().toURL();
             }
             throw e;
         }

@@ -144,7 +144,7 @@ public class ParserTest
     {
         Parser parser = new Parser(
             "file:toWrap.jar,"
-            + FileUtils.getFileFromClasspath( "parser/instructions.properties" ).toURL().toExternalForm()
+            + FileUtils.getFileFromClasspath( "parser/instructions.properties" ).toURI().toURL().toExternalForm()
         );
         assertEquals( "Wrapped Jar URL", new URL( "file:toWrap.jar" ), parser.getWrappedJarURL() );
         Properties props = parser.getWrappingProperties();
@@ -159,7 +159,7 @@ public class ParserTest
     {
         Parser parser = new Parser(
             "file:toWrap.jar,jar:"
-            + FileUtils.getFileFromClasspath( "parser/instructions.jar" ).toURL().toExternalForm()
+            + FileUtils.getFileFromClasspath( "parser/instructions.jar" ).toURI().toURL().toExternalForm()
             + "!/instructions.properties"
         );
         assertEquals( "Wrapped Jar URL", new URL( "file:toWrap.jar" ), parser.getWrappedJarURL() );
@@ -175,7 +175,7 @@ public class ParserTest
     {
         Parser parser = new Parser(
             "file:toWrap.jar,"
-            + FileUtils.getFileFromClasspath( "parser/instructions.properties" ).toURL().toExternalForm()
+            + FileUtils.getFileFromClasspath( "parser/instructions.properties" ).toURI().toURL().toExternalForm()
             + "$Bundle-Name=v3&Bundle-URL=v4"
         );
         assertEquals( "Wrapped Jar URL", new URL( "file:toWrap.jar" ), parser.getWrappedJarURL() );

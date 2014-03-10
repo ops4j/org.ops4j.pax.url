@@ -68,7 +68,7 @@ public class ConnectionTest
         expect( bundle1.getSymbolicName() ).andReturn( "bundle1" );
         expect( bundle2.getSymbolicName() ).andReturn( "bundle2" );
         expect( bundle2.getResource( "fake" ) ).andReturn(
-            FileUtils.getFileFromClasspath( "connection/resource" ).toURL()
+            FileUtils.getFileFromClasspath( "connection/resource" ).toURI().toURL()
         );
         replay( context, bundle1, bundle2 );
         InputStream is = new Connection( new URL( "http://bundle2/fake" ), context ).getInputStream();
@@ -86,7 +86,7 @@ public class ConnectionTest
         expect( context.getBundles() ).andReturn( new Bundle[]{ bundle1, bundle2 } );
         expect( bundle1.getResource( "fake" ) ).andReturn( null );
         expect( bundle2.getResource( "fake" ) ).andReturn(
-            FileUtils.getFileFromClasspath( "connection/resource" ).toURL()
+            FileUtils.getFileFromClasspath( "connection/resource" ).toURI().toURL()
         );
         replay( context, bundle1, bundle2 );
         InputStream is = new Connection( new URL( "http:fake" ), context ).getInputStream();
@@ -101,7 +101,7 @@ public class ConnectionTest
         BundleContext context = createMock( BundleContext.class );
         expect( context.getBundles() ).andReturn( null );
         replay( context );
-        InputStream is = new Connection( new URL( "http:nonExisting" ), context ).getInputStream();
+        new Connection( new URL( "http:nonExisting" ), context ).getInputStream();
         verify( context );
     }
     

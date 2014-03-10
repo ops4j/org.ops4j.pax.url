@@ -19,7 +19,7 @@ public class ParserTest
         throws MalformedURLException
     {
         File f = new File( "doesnotexist" );
-        String ext = f.toURL().toExternalForm();
+        String ext = f.toURI().toURL().toExternalForm();
         new Parser( "http:" + ext );
     }
 
@@ -29,7 +29,7 @@ public class ParserTest
     {
         File f = new File( this.getClass().getResource( "/test.txt" ).toURI() );
 
-        String ext = f.toURL().toExternalForm();
+        String ext = f.toURI().toURL().toExternalForm();
         new Parser( "http:" + ext );
     }
 
@@ -38,8 +38,6 @@ public class ParserTest
         throws IOException
     {
         File f = new File( System.getProperty( "java.io.tmpdir" ) );
-        // Parser needs it as url
-        String ext = f.toURL().toExternalForm();
 
         // use dummy protocol for testing
         assertEquals( f.getCanonicalPath(),
@@ -52,8 +50,6 @@ public class ParserTest
         throws IOException, URISyntaxException
     {
         File f = new File( System.getProperty( "java.io.tmpdir" ) );
-        // Parser needs it as url
-        String ext = f.toURL().toExternalForm();
         Parser parser =
             new Parser( "http:" + f.getCanonicalPath() + "$tail=org/ops4j/pax/url/dir/internal/Activator.class" );
         // use dummy protocol for testing

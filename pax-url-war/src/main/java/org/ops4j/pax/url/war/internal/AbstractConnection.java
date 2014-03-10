@@ -243,7 +243,7 @@ abstract class AbstractConnection
             final JarURLConnection conn = (JarURLConnection) new URL( "jar:" + warUri + "!/" ).openConnection();
             conn.setUseCaches( false );
             jarFile = conn.getJarFile();
-            Enumeration entries = jarFile.entries();
+            Enumeration<JarEntry> entries = jarFile.entries();
             while( entries.hasMoreElements() )
             {
             	JarEntry entry = (JarEntry) entries.nextElement();
@@ -358,7 +358,7 @@ abstract class AbstractConnection
             final JarURLConnection conn = (JarURLConnection) new URL( "jar:" + warUri + "!/" ).openConnection();
             conn.setUseCaches( false );
             jarFile = conn.getJarFile();
-            Enumeration entries = jarFile.entries();
+            Enumeration<JarEntry> entries = jarFile.entries();
             while( entries.hasMoreElements() )
             {
                 JarEntry entry = (JarEntry) entries.nextElement();

@@ -49,16 +49,13 @@ import org.ops4j.pax.url.dir.internal.FileTailImpl;
 public class Connection extends URLConnection
 {
 
-    private Configuration m_config;
     private Parser m_parser;
 
     public Connection( URL url, Configuration config )
     {
         super( url );
         NullArgumentException.validateNotNull( url, "url should be provided" );
-        NullArgumentException.validateNotNull( config, "config should be provided" );
 
-        m_config = config;
         try
         {
             m_parser = new Parser( url.toExternalForm() );

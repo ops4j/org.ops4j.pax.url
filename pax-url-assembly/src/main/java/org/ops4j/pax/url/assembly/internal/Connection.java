@@ -112,7 +112,7 @@ class Connection
             }
             catch( MalformedURLException e )
             {
-                return new File( manifest ).toURL();
+                return new File( manifest ).toURI().toURL();
             }
         }
         if( resources != null )

@@ -1,11 +1,13 @@
 package org.ops4j.pax.url.dir.internal.bundle;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.io.IOException;
-import static junit.framework.Assert.*;
+
 import org.junit.Test;
-import org.ops4j.pax.url.dir.internal.FileTailImpl;
 import org.ops4j.pax.url.dir.internal.FileTail;
+import org.ops4j.pax.url.dir.internal.FileTailImpl;
 
 /**
  * @author Toni Menzel (tonit)
@@ -18,7 +20,7 @@ public class FileTailTest
     public void simpleFailingAtConstruct()
         throws IOException
     {
-        FileTail loc = new FileTailImpl( null, "" );
+        new FileTailImpl( null, "" );
     }
 
     @Test
