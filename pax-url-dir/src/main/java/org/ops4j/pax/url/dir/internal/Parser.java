@@ -61,12 +61,6 @@ import org.ops4j.lang.NullArgumentException;
  */
 public class Parser
 {
-
-    /**
-     * Syntax for the url; to be shown on exception messages.
-     */
-    private static final String SYNTAX = "dir:local-file-uri[$building-m_options]";
-
     private static final String OPTION_SEPARATOR = "&";
 
     private static final String TAIL = "tail";

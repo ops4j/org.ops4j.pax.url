@@ -17,7 +17,7 @@ class OptionalConfigAdminHelper {
     }
 
     static ServiceRegistration registerManagedService(
-            final String m_pid, final BundleContext m_bundleContext, final HandlerActivator parent) {
+            final String m_pid, final BundleContext m_bundleContext, final HandlerActivator<?> parent) {
         final ManagedService managedService = new ManagedService() {
             /**
              * Sets the resolver on handler.
