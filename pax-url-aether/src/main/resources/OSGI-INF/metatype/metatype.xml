@@ -6,7 +6,11 @@
       <AD id="org.ops4j.pax.url.mvn.localRepository" type="String" default="" name="%localRepository.name" description="%localRepository.description"/>
       <AD id="org.ops4j.pax.url.mvn.defaultRepositories" type="String" default="" name="%defaultRepositories.name" description="%defaultRepositories.description"/>
       <AD id="org.ops4j.pax.url.mvn.repositories" type="String" default="" name="%repositories.name" description="%repositories.description"/>
-      <AD id="org.ops4j.pax.url.mvn.proxySupport" type="String" default="" name="%proxySupport.name" description="%proxySupport.description"/>
+      <AD id="org.ops4j.pax.url.mvn.proxySupport" type="Boolean" default="true" name="%proxySupport.name" description="%proxySupport.description"/>
+      <AD id="org.ops4j.pax.url.mvn.globalUpdatePolicy" type="String" default="daily" name="%globalUpdatePolicy.name" description="%globalUpdatePolicy.description"/>
+      <AD id="org.ops4j.pax.url.mvn.proxies" type="String" default="" name="%proxies.name" description="%proxies.description"/>
+      <AD id="org.ops4j.pax.url.mvn.security" type="String" default="" name="%security.name" description="%security.description"/>
+      <AD id="org.ops4j.pax.url.mvn.timeout" type="Integer" default="5000" name="%timeout.name" description="%timeout.description"/>
     </OCD>
     <Designate pid="org.ops4j.pax.url.mvn">
         <Object ocdref="org.ops4j.pax.url.mvn"/>

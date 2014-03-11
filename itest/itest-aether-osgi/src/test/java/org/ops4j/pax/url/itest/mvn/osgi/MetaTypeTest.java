@@ -1,0 +1,111 @@
+/*
+ * Copyright 2014 Harald Wellmann
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
+
+package org.ops4j.pax.url.itest.mvn.osgi;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.Assert.assertThat;
+import static org.ops4j.pax.exam.CoreOptions.bundle;
+import static org.ops4j.pax.exam.CoreOptions.frameworkProperty;
+import static org.ops4j.pax.exam.CoreOptions.options;
+import static org.ops4j.pax.exam.CoreOptions.systemProperty;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.hamcrest.CoreMatchers;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.Configuration;
+import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.junit.PaxExam;
+import org.ops4j.pax.swissbox.core.BundleUtils;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleException;
+import org.osgi.service.metatype.AttributeDefinition;
+import org.osgi.service.metatype.MetaTypeInformation;
+import org.osgi.service.metatype.MetaTypeService;
+import org.osgi.service.metatype.ObjectClassDefinition;
+
+/**
+ * Tests mvn: protocol handler metadata via Metatype service.
+ * 
+ * @author Harald Wellmann
+ */
+@RunWith( PaxExam.class )
+public class MetaTypeTest
+{
+
+    @Inject
+    private BundleContext bc;
+
+    @Inject
+    private MetaTypeService metaTypeService;
+
+    @Configuration
+    public Option[] config()
+    {
+        return options(
+            frameworkProperty( "osgi.console" ).value( "6666" ), //
+            systemProperty( "logback.configurationFile" ).value( "src/test/resources/logback.xml" ),
+            bundle( "file:target/bundles/pax-url-aether.jar" ), //
+            bundle( "file:target/bundles/org.apache.felix.metatype.jar" ), //
+            bundle( "file:target/bundles/slf4j-api.jar" ), //
+            bundle( "file:target/bundles/logback-classic.jar" ), //
+            bundle( "file:target/bundles/logback-core.jar" ), //
+            bundle( "file:target/bundles/org.ops4j.pax.tipi.junit.jar" ), //
+            bundle( "file:target/bundles/org.ops4j.pax.tipi.hamcrest.core.jar" ) );
+    }
+
+    @Test
+    public void checkMetadata() throws IOException, BundleException
+    {
+        Bundle bundle = BundleUtils.getBundle( bc, "org.ops4j.pax.url.mvn" );
+        assertThat( bundle, is( notNullValue() ) );
+
+        MetaTypeInformation metaTypeInformation = metaTypeService.getMetaTypeInformation( bundle );
+        assertThat( metaTypeInformation, is( notNullValue() ) );
+
+        String[] pids = metaTypeInformation.getPids();
+        assertThat( pids, is( notNullValue() ) );
+        assertThat( pids.length, is( 1 ) );
+        assertThat( pids[0], is( "org.ops4j.pax.url.mvn" ) );
+
+        ObjectClassDefinition ocd = metaTypeInformation.getObjectClassDefinition( pids[0], null );
+        assertThat( ocd, is( notNullValue() ) );
+
+        assertThat( ocd.getID(), is( "org.ops4j.pax.url.mvn" ) );
+        AttributeDefinition[] attrDefs = ocd.getAttributeDefinitions( ObjectClassDefinition.ALL );
+        assertThat( attrDefs, is( notNullValue() ) );
+        assertThat( attrDefs.length, is( 10 ) );
+
+        List<String> ids = new ArrayList<String>();
+        for( AttributeDefinition attrDef : attrDefs )
+        {
+            String id = attrDef.getID().replace( "org.ops4j.pax.url.mvn.", "" );
+            ids.add( id );
+        }
+        assertThat( ids, CoreMatchers.hasItems( "certificateCheck", "defaultRepositories",
+            "globalUpdatePolicy", "localRepository", "proxies", "proxySupport", "repositories",
+            "security", "settings", "timeout" ) );
+    }
+}
