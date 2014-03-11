@@ -15,7 +15,7 @@
  */
 package org.ops4j.pax.url.mvn.internal;
 
-import static org.ops4j.pax.url.mvn.Parser.VERSION_LATEST;
+import static org.ops4j.pax.url.mvn.internal.Parser.VERSION_LATEST;
 
 import java.io.File;
 import java.io.FileInputStream;

@@ -27,7 +27,6 @@ import java.net.URLConnection;
 import java.util.Arrays;
 
 import org.ops4j.lang.NullArgumentException;
-import org.ops4j.pax.url.mvn.Parser;
 import org.ops4j.pax.url.mvn.ServiceConstants;
 import org.ops4j.pax.url.mvn.internal.config.MavenConfiguration;
 import org.ops4j.pax.url.mvn.internal.config.MavenConfigurationImpl;

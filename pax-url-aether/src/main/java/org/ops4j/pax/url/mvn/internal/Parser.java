@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.url.mvn;
+package org.ops4j.pax.url.mvn.internal;
 
 import java.net.MalformedURLException;
 
