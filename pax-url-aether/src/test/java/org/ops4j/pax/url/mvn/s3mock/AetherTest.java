@@ -27,7 +27,6 @@ import org.ops4j.pax.url.mvn.ServiceConstants;
 import org.ops4j.pax.url.mvn.UnitHelp;
 import org.ops4j.pax.url.mvn.internal.AetherBasedResolver;
 import org.ops4j.pax.url.mvn.internal.config.MavenConfiguration;
-import org.ops4j.pax.url.mvn.internal.config.MavenConstants;
 
 public class AetherTest extends TestBase
 {
@@ -52,12 +51,12 @@ public class AetherTest extends TestBase
         Properties props = new Properties();
 
         props.setProperty( //
-            ServiceConstants.PID + MavenConstants.PROPERTY_LOCAL_REPOSITORY,//
+            ServiceConstants.PID + ServiceConstants.PROPERTY_LOCAL_REPOSITORY,//
             Util.getTestRepo().toURI().toASCIIString() //
             );
 
         props.setProperty( //
-            ServiceConstants.PID + MavenConstants.PROPERTY_SETTINGS_FILE, //
+            ServiceConstants.PID + ServiceConstants.PROPERTY_SETTINGS_FILE, //
             Util.getTestSettings().toURI().toASCIIString() //
             );
 

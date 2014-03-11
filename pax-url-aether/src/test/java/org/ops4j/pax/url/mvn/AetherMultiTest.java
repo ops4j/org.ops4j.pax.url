@@ -19,16 +19,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.junit.Assert;
-
 import org.apache.maven.settings.Settings;
 import org.eclipse.aether.collection.DependencyCollectionException;
 import org.eclipse.aether.resolution.ArtifactResolutionException;
+import org.junit.Assert;
 import org.junit.Test;
 import org.ops4j.pax.url.mvn.internal.AetherBasedResolver;
 import org.ops4j.pax.url.mvn.internal.config.MavenConfiguration;
 import org.ops4j.pax.url.mvn.internal.config.MavenConfigurationImpl;
-import org.ops4j.pax.url.mvn.internal.config.MavenConstants;
 import org.ops4j.util.property.PropertiesPropertyResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,12 +51,12 @@ public class AetherMultiTest {
     {
         Properties p = new Properties();
         String localRepo = getCache().toURI().toASCIIString();
-        p.setProperty( ServiceConstants.PID + MavenConstants.PROPERTY_LOCAL_REPOSITORY, localRepo );
+        p.setProperty( ServiceConstants.PID + ServiceConstants.PROPERTY_LOCAL_REPOSITORY, localRepo );
         
         File target = new File("target/test-classes/repomulti");
         Assert.assertTrue("Can not find test repo " + target.toURI().toString(), target.isDirectory());
         String multiRepo = target.toURI().toString() + "@id=multitest@multi";
-        p.setProperty( ServiceConstants.PID + MavenConstants.PROPERTY_REPOSITORIES, multiRepo);
+        p.setProperty( ServiceConstants.PID + ServiceConstants.PROPERTY_REPOSITORIES, multiRepo);
         MavenConfigurationImpl config = new MavenConfigurationImpl( new PropertiesPropertyResolver( p ), ServiceConstants.PID );
         Settings settings = new Settings();
         settings.setLocalRepository( localRepo );

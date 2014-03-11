@@ -30,7 +30,6 @@ import org.ops4j.lang.NullArgumentException;
 import org.ops4j.pax.url.mvn.ServiceConstants;
 import org.ops4j.pax.url.mvn.internal.config.MavenConfiguration;
 import org.ops4j.pax.url.mvn.internal.config.MavenConfigurationImpl;
-import org.ops4j.pax.url.mvn.internal.config.MavenConstants;
 import org.ops4j.pax.url.mvn.internal.config.MavenRepositoryURL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,7 +101,7 @@ public class Connection
         if ( repoUrl != null )
         {
             MavenConfigurationImpl config = (MavenConfigurationImpl) configuration;
-            config.set( ServiceConstants.PID + MavenConstants.PROPERTY_REPOSITORIES, Arrays.asList( repoUrl ) );
+            config.set( ServiceConstants.PID + ServiceConstants.PROPERTY_REPOSITORIES, Arrays.asList( repoUrl ) );
         }
         m_aetherBasedResolver = new AetherBasedResolver( configuration );
     }

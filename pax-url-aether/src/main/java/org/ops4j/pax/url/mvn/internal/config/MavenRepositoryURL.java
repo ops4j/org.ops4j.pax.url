@@ -24,6 +24,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 import org.ops4j.lang.NullArgumentException;
+import org.ops4j.pax.url.mvn.ServiceConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,7 +76,7 @@ public class MavenRepositoryURL
     {
         NullArgumentException.validateNotEmpty( repositorySpec, true, "Repository spec" );
 
-        final String[] segments = repositorySpec.split( MavenConstants.SEPARATOR_OPTIONS );
+        final String[] segments = repositorySpec.split( ServiceConstants.SEPARATOR_OPTIONS );
         final StringBuilder urlBuilder = new StringBuilder();
         boolean snapshotEnabled = false;
         boolean releasesEnabled = true;
@@ -86,19 +87,19 @@ public class MavenRepositoryURL
         for( int i = 0; i < segments.length; i++ )
         {
             String segment = segments[i].trim(); 
-            if( segment.equalsIgnoreCase( MavenConstants.OPTION_ALLOW_SNAPSHOTS ) )
+            if( segment.equalsIgnoreCase( ServiceConstants.OPTION_ALLOW_SNAPSHOTS ) )
             {
                 snapshotEnabled = true;
             }
-            else if( segment.equalsIgnoreCase( MavenConstants.OPTION_DISALLOW_RELEASES ) )
+            else if( segment.equalsIgnoreCase( ServiceConstants.OPTION_DISALLOW_RELEASES ) )
             {
                 releasesEnabled = false;
             }
-            else if( segment.equalsIgnoreCase( MavenConstants.OPTION_MULTI ) )
+            else if( segment.equalsIgnoreCase( ServiceConstants.OPTION_MULTI ) )
             {
                 multi = true;
             }
-            else if( segment.startsWith( MavenConstants.OPTION_ID ) )
+            else if( segment.startsWith( ServiceConstants.OPTION_ID ) )
             {
                 try {
                     name = segments[ i ].split( "=" )[1].trim();
@@ -110,7 +111,7 @@ public class MavenRepositoryURL
             {
                 if( i > 0 )
                 {
-                    urlBuilder.append( MavenConstants.SEPARATOR_OPTIONS );
+                    urlBuilder.append( ServiceConstants.SEPARATOR_OPTIONS );
                 }
                 urlBuilder.append( segments[ i ] );
             }

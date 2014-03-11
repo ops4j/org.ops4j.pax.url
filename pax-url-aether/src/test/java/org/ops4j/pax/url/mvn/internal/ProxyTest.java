@@ -19,9 +19,9 @@ import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.ops4j.pax.url.mvn.ServiceConstants;
 import org.ops4j.pax.url.mvn.UnitHelp;
 import org.ops4j.pax.url.mvn.internal.config.MavenConfiguration;
-import org.ops4j.pax.url.mvn.internal.config.MavenConstants;
 
 public class ProxyTest
 {
@@ -61,8 +61,8 @@ public class ProxyTest
         String repoPath = "target/localrepo_" + UUID.randomUUID();
 
         Properties properties = new Properties();
-        properties.setProperty( TEST_PID + MavenConstants.PROPERTY_LOCAL_REPOSITORY, repoPath );
-        properties.setProperty( TEST_PID + MavenConstants.PROPERTY_REPOSITORIES,
+        properties.setProperty( TEST_PID + ServiceConstants.PROPERTY_LOCAL_REPOSITORY, repoPath );
+        properties.setProperty( TEST_PID + ServiceConstants.PROPERTY_REPOSITORIES,
             "http://qfdqfqfqf.fra@id=fake" );
 
         File file = new File( "target/test-classes/settings-proxy1.xml" );

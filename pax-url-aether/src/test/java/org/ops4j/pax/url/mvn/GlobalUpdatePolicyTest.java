@@ -30,7 +30,6 @@ import org.apache.maven.shared.invoker.Invoker;
 import org.junit.Test;
 import org.ops4j.pax.url.mvn.internal.AetherBasedResolver;
 import org.ops4j.pax.url.mvn.internal.config.MavenConfiguration;
-import org.ops4j.pax.url.mvn.internal.config.MavenConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -132,11 +131,11 @@ public class GlobalUpdatePolicyTest
 
         /** Relax SSL requirements. */
         props.setProperty( ServiceConstants.PID
-                + MavenConstants.PROPERTY_CERTIFICATE_CHECK, "false" );
+                + ServiceConstants.PROPERTY_CERTIFICATE_CHECK, "false" );
 
         /** Enable snapshot update on every resolve request. */
         props.setProperty( ServiceConstants.PID
-                + MavenConstants.PROPERTY_GLOBAL_UPDATE_POLICY, "always" );
+                + ServiceConstants.PROPERTY_GLOBAL_UPDATE_POLICY, "always" );
 
         MavenConfiguration config = UnitHelp.getConfig( SETTINGS, props );
 

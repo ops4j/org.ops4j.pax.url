@@ -33,7 +33,6 @@ import org.apache.maven.settings.building.SettingsBuildingRequest;
 import org.apache.maven.settings.building.SettingsBuildingResult;
 import org.ops4j.pax.url.mvn.internal.config.MavenConfiguration;
 import org.ops4j.pax.url.mvn.internal.config.MavenConfigurationImpl;
-import org.ops4j.pax.url.mvn.internal.config.MavenConstants;
 import org.ops4j.util.property.PropertiesPropertyResolver;
 
 /**
@@ -101,7 +100,7 @@ public class UnitHelp
     {
 
         props.setProperty( ServiceConstants.PID
-                + MavenConstants.PROPERTY_SETTINGS_FILE, settingsFile.toURI()
+                + ServiceConstants.PROPERTY_SETTINGS_FILE, settingsFile.toURI()
             .toASCIIString() );
 
         final MavenConfigurationImpl config = new MavenConfigurationImpl(
@@ -122,7 +121,7 @@ public class UnitHelp
         }
 
         String localRepo = props.getProperty( ServiceConstants.PID
-            + MavenConstants.PROPERTY_LOCAL_REPOSITORY );
+            + ServiceConstants.PROPERTY_LOCAL_REPOSITORY );
         if (localRepo != null) {
             settings.setLocalRepository( localRepo );
         }
