@@ -23,17 +23,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.apache.maven.settings.Mirror;
-import org.apache.maven.settings.Profile;
-import org.apache.maven.settings.Repository;
 import org.apache.maven.settings.Server;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.settings.crypto.DefaultSettingsDecryptionRequest;
@@ -72,7 +68,10 @@ import org.eclipse.aether.transport.wagon.WagonTransporterFactory;
 import org.eclipse.aether.util.repository.AuthenticationBuilder;
 import org.eclipse.aether.util.repository.DefaultMirrorSelector;
 import org.eclipse.aether.util.repository.DefaultProxySelector;
+import org.eclipse.aether.util.version.GenericVersionScheme;
+import org.eclipse.aether.version.InvalidVersionSpecificationException;
 import org.eclipse.aether.version.Version;
+import org.eclipse.aether.version.VersionConstraint;
 import org.ops4j.pax.url.mvn.internal.config.MavenConfiguration;
 import org.ops4j.pax.url.mvn.internal.config.MavenRepositoryURL;
 import org.slf4j.LoggerFactory;
@@ -164,23 +163,6 @@ public class AetherBasedResolver {
         remoteRepos.addAll( resultingRepos );
     }
 
-    private Collection<Repository> getRemoteRepositories( MavenConfiguration configuration )
-        throws MalformedURLException {
-        Map<String, Repository> repoMap = new LinkedHashMap<String, Repository>();
-        List<String> activeProfiles = m_settings.getActiveProfiles();
-        for( String profileId : activeProfiles ) {
-            for( Profile profile : m_settings.getProfiles() ) {
-                if( profile.getId().equals( profileId ) ) {
-                    for( Repository repo : profile.getRepositories() ) {
-                        repoMap.put( repo.getId(), repo );
-                    }
-                }
-            }
-        }
-
-        return repoMap.values();
-    }
-
     private ProxySelector selectProxies() {
         DefaultProxySelector proxySelector = new DefaultProxySelector();
         for( org.apache.maven.settings.Proxy proxy : m_settings.getProxies() ) {
@@ -202,7 +184,7 @@ public class AetherBasedResolver {
         return selector;
     }
 
-    private List<RemoteRepository> selectRepositories( Collection<Repository> repos ) {
+    private List<RemoteRepository> selectRepositories() {
         List<RemoteRepository> list = new ArrayList<RemoteRepository>();
         List<MavenRepositoryURL> urls = Collections.emptyList();
         try {
@@ -222,7 +204,28 @@ public class AetherBasedResolver {
         
         return list;
     }
-    
+
+    List<LocalRepository> selectDefaultRepositories() {
+        List<LocalRepository> list = new ArrayList<LocalRepository>();
+        List<MavenRepositoryURL> urls = Collections.emptyList();
+        try {
+            urls = m_config.getDefaultRepositories();
+        }
+        catch( MalformedURLException exc ) {
+            LOG.error( "invalid repository URLs", exc );
+        }
+        for( MavenRepositoryURL r : urls ) {
+            if( r.isMulti() ) {
+                addLocalSubDirs(list, r.getFile());
+            }
+            else {
+                addLocalRepo(list, r);
+            }
+        }
+
+        return list;
+    }
+
     private void addSubDirs( List<RemoteRepository> list, File parentDir ) {
         if( !parentDir.isDirectory() ) {
             LOG.debug( "Repository marked with @multi does not resolve to a directory: "
@@ -258,6 +261,33 @@ public class AetherBasedResolver {
         list.add( builder.build() );
     }
     
+    private void addLocalSubDirs( List<LocalRepository> list, File parentDir ) {
+        if( !parentDir.isDirectory() ) {
+            LOG.debug( "Repository marked with @multi does not resolve to a directory: "
+                    + parentDir );
+            return;
+        }
+        for( File repo : parentDir.listFiles() ) {
+            if( repo.isDirectory() ) {
+                try {
+                    String repoURI = repo.toURI().toString() + "@id=" + repo.getName();
+                    LOG.debug( "Adding repo from inside multi dir: " + repoURI );
+                    addLocalRepo(list, new MavenRepositoryURL(repoURI));
+                }
+                catch( MalformedURLException e ) {
+                    LOG.error( "Error resolving repo url of a multi repo " + repo.toURI() );
+                }
+            }
+        }
+    }
+
+    private void addLocalRepo( List<LocalRepository> list, MavenRepositoryURL repo ) {
+        if (repo.getFile() != null) {
+            LocalRepository local = new LocalRepository( repo.getFile(), "simple" );
+            list.add( local );
+        }
+    }
+
     /**
      * Resolve maven artifact as input stream.
      */
@@ -272,22 +302,43 @@ public class AetherBasedResolver {
      */
     public File resolveFile( String groupId, String artifactId, String classifier,
         String extension, String version ) throws IOException {
-        List<RemoteRepository> remoteRepos = selectRepositories( getRemoteRepositories( m_config ) );
-        assignProxyAndMirrors( remoteRepos );
         // version = mapLatestToRange( version );
-        RepositorySystemSession session = newSession();
 
-        Artifact artifact = new DefaultArtifact( groupId, artifactId, classifier, extension,
-            version );
-        File resolved = resolve( session, remoteRepos, artifact );
+        Artifact artifact = new DefaultArtifact( groupId, artifactId, classifier, extension, version );
+
+        List<LocalRepository> defaultRepos = selectDefaultRepositories();
+        List<RemoteRepository> remoteRepos = selectRepositories();
+        assignProxyAndMirrors( remoteRepos );
+        File resolved = resolve( defaultRepos, remoteRepos, artifact );
 
         LOG.debug( "Resolved ({}) as {}", artifact.toString(), resolved.getAbsolutePath() );
         return resolved;
     }
 
-    private File resolve( RepositorySystemSession session, List<RemoteRepository> remoteRepos,
+    private File resolve( List<LocalRepository> defaultRepos, List<RemoteRepository> remoteRepos,
         Artifact artifact ) throws IOException {
+        // Try with default repositories
         try {
+            VersionConstraint vc = new GenericVersionScheme().parseVersionConstraint(artifact.getVersion());
+            if (vc.getVersion() != null) {
+                for (LocalRepository repo : defaultRepos) {
+                    RepositorySystemSession session = newSession( repo );
+                    try {
+                        return m_repoSystem
+                                .resolveArtifact(session, new ArtifactRequest(artifact, null, null))
+                                .getArtifact().getFile();
+                    }
+                    catch( ArtifactResolutionException e ) {
+                        // Ignore
+                    }
+                }
+            }
+        }
+        catch( InvalidVersionSpecificationException e ) {
+            // Should not happen
+        }
+        try {
+            RepositorySystemSession session = newSession( null );
             artifact = resolveLatestVersionRange( session, remoteRepos, artifact );
             return m_repoSystem
                 .resolveArtifact( session, new ArtifactRequest( artifact, remoteRepos, null ) )
@@ -345,21 +396,22 @@ public class AetherBasedResolver {
         return artifact;
     }
 
-    private RepositorySystemSession newSession() {
-        File local;
-        if( m_config.getLocalRepository() == null ) {
-            local = new File( System.getProperty( "user.home" ), ".m2/repository" );
-        }
-        else {
-            local = m_config.getLocalRepository().getFile();
-        }
-
+    private RepositorySystemSession newSession(LocalRepository repo) {
         DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
 
-        LocalRepository localRepo = new LocalRepository( local );
+        if( repo != null ) {
+            session.setLocalRepositoryManager( m_repoSystem.newLocalRepositoryManager( session, repo ) );
+        } else {
+            File local;
+            if( m_config.getLocalRepository() != null ) {
+                local = m_config.getLocalRepository().getFile();
+            } else {
+                local = new File( System.getProperty( "user.home" ), ".m2/repository" );
+            }
+            LocalRepository localRepo = new LocalRepository( local );
+            session.setLocalRepositoryManager( m_repoSystem.newLocalRepositoryManager( session, localRepo ) );
+        }
 
-        session.setLocalRepositoryManager( m_repoSystem.newLocalRepositoryManager( session,
-            localRepo ) );
         session.setMirrorSelector( m_mirrorSelector );
         session.setProxySelector( m_proxySelector );
 
