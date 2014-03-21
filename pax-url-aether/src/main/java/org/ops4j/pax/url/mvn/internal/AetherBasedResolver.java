@@ -250,9 +250,9 @@ public class AetherBasedResolver {
 
     private void addRepo( List<RemoteRepository> list, MavenRepositoryURL repo ) {
         RemoteRepository.Builder builder = new RemoteRepository.Builder( repo.getId(), REPO_TYPE, repo.getURL().toExternalForm() );
-        RepositoryPolicy releasePolicy = new RepositoryPolicy( repo.isReleasesEnabled(), null, null );
+        RepositoryPolicy releasePolicy = new RepositoryPolicy( repo.isReleasesEnabled(), RepositoryPolicy.UPDATE_POLICY_DAILY, null );
         builder.setReleasePolicy( releasePolicy );
-        RepositoryPolicy snapshotPolicy = new RepositoryPolicy( repo.isSnapshotsEnabled(), null, null );
+        RepositoryPolicy snapshotPolicy = new RepositoryPolicy( repo.isSnapshotsEnabled(), RepositoryPolicy.UPDATE_POLICY_DAILY, null );
         builder.setSnapshotPolicy( snapshotPolicy );
         Authentication authentication = getAuthentication( repo.getId() );
         if (authentication != null) {
