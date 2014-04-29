@@ -21,6 +21,7 @@ Import-Package:\
   org.osgi.service.cm; resolution:=optional,\
   javax.annotation.processing; resolution:=optional,\
   org.osgi.util.tracker,\
+  org.eclipse.sisu; resolution:=optional,\
   !com.google.inject.*,\
   !org.apache.commons.lang.*,\
   !org.codehaus.classworlds.*,\
