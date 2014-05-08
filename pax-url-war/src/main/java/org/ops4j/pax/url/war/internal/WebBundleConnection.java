@@ -52,7 +52,14 @@ public class WebBundleConnection extends WarConnection {
         boolean isBundle = false;
         try
         {
-            JarInputStream jis = new JarInputStream( bis );
+            JarInputStream jis = new JarInputStream( bis ) {
+            	@Override
+            	public void close() throws IOException {
+            		//DO NOTHING
+            		//this works around the "Stream closed" exception
+            		//http://bugs.sun.com/view_bug.do?bug_id=6539065
+            	}
+            };
             Manifest man = jis.getManifest();
             if (man.getMainAttributes().getValue(Constants.BUNDLE_SYMBOLICNAME) != null)
             {
