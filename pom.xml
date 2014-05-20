@@ -58,7 +58,7 @@
         <dependency.logback.version>1.0.7</dependency.logback.version>
         <dependency.maven.version>3.2.1</dependency.maven.version>
         <dependency.paxexam.version>3.4.0</dependency.paxexam.version>
-        <dependency.swissbox.version>1.7.0</dependency.swissbox.version>
+        <dependency.swissbox.version>1.8.0-SNAPSHOT</dependency.swissbox.version>
         <dependency.slf4j.version>1.6.6</dependency.slf4j.version>
         <dependency.wagon.version>2.5</dependency.wagon.version>
         <wiki.url>http://team.ops4j.org/wiki/display/paxurl</wiki.url>
