@@ -21,6 +21,12 @@
             <artifactId>pax-exam-container-native</artifactId>
             <version>${dependency.paxexam.version}</version>
             <scope>test</scope>
+            <exclusions>
+				<exclusion>
+					<artifactId>pax-swissbox-core</artifactId>
+					<groupId>org.ops4j.pax.swissbox</groupId>
+				</exclusion>
+			</exclusions>
         </dependency>
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
