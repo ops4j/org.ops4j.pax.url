@@ -422,7 +422,7 @@ public class AetherBasedResolver {
         
         for (Server server : m_settings.getServers()) {
             if (server.getConfiguration() != null
-                && server.getConfiguration().getChild("httpHeaders") != null) {
+                && ((Xpp3Dom)server.getConfiguration()).getChild("httpHeaders") != null) {
                 addServerConfig(session, server);
             }
         }
