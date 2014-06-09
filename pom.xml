@@ -387,6 +387,7 @@
         </developer>
     </developers>
     
+    <!-- don't treat Javadoc warnings as errors when running under JDK 8 -->
     <profiles>
         <profile>
             <id>jdk8</id>
