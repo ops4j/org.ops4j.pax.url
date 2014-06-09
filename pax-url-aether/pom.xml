@@ -144,6 +144,7 @@
             <artifactId>pax-url-commons</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
+            <optional>true</optional>
         </dependency>
 
         <!-- Provided dependencies (not transitive) -->
@@ -169,50 +170,62 @@
         <dependency>
             <groupId>org.eclipse.aether</groupId>
             <artifactId>aether-api</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.eclipse.aether</groupId>
             <artifactId>aether-spi</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.eclipse.aether</groupId>
             <artifactId>aether-util</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.eclipse.aether</groupId>
             <artifactId>aether-impl</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.eclipse.aether</groupId>
             <artifactId>aether-connector-basic</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.eclipse.aether</groupId>
             <artifactId>aether-transport-wagon</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-aether-provider</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-settings-builder</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.sonatype.plexus</groupId>
             <artifactId>plexus-sec-dispatcher</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.sonatype.plexus</groupId>
             <artifactId>plexus-cipher</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.apache.maven.wagon</groupId>
             <artifactId>wagon-provider-api</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.apache.maven.wagon</groupId>
             <artifactId>wagon-file</artifactId>
+            <optional>true</optional>
             <exclusions>
                 <exclusion>
                     <groupId>commons-lang</groupId>
@@ -223,6 +236,7 @@
         <dependency>
             <groupId>org.apache.maven.wagon</groupId>
             <artifactId>wagon-http-lightweight</artifactId>
+            <optional>true</optional>
             <exclusions>
                 <exclusion>
                     <groupId>commons-lang</groupId>
