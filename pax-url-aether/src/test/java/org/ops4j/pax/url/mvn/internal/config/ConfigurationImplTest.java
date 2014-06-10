@@ -35,11 +35,9 @@ import java.util.List;
 import org.apache.maven.settings.Profile;
 import org.apache.maven.settings.Repository;
 import org.apache.maven.settings.Settings;
+import org.junit.Assume;
 import org.junit.Test;
 import org.ops4j.io.FileUtils;
-import org.ops4j.pax.url.mvn.internal.config.MavenConfiguration;
-import org.ops4j.pax.url.mvn.internal.config.MavenConfigurationImpl;
-import org.ops4j.pax.url.mvn.internal.config.MavenRepositoryURL;
 import org.ops4j.util.property.PropertyResolver;
 
 public class ConfigurationImplTest
@@ -135,6 +133,9 @@ public class ConfigurationImplTest
     public void getSettingsWithoutPropertySet()
         throws MalformedURLException
     {
+        File settingsFile = new File( System.getProperty( "user.home" ) + "/.m2/settings.xml" );
+        Assume.assumeTrue( settingsFile.exists() );
+        
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.useFallbackRepositories" ) ).andReturn( null );
@@ -143,7 +144,7 @@ public class ConfigurationImplTest
         MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
         URL settings = config.getSettingsFileUrl();
         assertNotNull( settings );
-        assertEquals( "Settings", "file:" + System.getProperty("user.home") + "/.m2/settings.xml", settings.toExternalForm() );
+        assertEquals( "Settings", settingsFile.toURI().toASCIIString(), settings.toExternalForm() );
         verify( propertyResolver );
     }
 
