@@ -154,6 +154,7 @@ public class AetherBasedResolver {
                 mirroredRepos.add( naming.get( rep ) );
             }
             mirror = new RemoteRepository.Builder( mirror ).setMirroredRepositories( mirroredRepos )
+                .setProxy( m_proxySelector.getProxy( mirror ) )
                 .build();
             resultingRepos.removeAll( mirroredRepos );
             resultingRepos.add( 0, mirror );
