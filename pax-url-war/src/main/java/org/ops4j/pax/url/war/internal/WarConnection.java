@@ -68,10 +68,10 @@ public class WarConnection
         {
             String packages = "javax.servlet,"
                 + "javax.servlet.http,"
-                + "javax.*; resolution:=optional,"
                 + "javax.servlet.jsp; resolution:=optional,"
                 + "javax.servlet.jsp.el; resolution:=optional,"
                 + "javax.servlet.jsp.jstl.*; resolution:=optional,"
+                + "javax.*; resolution:=optional,"
                 + "org.apache.jasper.*;resolution:=optional," //extra dependencies for JSP/JSF War Bundles
                 + "org.apache.taglibs.*;resolution:=optional,"
                 + "com.sun.el.*;resolution:=optional,"
