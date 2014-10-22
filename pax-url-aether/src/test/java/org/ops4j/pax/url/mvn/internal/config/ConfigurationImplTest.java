@@ -549,7 +549,9 @@ public class ConfigurationImplTest
         MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
         MavenRepositoryURL localRepo = config.getLocalRepository();
         assertNotNull( localRepo );
-        assertEquals( "Local repository", System.getProperty("user.home") + "/.m2/repository", localRepo.getFile().toString() );
+		assertEquals("Local repository", System.getProperty("user.home")
+				+ File.separator + ".m2" + File.separator + "repository",
+				localRepo.getFile().toString());
         verify( propertyResolver );
     }
 
