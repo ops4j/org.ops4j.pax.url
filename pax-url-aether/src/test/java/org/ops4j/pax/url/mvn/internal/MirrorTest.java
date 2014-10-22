@@ -7,6 +7,7 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.Properties;
 import java.util.UUID;
 
@@ -27,6 +28,7 @@ import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.ops4j.pax.url.mvn.ServiceConstants;
 import org.ops4j.pax.url.mvn.internal.config.MavenConfigurationImpl;
@@ -149,4 +151,48 @@ public class MirrorTest {
         assertEquals( "the artifact must be downloaded", true, new File( localRepo,
             "ant/ant/1.5.1/ant-1.5.1.jar" ).exists() );
     }
+
+	@Test
+	public void mirror3() throws IOException, InterruptedException {
+		MavenConfigurationImpl config = getConfig("settings-mirror3.xml",
+				"fake", "http://qfdqfqfqf.fra/repo");
+
+		Settings settings = config.getSettings();
+		File localRepo = new File(settings.getLocalRepository());
+		// you must exist.
+		localRepo.mkdirs();
+
+		Connection c = new Connection(new URL("file:ant/ant/1.5.1"), config);
+		c.getInputStream();
+		assertEquals("the artifact must be downloaded", true, new File(
+				localRepo, "ant/ant/1.5.1/ant-1.5.1.jar").exists());
+	}
+
+	@Test
+	public void mirrorBlankPath() throws Exception {
+
+		File file = new File("target/test-classes/settings-mirror3.xml");
+		File blankPath = new File("target/test-classes/path with blanks/");
+		File blankPathFile = new File(blankPath.getAbsolutePath(),
+				"settings.xml");
+		blankPath.mkdirs();
+
+		if (!blankPathFile.exists())
+			Files.copy(file.toPath(), blankPathFile.toPath());
+
+		MavenConfigurationImpl config = getConfig(
+				"path with blanks/settings.xml", "fake",
+				"http://qfdqfqfqf.fra/repo");
+
+		Settings settings = config.getSettings();
+		File localRepo = new File(settings.getLocalRepository());
+		// you must exist.
+		localRepo.mkdirs();
+
+		Connection c = new Connection(new URL("file:ant/ant/1.5.1"), config);
+		c.getInputStream();
+		assertEquals("the artifact must be downloaded", true, new File(
+				localRepo, "ant/ant/1.5.1/ant-1.5.1.jar").exists());
+
+	}
 }
