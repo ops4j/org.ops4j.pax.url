@@ -51,14 +51,14 @@ public final class Activator
                 /**
                  * Creates an "assembly:" url connection.
                  *
-                 * @see ConnectionFactory#createConection(BundleContext, java.net.URL, Object)
+                 * @see ConnectionFactory#createConnection(BundleContext, java.net.URL, Object)
                  */
-                public URLConnection createConection( final BundleContext bundleContext,
-                                                      final URL url,
-                                                      final Void notUsed )
+                public URLConnection createConnection( final BundleContext bundleContext,
+                                                       final URL url,
+                                                       final Void notUsed )
                     throws IOException
                 {
-                    return createConnection( url );
+                    return Activator.createConnection( url );
                 }
 
                 /**

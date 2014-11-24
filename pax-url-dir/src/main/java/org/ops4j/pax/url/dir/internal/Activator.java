@@ -42,11 +42,11 @@ public class Activator extends HandlerActivator<Configuration>
             {
 
                 /**
-                 * @see ConnectionFactory#createConection(org.osgi.framework.BundleContext , java.net.URL , Object)
+                 * @see ConnectionFactory#createConnection(org.osgi.framework.BundleContext , java.net.URL , Object)
                  */
-                public URLConnection createConection( final BundleContext bundleContext,
-                                                      final URL url,
-                                                      final Configuration config )
+                public URLConnection createConnection( final BundleContext bundleContext,
+                                                       final URL url,
+                                                       final Configuration config )
                     throws MalformedURLException
                 {
                     return new Connection( url, config );
