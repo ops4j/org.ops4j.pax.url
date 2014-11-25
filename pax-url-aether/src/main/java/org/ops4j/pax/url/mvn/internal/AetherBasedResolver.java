@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Toni Menzel
+ * Copyright (C) 2014 Guillaume Nodet
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,15 +20,24 @@ import static org.ops4j.pax.url.mvn.internal.Parser.VERSION_LATEST;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.maven.artifact.repository.metadata.SnapshotVersion;
+import org.apache.maven.artifact.repository.metadata.Versioning;
+import org.apache.maven.artifact.repository.metadata.io.xpp3.MetadataXpp3Reader;
+import org.apache.maven.artifact.repository.metadata.io.xpp3.MetadataXpp3Writer;
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.apache.maven.settings.Mirror;
 import org.apache.maven.settings.Server;
@@ -46,8 +56,11 @@ import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory;
 import org.eclipse.aether.impl.DefaultServiceLocator;
+import org.eclipse.aether.installation.InstallRequest;
 import org.eclipse.aether.internal.impl.SimpleLocalRepositoryManagerFactory;
 import org.eclipse.aether.internal.impl.slf4j.Slf4jLoggerFactory;
+import org.eclipse.aether.metadata.DefaultMetadata;
+import org.eclipse.aether.metadata.Metadata;
 import org.eclipse.aether.repository.Authentication;
 import org.eclipse.aether.repository.LocalRepository;
 import org.eclipse.aether.repository.MirrorSelector;
@@ -57,6 +70,8 @@ import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.repository.RepositoryPolicy;
 import org.eclipse.aether.resolution.ArtifactRequest;
 import org.eclipse.aether.resolution.ArtifactResolutionException;
+import org.eclipse.aether.resolution.MetadataRequest;
+import org.eclipse.aether.resolution.MetadataResult;
 import org.eclipse.aether.resolution.VersionRangeRequest;
 import org.eclipse.aether.resolution.VersionRangeResolutionException;
 import org.eclipse.aether.resolution.VersionRangeResult;
@@ -72,6 +87,9 @@ import org.eclipse.aether.util.version.GenericVersionScheme;
 import org.eclipse.aether.version.InvalidVersionSpecificationException;
 import org.eclipse.aether.version.Version;
 import org.eclipse.aether.version.VersionConstraint;
+import org.ops4j.lang.NullArgumentException;
+import org.ops4j.pax.url.mvn.MavenResolver;
+import org.ops4j.pax.url.mvn.ServiceConstants;
 import org.ops4j.pax.url.mvn.internal.config.MavenConfiguration;
 import org.ops4j.pax.url.mvn.internal.config.MavenRepositoryURL;
 import org.slf4j.LoggerFactory;
@@ -81,7 +99,7 @@ import org.sonatype.plexus.components.cipher.PlexusCipherException;
 /**
  * Aether based, drop in replacement for mvn protocol
  */
-public class AetherBasedResolver {
+public class AetherBasedResolver implements MavenResolver {
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger( AetherBasedResolver.class );
     private static final String LATEST_VERSION_RANGE = "(0.0,]";
@@ -91,26 +109,38 @@ public class AetherBasedResolver {
     final private MavenConfiguration m_config;
     final private MirrorSelector m_mirrorSelector;
     final private ProxySelector m_proxySelector;
+    final private CloseableHttpClient m_client;
     private Settings m_settings;
     private ConfigurableSettingsDecrypter decrypter;
 
     /**
      * Create a AetherBasedResolver
-     * 
-     * @param configuration
-     *            (must be not null)
-     * 
-     * @throws java.net.MalformedURLException
-     *             in case of url problems in configuration.
+     *
+     * @param configuration (must be not null)
      */
-    public AetherBasedResolver( final MavenConfiguration configuration )
-        throws MalformedURLException {
+    public AetherBasedResolver( final MavenConfiguration configuration ) {
+        this( configuration, null );
+    }
+
+    /**
+     * Create a AetherBasedResolver
+     *
+     * @param configuration (must be not null)
+     */
+    public AetherBasedResolver( final MavenConfiguration configuration, final Mirror mirror ) {
+        NullArgumentException.validateNotNull( configuration, "Maven configuration");
+        m_client = HttpClients.createClient(configuration.getPropertyResolver());
         m_config = configuration;
         m_settings = configuration.getSettings();
         m_repoSystem = newRepositorySystem();
         decryptSettings();
         m_proxySelector = selectProxies();
-        m_mirrorSelector = selectMirrors();
+        m_mirrorSelector = selectMirrors( mirror );
+    }
+
+    @Override
+    public void close() throws IOException {
+        m_client.close();
     }
 
     private void decryptSettings()
@@ -175,12 +205,14 @@ public class AetherBasedResolver {
         return proxySelector;
     }
 
-    private MirrorSelector selectMirrors() {
+    private MirrorSelector selectMirrors( Mirror mirror ) {
         // configure mirror
         DefaultMirrorSelector selector = new DefaultMirrorSelector();
-        for( Mirror mirror : m_settings.getMirrors() ) {
-            selector
-                .add( mirror.getName(), mirror.getUrl(), null, false, mirror.getMirrorOf(), "*" );
+        for( Mirror m : m_settings.getMirrors() ) {
+            selector.add( m.getName(), m.getUrl(), null, false, m.getMirrorOf(), "*" );
+        }
+        if( mirror != null ) {
+            selector.add(mirror.getName(), mirror.getUrl(), null, false, mirror.getMirrorOf(), "*");
         }
         return selector;
     }
@@ -250,10 +282,26 @@ public class AetherBasedResolver {
     
 
     private void addRepo( List<RemoteRepository> list, MavenRepositoryURL repo ) {
+        String releasesUpdatePolicy = repo.getReleasesUpdatePolicy();
+        if (releasesUpdatePolicy == null || releasesUpdatePolicy.isEmpty()) {
+            releasesUpdatePolicy = new RepositoryPolicy().getUpdatePolicy();
+        }
+        String releasesChecksumPolicy = repo.getReleasesChecksumPolicy();
+        if (releasesChecksumPolicy == null || releasesChecksumPolicy.isEmpty()) {
+            releasesChecksumPolicy = new RepositoryPolicy().getChecksumPolicy();
+        }
+        String snapshotsUpdatePolicy = repo.getSnapshotsUpdatePolicy();
+        if (snapshotsUpdatePolicy == null || snapshotsUpdatePolicy.isEmpty()) {
+            snapshotsUpdatePolicy = new RepositoryPolicy().getUpdatePolicy();
+        }
+        String snapshotsChecksumPolicy = repo.getSnapshotsChecksumPolicy();
+        if (snapshotsChecksumPolicy == null || snapshotsChecksumPolicy.isEmpty()) {
+            snapshotsChecksumPolicy = new RepositoryPolicy().getChecksumPolicy();
+        }
         RemoteRepository.Builder builder = new RemoteRepository.Builder( repo.getId(), REPO_TYPE, repo.getURL().toExternalForm() );
-        RepositoryPolicy releasePolicy = new RepositoryPolicy( repo.isReleasesEnabled(), RepositoryPolicy.UPDATE_POLICY_DAILY, null );
+        RepositoryPolicy releasePolicy = new RepositoryPolicy( repo.isReleasesEnabled(), releasesUpdatePolicy, releasesChecksumPolicy );
         builder.setReleasePolicy( releasePolicy );
-        RepositoryPolicy snapshotPolicy = new RepositoryPolicy( repo.isSnapshotsEnabled(), RepositoryPolicy.UPDATE_POLICY_DAILY, null );
+        RepositoryPolicy snapshotPolicy = new RepositoryPolicy( repo.isSnapshotsEnabled(), snapshotsUpdatePolicy, snapshotsChecksumPolicy );
         builder.setSnapshotPolicy( snapshotPolicy );
         Authentication authentication = getAuthentication( repo.getId() );
         if (authentication != null) {
@@ -289,26 +337,68 @@ public class AetherBasedResolver {
         }
     }
 
-    /**
-     * Resolve maven artifact as input stream.
-     */
-    public InputStream resolve( String groupId, String artifactId, String classifier,
-        String extension, String version ) throws IOException {
-        File resolved = resolveFile( groupId, artifactId, classifier, extension, version );
-        return new FileInputStream( resolved );
+    public RepositorySystem getRepositorySystem() {
+        return m_repoSystem;
+    }
+
+    public List<RemoteRepository> getRepositories() {
+        List<RemoteRepository> repos = selectRepositories();
+        assignProxyAndMirrors(repos);
+        return repos;
+    }
+
+    public File resolve(String url) throws IOException {
+        if (!url.startsWith(ServiceConstants.PROTOCOL + ":")) {
+            throw new IllegalArgumentException("url should be a mvn based url");
+        }
+        url = url.substring((ServiceConstants.PROTOCOL + ":").length());
+        Parser parser = new Parser(url);
+        return resolve(
+                parser.getGroup(),
+                parser.getArtifact(),
+                parser.getClassifier(),
+                parser.getType(),
+                parser.getVersion(),
+                parser.getRepositoryURL()
+        );
     }
 
     /**
      * Resolve maven artifact as file in repository.
      */
-    public File resolveFile( String groupId, String artifactId, String classifier,
-        String extension, String version ) throws IOException {
-        // version = mapLatestToRange( version );
+    public File resolve( String groupId, String artifactId, String classifier,
+                             String extension, String version ) throws IOException {
+        return resolve(groupId, artifactId, classifier, extension, version, null);
+    }
 
+    /**
+     * Resolve maven artifact as file in repository.
+     */
+    public File resolve( String groupId, String artifactId, String classifier,
+                             String extension, String version,
+                             MavenRepositoryURL repositoryURL ) throws IOException {
         Artifact artifact = new DefaultArtifact( groupId, artifactId, classifier, extension, version );
+        return resolve(artifact, repositoryURL);
+    }
+
+    /**
+     * Resolve maven artifact as file in repository.
+     */
+    public File resolve( Artifact artifact ) throws IOException {
+        return resolve(artifact, null);
+    }
+
+    /**
+     * Resolve maven artifact as file in repository.
+     */
+    public File resolve( Artifact artifact,
+                         MavenRepositoryURL repositoryURL ) throws IOException {
 
         List<LocalRepository> defaultRepos = selectDefaultRepositories();
-        List<RemoteRepository> remoteRepos = selectRepositories();
+        List<RemoteRepository> remoteRepos = getRepositories();
+        if (repositoryURL != null) {
+            addRepo(remoteRepos, repositoryURL);
+        }
         assignProxyAndMirrors( remoteRepos );
         File resolved = resolve( defaultRepos, remoteRepos, artifact );
 
@@ -316,8 +406,20 @@ public class AetherBasedResolver {
         return resolved;
     }
 
-    private File resolve( List<LocalRepository> defaultRepos, List<RemoteRepository> remoteRepos,
-        Artifact artifact ) throws IOException {
+    private File resolve( List<LocalRepository> defaultRepos,
+                          List<RemoteRepository> remoteRepos,
+                          Artifact artifact ) throws IOException {
+
+        if (artifact.getExtension().isEmpty()) {
+            artifact = new DefaultArtifact(
+                    artifact.getGroupId(),
+                    artifact.getArtifactId(),
+                    artifact.getClassifier(),
+                    "jar",
+                    artifact.getVersion()
+            );
+        }
+
         // Try with default repositories
         try {
             VersionConstraint vc = new GenericVersionScheme().parseVersionConstraint(artifact.getVersion());
@@ -360,6 +462,147 @@ public class AetherBasedResolver {
         }
     }
 
+    @Override
+    public File resolveMetadata(String groupId, String artifactId, String type, String version) throws IOException {
+        try {
+            RepositorySystem system = getRepositorySystem();
+            RepositorySystemSession session = createSession();
+
+            Metadata metadata = new DefaultMetadata(groupId, artifactId, version,
+                                                    type, Metadata.Nature.RELEASE_OR_SNAPSHOT);
+            List<MetadataRequest> requests = new ArrayList<MetadataRequest>();
+            for (RemoteRepository repository : getRepositories()) {
+                MetadataRequest request = new MetadataRequest(metadata, repository, null);
+                request.setFavorLocalRepository(false);
+                requests.add(request);
+            }
+            MetadataRequest request = new MetadataRequest(metadata, null, null);
+            request.setFavorLocalRepository(true);
+            requests.add(request);
+            org.apache.maven.artifact.repository.metadata.Metadata mr = new org.apache.maven.artifact.repository.metadata.Metadata();
+            mr.setModelVersion("1.1.0");
+            mr.setGroupId(metadata.getGroupId());
+            mr.setArtifactId(metadata.getArtifactId());
+            mr.setVersioning(new Versioning());
+            boolean merged = false;
+            List<MetadataResult> results = system.resolveMetadata(session, requests);
+            for (MetadataResult result : results) {
+                if (result.getMetadata() != null && result.getMetadata().getFile() != null) {
+                    FileInputStream fis = new FileInputStream(result.getMetadata().getFile());
+                    org.apache.maven.artifact.repository.metadata.Metadata m = new MetadataXpp3Reader().read(fis, false);
+                    fis.close();
+                    if (m.getVersioning() != null) {
+                        mr.getVersioning().setLastUpdated(latestTimestamp(mr.getVersioning().getLastUpdated(), m.getVersioning().getLastUpdated()));
+                        mr.getVersioning().setLatest(latestVersion(mr.getVersioning().getLatest(), m.getVersioning().getLatest()));
+                        mr.getVersioning().setRelease(latestVersion(mr.getVersioning().getRelease(), m.getVersioning().getRelease()));
+                        for (String v : m.getVersioning().getVersions()) {
+                            if (!mr.getVersioning().getVersions().contains(v)) {
+                                mr.getVersioning().getVersions().add(v);
+                            }
+                        }
+                        mr.getVersioning().getSnapshotVersions().addAll(m.getVersioning().getSnapshotVersions());
+                    }
+                    merged = true;
+                }
+            }
+            if (merged) {
+                Collections.sort(mr.getVersioning().getVersions(), VERSION_COMPARATOR);
+                Collections.sort(mr.getVersioning().getSnapshotVersions(), SNAPSHOT_VERSION_COMPARATOR);
+                File tmpFile = Files.createTempFile("mvn-", ".tmp").toFile();
+                FileOutputStream fos = new FileOutputStream(tmpFile);
+                try {
+                    new MetadataXpp3Writer().write(fos, mr);
+                } finally {
+                    fos.close();
+                }
+                return tmpFile;
+            }
+            return null;
+        } catch (Exception e) {
+            throw new IOException("Unable to resolve metadata", e);
+        }
+    }
+
+    @Override
+    public void upload(String groupId, String artifactId, String classifier, String extension, String version, File file) throws IOException {
+        try {
+            RepositorySystem system = getRepositorySystem();
+            RepositorySystemSession session = createSession();
+
+            Artifact artifact = new DefaultArtifact(groupId, artifactId, classifier, extension, version,
+                                                    null, file);
+            InstallRequest request = new InstallRequest();
+            request.addArtifact(artifact);
+            system.install(session, request);
+        } catch (Exception e) {
+            throw new IOException("Unable to install artifact", e);
+        }
+    }
+
+    @Override
+    public void uploadMetadata(String groupId, String artifactId, String type, String version, File file) throws IOException {
+        try {
+            RepositorySystem system = getRepositorySystem();
+            RepositorySystemSession session = createSession();
+
+            Metadata metadata = new DefaultMetadata(groupId, artifactId, version,
+                                                    type, Metadata.Nature.RELEASE_OR_SNAPSHOT,
+                                                    file);
+            InstallRequest request = new InstallRequest();
+            request.addMetadata(metadata);
+            system.install(session, request);
+        } catch (Exception e) {
+            throw new IOException("Unable to install metadata", e);
+        }
+    }
+
+    private Comparator<String> VERSION_COMPARATOR = new Comparator<String>() {
+        @Override
+        public int compare(String v1, String v2) {
+            try {
+                Version vv1 = new GenericVersionScheme().parseVersion(v1);
+                Version vv2 = new GenericVersionScheme().parseVersion(v2);
+                return vv1.compareTo(vv2);
+            } catch (Exception e) {
+                return v1.compareTo(v2);
+            }
+        }
+    };
+
+    private Comparator<SnapshotVersion> SNAPSHOT_VERSION_COMPARATOR = new Comparator<SnapshotVersion>() {
+        @Override
+        public int compare(SnapshotVersion o1, SnapshotVersion o2) {
+            int c = VERSION_COMPARATOR.compare(o1.getVersion(), o2.getVersion());
+            if (c == 0) {
+                c = o1.getExtension().compareTo(o2.getExtension());
+            }
+            if (c == 0) {
+                c = o1.getClassifier().compareTo(o2.getClassifier());
+            }
+            return c;
+        }
+    };
+
+    private String latestTimestamp(String t1, String t2) {
+        if (t1 == null) {
+            return t2;
+        } else if (t2 == null) {
+            return t1;
+        }  else {
+            return t1.compareTo(t2) < 0 ? t2 : t1;
+        }
+    }
+
+    private String latestVersion(String v1, String v2) {
+        if (v1 == null) {
+            return v2;
+        } else if (v2 == null) {
+            return v1;
+        } else {
+            return VERSION_COMPARATOR.compare(v1, v2) < 0 ? v2 : v1;
+        }
+    }
+
     /**
      * Tries to resolve versions = LATEST using an open range version query. If it succeeds, version
      * of artifact is set to the highest available version.
@@ -397,6 +640,10 @@ public class AetherBasedResolver {
         return artifact;
     }
 
+    public RepositorySystemSession createSession() {
+        return newSession( null );
+    }
+
     private RepositorySystemSession newSession(LocalRepository repo) {
         DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
 
@@ -427,6 +674,8 @@ public class AetherBasedResolver {
                 addServerConfig(session, server);
             }
         }
+
+        session.setOffline( m_config.isOffline() );
 
         return session;
     }
@@ -468,10 +717,9 @@ public class AetherBasedResolver {
     private RepositorySystem newRepositorySystem() {
         DefaultServiceLocator locator = MavenRepositorySystemUtils.newServiceLocator();
 
-        locator.setServices( WagonProvider.class, new ManualWagonProvider( m_config.getTimeout() ) );
+        locator.setServices( WagonProvider.class, new ManualWagonProvider( m_client, m_config.getTimeout() ) );
         locator.addService( TransporterFactory.class, WagonTransporterFactory.class );
-        locator
-            .addService( RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class );
+        locator.addService(RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class);
 
         decrypter = new ConfigurableSettingsDecrypter();
         PaxUrlSecDispatcher secDispatcher = new PaxUrlSecDispatcher();

@@ -1,7 +1,7 @@
 /*
  * Copyright 2007 Alin Dreghiciu.
  * Copyright 2010, 2011 Toni Menzel.
-
+ * Copyright (C) 2014 Guillaume Nodet
  *
  * Licensed  under the  Apache License,  Version 2.0  (the "License");
  * you may not use  this file  except in  compliance with the License.
@@ -19,27 +19,26 @@
  */
 package org.ops4j.pax.url.mvn.internal;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Arrays;
 
 import org.ops4j.lang.NullArgumentException;
-import org.ops4j.pax.url.mvn.ServiceConstants;
+import org.ops4j.pax.url.mvn.MavenResolver;
 import org.ops4j.pax.url.mvn.internal.config.MavenConfiguration;
-import org.ops4j.pax.url.mvn.internal.config.MavenConfigurationImpl;
-import org.ops4j.pax.url.mvn.internal.config.MavenRepositoryURL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An URLConnextion that supports mvn: protocol.<br/>
+ * An URLConnection that supports mvn: protocol.<br/>
  * Syntax:<br>
  * mvn:[repository_url!]groupId/artifactId[/version[/type]]<br/>
  * where:<br/>
- * - repository_url = an url that points to a maven 2 repository; optional, if not sepecified the repositories are
+ * - repository_url = an url that points to a maven 2 repository; optional, if not specified the repositories are
  * resolved based on the repository/localRepository.<br/>
  * - groupId = group id of maven artifact; mandatory<br/>
  * - artifactId = artifact id of maven artifact; mandatory<br/>
@@ -61,11 +60,12 @@ import org.slf4j.LoggerFactory;
  * - org.ops4j.pax.url.mvn.settings = the path to settings.xml;<br/>
  * - org.ops4j.pax.url.mvn.localRepository = the path to local repository directory;<br>
  * - org.ops4j.pax.url.mvn.repository =  a comma separated list for repositories urls;<br/>
- * - org.ops4j.pax.url.mvn.certicateCheck = true/false if the SSL certificate check should be done.
+ * - org.ops4j.pax.url.mvn.certificateCheck = true/false if the SSL certificate check should be done.
  * Default false.
  *
  * @author Toni Menzel
  * @author Alin Dreghiciu
+ * @author Guillaume Nodet
  * @since September 10, 2010
  */
 public class Connection
@@ -76,36 +76,29 @@ public class Connection
      */
     private static final Logger LOG = LoggerFactory.getLogger( Connection.class );
     /**
-     * Parsed url.
+     * Maven resolver
      */
-    private Parser m_parser;
-    private AetherBasedResolver m_aetherBasedResolver;
+    private final MavenResolver m_resolver;
 
     /**
      * Creates a new connection.
      *
      * @param url           the url; cannot be null.
-     * @param configuration service configuration; cannot be null
+     * @param resolver      resolver service; cannot be null
      *
-     * @throws MalformedURLException in case of a malformed url
+     * @throws java.net.MalformedURLException in case of a malformed url
      */
-    public Connection( final URL url, final MavenConfiguration configuration )
-        throws MalformedURLException
+    public Connection( final URL url, final MavenResolver resolver )
+            throws MalformedURLException
     {
         super( url );
         NullArgumentException.validateNotNull( url, "URL cannot be null" );
-        NullArgumentException.validateNotNull( configuration, "Service configuration" );
+        NullArgumentException.validateNotNull( resolver, "Service configuration" );
 
-        m_parser = new Parser( url.getPath() );
-        MavenRepositoryURL repoUrl = m_parser.getRepositoryURL();
-        if ( repoUrl != null )
-        {
-            MavenConfigurationImpl config = (MavenConfigurationImpl) configuration;
-            config.set( ServiceConstants.PID + ServiceConstants.PROPERTY_REPOSITORIES, Arrays.asList( repoUrl ) );
-        }
-        m_aetherBasedResolver = new AetherBasedResolver( configuration );
+        m_resolver = resolver;
+        // Verify the url syntax, will throw an exception when invalid
+        new Parser( url.getPath() );
     }
-
 
 
     /**
@@ -128,6 +121,7 @@ public class Connection
     {
         connect();
         LOG.debug( "Resolving [" + url.toExternalForm() + "]" );
-        return m_aetherBasedResolver.resolve( m_parser.getGroup(), m_parser.getArtifact(), m_parser.getClassifier(), m_parser.getType(), m_parser.getVersion() );
+        File file = m_resolver.resolve( url.toExternalForm() );
+        return new FileInputStream( file );
     }
 }

@@ -38,10 +38,7 @@ public class AetherTest extends TestBase
 
         AetherBasedResolver resolver = new AetherBasedResolver( getTestConfig() );
 
-        InputStream input = resolver.resolve( "org.ops4j.pax.web",
-            "pax-web-api", "", "jar", "0.7.2" );
-
-        input.close();
+        resolver.resolve( "org.ops4j.pax.web", "pax-web-api", "", "jar", "0.7.2" );
 
     }
 
@@ -51,12 +48,12 @@ public class AetherTest extends TestBase
         Properties props = new Properties();
 
         props.setProperty( //
-            ServiceConstants.PID + ServiceConstants.PROPERTY_LOCAL_REPOSITORY,//
+            ServiceConstants.PID + "." + ServiceConstants.PROPERTY_LOCAL_REPOSITORY,//
             Util.getTestRepo().toURI().toASCIIString() //
             );
 
         props.setProperty( //
-            ServiceConstants.PID + ServiceConstants.PROPERTY_SETTINGS_FILE, //
+            ServiceConstants.PID + "." + ServiceConstants.PROPERTY_SETTINGS_FILE, //
             Util.getTestSettings().toURI().toASCIIString() //
             );
 

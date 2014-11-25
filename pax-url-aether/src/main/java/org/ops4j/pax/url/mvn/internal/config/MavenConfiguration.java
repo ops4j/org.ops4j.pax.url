@@ -1,5 +1,6 @@
 /*
  * Copyright 2007 Alin Dreghiciu.
+ * Copyright (C) 2014 Guillaume Nodet
  *
  * Licensed  under the  Apache License,  Version 2.0  (the "License");
  * you may not use  this file  except in  compliance with the License.
@@ -23,14 +24,18 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.maven.settings.Settings;
+import org.ops4j.util.property.PropertyResolver;
 
 /**
  * Handler configuration.
  *
  * @author Alin Dreghiciu
+ * @author Guillaume Nodet
  * @since August 11, 2007
  */
 public interface MavenConfiguration {
+
+    boolean isOffline();
 
     /**
      * Returns true if the certificate should be checked on SSL connection, false otherwise.
@@ -65,11 +70,20 @@ public interface MavenConfiguration {
     /**
      * Global repository update policy. 
      * 
-     * See {@link MavenConstants#PROPERTY_GLOBAL_UPDATE_POLICY}
+     * See {@link org.ops4j.pax.url.mvn.ServiceConstants#PROPERTY_GLOBAL_UPDATE_POLICY}
      * 
      * @return repository update policy or null if not set
      */
     String getGlobalUpdatePolicy();
+
+    /**
+     * Global repository update policy.
+     *
+     * See {@link org.ops4j.pax.url.mvn.ServiceConstants#PROPERTY_GLOBAL_CHECKSUM_POLICY}
+     *
+     * @return repository update policy or null if not set
+     */
+    String getGlobalChecksumPolicy();
 
     /**
      * Returns the url of local repository.
@@ -120,4 +134,6 @@ public interface MavenConfiguration {
     Settings getSettings();
     
     String getSecuritySettings();
+
+    PropertyResolver getPropertyResolver();
 }

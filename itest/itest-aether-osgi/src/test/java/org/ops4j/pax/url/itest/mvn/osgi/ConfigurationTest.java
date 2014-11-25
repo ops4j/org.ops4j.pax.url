@@ -62,6 +62,7 @@ public class ConfigurationTest
             bundle( "file:target/bundles/pax-confman-propsloader.jar" ), //
             bundle( "file:target/bundles/org.apache.felix.configadmin.jar" ), //
             bundle( "file:target/bundles/slf4j-api.jar" ), //
+            bundle( "file:target/bundles/jcl-over-slf4j.jar" ), //
             bundle( "file:target/bundles/logback-classic.jar" ), //
             bundle( "file:target/bundles/logback-core.jar" ), //
             bundle( "file:target/bundles/org.ops4j.pax.tipi.junit.jar" ), //

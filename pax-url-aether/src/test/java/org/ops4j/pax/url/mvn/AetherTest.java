@@ -43,7 +43,7 @@ public class AetherTest {
         throws DependencyCollectionException, ArtifactResolutionException, IOException
     {
         AetherBasedResolver aetherBasedResolver = new AetherBasedResolver( getConfig() );
-        aetherBasedResolver.resolve( "org.ops4j.pax.web", "pax-web-api", "", "jar", "0.7.2" ).close();
+        aetherBasedResolver.resolve( "org.ops4j.pax.web", "pax-web-api", "", "jar", "0.7.2" );
     }
 
     @Test
@@ -51,7 +51,7 @@ public class AetherTest {
         throws DependencyCollectionException, ArtifactResolutionException, IOException
     {
         AetherBasedResolver aetherBasedResolver = new AetherBasedResolver( getConfig() );
-        aetherBasedResolver.resolve( "org.ops4j.pax.web", "pax-web-api", "", "jar", "LATEST" ).close();
+        aetherBasedResolver.resolve( "org.ops4j.pax.web", "pax-web-api", "", "jar", "LATEST" );
     }
 
     @Test
@@ -60,12 +60,12 @@ public class AetherTest {
     {
 
         AetherBasedResolver aetherBasedResolver = new AetherBasedResolver( getConfig() );
-        aetherBasedResolver.resolve( "org.ops4j.pax.web", "pax-web-api", "", "jar", "LATEST" ).close();
+        aetherBasedResolver.resolve( "org.ops4j.pax.web", "pax-web-api", "", "jar", "LATEST" );
 
         // now again:
         // no repo
         aetherBasedResolver = new AetherBasedResolver( getConfig() );
-        aetherBasedResolver.resolve( "org.ops4j.pax.web", "pax-web-api", "", "jar", "LATEST" ).close();
+        aetherBasedResolver.resolve( "org.ops4j.pax.web", "pax-web-api", "", "jar", "LATEST" );
     }
 
     private Settings getSettings()        
@@ -122,7 +122,7 @@ public class AetherTest {
         MavenConfigurationImpl config = getConfig();
         config.setSettings( settings );
         AetherBasedResolver aetherBasedResolver = new AetherBasedResolver( config );
-        aetherBasedResolver.resolve( "org.openrdf", "openrdf-model", "", "jar", "2.0.1" ).close();
+        aetherBasedResolver.resolve( "org.openrdf", "openrdf-model", "", "jar", "2.0.1" );
     }
 }
 

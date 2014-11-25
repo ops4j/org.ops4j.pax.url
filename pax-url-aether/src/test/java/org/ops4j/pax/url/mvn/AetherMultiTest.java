@@ -43,7 +43,7 @@ public class AetherMultiTest {
         throws DependencyCollectionException, ArtifactResolutionException, IOException
     {
         AetherBasedResolver aetherBasedResolver = new AetherBasedResolver( getDummyConfig() );
-        aetherBasedResolver.resolve( "ant", "ant", "", "jar", "1.5.1" ).close();
+        aetherBasedResolver.resolve( "ant", "ant", "", "jar", "1.5.1" );
     }
 
     private MavenConfiguration getDummyConfig()
@@ -51,12 +51,12 @@ public class AetherMultiTest {
     {
         Properties p = new Properties();
         String localRepo = getCache().toURI().toASCIIString();
-        p.setProperty( ServiceConstants.PID + ServiceConstants.PROPERTY_LOCAL_REPOSITORY, localRepo );
+        p.setProperty( ServiceConstants.PID + "." + ServiceConstants.PROPERTY_LOCAL_REPOSITORY, localRepo );
         
         File target = new File("target/test-classes/repomulti");
         Assert.assertTrue("Can not find test repo " + target.toURI().toString(), target.isDirectory());
         String multiRepo = target.toURI().toString() + "@id=multitest@multi";
-        p.setProperty( ServiceConstants.PID + ServiceConstants.PROPERTY_REPOSITORIES, multiRepo);
+        p.setProperty( ServiceConstants.PID + "." + ServiceConstants.PROPERTY_REPOSITORIES, multiRepo);
         MavenConfigurationImpl config = new MavenConfigurationImpl( new PropertiesPropertyResolver( p ), ServiceConstants.PID );
         Settings settings = new Settings();
         settings.setLocalRepository( localRepo );

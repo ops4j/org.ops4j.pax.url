@@ -50,6 +50,8 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.ops4j.pax.url.mvn.Handler;
+import org.ops4j.pax.url.mvn.MavenResolver;
 import org.ops4j.pax.url.mvn.ServiceConstants;
 import org.ops4j.pax.url.mvn.internal.config.MavenConfigurationImpl;
 import org.ops4j.util.property.PropertiesPropertyResolver;
@@ -177,10 +179,11 @@ public class AuthenticationTest
         File localRepo = new File( settings.getLocalRepository() );
         localRepo.mkdirs();
 
-        Connection c = new Connection( new URL( "file:ant/ant/1.5.1" ), config );
+        Connection c = new Connection( new URL( null, "mvn:ant/ant/1.5.1", new Handler() ),
+                                       new AetherBasedResolver( config ) );
 
         thrown.expect( IOException.class );
-        thrown.expectMessage( "Access denied" );
+        thrown.expectMessage( "Not authorized" );
         c.getInputStream();
     }
 
@@ -193,7 +196,8 @@ public class AuthenticationTest
         File localRepo = new File( settings.getLocalRepository() );
         localRepo.mkdirs();
 
-        Connection c = new Connection( new URL( "file:ant/ant/1.5.1" ), config );
+        Connection c = new Connection( new URL( null, "mvn:ant/ant/1.5.1", new Handler() ),
+                                       new AetherBasedResolver( config ) );
         c.getInputStream().close();
         assertEquals( "the artifact must be downloaded", true, new File( localRepo,
             "ant/ant/1.5.1/ant-1.5.1.jar" ).exists() );
@@ -208,7 +212,8 @@ public class AuthenticationTest
         File localRepo = new File( settings.getLocalRepository() );
         localRepo.mkdirs();
 
-        Connection c = new Connection( new URL( "file:ant/ant/1.5.1" ), config );
+        Connection c = new Connection( new URL( null, "mvn:ant/ant/1.5.1", new Handler() ),
+                                       new AetherBasedResolver( config ) );
         c.getInputStream().close();
         assertEquals( "the artifact must be downloaded", true, new File( localRepo,
             "ant/ant/1.5.1/ant-1.5.1.jar" ).exists() );
@@ -224,9 +229,10 @@ public class AuthenticationTest
         // you must exist.
         localRepo.mkdirs();
 
-        Connection c = new Connection( new URL( "file:ant/ant/1.5.1" ), config );
+        Connection c = new Connection( new URL( null, "mvn:ant/ant/1.5.1", new Handler() ),
+                                       new AetherBasedResolver( config ) );
         thrown.expect( IOException.class );
-        thrown.expectMessage( "Access denied" );
+        thrown.expectMessage( "Not authorized" );
         c.getInputStream();
     }    
 }

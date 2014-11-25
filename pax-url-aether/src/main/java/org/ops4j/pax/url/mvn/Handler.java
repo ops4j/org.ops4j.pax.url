@@ -1,5 +1,6 @@
 /*
  * Copyright 2009 Alin Dreghiciu.
+ * Copyright (C) 2014 Guillaume Nodet
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +31,8 @@ import org.ops4j.util.property.PropertiesPropertyResolver;
  * {@link URLStreamHandler} implementation for "mvn:" protocol.
  *
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
- * @author Toni Menzel (adreghiciu@gmail.com)
+ * @author Toni Menzel
+ * @author Guillaume Nodet
 
  * @since 1.3.0, March 28, 2011 (usable since)
  */
@@ -45,8 +47,7 @@ public class Handler
     protected URLConnection openConnection( final URL url )
         throws IOException
     {
-        PropertiesPropertyResolver propertyResolver = new PropertiesPropertyResolver( System.getProperties() );
-        final MavenConfigurationImpl config = new MavenConfigurationImpl( propertyResolver, ServiceConstants.PID);
-        return new Connection( url, config );
-    }    
+        MavenResolver resolver = MavenResolvers.createMavenResolver(null, ServiceConstants.PID);
+        return new Connection( url, resolver );
+    }
 }

@@ -47,6 +47,7 @@ import org.eclipse.aether.util.graph.visitor.PreorderNodeListGenerator;
 import org.eclipse.aether.version.Version;
 import org.junit.Before;
 import org.junit.Test;
+import org.ops4j.pax.url.mvn.internal.HttpClients;
 import org.ops4j.pax.url.mvn.internal.ManualWagonProvider;
 
 /**
@@ -66,7 +67,7 @@ public class DirectAetherTest {
         DefaultServiceLocator locator = MavenRepositorySystemUtils.newServiceLocator();
         locator
             .addService( RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class );
-        locator.setServices( WagonProvider.class, new ManualWagonProvider( 10000 ) );
+        locator.setServices( WagonProvider.class, new ManualWagonProvider( HttpClients.createClient(null), 10000 ) );
         locator.addService( TransporterFactory.class, WagonTransporterFactory.class );
         system = locator.getService( RepositorySystem.class );
 

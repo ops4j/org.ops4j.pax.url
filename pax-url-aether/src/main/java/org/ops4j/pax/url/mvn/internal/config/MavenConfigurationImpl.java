@@ -1,5 +1,6 @@
 /*
  * Copyright 2007 Alin Dreghiciu.
+ * Copyright (C) 2014 Guillaume Nodet
  *
  * Licensed  under the  Apache License,  Version 2.0  (the "License");
  * you may not use  this file  except in  compliance with the License.
@@ -49,6 +50,7 @@ import org.slf4j.LoggerFactory;
  * Service Configuration implementation.
  * 
  * @author Alin Dreghiciu
+ * @author Guillaume Nodet
  * @see MavenConfiguration
  * @since August 11, 2007
  */
@@ -71,7 +73,7 @@ public class MavenConfigurationImpl extends PropertyStore implements MavenConfig
     /**
      * Use a default timeout of 5 seconds.
      */
-    private final String DEFAULT_TIMEOUT = "5000";
+    private final static String DEFAULT_TIMEOUT = "5000";
 
     /**
      * Configuration PID. Cannot be null or empty.
@@ -94,16 +96,33 @@ public class MavenConfigurationImpl extends PropertyStore implements MavenConfig
      */
     public MavenConfigurationImpl(final PropertyResolver propertyResolver, final String pid) {
         NullArgumentException.validateNotNull(propertyResolver, "Property resolver");
-        NullArgumentException.validateNotEmpty(pid, true, "Configuration pid");
 
-        m_pid = pid;
+        m_pid = pid == null ? "" : pid + ".";
         m_propertyResolver = propertyResolver;
         settings = buildSettings(getLocalRepoPath(propertyResolver), getSettingsPath(),
             useFallbackRepositories());
     }
 
+    @Override
+    public PropertyResolver getPropertyResolver() {
+        return m_propertyResolver;
+    }
+
     public boolean isValid() {
         return m_propertyResolver.get(m_pid + ServiceConstants.REQUIRE_CONFIG_ADMIN_CONFIG) == null;
+    }
+
+    /**
+     * @see MavenConfiguration#isOffline()
+     */
+    public boolean isOffline() {
+        if (!contains(m_pid + ServiceConstants.PROPERTY_OFFLINE)) {
+            return set(
+                    m_pid + ServiceConstants.PROPERTY_OFFLINE,
+                    Boolean.valueOf(m_propertyResolver.get(m_pid
+                            + ServiceConstants.PROPERTY_OFFLINE)));
+        }
+        return get(m_pid + ServiceConstants.PROPERTY_OFFLINE);
     }
 
     /**
@@ -300,6 +319,19 @@ public class MavenConfigurationImpl extends PropertyStore implements MavenConfig
         return null;
     }
 
+    public String getGlobalChecksumPolicy() {
+        final String propertyName = m_pid + ServiceConstants.PROPERTY_GLOBAL_CHECKSUM_POLICY;
+        if (contains(propertyName)) {
+            return get(propertyName);
+        }
+        final String propertyValue = m_propertyResolver.get(propertyName);
+        if (propertyValue != null) {
+            set(propertyName, propertyValue);
+            return propertyValue;
+        }
+        return null;
+    }
+
     /**
      * Resolves local repository directory by using the following resolution:<br/>
      * 1. looks for a configuration property named localRepository; 2. looks for a framework
@@ -320,29 +352,27 @@ public class MavenConfigurationImpl extends PropertyStore implements MavenConfig
             if (spec == null) {
                 spec = System.getProperty("user.home") + "/.m2/repository";
             }
-            if (spec != null) {
-                if (!spec.toLowerCase().contains("@snapshots")) {
-                    spec += "@snapshots";
-                }
-                spec += "@id=local";
-                // check if we have a valid url
+            if (!spec.toLowerCase().contains("@snapshots")) {
+                spec += "@snapshots";
+            }
+            spec += "@id=local";
+            // check if we have a valid url
+            try {
+                return set(m_pid + ServiceConstants.PROPERTY_LOCAL_REPOSITORY,
+                    new MavenRepositoryURL(spec));
+            }
+            catch (MalformedURLException e) {
+                // maybe is just a file?
                 try {
                     return set(m_pid + ServiceConstants.PROPERTY_LOCAL_REPOSITORY,
-                        new MavenRepositoryURL(spec));
+                        new MavenRepositoryURL(new File(spec).toURI().toASCIIString()));
                 }
-                catch (MalformedURLException e) {
-                    // maybe is just a file?
-                    try {
-                        return set(m_pid + ServiceConstants.PROPERTY_LOCAL_REPOSITORY,
-                            new MavenRepositoryURL(new File(spec).toURI().toASCIIString()));
-                    }
-                    catch (MalformedURLException ignore) {
-                        LOGGER.warn("Local repository [" + spec
-                            + "] cannot be used and will be skipped");
-                        return set(m_pid + ServiceConstants.PROPERTY_LOCAL_REPOSITORY, null);
-                    }
+                catch (MalformedURLException ignore) {
+                    LOGGER.warn("Local repository [" + spec
+                        + "] cannot be used and will be skipped");
+                    return set(m_pid + ServiceConstants.PROPERTY_LOCAL_REPOSITORY, null);
+                }
 
-                }
             }
         }
         return get(m_pid + ServiceConstants.PROPERTY_LOCAL_REPOSITORY);
@@ -532,7 +562,7 @@ public class MavenConfigurationImpl extends PropertyStore implements MavenConfig
     }
 
     private String getLocalRepoPath(PropertyResolver props) {
-        return props.get(ServiceConstants.PID + ServiceConstants.PROPERTY_LOCAL_REPOSITORY);
+        return props.get(ServiceConstants.PID + "." + ServiceConstants.PROPERTY_LOCAL_REPOSITORY);
     }
 
     private Settings buildSettings(String localRepoPath, String settingsPath,

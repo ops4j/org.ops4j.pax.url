@@ -42,7 +42,7 @@ public class MirrorTest {
     public void startHttp() throws Exception {
         server = new Server();
         SelectChannelConnector connector = new SelectChannelConnector();
-        String portNumber = System.getProperty( "jetty.http.port", "8181" );
+        String portNumber = System.getProperty( "jetty.http.port" );
         connector.setPort( Integer.parseInt( portNumber ) );
         server.addConnector( connector );
 
@@ -117,7 +117,8 @@ public class MirrorTest {
         // you must exist.
         localRepo.mkdirs();
 
-        Connection c = new Connection( new URL( "file:ant/ant/1.5.1" ), config );
+        Connection c = new Connection( new URL( null, "mvn:ant/ant/1.5.1", new org.ops4j.pax.url.mvn.Handler() ),
+                                       new AetherBasedResolver( config ) );
         c.getInputStream();
         assertEquals( "the artifact must be downloaded", true, new File( localRepo,
             "ant/ant/1.5.1/ant-1.5.1.jar" ).exists() );
@@ -132,7 +133,8 @@ public class MirrorTest {
         // you must exist.
         localRepo.mkdirs();
 
-        Connection c = new Connection( new URL( "file:test/test/1.5.1" ), config );
+        Connection c = new Connection( new URL(  null, "mvn:test/test/1.5.1", new org.ops4j.pax.url.mvn.Handler() ),
+                                       new AetherBasedResolver( config ) );
         c.getInputStream().read();
     }
 
@@ -146,7 +148,8 @@ public class MirrorTest {
         // you must exist.
         localRepo.mkdirs();
 
-        Connection c = new Connection( new URL( "file:ant/ant/1.5.1" ), config );
+        Connection c = new Connection( new URL( null, "mvn:ant/ant/1.5.1", new org.ops4j.pax.url.mvn.Handler() ),
+                                       new AetherBasedResolver( config ) );
         c.getInputStream();
         assertEquals( "the artifact must be downloaded", true, new File( localRepo,
             "ant/ant/1.5.1/ant-1.5.1.jar" ).exists() );
@@ -162,7 +165,8 @@ public class MirrorTest {
 		// you must exist.
 		localRepo.mkdirs();
 
-		Connection c = new Connection(new URL("file:ant/ant/1.5.1"), config);
+		Connection c = new Connection( new URL( null, "mvn:ant/ant/1.5.1", new org.ops4j.pax.url.mvn.Handler() ),
+                                       new AetherBasedResolver( config ) );
 		c.getInputStream();
 		assertEquals("the artifact must be downloaded", true, new File(
 				localRepo, "ant/ant/1.5.1/ant-1.5.1.jar").exists());
@@ -189,7 +193,8 @@ public class MirrorTest {
 		// you must exist.
 		localRepo.mkdirs();
 
-		Connection c = new Connection(new URL("file:ant/ant/1.5.1"), config);
+		Connection c = new Connection( new URL( null, "mvn:ant/ant/1.5.1", new org.ops4j.pax.url.mvn.Handler() ),
+                                       new AetherBasedResolver( config ) );
 		c.getInputStream();
 		assertEquals("the artifact must be downloaded", true, new File(
 				localRepo, "ant/ant/1.5.1/ant-1.5.1.jar").exists());

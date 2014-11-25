@@ -61,8 +61,8 @@ public class ProxyTest
         String repoPath = "target/localrepo_" + UUID.randomUUID();
 
         Properties properties = new Properties();
-        properties.setProperty( TEST_PID + ServiceConstants.PROPERTY_LOCAL_REPOSITORY, repoPath );
-        properties.setProperty( TEST_PID + ServiceConstants.PROPERTY_REPOSITORIES,
+        properties.setProperty( TEST_PID + "." + ServiceConstants.PROPERTY_LOCAL_REPOSITORY, repoPath );
+        properties.setProperty( TEST_PID + "." + ServiceConstants.PROPERTY_REPOSITORIES,
             "http://qfdqfqfqf.fra@id=fake" );
 
         File file = new File( "target/test-classes/settings-proxy1.xml" );
@@ -71,7 +71,8 @@ public class ProxyTest
         // you must exist.
         localRepo.mkdirs();
 
-        Connection c = new Connection( new URL( "file:ant/ant/1.5.1" ), config );
+        Connection c = new Connection( new URL( null, "mvn:ant/ant/1.5.1", new org.ops4j.pax.url.mvn.Handler() ),
+                                       new AetherBasedResolver( config ) );
         c.getInputStream();
 
         assertEquals( "the artifact must be downloaded", true, new File( localRepo,

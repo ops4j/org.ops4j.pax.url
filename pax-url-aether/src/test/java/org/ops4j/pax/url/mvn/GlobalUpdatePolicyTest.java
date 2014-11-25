@@ -130,11 +130,11 @@ public class GlobalUpdatePolicyTest
         final Properties props = new Properties();
 
         /** Relax SSL requirements. */
-        props.setProperty( ServiceConstants.PID
+        props.setProperty( ServiceConstants.PID + "."
                 + ServiceConstants.PROPERTY_CERTIFICATE_CHECK, "false" );
 
         /** Enable snapshot update on every resolve request. */
-        props.setProperty( ServiceConstants.PID
+        props.setProperty( ServiceConstants.PID + "."
                 + ServiceConstants.PROPERTY_GLOBAL_UPDATE_POLICY, "always" );
 
         MavenConfiguration config = UnitHelp.getConfig( SETTINGS, props );
@@ -165,7 +165,7 @@ public class GlobalUpdatePolicyTest
             mavenDeploy();
 
             final File file = //
-                resolver.resolveFile( GROUP, ARTIFACT, "", TYPE, VERSION );
+                resolver.resolve( GROUP, ARTIFACT, "", TYPE, VERSION );
 
             time1 = file.lastModified();
         }
@@ -176,7 +176,7 @@ public class GlobalUpdatePolicyTest
             mavenDeploy();
 
             final File file = //
-                resolver.resolveFile( GROUP, ARTIFACT, "", TYPE, VERSION );
+                resolver.resolve( GROUP, ARTIFACT, "", TYPE, VERSION );
 
             time2 = file.lastModified();
         }
