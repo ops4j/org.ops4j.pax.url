@@ -141,7 +141,7 @@ abstract class AbstractConnection
         generateImportPackageFromWebXML( instructions );
 
         return createBundle(
-                    URLUtils.prepareInputStream(new URL(warUri), m_configuration.getCertificateCheck()),
+                    URLUtils.prepareInputStream(new URL(warUri), !m_configuration.getCertificateCheck()),
                     instructions,
                     warUri );
     }

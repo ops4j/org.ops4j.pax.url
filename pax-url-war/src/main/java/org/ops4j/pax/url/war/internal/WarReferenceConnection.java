@@ -55,7 +55,7 @@ public class WarReferenceConnection
         final Properties instructions = new Properties();
         final URL instructionsFleUrl = getInstructionsFileURL();
         instructions.load(
-            URLUtils.prepareInputStream( instructionsFleUrl, getConfiguration().getCertificateCheck() )
+            URLUtils.prepareInputStream( instructionsFleUrl, !getConfiguration().getCertificateCheck() )
         );
         //the following line is for debugging purposes 
         //instructions.store( System.out, null );
