@@ -267,8 +267,11 @@ public class MavenConfigurationImpl extends PropertyStore implements MavenConfig
                 StringBuilder builder = new StringBuilder(init);
                 Map<String, Profile> profiles = settings.getProfilesAsMap();
                 for (String activeProfile : settings.getActiveProfiles()) {
-                    for (org.apache.maven.settings.Repository repo : profiles.get(activeProfile)
-                        .getRepositories()) {
+                    Profile profile = profiles.get(activeProfile);
+                    if (profile == null) {
+                        continue;
+                    }
+                    for (org.apache.maven.settings.Repository repo : profile.getRepositories()) {
                         if (builder.length() > 0) {
                             builder.append(REPOSITORIES_SEPARATOR);
                         }
