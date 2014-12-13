@@ -47,9 +47,9 @@ import org.eclipse.jetty.security.authentication.BasicAuthenticator;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
-import org.hamcrest.core.StringContains;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -175,7 +175,7 @@ public class MirrorAuthenticationTest
     @Test
     public void authenticationShouldFail() throws IOException, InterruptedException
     {
-        MavenConfigurationImpl config = getConfig( "src/test/resources/settings-auth-fail.xml",
+        MavenConfigurationImpl config = getConfig( "src/test/resources/settings-mirror-auth-fail.xml",
         		 "fake", "http://google.com/repo" );
 
         Settings settings = config.getSettings();
@@ -185,9 +185,9 @@ public class MirrorAuthenticationTest
         Connection c = new Connection( new URL( null, "mvn:ant/ant/1.5.1", new Handler() ),
                                        new AetherBasedResolver( config ) );
 
-        c.getInputStream().close();
         thrown.expect( IOException.class );
-        thrown.expectMessage(new StringContains("Not authorized"));
+        thrown.expectMessage( "Not authorized" );
+        c.getInputStream();
     }
 
     @Test
