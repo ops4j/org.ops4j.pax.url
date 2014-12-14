@@ -207,12 +207,42 @@ public class AetherBasedResolver implements MavenResolver {
 
     private MirrorSelector selectMirrors( Mirror mirror ) {
         // configure mirror
-        DefaultMirrorSelector selector = new DefaultMirrorSelector();
+
+       	// The class org.eclipse.aether.util.repository.DefaultMirrorSelector is final therefore it needs to be
+    	// wrapped to fix PAXURL-289.
+    	class DefaultMirrorSelectorWrapper implements MirrorSelector {
+            final DefaultMirrorSelector delegate = new DefaultMirrorSelector();
+            final Map<String, Authentication> authMap = new HashMap<String, Authentication>();
+
+			@Override
+			public RemoteRepository getMirror(RemoteRepository repository) {
+				RemoteRepository repo = delegate.getMirror( repository );
+				if( repo != null ) {
+					Authentication mirrorAuth = authMap.get( repo.getId() );
+					if( mirrorAuth != null ) {
+						RemoteRepository.Builder builder = new RemoteRepository.Builder( repo );
+						repo = builder.setAuthentication( mirrorAuth ).build();
+					}
+				}
+				return repo;
+			}
+			
+			public DefaultMirrorSelector add( String id, String url, String type, boolean repositoryManager,
+					String mirrorOfIds, String mirrorOfTypes, Authentication authentication ) {
+				LOG.trace("adding mirror {} auth = {}", id, authentication != null);
+				if( authentication != null ) {					
+					authMap.put(id, authentication);
+				}
+				return delegate.add( id, url, type, repositoryManager, mirrorOfIds, mirrorOfTypes );
+			}
+    	}
+
+    	DefaultMirrorSelectorWrapper selector = new DefaultMirrorSelectorWrapper();
         for( Mirror m : m_settings.getMirrors() ) {
-            selector.add( m.getName(), m.getUrl(), null, false, m.getMirrorOf(), "*" );
+            selector.add( m.getName(), m.getUrl(), null, false, m.getMirrorOf(), "*", getAuthentication( m.getId() ) );
         }
         if( mirror != null ) {
-            selector.add(mirror.getName(), mirror.getUrl(), null, false, mirror.getMirrorOf(), "*");
+            selector.add(mirror.getName(), mirror.getUrl(), null, false, mirror.getMirrorOf(), "*", getAuthentication( mirror.getId() ) );
         }
         return selector;
     }
