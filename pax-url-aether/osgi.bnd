@@ -35,7 +35,7 @@ Private-Package:\
   org.apache.maven.model;-split-package:=merge-first
 
 Embed-Dependency:\
-  *; scope=compile; type=!pom; inline=true; groupId=!org.slf4j
+  *; scope=compile; type=!pom; inline=true
 
 Embed-Transitive: true
 
