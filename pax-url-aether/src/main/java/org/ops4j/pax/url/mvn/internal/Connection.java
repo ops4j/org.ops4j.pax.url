@@ -29,7 +29,6 @@ import java.net.URLConnection;
 
 import org.ops4j.lang.NullArgumentException;
 import org.ops4j.pax.url.mvn.MavenResolver;
-import org.ops4j.pax.url.mvn.internal.config.MavenConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

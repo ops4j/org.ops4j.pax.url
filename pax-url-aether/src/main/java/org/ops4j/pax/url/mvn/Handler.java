@@ -24,8 +24,6 @@ import java.net.URLConnection;
 import java.net.URLStreamHandler;
 
 import org.ops4j.pax.url.mvn.internal.Connection;
-import org.ops4j.pax.url.mvn.internal.config.MavenConfigurationImpl;
-import org.ops4j.util.property.PropertiesPropertyResolver;
 
 /**
  * {@link URLStreamHandler} implementation for "mvn:" protocol.

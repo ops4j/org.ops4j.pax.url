@@ -17,7 +17,6 @@ package org.ops4j.pax.url.mvn.s3mock;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Properties;
 
 import org.eclipse.aether.collection.DependencyCollectionException;
