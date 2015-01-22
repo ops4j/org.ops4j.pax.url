@@ -19,10 +19,8 @@ package org.ops4j.pax.url.mvn.internal;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.maven.wagon.Wagon;
 import org.apache.maven.wagon.providers.file.FileWagon;
-import org.apache.maven.wagon.providers.http.HttpWagon;
 import org.eclipse.aether.transport.wagon.WagonProvider;
 import org.ops4j.pax.url.mvn.internal.wagon.ConfigurableHttpWagon;
-import org.ops4j.util.property.PropertyResolver;
 
 /**
  * Simplistic wagon provider
