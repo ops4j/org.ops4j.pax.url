@@ -16,6 +16,7 @@
 package org.ops4j.pax.url.mvn.internal;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Dictionary;
@@ -81,6 +82,7 @@ public class Activator extends AbstractURLStreamHandlerService
      *
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
      */
+    @Override
     public void start( final BundleContext bundleContext )
     {
         m_bundleContext = bundleContext;
@@ -97,6 +99,7 @@ public class Activator extends AbstractURLStreamHandlerService
      *
      * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
      */
+    @Override
     public void stop( final BundleContext bundleContext )
     {
         if ( m_handlerReg != null )
@@ -134,12 +137,10 @@ public class Activator extends AbstractURLStreamHandlerService
     {
         final Dictionary<String, Object> props = new Hashtable<String, Object>();
         props.put( URLConstants.URL_HANDLER_PROTOCOL, ServiceConstants.PROTOCOL );
-        m_handlerReg = m_bundleContext.registerService(
-                URLStreamHandlerService.class.getName(),
+        m_handlerReg = safeRegisterService(
+                URLStreamHandlerService.class,
                 this,
-                props
-        );
-
+                props);
     }
 
     /**
@@ -173,11 +174,10 @@ public class Activator extends AbstractURLStreamHandlerService
         MavenConfiguration mavenConfig = new MavenConfigurationImpl(propertyResolver, ServiceConstants.PID);
         MavenResolver resolver = new AetherBasedResolver(mavenConfig);
         MavenResolver oldResolver = m_resolver.getAndSet( resolver );
-        ServiceRegistration registration = m_bundleContext.registerService(
-                MavenResolver.class.getName(),
+        ServiceRegistration registration = safeRegisterService(
+                MavenResolver.class,
                 resolver,
-                null
-        );
+                null);
         registration = m_resolverReg.getAndSet(registration);
         if (registration != null) {
             registration.unregister();
@@ -196,6 +196,49 @@ public class Activator extends AbstractURLStreamHandlerService
             throws IOException
     {
         return new Connection( url, m_resolver.get() );
+    }
+
+    /**
+     * Safely registers the specified service to the {@link BundleContext}.
+     * <p>
+     * This method is introduced to support backward compatibility with the older 4.0.0
+     * version because org.osgi.framework in version 1.5 has method
+     * <code>safeRegisterService(String,Object,Dictionary)</code> while in version
+     * 1.6 it is changed to <code>safeRegisterService(String,Object,Dictionary<String, ? >)</code>.
+     * The dictionary is not a raw typed.
+     * <p>
+     * The method can be replaced to the single <code>registerService</code> method
+     * invocation if the backward compatibility will not be supported any more. In
+     * such case the specified version ranges in <i>osgi.bnd</i> should be replaced
+     * or removed as well: <pre>
+     * {@code
+     * org.osgi.framework;version="[1.5,2)"
+     * org.osgi.util.tracker;version="[1.4,2)" }</pre>
+     */
+    @SuppressWarnings("unchecked")
+    private <T> ServiceRegistration<T> safeRegisterService(Class<T> clazz, T service, Dictionary<String, ?> properties) {
+        Method[] methods = BundleContext.class.getMethods();
+        for (Method method : methods) {
+            Class<?>[] params = method.getParameterTypes();
+            if ("registerService".equals(method.getName())
+                    && params.length == 3
+                    && String.class.equals(params[0])
+                    && Object.class.equals(params[1])
+                    && Dictionary.class.equals(params[2])) {
+                try {
+                    return (ServiceRegistration<T>) method.invoke(
+                            m_bundleContext,
+                            clazz.getName(),
+                            service,
+                            properties);
+                } catch (Exception e) {
+                    LOG.error("Unable to register service {}", service, e);
+                    return null;
+                }
+            }
+        }
+        LOG.error("Method registerService is not found in BundleContext");
+        return null;
     }
 
     static class OptionalConfigAdminHelper {

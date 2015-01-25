@@ -49,12 +49,28 @@
                                 </configuration>
                             </execution>
                             <execution>
-                                <id>aether-osgi</id>
+                                <id>aether-osgi-eclipse-3.6</id>
                                 <goals>
                                     <goal>run</goal>
                                 </goals>
                                 <configuration>
-                                    <cloneProjectsTo>${project.build.directory}/aether-osgi</cloneProjectsTo>
+                                    <profiles>
+                                        <profile>eclipse-3.6</profile>
+                                    </profiles>
+                                    <cloneProjectsTo>${project.build.directory}/aether-osgi-eclipse-3.6</cloneProjectsTo>
+                                    <pom>src/it/itest-aether-osgi/pom.xml</pom>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>aether-osgi-eclipse-3.7</id>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <profiles>
+                                        <profile>eclipse-3.7</profile>
+                                    </profiles>
+                                    <cloneProjectsTo>${project.build.directory}/aether-osgi-eclipse-3.7</cloneProjectsTo>
                                     <pom>src/it/itest-aether-osgi/pom.xml</pom>
                                 </configuration>
                             </execution>
@@ -72,6 +88,33 @@
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+        <profile>
+            <id>eclipse-3.6</id>
+            <dependencyManagement>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.eclipse.tycho</groupId>
+                        <artifactId>org.eclipse.osgi</artifactId>
+                        <version>3.6.2.R36x_v20110210</version>
+                    </dependency>
+                </dependencies>
+            </dependencyManagement>
+        </profile>
+        <profile>
+            <id>eclipse-3.7</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <dependencyManagement>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.eclipse.tycho</groupId>
+                        <artifactId>org.eclipse.osgi</artifactId>
+                        <version>3.7.0.v20110613</version>
+                    </dependency>
+                </dependencies>
+            </dependencyManagement>
         </profile>
     </profiles>
 
