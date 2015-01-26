@@ -254,7 +254,7 @@ public class Activator extends AbstractURLStreamHandlerService
                     ManagedService.class.getName(),
                     new ManagedService() {
                         @Override
-                        public void updated(Dictionary dictionary) throws ConfigurationException {
+                        public void updated(Dictionary<String, ?> dictionary) throws ConfigurationException {
                             activator.updated(dictionary);
                         }
                     },
