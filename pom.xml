@@ -52,7 +52,7 @@
     <properties>
         <release-paxurl-altGitURL>scm:git:ssh://git@github.com/ops4j/org.ops4j.pax.url.git</release-paxurl-altGitURL>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <dependency.aether.version>1.0.0.v20140518</dependency.aether.version>
+        <dependency.aether.version>1.0.2.v20150114</dependency.aether.version>
         <dependency.base.version>1.4.0</dependency.base.version>
         <dependency.bndlib.version>2.3.0</dependency.bndlib.version>
         <!-- higher versions of logback import slf4j 1.7 -->
