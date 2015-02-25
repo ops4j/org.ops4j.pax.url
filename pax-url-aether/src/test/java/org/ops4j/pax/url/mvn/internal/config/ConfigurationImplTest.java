@@ -601,4 +601,29 @@ public class ConfigurationImplTest
         verify( propertyResolver );
     }
 
+    @Test
+    public void getRepossitoryPoliciesFromSettings()
+        throws MalformedURLException, FileNotFoundException
+    {
+        PropertyResolver propertyResolver = createMock( PropertyResolver.class );
+        File validSettings = FileUtils.getFileFromClasspath( "settings-policies.xml" );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.repositories" ) ).andReturn( null );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.defaultLocalRepoAsRemote" ) ).andReturn( null );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.useFallbackRepositories" ) ).andReturn( "false" );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.settings" ) ).andReturn(
+            validSettings.getAbsolutePath()
+        );
+        replay( propertyResolver );
+        MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
+        List<MavenRepositoryURL> repositories = config.getRepositories();
+        assertEquals(1, repositories.size());
+        MavenRepositoryURL mavenRepositoryURL = repositories.get(0);
+        assertEquals("always", mavenRepositoryURL.getReleasesUpdatePolicy());
+        assertEquals("never", mavenRepositoryURL.getSnapshotsUpdatePolicy());
+        assertEquals("fail", mavenRepositoryURL.getReleasesChecksumPolicy());
+        assertEquals("warn", mavenRepositoryURL.getSnapshotsChecksumPolicy());
+        verify( propertyResolver );
+    }
+
 }

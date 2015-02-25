@@ -238,7 +238,7 @@ public class MavenConfigurationImpl extends PropertyStore implements MavenConfig
     }
 
     /**
-     * Repository is a comma separated list of repositories to be used. If repository acces requests
+     * Repository is a comma separated list of repositories to be used. If repository access requests
      * authentication the user name and password must be specified in the repository url as for
      * example http://user:password@repository.ops4j.org/maven2.<br/>
      * If the repository from 1/2 bellow starts with a plus (+) the option 3 is also used and the
@@ -276,14 +276,26 @@ public class MavenConfigurationImpl extends PropertyStore implements MavenConfig
                             builder.append(REPOSITORIES_SEPARATOR);
                         }
                         builder.append(repo.getUrl());
-                        builder.append("@id=");
+                        builder.append(ServiceConstants.SEPARATOR_OPTIONS);
+                        builder.append(ServiceConstants.OPTION_ID);
+                        builder.append("=");
                         builder.append(repo.getId());
 
-                        if (repo.getReleases() != null && !repo.getReleases().isEnabled()) {
-                            builder.append("@noreleases");
+                        if (repo.getReleases() != null) {
+                            if (!repo.getReleases().isEnabled()) {
+                                builder.append(ServiceConstants.SEPARATOR_OPTIONS);
+                                builder.append(ServiceConstants.OPTION_DISALLOW_RELEASES);
+                            }
+                            addPolicy(builder, repo.getReleases().getUpdatePolicy(), ServiceConstants.OPTION_RELEASES_UPDATE);
+                            addPolicy(builder, repo.getReleases().getChecksumPolicy(), ServiceConstants.OPTION_RELEASES_CHECKSUM);
                         }
-                        if (repo.getSnapshots() != null && repo.getSnapshots().isEnabled()) {
-                            builder.append("@snapshots");
+                        if (repo.getSnapshots() != null) {
+                            if (repo.getSnapshots().isEnabled()) {
+                                builder.append(ServiceConstants.SEPARATOR_OPTIONS);
+                                builder.append(ServiceConstants.OPTION_ALLOW_SNAPSHOTS);
+                            }
+                            addPolicy(builder, repo.getSnapshots().getUpdatePolicy(), ServiceConstants.OPTION_SNAPSHOTS_UPDATE);
+                            addPolicy(builder, repo.getSnapshots().getChecksumPolicy(), ServiceConstants.OPTION_SNAPSHOTS_CHECKSUM);
                         }
                     }
                 }
@@ -307,6 +319,15 @@ public class MavenConfigurationImpl extends PropertyStore implements MavenConfig
             return set(m_pid + ServiceConstants.PROPERTY_REPOSITORIES, repositoriesProperty);
         }
         return get(m_pid + ServiceConstants.PROPERTY_REPOSITORIES);
+    }
+
+    private void addPolicy(StringBuilder builder, String policy, String option) {
+        if (policy != null && !policy.isEmpty()) {
+            builder.append(ServiceConstants.SEPARATOR_OPTIONS);
+            builder.append(option);
+            builder.append("=");
+            builder.append(policy);
+        }
     }
 
     public String getGlobalUpdatePolicy() {

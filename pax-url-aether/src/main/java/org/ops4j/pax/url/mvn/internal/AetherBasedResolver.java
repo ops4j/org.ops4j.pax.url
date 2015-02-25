@@ -17,6 +17,8 @@
 package org.ops4j.pax.url.mvn.internal;
 
 import static org.ops4j.pax.url.mvn.internal.Parser.VERSION_LATEST;
+import static org.eclipse.aether.repository.RepositoryPolicy.CHECKSUM_POLICY_WARN;
+import static org.eclipse.aether.repository.RepositoryPolicy.UPDATE_POLICY_DAILY;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -312,19 +314,19 @@ public class AetherBasedResolver implements MavenResolver {
     private void addRepo( List<RemoteRepository> list, MavenRepositoryURL repo ) {
         String releasesUpdatePolicy = repo.getReleasesUpdatePolicy();
         if (releasesUpdatePolicy == null || releasesUpdatePolicy.isEmpty()) {
-            releasesUpdatePolicy = new RepositoryPolicy().getUpdatePolicy();
+            releasesUpdatePolicy = UPDATE_POLICY_DAILY;
         }
         String releasesChecksumPolicy = repo.getReleasesChecksumPolicy();
         if (releasesChecksumPolicy == null || releasesChecksumPolicy.isEmpty()) {
-            releasesChecksumPolicy = new RepositoryPolicy().getChecksumPolicy();
+            releasesChecksumPolicy = CHECKSUM_POLICY_WARN;
         }
         String snapshotsUpdatePolicy = repo.getSnapshotsUpdatePolicy();
         if (snapshotsUpdatePolicy == null || snapshotsUpdatePolicy.isEmpty()) {
-            snapshotsUpdatePolicy = new RepositoryPolicy().getUpdatePolicy();
+            snapshotsUpdatePolicy = UPDATE_POLICY_DAILY;
         }
         String snapshotsChecksumPolicy = repo.getSnapshotsChecksumPolicy();
         if (snapshotsChecksumPolicy == null || snapshotsChecksumPolicy.isEmpty()) {
-            snapshotsChecksumPolicy = new RepositoryPolicy().getChecksumPolicy();
+            snapshotsChecksumPolicy = CHECKSUM_POLICY_WARN;
         }
         RemoteRepository.Builder builder = new RemoteRepository.Builder( repo.getId(), REPO_TYPE, repo.getURL().toExternalForm() );
         RepositoryPolicy releasePolicy = new RepositoryPolicy( repo.isReleasesEnabled(), releasesUpdatePolicy, releasesChecksumPolicy );
