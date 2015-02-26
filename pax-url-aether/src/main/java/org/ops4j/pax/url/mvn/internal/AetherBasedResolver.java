@@ -17,8 +17,13 @@
 package org.ops4j.pax.url.mvn.internal;
 
 import static org.ops4j.pax.url.mvn.internal.Parser.VERSION_LATEST;
+import static org.eclipse.aether.repository.RepositoryPolicy.CHECKSUM_POLICY_FAIL;
+import static org.eclipse.aether.repository.RepositoryPolicy.CHECKSUM_POLICY_IGNORE;
 import static org.eclipse.aether.repository.RepositoryPolicy.CHECKSUM_POLICY_WARN;
+import static org.eclipse.aether.repository.RepositoryPolicy.UPDATE_POLICY_ALWAYS;
 import static org.eclipse.aether.repository.RepositoryPolicy.UPDATE_POLICY_DAILY;
+import static org.eclipse.aether.repository.RepositoryPolicy.UPDATE_POLICY_INTERVAL;
+import static org.eclipse.aether.repository.RepositoryPolicy.UPDATE_POLICY_NEVER;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -154,6 +159,9 @@ public class AetherBasedResolver implements MavenResolver {
     private void assignProxyAndMirrors( List<RemoteRepository> remoteRepos ) {
         Map<String, List<String>> map = new HashMap<String, List<String>>();
         Map<String, RemoteRepository> naming = new HashMap<String, RemoteRepository>();
+        boolean aggregateReleaseEnabled = false, aggregateSnapshotEnabled = false;
+        String aggregateReleaseUpdateInterval = null, aggregateSnapshotUpdateInterval = null;
+        String aggregateReleaseChecksumPolicy = null, aggregateSnapshotChecksumPolicy = null; 
 
         List<RemoteRepository> resultingRepos = new ArrayList<RemoteRepository>();
 
@@ -173,6 +181,14 @@ public class AetherBasedResolver implements MavenResolver {
                 }
                 List<String> mirrored = map.get( key );
                 mirrored.add( r.getId() );
+
+                // Aggregate policy settings of the mirror repos.
+            	aggregateReleaseEnabled |= r.getPolicy( false ).isEnabled();
+            	aggregateSnapshotEnabled |= r.getPolicy( true ).isEnabled();
+            	aggregateReleaseUpdateInterval = minUpdateInterval( aggregateReleaseUpdateInterval, r.getPolicy( false ).getUpdatePolicy() );
+            	aggregateSnapshotUpdateInterval = minUpdateInterval( aggregateSnapshotUpdateInterval, r.getPolicy( true ).getUpdatePolicy() );
+            	aggregateReleaseChecksumPolicy = aggregateChecksumPolicy( aggregateReleaseChecksumPolicy, r.getPolicy( false ).getChecksumPolicy() );
+            	aggregateSnapshotChecksumPolicy = aggregateChecksumPolicy( aggregateSnapshotChecksumPolicy, r.getPolicy( true ).getChecksumPolicy() );
             }
         }
 
@@ -183,8 +199,12 @@ public class AetherBasedResolver implements MavenResolver {
             for( String rep : map.get( mirrorId ) ) {
                 mirroredRepos.add( naming.get( rep ) );
             }
+            RepositoryPolicy releasePolicy = new RepositoryPolicy(aggregateReleaseEnabled, aggregateReleaseUpdateInterval, aggregateReleaseChecksumPolicy);
+            RepositoryPolicy snapshotPolicy = new RepositoryPolicy(aggregateSnapshotEnabled, aggregateSnapshotUpdateInterval, aggregateSnapshotChecksumPolicy);
             mirror = new RemoteRepository.Builder( mirror ).setMirroredRepositories( mirroredRepos )
                 .setProxy( m_proxySelector.getProxy( mirror ) )
+                .setReleasePolicy( releasePolicy )
+                .setSnapshotPolicy( snapshotPolicy )
                 .build();
             resultingRepos.removeAll( mirroredRepos );
             resultingRepos.add( 0, mirror );
@@ -192,6 +212,73 @@ public class AetherBasedResolver implements MavenResolver {
 
         remoteRepos.clear();
         remoteRepos.addAll( resultingRepos );
+    }
+
+    private String minUpdateInterval(String interval1, String interval2) {
+    	LOG.warn("interval1: {}, interval2: {}", interval1, interval2);
+    	if( interval1 == null ) {
+    		return interval2;
+    	} else if( interval2 == null ) {
+    		return interval1;
+    	}
+
+    	int interval1InMin = getIntervalInMinutes( interval1 );
+    	int interval2InMin = getIntervalInMinutes( interval2 );
+    	if( interval1InMin <= interval2InMin ) {
+    		return getUpdatePolicyInterval( interval1InMin );
+    	} else {
+    		return getUpdatePolicyInterval( interval2InMin );
+    	}
+    }
+
+    private int getIntervalInMinutes(String interval) {
+    	int intervalInMin;
+    	if (interval.equals( UPDATE_POLICY_NEVER )) {
+    		intervalInMin = Integer.MAX_VALUE;
+    	} else if (interval.equals( UPDATE_POLICY_DAILY )) {
+    		intervalInMin = 24 * 60;
+    	} else if (interval.equals( UPDATE_POLICY_ALWAYS )) {
+    		intervalInMin = Integer.MIN_VALUE;
+    	} else if (interval.startsWith( UPDATE_POLICY_INTERVAL + ":")) {
+    		try {
+				intervalInMin = Integer.parseInt(interval.substring( UPDATE_POLICY_INTERVAL.length() + 1 ));
+			} catch (NumberFormatException e) {
+				LOG.warn("unable to parse update policy interval: \"{}\"", interval);
+				intervalInMin = 24 * 60;
+			}
+    	} else {
+    		throw new IllegalArgumentException( String.format( "Invalid update policy \"%s\"", interval ) );
+    	}
+    	return intervalInMin;
+    }
+
+    private String getUpdatePolicyInterval(int intervalInMin) {
+    	switch (intervalInMin) {
+    	case Integer.MAX_VALUE:
+    		return UPDATE_POLICY_NEVER;
+    	case Integer.MIN_VALUE:
+    		return UPDATE_POLICY_ALWAYS;
+    	case 24 * 60:
+    		return UPDATE_POLICY_DAILY;
+    	default:
+    		return String.format("%s:%d", UPDATE_POLICY_INTERVAL, intervalInMin);
+    	}
+    }
+
+    private String aggregateChecksumPolicy( String policy1, String policy2 ) {
+    	if( policy1 == null ) {
+    		return policy2;
+    	}
+    	if( policy2 == null ) {
+    		return policy1;
+    	}
+    	if( policy1.equals( CHECKSUM_POLICY_FAIL ) || policy2.equals( CHECKSUM_POLICY_FAIL ) ) {
+    		return CHECKSUM_POLICY_FAIL;
+    	} else if( policy1.equals( CHECKSUM_POLICY_WARN ) || policy2.equals( CHECKSUM_POLICY_WARN ) ) {
+    		return CHECKSUM_POLICY_WARN;
+    	} else {
+    		return CHECKSUM_POLICY_IGNORE;
+    	}
     }
 
     private ProxySelector selectProxies() {
