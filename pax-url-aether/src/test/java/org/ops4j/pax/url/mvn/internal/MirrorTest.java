@@ -1,18 +1,26 @@
 package org.ops4j.pax.url.mvn.internal;
 
+import static org.eclipse.aether.repository.RepositoryPolicy.CHECKSUM_POLICY_FAIL;
+import static org.eclipse.aether.repository.RepositoryPolicy.CHECKSUM_POLICY_WARN;
+import static org.eclipse.aether.repository.RepositoryPolicy.UPDATE_POLICY_INTERVAL;
+import static org.eclipse.aether.repository.RepositoryPolicy.UPDATE_POLICY_NEVER;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
 
 import org.apache.maven.settings.Profile;
 import org.apache.maven.settings.Repository;
+import org.apache.maven.settings.RepositoryPolicy;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.settings.building.DefaultSettingsBuilder;
 import org.apache.maven.settings.building.DefaultSettingsBuilderFactory;
@@ -20,6 +28,7 @@ import org.apache.maven.settings.building.DefaultSettingsBuildingRequest;
 import org.apache.maven.settings.building.SettingsBuildingException;
 import org.apache.maven.settings.building.SettingsBuildingRequest;
 import org.apache.maven.settings.building.SettingsBuildingResult;
+import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.DefaultHandler;
@@ -64,6 +73,14 @@ public class MirrorTest {
     }
 
     private Settings buildSettings( String settingsPath, String id, String url ) {
+        Repository remote = new Repository();
+        remote.setId( id );
+        remote.setUrl( url );
+
+        return buildSettings(settingsPath, remote);
+    }
+
+    private Settings buildSettings( String settingsPath, Repository... remotes ) {
         Settings settings = null;
         if( settingsPath == null ) {
             settings = new Settings();
@@ -88,10 +105,8 @@ public class MirrorTest {
         settings.setLocalRepository( "target/localrepo_" + UUID.randomUUID() );
         Profile centralProfile = new Profile();
         centralProfile.setId( "test" );
-        Repository remote = new Repository();
-        remote.setId( id );
-        remote.setUrl( url );
-        centralProfile.addRepository( remote );
+        for ( Repository remote : remotes ) 
+        	centralProfile.addRepository( remote );
         settings.addProfile( centralProfile );
         settings.addActiveProfile( "test" );
         return settings;
@@ -102,6 +117,14 @@ public class MirrorTest {
         MavenConfigurationImpl config = new MavenConfigurationImpl( new PropertiesPropertyResolver(
             p ), ServiceConstants.PID );
         config.setSettings( buildSettings( settingsPath, id, url ) );
+        return config;
+    }
+
+    private MavenConfigurationImpl getConfig( String settingsPath, Repository... remotes ) {
+        Properties p = new Properties();
+        MavenConfigurationImpl config = new MavenConfigurationImpl( new PropertiesPropertyResolver(
+            p ), ServiceConstants.PID );
+        config.setSettings( buildSettings( settingsPath, remotes ) );
         return config;
     }
 
@@ -197,6 +220,71 @@ public class MirrorTest {
 		c.getInputStream();
 		assertEquals("the artifact must be downloaded", true, new File(
 				localRepo, "ant/ant/1.5.1/ant-1.5.1.jar").exists());
+
+	}
+	
+	@Test
+	public void mirror1MultiRemotes() throws IOException, InterruptedException {
+
+		Repository disabledRemote = new Repository(), enabledRemote = new Repository();
+		enabledRemote.setId( "enabled" );
+		enabledRemote.setUrl( "http://google.com/repo" );
+		disabledRemote.setId( "disabled" );
+		disabledRemote.setUrl( "http://google.com/repo" );
+		RepositoryPolicy disabledPolicy = new RepositoryPolicy();
+		disabledPolicy.setEnabled( false );
+		disabledRemote.setReleases( disabledPolicy );
+
+		MavenConfigurationImpl config = getConfig( "settings-mirror1.xml", enabledRemote, disabledRemote);
+
+		Settings settings = config.getSettings();
+		File localRepo = new File( settings.getLocalRepository() );
+		// you must exist.
+		localRepo.mkdirs();
+
+		Connection c = new Connection( new URL( null, "mvn:ant/ant/1.5.1", new org.ops4j.pax.url.mvn.Handler() ),
+									   new AetherBasedResolver( config ) );
+		c.getInputStream();
+		assertEquals( "the artifact must be downloaded", true, new File( localRepo,
+			"ant/ant/1.5.1/ant-1.5.1.jar" ).exists() );
+	}
+
+	@Test
+	public void mirror1MultiRemote_configCorrect() {
+
+		Repository remote1 = new Repository(), remote2 = new Repository();
+		remote1.setId( "remote1" );
+		remote1.setUrl( "http://google.com/repo" );
+		remote2.setId( "remote2" );
+		remote2.setUrl( "http://google.com/repo" );
+		RepositoryPolicy remote1Policy = new RepositoryPolicy();
+		remote1Policy.setEnabled( true );
+		remote1Policy.setUpdatePolicy( UPDATE_POLICY_INTERVAL + ":42");
+		remote1Policy.setChecksumPolicy( CHECKSUM_POLICY_FAIL );
+		remote1.setReleases( remote1Policy );
+		RepositoryPolicy remote2Policy = new RepositoryPolicy();
+		remote2Policy.setEnabled( true );
+		remote2Policy.setUpdatePolicy( UPDATE_POLICY_NEVER );
+		remote2Policy.setChecksumPolicy( CHECKSUM_POLICY_WARN );
+		remote2.setReleases( remote2Policy );
+
+		@SuppressWarnings("resource")
+		List<RemoteRepository> mirrors1 = new AetherBasedResolver( getConfig( "settings-mirror1.xml", remote1, remote2 ) ).getRepositories();		
+
+		assertNotNull( mirrors1 ) ;
+		assertEquals( 1, mirrors1.size() );
+		assertEquals( true, mirrors1.get( 0 ).getPolicy( false ).isEnabled() );
+		assertEquals( "interval:42", mirrors1.get( 0 ).getPolicy( false ).getUpdatePolicy() );
+		assertEquals( CHECKSUM_POLICY_FAIL, mirrors1.get( 0 ).getPolicy( false ).getChecksumPolicy() );
+
+		@SuppressWarnings("resource")
+		List<RemoteRepository> mirrors2 = new AetherBasedResolver( getConfig( "settings-mirror1.xml", remote2, remote1 ) ).getRepositories();		
+
+		assertNotNull( mirrors2) ;
+		assertEquals( 1, mirrors2.size() );
+		assertEquals( true, mirrors2.get( 0 ).getPolicy( false ).isEnabled() );
+		assertEquals( "interval:42", mirrors2.get( 0 ).getPolicy( false ).getUpdatePolicy() );
+		assertEquals( CHECKSUM_POLICY_FAIL, mirrors2.get( 0 ).getPolicy( false ).getChecksumPolicy() );
 
 	}
 }
