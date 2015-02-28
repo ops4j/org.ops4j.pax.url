@@ -60,11 +60,11 @@ public class Activator extends AbstractURLStreamHandlerService
     /**
      * Handler service registration. Used for cleanup.
      */
-    private ServiceRegistration m_handlerReg;
+    private ServiceRegistration<URLStreamHandlerService> m_handlerReg;
     /**
      * Managed service registration. Used for cleanup.
      */
-    private ServiceRegistration m_managedServiceReg;
+    private ServiceRegistration<ManagedService> m_managedServiceReg;
     /**
      * Maven resolver.
      */
@@ -72,7 +72,8 @@ public class Activator extends AbstractURLStreamHandlerService
     /**
      * Managed service registration. Used for cleanup.
      */
-    private final AtomicReference<ServiceRegistration> m_resolverReg = new AtomicReference<ServiceRegistration>();
+    private final AtomicReference<ServiceRegistration<MavenResolver>> m_resolverReg =
+            new AtomicReference<ServiceRegistration<MavenResolver>>();
 
     /**
      * Registers Handler as a wrap: protocol stream handler service and as a configuration managed service if
@@ -112,7 +113,7 @@ public class Activator extends AbstractURLStreamHandlerService
             m_managedServiceReg.unregister();
             m_managedServiceReg = null;
         }
-        ServiceRegistration registration = m_resolverReg.getAndSet( null );
+        ServiceRegistration<MavenResolver> registration = m_resolverReg.getAndSet( null );
         if ( registration != null )
         {
             registration.unregister();
@@ -174,7 +175,7 @@ public class Activator extends AbstractURLStreamHandlerService
         MavenConfiguration mavenConfig = new MavenConfigurationImpl(propertyResolver, ServiceConstants.PID);
         MavenResolver resolver = new AetherBasedResolver(mavenConfig);
         MavenResolver oldResolver = m_resolver.getAndSet( resolver );
-        ServiceRegistration registration = safeRegisterService(
+        ServiceRegistration<MavenResolver> registration = safeRegisterService(
                 MavenResolver.class,
                 resolver,
                 null);
@@ -246,12 +247,12 @@ public class Activator extends AbstractURLStreamHandlerService
         /**
          * Registers a managed service to listen on configuration updates.
          */
-        static ServiceRegistration registerManagedService(final Activator activator)
+        static ServiceRegistration<ManagedService> registerManagedService(final Activator activator)
         {
             final Dictionary<String, String> props = new Hashtable<String, String>();
             props.put(Constants.SERVICE_PID, ServiceConstants.PID);
-            return activator.m_bundleContext.registerService(
-                    ManagedService.class.getName(),
+            return activator.safeRegisterService(
+                    ManagedService.class,
                     new ManagedService() {
                         @Override
                         public void updated(Dictionary<String, ?> dictionary) throws ConfigurationException {
