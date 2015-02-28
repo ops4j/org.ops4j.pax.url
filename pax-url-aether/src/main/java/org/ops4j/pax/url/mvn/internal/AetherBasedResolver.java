@@ -34,9 +34,13 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.ConcurrentMap;
 
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.maven.artifact.repository.metadata.SnapshotVersion;
@@ -117,6 +121,10 @@ public class AetherBasedResolver implements MavenResolver {
     final private CloseableHttpClient m_client;
     private Settings m_settings;
     private ConfigurableSettingsDecrypter decrypter;
+
+    private LocalRepository localRepository;
+    private final ConcurrentMap<LocalRepository, Deque<RepositorySystemSession>> sessions
+            = new ConcurrentHashMap<LocalRepository, Deque<RepositorySystemSession>>();
 
     /**
      * Create a AetherBasedResolver
@@ -512,7 +520,7 @@ public class AetherBasedResolver implements MavenResolver {
                          MavenRepositoryURL repositoryURL ) throws IOException {
 
         List<LocalRepository> defaultRepos = selectDefaultRepositories();
-        List<RemoteRepository> remoteRepos = getRepositories();
+        List<RemoteRepository> remoteRepos = selectRepositories();
         if (repositoryURL != null) {
             addRepo(remoteRepos, repositoryURL);
         }
@@ -550,6 +558,8 @@ public class AetherBasedResolver implements MavenResolver {
                     }
                     catch( ArtifactResolutionException e ) {
                         // Ignore
+                    } finally {
+                        releaseSession(session);
                     }
                 }
             }
@@ -557,8 +567,8 @@ public class AetherBasedResolver implements MavenResolver {
         catch( InvalidVersionSpecificationException e ) {
             // Should not happen
         }
+        RepositorySystemSession session = newSession( null );
         try {
-            RepositorySystemSession session = newSession( null );
             artifact = resolveLatestVersionRange( session, remoteRepos, artifact );
             return m_repoSystem
                 .resolveArtifact( session, new ArtifactRequest( artifact, remoteRepos, null ) )
@@ -576,15 +586,16 @@ public class AetherBasedResolver implements MavenResolver {
         }
         catch( RepositoryException e ) {
             throw new IOException( "Error resolving artifact " + artifact.toString(), e );
+        } finally {
+            releaseSession(session);
         }
     }
 
     @Override
     public File resolveMetadata(String groupId, String artifactId, String type, String version) throws IOException {
+        RepositorySystem system = getRepositorySystem();
+        RepositorySystemSession session = newSession();
         try {
-            RepositorySystem system = getRepositorySystem();
-            RepositorySystemSession session = createSession();
-
             Metadata metadata = new DefaultMetadata(groupId, artifactId, version,
                                                     type, Metadata.Nature.RELEASE_OR_SNAPSHOT);
             List<MetadataRequest> requests = new ArrayList<MetadataRequest>();
@@ -637,15 +648,16 @@ public class AetherBasedResolver implements MavenResolver {
             return null;
         } catch (Exception e) {
             throw new IOException("Unable to resolve metadata", e);
+        } finally {
+            releaseSession(session);
         }
     }
 
     @Override
     public void upload(String groupId, String artifactId, String classifier, String extension, String version, File file) throws IOException {
+        RepositorySystem system = getRepositorySystem();
+        RepositorySystemSession session = newSession();
         try {
-            RepositorySystem system = getRepositorySystem();
-            RepositorySystemSession session = createSession();
-
             Artifact artifact = new DefaultArtifact(groupId, artifactId, classifier, extension, version,
                                                     null, file);
             InstallRequest request = new InstallRequest();
@@ -653,15 +665,16 @@ public class AetherBasedResolver implements MavenResolver {
             system.install(session, request);
         } catch (Exception e) {
             throw new IOException("Unable to install artifact", e);
+        } finally {
+            releaseSession(session);
         }
     }
 
     @Override
     public void uploadMetadata(String groupId, String artifactId, String type, String version, File file) throws IOException {
+        RepositorySystem system = getRepositorySystem();
+        RepositorySystemSession session = newSession();
         try {
-            RepositorySystem system = getRepositorySystem();
-            RepositorySystemSession session = createSession();
-
             Metadata metadata = new DefaultMetadata(groupId, artifactId, version,
                                                     type, Metadata.Nature.RELEASE_OR_SNAPSHOT,
                                                     file);
@@ -670,6 +683,8 @@ public class AetherBasedResolver implements MavenResolver {
             system.install(session, request);
         } catch (Exception e) {
             throw new IOException("Unable to install metadata", e);
+        } finally {
+            releaseSession(session);
         }
     }
 
@@ -757,11 +772,45 @@ public class AetherBasedResolver implements MavenResolver {
         return artifact;
     }
 
-    public RepositorySystemSession createSession() {
+    public RepositorySystemSession newSession() {
         return newSession( null );
     }
 
     private RepositorySystemSession newSession(LocalRepository repo) {
+        if (repo == null) {
+            if (localRepository == null) {
+                File local;
+                if( m_config.getLocalRepository() != null ) {
+                    local = m_config.getLocalRepository().getFile();
+                } else {
+                    local = new File( System.getProperty( "user.home" ), ".m2/repository" );
+                }
+                localRepository = new LocalRepository( local );
+            }
+            repo = localRepository;
+        }
+        Deque<RepositorySystemSession> deque = sessions.get(repo);
+        RepositorySystemSession session = null;
+        if (deque != null) {
+            session = deque.removeFirst();
+        }
+        if (session == null) {
+            session = createSession(repo);
+        }
+        return session;
+    }
+
+    private void releaseSession(RepositorySystemSession session) {
+        LocalRepository repo = session.getLocalRepository();
+        Deque<RepositorySystemSession> deque = sessions.get(repo);
+        if (deque == null) {
+            sessions.putIfAbsent(repo, new ConcurrentLinkedDeque<RepositorySystemSession>());
+            deque = sessions.get(repo);
+        }
+        deque.add(session);
+    }
+
+    private RepositorySystemSession createSession(LocalRepository repo) {
         DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
 
         if( repo != null ) {
