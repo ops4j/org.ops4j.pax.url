@@ -792,7 +792,7 @@ public class AetherBasedResolver implements MavenResolver {
         Deque<RepositorySystemSession> deque = sessions.get(repo);
         RepositorySystemSession session = null;
         if (deque != null) {
-            session = deque.removeFirst();
+            session = deque.pollFirst();
         }
         if (session == null) {
             session = createSession(repo);
