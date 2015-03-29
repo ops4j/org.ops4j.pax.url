@@ -194,6 +194,7 @@ public class GlobalUpdatePolicyTest
 
         LOG.info( "done" );
 
+        resolver.close();
     }
 
 }

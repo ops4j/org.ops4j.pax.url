@@ -39,6 +39,7 @@ public class AetherTest extends TestBase
 
         resolver.resolve( "org.ops4j.pax.web", "pax-web-api", "", "jar", "0.7.2" );
 
+        resolver.close();
     }
 
     private MavenConfiguration getTestConfig() throws IOException

@@ -44,6 +44,7 @@ public class AetherMultiTest {
     {
         AetherBasedResolver aetherBasedResolver = new AetherBasedResolver( getDummyConfig() );
         aetherBasedResolver.resolve( "ant", "ant", "", "jar", "1.5.1" );
+        aetherBasedResolver.close();
     }
 
     private MavenConfiguration getDummyConfig()

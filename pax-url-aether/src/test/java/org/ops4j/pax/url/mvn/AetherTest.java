@@ -44,6 +44,7 @@ public class AetherTest {
     {
         AetherBasedResolver aetherBasedResolver = new AetherBasedResolver( getConfig() );
         aetherBasedResolver.resolve( "org.ops4j.pax.web", "pax-web-api", "", "jar", "0.7.2" );
+        aetherBasedResolver.close();
     }
 
     @Test
@@ -52,6 +53,7 @@ public class AetherTest {
     {
         AetherBasedResolver aetherBasedResolver = new AetherBasedResolver( getConfig() );
         aetherBasedResolver.resolve( "org.ops4j.pax.web", "pax-web-api", "", "jar", "LATEST" );
+        aetherBasedResolver.close();
     }
 
     @Test
@@ -61,11 +63,13 @@ public class AetherTest {
 
         AetherBasedResolver aetherBasedResolver = new AetherBasedResolver( getConfig() );
         aetherBasedResolver.resolve( "org.ops4j.pax.web", "pax-web-api", "", "jar", "LATEST" );
+        aetherBasedResolver.close();
 
         // now again:
         // no repo
         aetherBasedResolver = new AetherBasedResolver( getConfig() );
         aetherBasedResolver.resolve( "org.ops4j.pax.web", "pax-web-api", "", "jar", "LATEST" );
+        aetherBasedResolver.close();
     }
 
     private Settings getSettings()        
@@ -123,6 +127,7 @@ public class AetherTest {
         config.setSettings( settings );
         AetherBasedResolver aetherBasedResolver = new AetherBasedResolver( config );
         aetherBasedResolver.resolve( "org.openrdf", "openrdf-model", "", "jar", "2.0.1" );
+        aetherBasedResolver.close();
     }
 }
 
