@@ -41,7 +41,7 @@ public interface ServiceConstants
     /**
      * The protocol name used to only resolve on local repositories.
      */
-    String LOCAL_REPO_PROTOCOL = "localrepositories";
+    String LOCAL_REPO_PROTOCOL = "local";
 
     /**
      * Warning: use only in framework properties.  If present, do not accept configuration, wait for one without this flag.

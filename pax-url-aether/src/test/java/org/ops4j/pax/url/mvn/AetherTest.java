@@ -15,6 +15,7 @@
  */
 package org.ops4j.pax.url.mvn;
 
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
@@ -71,13 +72,14 @@ public class AetherTest {
         try{
             //check the remote artifact is not resolved and therefore throws an exception
             try{
-                aetherBasedResolver.resolve( "mvn:localrepositories://@id=foo!org.ops4j.pax.web/pax-web-api/LATEST" ); //$NON-NLS-1$
-                fail( "mvn:localrepositories://@id=foo!org.ops4j.pax.web/pax-web-api/LATEST should never be resolved" ); //$NON-NLS-1$
+                aetherBasedResolver.resolve( "mvn:"+ServiceConstants.LOCAL_REPO_PROTOCOL+"://@id=foo!org.ops4j.pax.web/pax-web-api/LATEST" ); //$NON-NLS-1$
+                fail( "mvn:"+ServiceConstants.LOCAL_REPO_PROTOCOL+"://@id=foo!org.ops4j.pax.web/pax-web-api/LATEST should never be resolved" ); //$NON-NLS-1$
             }catch(IOException ioe){
                 //expected exception
             }
             //check local artifact is resolved
             File resolvedFile = aetherBasedResolver.resolve( "mvn:file://local.repositories@id=foo!ant/ant/1.5.1" ); //$NON-NLS-1$
+            assertTrue( "File should exist", resolvedFile.exists() );
         }finally{
             aetherBasedResolver.close();
         }
