@@ -520,11 +520,14 @@ public class AetherBasedResolver implements MavenResolver {
                          MavenRepositoryURL repositoryURL ) throws IOException {
 
         List<LocalRepository> defaultRepos = selectDefaultRepositories();
-        List<RemoteRepository> remoteRepos = selectRepositories();
-        if (repositoryURL != null) {
-            addRepo(remoteRepos, repositoryURL);
-        }
-        assignProxyAndMirrors( remoteRepos );
+        List<RemoteRepository> remoteRepos = Collections.EMPTY_LIST;
+        if (repositoryURL == null || !repositoryURL.useOnlyLocalRepositories()) {
+            remoteRepos = selectRepositories();
+            if (repositoryURL != null) {
+                addRepo(remoteRepos, repositoryURL);
+            }
+            assignProxyAndMirrors(remoteRepos);
+        }//else not url specified or only local onces so keep going
         File resolved = resolve( defaultRepos, remoteRepos, artifact );
 
         LOG.debug( "Resolved ({}) as {}", artifact.toString(), resolved.getAbsolutePath() );

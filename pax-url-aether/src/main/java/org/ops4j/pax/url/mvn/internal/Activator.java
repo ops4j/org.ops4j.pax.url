@@ -61,6 +61,12 @@ public class Activator extends AbstractURLStreamHandlerService
      * Handler service registration. Used for cleanup.
      */
     private ServiceRegistration<URLStreamHandlerService> m_handlerReg;
+
+    /**
+     * Handler service registration. Used for cleanup.
+     */
+    private ServiceRegistration<URLStreamHandlerService> m_handlerLocalRepoReg;
+
     /**
      * Managed service registration. Used for cleanup.
      */
@@ -108,6 +114,11 @@ public class Activator extends AbstractURLStreamHandlerService
             m_handlerReg.unregister();
             m_handlerReg = null;
         }
+        if ( m_handlerLocalRepoReg != null )
+        {
+            m_handlerLocalRepoReg.unregister();
+            m_handlerLocalRepoReg = null;
+        }
         if ( m_managedServiceReg != null )
         {
             m_managedServiceReg.unregister();
@@ -142,6 +153,18 @@ public class Activator extends AbstractURLStreamHandlerService
                 URLStreamHandlerService.class,
                 this,
                 props);
+        //create a dummy localrepositories url handler to detect the client wants only local resolution (no internet)
+        final Dictionary<String, Object> propsLocalRepo = new Hashtable<String, Object>();
+        propsLocalRepo.put( URLConstants.URL_HANDLER_PROTOCOL, ServiceConstants.LOCAL_REPO_PROTOCOL );
+        m_handlerLocalRepoReg = safeRegisterService(
+                URLStreamHandlerService.class,
+                new AbstractURLStreamHandlerService(){
+
+                    @Override
+                    public URLConnection openConnection(URL u) throws IOException {
+                        return null;
+                    }},
+                    propsLocalRepo);
     }
 
     /**

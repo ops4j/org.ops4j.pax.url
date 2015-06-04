@@ -15,8 +15,11 @@
  */
 package org.ops4j.pax.url.mvn;
 
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Properties;
 
 import org.apache.maven.settings.Profile;
@@ -55,7 +58,32 @@ public class AetherTest {
         aetherBasedResolver.resolve( "org.ops4j.pax.web", "pax-web-api", "", "jar", "LATEST" );
         aetherBasedResolver.close();
     }
-
+    
+    @Test
+    public void resolvedOnlyLocal() throws IOException{
+        Settings settings = getSettings();
+        URL resource = AetherTest.class.getResource("/repo2"); //$NON-NLS-1$
+        settings.setLocalRepository( resource.toExternalForm() );
+        Properties p = new Properties();
+        MavenConfigurationImpl config = new MavenConfigurationImpl( new PropertiesPropertyResolver( p ), ServiceConstants.PID );
+        config.setSettings( settings );
+        AetherBasedResolver aetherBasedResolver = new AetherBasedResolver( config );
+        try{
+            //check the remote artifact is not resolved and therefore throws an exception
+            try{
+                aetherBasedResolver.resolve( "mvn:localrepositories://@id=foo!org.ops4j.pax.web/pax-web-api/LATEST" ); //$NON-NLS-1$
+                fail( "mvn:localrepositories://@id=foo!org.ops4j.pax.web/pax-web-api/LATEST should never be resolved" ); //$NON-NLS-1$
+            }catch(IOException ioe){
+                //expected exception
+            }
+            //check local artifact is resolved
+            File resolvedFile = aetherBasedResolver.resolve( "mvn:file://local.repositories@id=foo!ant/ant/1.5.1" ); //$NON-NLS-1$
+        }finally{
+            aetherBasedResolver.close();
+        }
+        
+    }
+    
     @Test
     public void testCachingOfRanges()
         throws DependencyCollectionException, ArtifactResolutionException, IOException

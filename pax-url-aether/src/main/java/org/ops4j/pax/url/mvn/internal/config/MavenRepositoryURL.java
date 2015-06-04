@@ -52,6 +52,12 @@ public class MavenRepositoryURL
      * Repository file (only if URL is a file URL).
      */
     private final File m_file;
+
+    /**
+     * only if url is of type "localrepositories"
+     */
+    private final boolean m_onlyLocalRepositories;
+
     /**
      * True if the repository contains snapshots.
      */
@@ -203,33 +209,32 @@ public class MavenRepositoryURL
         m_releasesChecksumPolicy = checksumReleases != null ? checksumReleases : checksum;
         m_snapshotsChecksumPolicy = checksumSnapshots != null ? checksumSnapshots : checksum;
 
-        if( m_repositoryURL.getProtocol().equals( "file" ) )
-        {
-            try
-            {
-                // You must transform to URI to decode the path (manage a path with a space or non
-                // us character)
-                // like D:/documents%20and%20Settings/SESA170017/.m2/repository
-                // the path can be store in path part or in scheme specific part (if is relatif
-                // path)
-                // the anti-slash character is not a valid character for uri.
-                spec = spec.replaceAll( "\\\\", "/" );
-                spec = spec.replaceAll( " ", "%20" );
-                URI uri = new URI( spec );
-                String path = uri.getPath();
-                if( path == null )
-                    path = uri.getSchemeSpecificPart();
-                m_file = new File( path );
-
-            }
-            catch ( URISyntaxException e )
-            {
-                throw new MalformedURLException( e.getMessage() );
-            }
-        }
-        else
-        {
+        if (m_repositoryURL.getProtocol().equals("file")) {
+            m_onlyLocalRepositories = false;
+                try {
+                    // You must transform to URI to decode the path (manage a path with a space or non
+                    // us character)
+                    // like D:/documents%20and%20Settings/SESA170017/.m2/repository
+                    // the path can be store in path part or in scheme specific part (if is relatif
+                    // path)
+                    // the anti-slash character is not a valid character for uri.
+                    spec = spec.replaceAll( "\\\\", "/" );
+                    spec = spec.replaceAll( " ", "%20" );
+                    URI uri = new URI( spec );
+                    String path = uri.getPath();
+                    if( path == null )
+                        path = uri.getSchemeSpecificPart();
+                    m_file = new File( path );
+    
+                } catch (URISyntaxException e) {
+                    throw new MalformedURLException(e.getMessage());
+                }
+        } else if (m_repositoryURL.getProtocol().equals(ServiceConstants.LOCAL_REPO_PROTOCOL)) {
+            m_onlyLocalRepositories = true;
             m_file = null;
+        }else {
+            m_file = null;
+            m_onlyLocalRepositories = false;
         }
     }
 
@@ -271,6 +276,14 @@ public class MavenRepositoryURL
     public File getFile()
     {
         return m_file;
+    }
+
+    /**
+     * Getter
+     * @return whether the url is only for local repositories resolution
+     */
+    public boolean useOnlyLocalRepositories() {
+        return m_onlyLocalRepositories;
     }
 
     /**
