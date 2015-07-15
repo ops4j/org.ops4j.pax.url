@@ -223,7 +223,7 @@ public class AetherBasedResolver implements MavenResolver {
     }
 
     private String minUpdateInterval(String interval1, String interval2) {
-    	LOG.warn("interval1: {}, interval2: {}", interval1, interval2);
+    	LOG.debug("interval1: {}, interval2: {}", interval1, interval2);
     	if( interval1 == null ) {
     		return interval2;
     	} else if( interval2 == null ) {
