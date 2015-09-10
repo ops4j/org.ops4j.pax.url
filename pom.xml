@@ -61,7 +61,7 @@
         <dependency.osgicore.version>4.3.1</dependency.osgicore.version>
         <dependency.osgicomp.version>4.3.1</dependency.osgicomp.version>
         <dependency.paxexam.version>3.5.0</dependency.paxexam.version>
-        <dependency.swissbox.version>1.8.1</dependency.swissbox.version>
+        <dependency.swissbox.version>1.8.2</dependency.swissbox.version>
         <dependency.slf4j.version>1.6.6</dependency.slf4j.version>
         <dependency.wagon.version>2.8</dependency.wagon.version>
         <wiki.url>http://team.ops4j.org/wiki/display/paxurl</wiki.url>

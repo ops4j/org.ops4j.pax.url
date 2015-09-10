@@ -89,6 +89,10 @@
       <artifactId>pax-url-commons</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>biz.aQute.bnd</groupId>
+      <artifactId>bndlib</artifactId>
+    </dependency>
 
     <!-- Provided dependencies (not transitive) -->
     <dependency>
