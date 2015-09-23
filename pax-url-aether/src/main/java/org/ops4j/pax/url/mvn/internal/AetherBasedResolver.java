@@ -778,16 +778,7 @@ public class AetherBasedResolver implements MavenResolver {
 
     private RepositorySystemSession newSession(LocalRepository repo) {
         if (repo == null) {
-            if (localRepository == null) {
-                File local;
-                if( m_config.getLocalRepository() != null ) {
-                    local = m_config.getLocalRepository().getFile();
-                } else {
-                    local = new File( System.getProperty( "user.home" ), ".m2/repository" );
-                }
-                localRepository = new LocalRepository( local );
-            }
-            repo = localRepository;
+            repo = getLocalRepository();
         }
         Deque<RepositorySystemSession> deque = sessions.get(repo);
         RepositorySystemSession session = null;
@@ -816,14 +807,7 @@ public class AetherBasedResolver implements MavenResolver {
         if( repo != null ) {
             session.setLocalRepositoryManager( m_repoSystem.newLocalRepositoryManager( session, repo ) );
         } else {
-            File local;
-            if( m_config.getLocalRepository() != null ) {
-                local = m_config.getLocalRepository().getFile();
-            } else {
-                local = new File( System.getProperty( "user.home" ), ".m2/repository" );
-            }
-            LocalRepository localRepo = new LocalRepository( local );
-            session.setLocalRepositoryManager( m_repoSystem.newLocalRepositoryManager( session, localRepo ) );
+            session.setLocalRepositoryManager( m_repoSystem.newLocalRepositoryManager( session, getLocalRepository() ) );
         }
 
         session.setMirrorSelector( m_mirrorSelector );
@@ -844,6 +828,19 @@ public class AetherBasedResolver implements MavenResolver {
         session.setOffline( m_config.isOffline() );
 
         return session;
+    }
+
+    private LocalRepository getLocalRepository() {
+      if (localRepository == null) {
+          File local;
+          if( m_config.getLocalRepository() != null ) {
+              local = m_config.getLocalRepository().getFile();
+          } else {
+              local = new File(System.getProperty( "user.home" ), ".m2/repository");
+          }
+          localRepository = new LocalRepository(local, "simple");
+      }
+      return localRepository;
     }
 
     private void addServerConfig( DefaultRepositorySystemSession session, Server server )
