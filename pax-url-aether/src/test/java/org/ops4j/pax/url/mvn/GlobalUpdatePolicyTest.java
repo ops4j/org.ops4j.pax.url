@@ -153,6 +153,8 @@ public class GlobalUpdatePolicyTest
     public void verifySnapshotUpdates() throws Exception
     {
 
+        System.setProperty("aether.updateCheckManager.sessionState", "bypass");
+
         final AetherBasedResolver resolver = new AetherBasedResolver( testConfig() );
 
         LOG.info( "init" );
@@ -190,7 +192,7 @@ public class GlobalUpdatePolicyTest
         assertTrue( "first is fresh", time1 > time0 );
         assertTrue( "second is fresh", time2 > time0 );
 
-        assertTrue( "second after frirst", time2 > time1 );
+        assertTrue( "second after first", time2 > time1 );
 
         LOG.info( "done" );
 
