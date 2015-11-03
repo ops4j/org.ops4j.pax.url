@@ -117,7 +117,7 @@ public class GlobalUpdatePolicyTest
 
         InvocationResult result = invoker.execute( request );
 
-        assertTrue("deploy success", result.getExitCode() == 0);
+        assertTrue( "deploy success", result.getExitCode() == 0 );
 
     }
 
@@ -153,7 +153,7 @@ public class GlobalUpdatePolicyTest
     public void verifySnapshotUpdates() throws Exception
     {
 
-        AetherBasedResolver resolver = new AetherBasedResolver( testConfig() );
+        final AetherBasedResolver resolver = new AetherBasedResolver( testConfig() );
 
         LOG.info( "init" );
 
@@ -169,8 +169,6 @@ public class GlobalUpdatePolicyTest
 
             time1 = file.lastModified();
         }
-
-        resolver = new AetherBasedResolver( testConfig() );
 
         LOG.info( "second" );
         final long time2;
@@ -192,7 +190,7 @@ public class GlobalUpdatePolicyTest
         assertTrue( "first is fresh", time1 > time0 );
         assertTrue( "second is fresh", time2 > time0 );
 
-        assertTrue( "second after first", time2 > time1 );
+        assertTrue( "second after frirst", time2 > time1 );
 
         LOG.info( "done" );
 
