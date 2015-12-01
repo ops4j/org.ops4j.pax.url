@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+
+  <mirrors>
+
+    <mirror>
+      <id>jetty-local</id>
+      <url>http://localhost:8778</url>
+      <mirrorOf>*</mirrorOf>
+    </mirror>
+
+  </mirrors>
+
+  <servers>
+    <server>
+      <id>jetty-local</id>
+      <username>pax</username>
+      <password>ops4j</password>
+    </server>
+  </servers>
+
+  <!-- To defined a repo to use -->
+  <profiles>
+    <profile>
+      <id>test</id>
+      <repositories>
+        <repository>
+          <id>jetty-local</id>
+          <name>Local Jetty Repository</name>
+          <url>http://localhost:8778</url>
+        </repository>
+      </repositories>
+    </profile>
+  </profiles>
+
+  <activeProfiles>
+    <activeProfile>test</activeProfile>
+  </activeProfiles>
+  
+</settings>

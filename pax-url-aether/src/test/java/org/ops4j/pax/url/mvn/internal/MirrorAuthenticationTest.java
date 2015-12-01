@@ -190,9 +190,9 @@ public class MirrorAuthenticationTest
     }
 
     @Test
-    public void authenticationShouldPass() throws IOException, InterruptedException
+    public void authenticationShouldPassWithAMirrorWithAName() throws IOException, InterruptedException
     {
-        MavenConfigurationImpl config = getConfig( "src/test/resources/settings-mirror-auth-pass.xml",
+        MavenConfigurationImpl config = getConfig( "src/test/resources/settings-mirror-with-name-auth-pass.xml",
         		 "fake", "http://google.com/repo" );
 
         Settings settings = config.getSettings();
@@ -204,5 +204,21 @@ public class MirrorAuthenticationTest
         c.getInputStream().close();
         assertEquals( "the artifact must be downloaded", true, new File( localRepo,
             "ant/ant/1.5.1/ant-1.5.1.jar" ).exists() );
-    }   
+    }
+    
+    @Test
+	public void authenticationShouldPassWithAMirrorWithoutName() throws Exception {
+    	MavenConfigurationImpl config = getConfig( "src/test/resources/settings-mirror-without-name-auth-pass.xml",
+       		 "fake", "http://google.com/repo" );
+
+       Settings settings = config.getSettings();
+       File localRepo = new File( settings.getLocalRepository() );
+       localRepo.mkdirs();
+
+       Connection c = new Connection( new URL( null, "mvn:ant/ant/1.5.1", new Handler() ),
+                                      new AetherBasedResolver( config ) );
+       c.getInputStream().close();
+       assertEquals( "the artifact must be downloaded", true, new File( localRepo,
+           "ant/ant/1.5.1/ant-1.5.1.jar" ).exists() );
+	}
 }
