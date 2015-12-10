@@ -4,6 +4,7 @@
         <artifactId>url</artifactId>
         <groupId>org.ops4j.pax</groupId>
         <version>2.4.5-SNAPSHOT</version>
+        <relativePath>..</relativePath>
     </parent>
     <groupId>org.ops4j.pax.url</groupId>
     <artifactId>itest</artifactId>

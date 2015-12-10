@@ -81,4 +81,32 @@ public class ProxyTest
         // test for PAXURL-209
         assertThat( System.getProperty( "http.proxyHost" ), is( nullValue() ) );
     }
+    
+    @Test
+    public void javaProxy() throws Exception
+    {
+        System.setProperty("http.proxyHost", "localhost");
+        System.setProperty("http.proxyPort", "8778");
+        String repoPath = "target/localrepo_" + UUID.randomUUID();
+
+        Properties properties = new Properties();
+        properties.setProperty( TEST_PID + "." + ServiceConstants.PROPERTY_LOCAL_REPOSITORY, repoPath );
+        properties.setProperty( TEST_PID + "." + ServiceConstants.PROPERTY_REPOSITORIES,
+            "http://qfdqfqfqf.fra@id=fake" );
+
+        File file = new File( "target/test-classes/settings-no-mirror.xml" );
+        MavenConfiguration config = UnitHelp.getConfig( file, properties );
+        File localRepo = new File( repoPath );
+        // you must exist.
+        localRepo.mkdirs();
+
+        Connection c = new Connection( new URL( null, "mvn:ant/ant/1.5.1", new org.ops4j.pax.url.mvn.Handler() ),
+                                       new AetherBasedResolver( config ) );
+        c.getInputStream();
+
+        assertEquals( "the artifact must be downloaded", true, new File( localRepo,
+            "ant/ant/1.5.1/ant-1.5.1.jar" ).exists() );
+        System.clearProperty("http.proxyHost");
+        System.clearProperty("http.proxyPort");
+    }
 }

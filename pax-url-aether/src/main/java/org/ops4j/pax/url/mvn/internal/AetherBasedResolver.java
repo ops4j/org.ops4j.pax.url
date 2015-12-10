@@ -113,6 +113,13 @@ public class AetherBasedResolver implements MavenResolver {
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger( AetherBasedResolver.class );
     private static final String LATEST_VERSION_RANGE = "(0.0,]";
     private static final String REPO_TYPE = "default";
+    private static final String SCHEMA_HTTP = "http";
+    private static final String SCHEMA_HTTPS = "https";
+    private static final String PROXY_HOST = "proxyHost";
+    private static final String PROXY_PORT = "proxyPort";
+    private static final String PROXY_USER = "proxyUser";
+    private static final String PROXY_PASSWORD = "proxyPassword";
+    private static final String NON_PROXY_HOSTS = "nonProxyHosts";
 
     final private RepositorySystem m_repoSystem;
     final private MavenConfiguration m_config;
@@ -297,7 +304,42 @@ public class AetherBasedResolver implements MavenResolver {
                 getAuthentication( proxy ) );
             proxySelector.add( proxyObj, nonProxyHosts );
         }
+
+        if(m_settings.getProxies().size() == 0) {
+            javaDefaultProxy(proxySelector);
+        }
         return proxySelector;
+    }
+
+    private void javaDefaultProxy(DefaultProxySelector proxySelector) {
+        // Prefer https
+        String proxyHost = System.getProperty(SCHEMA_HTTPS + "." + PROXY_HOST);
+        String schema = (proxyHost != null) ? SCHEMA_HTTPS : SCHEMA_HTTP;
+        if (proxyHost == null) {
+            proxyHost = System.getProperty(schema + "." + PROXY_HOST);
+        }
+        if(proxyHost == null) {
+            return;
+        }
+
+        String proxyUser = System.getProperty(schema + "." + PROXY_USER);
+        String proxyPassword = System.getProperty(schema + "." + PROXY_PASSWORD);
+        int proxyPort = Integer.parseInt(System.getProperty(schema + "." + PROXY_PORT, "8080"));
+        String nonProxyHosts = System.getProperty(schema + "." + NON_PROXY_HOSTS);
+
+        Authentication authentication = createAuthentication(proxyUser, proxyPassword);
+        Proxy proxyObj = new Proxy(schema, proxyHost, proxyPort, authentication);
+        proxySelector.add(proxyObj, nonProxyHosts);
+    }
+
+    private Authentication createAuthentication( String proxyUser, String proxyPassword ) {
+        Authentication authentication = null;
+        if(proxyUser != null) {
+            authentication = new AuthenticationBuilder()
+                    .addUsername(proxyUser)
+                    .addPassword(proxyPassword).build();
+        }
+        return authentication;
     }
 
     private MirrorSelector selectMirrors( Mirror mirror ) {
