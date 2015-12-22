@@ -29,34 +29,6 @@
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-shade-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>shade</goal>
-            </goals>
-            <configuration>
-              <artifactSet>
-                <includes>
-                  <include>null:null</include>
-                </includes>
-              </artifactSet>
-              <relocations>
-                <relocation>
-                  <shadedPattern>shaded.</shadedPattern>
-                  <includes>
-                    <include>org.ops4j.io.**</include>
-                    <include>org.ops4j.lang.**</include>
-                  </includes>
-                </relocation>
-              </relocations>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
   </build>
 
