@@ -18,6 +18,11 @@ Import-Package:\
   org.osgi.service.url; version="[1.0.0,2.0.0)",\
   !org.slf4j.impl,\
   *
+
+Embed-Dependency:\
+  *; scope=compile; type=!pom; inline=true
+
+Embed-Transitive: true
   
 Export-Package:\
   ${bundle.namespace}; version="${pom.version}"
