@@ -63,8 +63,6 @@ Ignore-Package:\
   org.codehaus.plexus.configuration,\
   org.codehaus.plexus.configuration.xml,\
   org.codehaus.plexus.logging,\
-  org.cyberneko.html,\
-  org.cyberneko.html.filters,\
   org.eclipse.sisu,\
   com.sun.jdmk.comm,\
   javax.jms,\
