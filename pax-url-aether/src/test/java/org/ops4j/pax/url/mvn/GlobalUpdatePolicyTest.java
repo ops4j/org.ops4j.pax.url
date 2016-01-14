@@ -44,7 +44,7 @@ public class GlobalUpdatePolicyTest
      */
     static final String GROUP = "org.ops4j.pax.url";
     static final String ARTIFACT = "pax-url-aether-test";
-    static final String VERSION = "1.0.0-SNAPSHOT";
+    static final String VERSION = "1.0.0";
     static final String TYPE = "jar";
 
     /**
@@ -94,7 +94,7 @@ public class GlobalUpdatePolicyTest
      * <p>
      * Use alternative local repository different from default user repository.
      */
-    private void mavenDeploy() throws Exception
+    private void mavenDeploy(String suffix) throws Exception
     {
 
         InvocationRequest request = new DefaultInvocationRequest();
@@ -103,6 +103,7 @@ public class GlobalUpdatePolicyTest
         request.setGoals( Collections.singletonList( "deploy" ) );
         Properties properties = new Properties();
         properties.setProperty( "TEST_REPO", REMOTE_REPO.toURI().toURL().toString() );
+        properties.setProperty( "SUFFIX", suffix );
         request.setProperties( properties );
 
         Invoker invoker = new DefaultInvoker();
@@ -153,8 +154,22 @@ public class GlobalUpdatePolicyTest
     public void verifySnapshotUpdates() throws Exception
     {
 
-        System.setProperty("aether.updateCheckManager.sessionState", "bypass");
+        verifyUpdates("-SNAPSHOT");
+    }
 
+    /**
+     * Deploy two releases in sequence, resolve and ensure proper time stamp relations.
+     */
+    @Test
+    public void verifyReleasesUpdates() throws Exception
+    {
+
+        verifyUpdates("");
+    }
+
+    public void verifyUpdates(String suffix) throws Exception
+    {
+    	System.setProperty("aether.updateCheckManager.sessionState", "bypass");
         final AetherBasedResolver resolver = new AetherBasedResolver( testConfig() );
 
         LOG.info( "init" );
@@ -164,10 +179,10 @@ public class GlobalUpdatePolicyTest
         LOG.info( "first" );
         final long time1;
         {
-            mavenDeploy();
+            mavenDeploy(suffix);
 
             final File file = //
-                resolver.resolve( GROUP, ARTIFACT, "", TYPE, VERSION );
+                    resolver.resolve( GROUP, ARTIFACT, "", TYPE, VERSION + suffix);
 
             time1 = file.lastModified();
         }
@@ -175,10 +190,10 @@ public class GlobalUpdatePolicyTest
         LOG.info( "second" );
         final long time2;
         {
-            mavenDeploy();
+            mavenDeploy(suffix);
 
             final File file = //
-                resolver.resolve( GROUP, ARTIFACT, "", TYPE, VERSION );
+                    resolver.resolve( GROUP, ARTIFACT, "", TYPE, VERSION + suffix );
 
             time2 = file.lastModified();
         }

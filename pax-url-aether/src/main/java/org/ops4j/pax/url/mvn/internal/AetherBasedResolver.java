@@ -79,13 +79,7 @@ import org.eclipse.aether.repository.Proxy;
 import org.eclipse.aether.repository.ProxySelector;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.repository.RepositoryPolicy;
-import org.eclipse.aether.resolution.ArtifactRequest;
-import org.eclipse.aether.resolution.ArtifactResolutionException;
-import org.eclipse.aether.resolution.MetadataRequest;
-import org.eclipse.aether.resolution.MetadataResult;
-import org.eclipse.aether.resolution.VersionRangeRequest;
-import org.eclipse.aether.resolution.VersionRangeResolutionException;
-import org.eclipse.aether.resolution.VersionRangeResult;
+import org.eclipse.aether.resolution.*;
 import org.eclipse.aether.spi.connector.RepositoryConnectorFactory;
 import org.eclipse.aether.spi.connector.transport.TransporterFactory;
 import org.eclipse.aether.spi.localrepo.LocalRepositoryManagerFactory;
@@ -94,6 +88,7 @@ import org.eclipse.aether.transport.wagon.WagonTransporterFactory;
 import org.eclipse.aether.util.repository.AuthenticationBuilder;
 import org.eclipse.aether.util.repository.DefaultMirrorSelector;
 import org.eclipse.aether.util.repository.DefaultProxySelector;
+import org.eclipse.aether.util.repository.SimpleResolutionErrorPolicy;
 import org.eclipse.aether.util.version.GenericVersionScheme;
 import org.eclipse.aether.version.InvalidVersionSpecificationException;
 import org.eclipse.aether.version.Version;
@@ -637,6 +632,12 @@ public class AetherBasedResolver implements MavenResolver {
             // Should not happen
         }
         RepositorySystemSession session = newSession( null );
+        // extension to support the semantics of remote repos with update=always policies.
+        DefaultRepositorySystemSession defaultRepositorySystemSession = new DefaultRepositorySystemSession(session);
+        defaultRepositorySystemSession.setLocalRepositoryManager(new QosAwareSimpleLocalRepositoryManager(session, session.getLocalRepository()));
+        defaultRepositorySystemSession.setReadOnly();
+
+        session = defaultRepositorySystemSession;
         try {
             artifact = resolveLatestVersionRange( session, remoteRepos, artifact );
             return m_repoSystem
@@ -978,3 +979,4 @@ public class AetherBasedResolver implements MavenResolver {
         return locator.getService( RepositorySystem.class );
     }
 }
+

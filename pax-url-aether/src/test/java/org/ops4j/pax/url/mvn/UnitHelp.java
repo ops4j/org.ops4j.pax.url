@@ -99,12 +99,13 @@ public class UnitHelp
             final Properties props ) 
     {
 
-        props.setProperty( ServiceConstants.PID
+        props.setProperty( ServiceConstants.PID + "."
                 + ServiceConstants.PROPERTY_SETTINGS_FILE, settingsFile.toURI()
             .toASCIIString() );
 
+        PropertiesPropertyResolver propertiesPropertyResolver = new PropertiesPropertyResolver(props);
         final MavenConfigurationImpl config = new MavenConfigurationImpl(
-            new PropertiesPropertyResolver( props ), ServiceConstants.PID );
+                propertiesPropertyResolver, ServiceConstants.PID );
         
         DefaultSettingsBuilderFactory factory = new DefaultSettingsBuilderFactory();
         DefaultSettingsBuilder builder = factory.newInstance();
@@ -121,7 +122,7 @@ public class UnitHelp
         }
 
         String localRepo = props.getProperty( ServiceConstants.PID
-            + ServiceConstants.PROPERTY_LOCAL_REPOSITORY );
+                + "." + ServiceConstants.PROPERTY_LOCAL_REPOSITORY );
         if (localRepo != null) {
             settings.setLocalRepository( localRepo );
         }
