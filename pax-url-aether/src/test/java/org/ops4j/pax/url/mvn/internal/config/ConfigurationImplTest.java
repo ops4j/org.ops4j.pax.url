@@ -24,7 +24,10 @@ import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -35,6 +38,12 @@ import java.util.List;
 import org.apache.maven.settings.Profile;
 import org.apache.maven.settings.Repository;
 import org.apache.maven.settings.Settings;
+import org.apache.maven.settings.building.DefaultSettingsBuilder;
+import org.apache.maven.settings.building.DefaultSettingsBuilderFactory;
+import org.apache.maven.settings.building.DefaultSettingsBuildingRequest;
+import org.apache.maven.settings.building.SettingsBuildingException;
+import org.apache.maven.settings.building.SettingsBuildingRequest;
+import org.apache.maven.settings.building.SettingsBuildingResult;
 import org.junit.Assume;
 import org.junit.Test;
 import org.ops4j.io.FileUtils;
@@ -555,6 +564,35 @@ public class ConfigurationImplTest
         verify( propertyResolver );
     }
 
+    private Settings buildSettings( String settingsPath )
+    {
+        Settings settings = null;
+        if( settingsPath == null )
+        {
+            settings = new Settings();
+        }
+        else
+        {
+            DefaultSettingsBuilderFactory factory = new DefaultSettingsBuilderFactory();
+            DefaultSettingsBuilder builder = factory.newInstance();
+            SettingsBuildingRequest request = new DefaultSettingsBuildingRequest();
+            request.setUserSettingsFile( new File( settingsPath ) );
+            try
+            {
+                SettingsBuildingResult result = builder.build( request );
+                assertThat( result, is( notNullValue() ) );
+                assertThat( result.getProblems().isEmpty(), is( true ) );
+
+                settings = result.getEffectiveSettings();
+            }
+            catch( SettingsBuildingException exc )
+            {
+                throw new AssertionError( "cannot build settings", exc );
+            }
+        }
+        return settings;
+    }
+
     @Test
     public void getLocalRepositoryFromSettings()
         throws MalformedURLException
@@ -563,16 +601,15 @@ public class ConfigurationImplTest
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null ).atLeastOnce();
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.settings" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.useFallbackRepositories" ) ).andReturn( null );
-        Settings settings = createMock( Settings.class );
-        expect( settings.getLocalRepository() ).andReturn( "file:somewhere/localrepository/" );
-        replay( propertyResolver, settings );
+        Settings settings = buildSettings("src/test/resources/settings/settingsWithLocalRepository.xml");
+        replay( propertyResolver );
         MavenConfigurationImpl config = new MavenConfigurationImpl( propertyResolver, PID );
         config.setSettings( settings );
         assertEquals( "Local repository",
-                      new URL( "file:somewhere/localrepository/" ),
+                      new URL( "file:" + new File("repository").getAbsolutePath() + "/" ),
                       config.getLocalRepository().getURL()
         );
-        verify( propertyResolver, settings );
+        verify( propertyResolver );
     }
 
     @Test
