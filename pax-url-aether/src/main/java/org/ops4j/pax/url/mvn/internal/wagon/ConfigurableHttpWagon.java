@@ -38,11 +38,16 @@ import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.protocol.HTTP;
+import org.apache.maven.wagon.ConnectionException;
+import org.apache.maven.wagon.authentication.AuthenticationException;
+import org.apache.maven.wagon.authentication.AuthenticationInfo;
 import org.apache.maven.wagon.providers.http.AbstractHttpClientWagon;
 import org.apache.maven.wagon.providers.http.HttpMethodConfiguration;
 import org.apache.maven.wagon.providers.http.HttpWagon;
 import org.apache.maven.wagon.proxy.ProxyInfo;
+import org.apache.maven.wagon.proxy.ProxyInfoProvider;
 import org.apache.maven.wagon.repository.Repository;
+import org.ops4j.net.URLUtils;
 
 /**
  * An http wagon provider providing more configuration options
@@ -138,8 +143,34 @@ public class ConfigurableHttpWagon extends HttpWagon {
                 }
             }
         }
-
+        
         return client.execute( httpMethod, getLocalContext() );
+    }
+
+    @Override
+    public void connect(Repository repository, AuthenticationInfo authenticationInfo, ProxyInfoProvider proxyInfoProvider)
+            throws ConnectionException, AuthenticationException {
+        if (repository == null) {
+            throw new IllegalStateException("The repository specified cannot be null.");
+        }
+
+        if (authenticationInfo == null) {
+            authenticationInfo = new AuthenticationInfo();
+        }
+
+        if (authenticationInfo.getUserName() == null) {
+            // Get user/pass that were encoded in the URL.
+            if (repository.getUsername() != null) {
+                // Need to decode username/password because it may contain encoded characters (http://www.w3schools.com/tags/ref_urlencode.asp)
+                // A common encoding is to provide a username as an email address like user%40domain.org
+                authenticationInfo.setUserName(URLUtils.decode(repository.getUsername()));
+                if (repository.getPassword() != null && authenticationInfo.getPassword() == null) {
+                    authenticationInfo.setPassword(URLUtils.decode(repository.getPassword()));
+                }
+            }
+        }
+
+        super.connect(repository, authenticationInfo, proxyInfoProvider);
     }
 
     private AuthCache getAuthCache() {
