@@ -1,0 +1,1 @@
+This is used to validate that files are skipped when scanning for child folders using @multi annotation.

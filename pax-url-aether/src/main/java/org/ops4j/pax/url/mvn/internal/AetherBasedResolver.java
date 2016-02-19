@@ -16,7 +16,6 @@
  */
 package org.ops4j.pax.url.mvn.internal;
 
-import static org.ops4j.pax.url.mvn.internal.Parser.VERSION_LATEST;
 import static org.eclipse.aether.repository.RepositoryPolicy.CHECKSUM_POLICY_FAIL;
 import static org.eclipse.aether.repository.RepositoryPolicy.CHECKSUM_POLICY_IGNORE;
 import static org.eclipse.aether.repository.RepositoryPolicy.CHECKSUM_POLICY_WARN;
@@ -24,14 +23,17 @@ import static org.eclipse.aether.repository.RepositoryPolicy.UPDATE_POLICY_ALWAY
 import static org.eclipse.aether.repository.RepositoryPolicy.UPDATE_POLICY_DAILY;
 import static org.eclipse.aether.repository.RepositoryPolicy.UPDATE_POLICY_INTERVAL;
 import static org.eclipse.aether.repository.RepositoryPolicy.UPDATE_POLICY_NEVER;
+import static org.ops4j.pax.url.mvn.internal.Parser.VERSION_LATEST;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Deque;
@@ -176,7 +178,7 @@ public class AetherBasedResolver implements MavenResolver {
         Map<String, RemoteRepository> naming = new HashMap<String, RemoteRepository>();
         boolean aggregateReleaseEnabled = false, aggregateSnapshotEnabled = false;
         String aggregateReleaseUpdateInterval = null, aggregateSnapshotUpdateInterval = null;
-        String aggregateReleaseChecksumPolicy = null, aggregateSnapshotChecksumPolicy = null; 
+        String aggregateReleaseChecksumPolicy = null, aggregateSnapshotChecksumPolicy = null;
 
         List<RemoteRepository> resultingRepos = new ArrayList<RemoteRepository>();
 
@@ -363,11 +365,11 @@ public class AetherBasedResolver implements MavenResolver {
 				}
 				return repo;
 			}
-			
+
 			public DefaultMirrorSelector add( String id, String url, String type, boolean repositoryManager,
 					String mirrorOfIds, String mirrorOfTypes, Authentication authentication ) {
 				LOG.trace("adding mirror {} auth = {}", id, authentication != null);
-				if( authentication != null ) {					
+				if( authentication != null ) {
 					authMap.put(id, authentication);
 				}
 				return delegate.add( id, url, type, repositoryManager, mirrorOfIds, mirrorOfTypes );
@@ -401,7 +403,7 @@ public class AetherBasedResolver implements MavenResolver {
                 addRepo( list, r );
             }
         }
-        
+
         return list;
     }
 
@@ -432,21 +434,46 @@ public class AetherBasedResolver implements MavenResolver {
                 + parentDir );
             return;
         }
-        for( File repo : parentDir.listFiles() ) {
-            if( repo.isDirectory() ) {
-                try {
-                    String repoURI = repo.toURI().toString() + "@id=" + repo.getName();
-                    LOG.debug( "Adding repo from inside multi dir: " + repoURI );
-                    addRepo( list, new MavenRepositoryURL( repoURI ) );
-                }
-                catch( MalformedURLException e ) {
-                    LOG.error( "Error resolving repo url of a multi repo " + repo.toURI() );
-                }
+
+        for( File repo : getSortedChildDirectories(parentDir) ) {
+            try {
+                String repoURI = repo.toURI().toString() + "@id=" + repo.getName();
+                LOG.debug( "Adding repo from inside multi dir: " + repoURI );
+                addRepo( list, new MavenRepositoryURL( repoURI ) );
+            }
+            catch( MalformedURLException e ) {
+                LOG.error( "Error resolving repo url of a multi repo " + repo.toURI() );
             }
         }
     }
 
-    
+    /**
+     * For the given parent, we find all child files, and then
+     * sort those files by their name (not absolute path).
+     *
+     * The sorted list is returned, or an empty list if listFiles returns
+     * null.
+     * @param parent A non-null parent File for which you want to get the sorted list of child directories.
+     * @return The alphabetically sorted list of files, or an empty list if parent.listFiles() returns null.
+     */
+    private static File[] getSortedChildDirectories( File parent ){
+        File[] files = parent.listFiles( new FileFilter(){
+            @Override
+            public boolean accept(File pathname) {
+                return pathname.isDirectory();
+            }
+        });
+        if( files == null ){
+            return new File[0];
+        }
+        Arrays.sort(files, new Comparator<File>(){
+            @Override
+            public int compare(File o1, File o2) {
+                return o1.getName().compareTo(o2.getName());
+            }
+        });
+        return files;
+    }
 
     private void addRepo( List<RemoteRepository> list, MavenRepositoryURL repo ) {
         String releasesUpdatePolicy = repo.getReleasesUpdatePolicy();
@@ -476,23 +503,21 @@ public class AetherBasedResolver implements MavenResolver {
         }
         list.add( builder.build() );
     }
-    
+
     private void addLocalSubDirs( List<LocalRepository> list, File parentDir ) {
         if( !parentDir.isDirectory() ) {
             LOG.debug( "Repository marked with @multi does not resolve to a directory: "
                     + parentDir );
             return;
         }
-        for( File repo : parentDir.listFiles() ) {
-            if( repo.isDirectory() ) {
-                try {
-                    String repoURI = repo.toURI().toString() + "@id=" + repo.getName();
-                    LOG.debug( "Adding repo from inside multi dir: " + repoURI );
-                    addLocalRepo(list, new MavenRepositoryURL(repoURI));
-                }
-                catch( MalformedURLException e ) {
-                    LOG.error( "Error resolving repo url of a multi repo " + repo.toURI() );
-                }
+        for( File repo : getSortedChildDirectories(parentDir) ) {
+            try {
+                String repoURI = repo.toURI().toString() + "@id=" + repo.getName();
+                LOG.debug( "Adding repo from inside multi dir: " + repoURI );
+                addLocalRepo(list, new MavenRepositoryURL(repoURI));
+            }
+            catch( MalformedURLException e ) {
+                LOG.error( "Error resolving repo url of a multi repo " + repo.toURI() );
             }
         }
     }
@@ -514,7 +539,8 @@ public class AetherBasedResolver implements MavenResolver {
         return repos;
     }
 
-    public File resolve(String url) throws IOException {
+    @Override
+	public File resolve(String url) throws IOException {
         if (!url.startsWith(ServiceConstants.PROTOCOL + ":")) {
             throw new IllegalArgumentException("url should be a mvn based url");
         }
@@ -533,7 +559,8 @@ public class AetherBasedResolver implements MavenResolver {
     /**
      * Resolve maven artifact as file in repository.
      */
-    public File resolve( String groupId, String artifactId, String classifier,
+    @Override
+	public File resolve( String groupId, String artifactId, String classifier,
                              String extension, String version ) throws IOException {
         return resolve(groupId, artifactId, classifier, extension, version, null);
     }
@@ -780,14 +807,14 @@ public class AetherBasedResolver implements MavenResolver {
     /**
      * Tries to resolve versions = LATEST using an open range version query. If it succeeds, version
      * of artifact is set to the highest available version.
-     * 
+     *
      * @param session
      *            to be used.
      * @param artifact
      *            to be used
-     * 
+     *
      * @return an artifact with version set properly (highest if available)
-     * 
+     *
      * @throws org.eclipse.aether.resolution.VersionRangeResolutionException
      *             in case of resolver errors.
      */
@@ -803,7 +830,7 @@ public class AetherBasedResolver implements MavenResolver {
         if( versionResult != null ) {
             Version v = versionResult.getHighestVersion();
             if( v != null ) {
-                
+
                 artifact = artifact.setVersion( v.toString() );
             }
             else {
@@ -859,7 +886,7 @@ public class AetherBasedResolver implements MavenResolver {
         if( null != updatePolicy ) {
             session.setUpdatePolicy( updatePolicy );
         }
-        
+
         for (Server server : m_settings.getServers()) {
             if (server.getConfiguration() != null
                 && ((Xpp3Dom)server.getConfiguration()).getChild("httpHeaders") != null) {
@@ -934,15 +961,15 @@ public class AetherBasedResolver implements MavenResolver {
         }
         catch( PlexusCipherException exc )
         {
-            throw new IllegalStateException( exc ); 
+            throw new IllegalStateException( exc );
         }
         secDispatcher.setConfigurationFile( m_config.getSecuritySettings() );
         decrypter.setSecurityDispatcher( secDispatcher );
-        
+
         locator.setServices( SettingsDecrypter.class, decrypter );
-        
-        
-        
+
+
+
         locator.setService( LocalRepositoryManagerFactory.class,
             SimpleLocalRepositoryManagerFactory.class );
         locator.setService( org.eclipse.aether.spi.log.LoggerFactory.class,
