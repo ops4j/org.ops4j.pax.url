@@ -45,7 +45,7 @@
                                     <goal>run</goal>
                                 </goals>
                                 <configuration>
-                                    <cloneProjectsTo>${project.build.directory}/aether</cloneProjectsTo>
+                                    <cloneProjectsTo>${project.build.directory}/it/aether</cloneProjectsTo>
                                     <pom>src/it/itest-aether/pom.xml</pom>
                                 </configuration>
                             </execution>
@@ -58,7 +58,7 @@
                                     <profiles>
                                         <profile>eclipse-3.6</profile>
                                     </profiles>
-                                    <cloneProjectsTo>${project.build.directory}/aether-osgi-eclipse-3.6</cloneProjectsTo>
+                                    <cloneProjectsTo>${project.build.directory}/it/aether-osgi-eclipse-3.6</cloneProjectsTo>
                                     <pom>src/it/itest-aether-osgi/pom.xml</pom>
                                 </configuration>
                             </execution>
@@ -71,7 +71,7 @@
                                     <profiles>
                                         <profile>eclipse-3.7</profile>
                                     </profiles>
-                                    <cloneProjectsTo>${project.build.directory}/aether-osgi-eclipse-3.7</cloneProjectsTo>
+                                    <cloneProjectsTo>${project.build.directory}/it/aether-osgi-eclipse-3.7</cloneProjectsTo>
                                     <pom>src/it/itest-aether-osgi/pom.xml</pom>
                                 </configuration>
                             </execution>
@@ -81,7 +81,7 @@
                                     <goal>run</goal>
                                 </goals>
                                 <configuration>
-                                    <cloneProjectsTo>${project.build.directory}/obr</cloneProjectsTo>
+                                    <cloneProjectsTo>${project.build.directory}/it/obr</cloneProjectsTo>
                                     <pom>src/it/itest-obr/pom.xml</pom>
                                 </configuration>
                             </execution>
