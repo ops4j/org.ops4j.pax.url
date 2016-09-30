@@ -638,6 +638,27 @@ public class ConfigurationImplTest
     }
 
     @Test
+    public void getRepositoriesFromProfilesActiveByDefaultInSettings()
+        throws MalformedURLException
+    {
+        PropertyResolver propertyResolver = createMock( PropertyResolver.class );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null ).atLeastOnce();
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.settings" ) ).andReturn( null );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.useFallbackRepositories" ) ).andReturn( "false" );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.repositories" ) ).andReturn( null ).anyTimes();
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.defaultLocalRepoAsRemote" ) ).andReturn( null ).anyTimes();
+        Settings settings = buildSettings("src/test/resources/settings/settingsWithActiveProfiles.xml");
+        replay( propertyResolver );
+        MavenConfigurationImpl config = new MavenConfigurationImpl( propertyResolver, PID );
+        config.setSettings( settings );
+        assertThat(config.getRepositories().size(), equalTo(3));
+        assertThat(config.getRepositories().get(0).getId(), equalTo("repository1"));
+        assertThat(config.getRepositories().get(1).getId(), equalTo("repository2"));
+        assertThat(config.getRepositories().get(2).getId(), equalTo("repository4"));
+        verify( propertyResolver );
+    }
+
+    @Test
     public void useFallbackRepositories()
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );

@@ -1,0 +1,52 @@
+<settings>
+  <profiles>
+    <profile>
+      <id>profile1</id>
+      <repositories>
+        <repository>
+          <id>repository1</id>
+          <url>http://repository1</url>
+        </repository>
+      </repositories>
+    </profile>
+    <profile>
+      <id>profile2</id>
+      <repositories>
+        <repository>
+          <id>repository2</id>
+          <url>http://repository2</url>
+        </repository>
+      </repositories>
+    </profile>
+    <profile>
+      <!-- this is an inactive profile -->
+      <id>profile3</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <repositories>
+        <repository>
+          <id>repository3</id>
+          <url>http://repository3</url>
+        </repository>
+      </repositories>
+    </profile>
+    <profile>
+      <!-- this is an profile activeByDefault and not included in <activeProfiles> -->
+      <id>profile4</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <repositories>
+        <repository>
+          <id>repository4</id>
+          <url>http://repository4</url>
+        </repository>
+      </repositories>
+    </profile>
+  </profiles>
+  <activeProfiles>
+    <activeProfile>profile1</activeProfile>
+    <activeProfile>profile2</activeProfile>
+  </activeProfiles>
+</settings>

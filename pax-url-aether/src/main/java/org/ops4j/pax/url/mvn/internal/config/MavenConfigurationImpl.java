@@ -25,10 +25,13 @@ import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.maven.settings.Profile;
 import org.apache.maven.settings.Repository;
@@ -266,7 +269,7 @@ public class MavenConfigurationImpl extends PropertyStore implements MavenConfig
                 String init = (repositoriesProp == null) ? "" : repositoriesProp.substring(1);
                 StringBuilder builder = new StringBuilder(init);
                 Map<String, Profile> profiles = settings.getProfilesAsMap();
-                for (String activeProfile : settings.getActiveProfiles()) {
+                for (String activeProfile : getActiveProfiles(true)) {
                     Profile profile = profiles.get(activeProfile);
                     if (profile == null) {
                         continue;
@@ -319,6 +322,25 @@ public class MavenConfigurationImpl extends PropertyStore implements MavenConfig
             return set(m_pid + ServiceConstants.PROPERTY_REPOSITORIES, repositoriesProperty);
         }
         return get(m_pid + ServiceConstants.PROPERTY_REPOSITORIES);
+    }
+
+    /**
+     * Returns active profile names from current settings
+     * @param alsoActiveByDefault if <code>true</code>, also return these profile names that are
+     * <code>&lt;activeByDefault&gt;</code>
+     * @return
+     */
+    private Collection<String> getActiveProfiles(boolean alsoActiveByDefault) {
+        Set<String> profileNames = new LinkedHashSet<String>(settings.getActiveProfiles());
+        if (alsoActiveByDefault) {
+            for (Profile profile : settings.getProfiles()) {
+                if (profile.getActivation() != null && profile.getActivation().isActiveByDefault()) {
+                    // TODO: check other activations - file/jdk/os/property?
+                    profileNames.add(profile.getId());
+                }
+            }
+        }
+        return profileNames;
     }
 
     private void addPolicy(StringBuilder builder, String policy, String option) {
