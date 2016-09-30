@@ -62,6 +62,7 @@ public class ConfigurableHttpWagon extends HttpWagon {
     public ConfigurableHttpWagon(CloseableHttpClient client, int timeout) {
         this.client = client;
         setTimeout(timeout);
+        setReadTimeout(timeout);
     }
 
     @Override
