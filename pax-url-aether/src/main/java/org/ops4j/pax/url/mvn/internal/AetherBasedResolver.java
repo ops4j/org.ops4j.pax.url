@@ -651,14 +651,9 @@ public class AetherBasedResolver implements MavenResolver {
                 .getArtifact().getFile();
         }
         catch( ArtifactResolutionException e ) {
-            /**
-             * Do not add root exception to avoid NotSerializableException on DefaultArtifact. To
-             * avoid loosing information log the root cause. We can remove this again as soon as
-             * DefaultArtifact is serializeable. See http://team.ops4j.org/browse/PAXURL-206
-             */
             LOG.warn( "Error resolving artifact " + artifact.toString() + ":" + e.getMessage(), e );
             throw new IOException( "Error resolving artifact " + artifact.toString() + ": "
-                + e.getMessage() );
+                + e.getMessage(), e );
         }
         catch( RepositoryException e ) {
             throw new IOException( "Error resolving artifact " + artifact.toString(), e );
