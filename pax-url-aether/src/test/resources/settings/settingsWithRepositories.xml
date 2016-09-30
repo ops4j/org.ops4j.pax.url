@@ -85,9 +85,14 @@
         </repository>
       </repositories>
     </profile>
+    <profile>
+      <!-- this profile doesn't have any repositories -->
+      <id>profile4</id>
+    </profile>
   </profiles>
   <activeProfiles>
     <activeProfile>profile1</activeProfile>
     <activeProfile>profile2</activeProfile>
+    <activeProfile>profile4</activeProfile>
   </activeProfiles>
 </settings>

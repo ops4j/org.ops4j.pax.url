@@ -26,6 +26,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 
@@ -44,6 +46,7 @@ import org.apache.maven.settings.building.DefaultSettingsBuildingRequest;
 import org.apache.maven.settings.building.SettingsBuildingException;
 import org.apache.maven.settings.building.SettingsBuildingRequest;
 import org.apache.maven.settings.building.SettingsBuildingResult;
+import org.apache.maven.settings.building.SettingsProblem;
 import org.junit.Assume;
 import org.junit.Test;
 import org.ops4j.io.FileUtils;
@@ -581,7 +584,11 @@ public class ConfigurationImplTest
             {
                 SettingsBuildingResult result = builder.build( request );
                 assertThat( result, is( notNullValue() ) );
-                assertThat( result.getProblems().isEmpty(), is( true ) );
+                for ( SettingsProblem sp : result.getProblems() ) {
+                    if ( sp.getSeverity() != SettingsProblem.Severity.WARNING ) {
+                        fail( "There should be no serious problems in settings.xml" );
+                    }
+                }
 
                 settings = result.getEffectiveSettings();
             }
@@ -609,6 +616,24 @@ public class ConfigurationImplTest
                       new URL( "file:" + new File("repository").getAbsolutePath() + "/" ),
                       config.getLocalRepository().getURL()
         );
+        verify( propertyResolver );
+    }
+
+    @Test
+    public void getRepositoriesFromActiveProfilesInSettings()
+        throws MalformedURLException
+    {
+        PropertyResolver propertyResolver = createMock( PropertyResolver.class );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null ).atLeastOnce();
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.settings" ) ).andReturn( null );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.useFallbackRepositories" ) ).andReturn( "false" );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.repositories" ) ).andReturn( null ).anyTimes();
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.defaultLocalRepoAsRemote" ) ).andReturn( null ).anyTimes();
+        Settings settings = buildSettings("src/test/resources/settings/settingsWithRepositories.xml");
+        replay( propertyResolver );
+        MavenConfigurationImpl config = new MavenConfigurationImpl( propertyResolver, PID );
+        config.setSettings( settings );
+        assertThat(config.getRepositories().size(), equalTo(6));
         verify( propertyResolver );
     }
 
