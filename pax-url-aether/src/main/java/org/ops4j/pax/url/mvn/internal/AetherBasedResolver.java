@@ -894,6 +894,11 @@ public class AetherBasedResolver implements MavenResolver {
             session.setUpdatePolicy( updatePolicy );
         }
 
+        String checksumPolicy = m_config.getGlobalChecksumPolicy();
+        if( null != checksumPolicy ) {
+            session.setChecksumPolicy(checksumPolicy);
+        }
+
         for (Server server : m_settings.getServers()) {
             if (server.getConfiguration() != null
                 && ((Xpp3Dom)server.getConfiguration()).getChild("httpHeaders") != null) {
