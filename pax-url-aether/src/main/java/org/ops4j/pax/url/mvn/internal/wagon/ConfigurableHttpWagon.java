@@ -59,10 +59,10 @@ public class ConfigurableHttpWagon extends HttpWagon {
 
     private final CloseableHttpClient client;
 
-    public ConfigurableHttpWagon(CloseableHttpClient client, int timeout) {
+    public ConfigurableHttpWagon(CloseableHttpClient client, int readTimeout, int connectionTimeout) {
         this.client = client;
-        setTimeout(timeout);
-        setReadTimeout(timeout);
+        setReadTimeout(readTimeout);
+        setTimeout(connectionTimeout);
     }
 
     @Override
@@ -96,6 +96,7 @@ public class ConfigurableHttpWagon extends HttpWagon {
         else
         {
             requestConfigBuilder.setSocketTimeout( getReadTimeout() );
+            requestConfigBuilder.setConnectTimeout( getTimeout() );
         }
 
         getLocalContext().setRequestConfig(requestConfigBuilder.build());

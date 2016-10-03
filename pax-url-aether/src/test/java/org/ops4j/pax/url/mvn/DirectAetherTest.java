@@ -67,7 +67,7 @@ public class DirectAetherTest {
         DefaultServiceLocator locator = MavenRepositorySystemUtils.newServiceLocator();
         locator
             .addService( RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class );
-        locator.setServices( WagonProvider.class, new ManualWagonProvider( HttpClients.createClient(null), 10000 ) );
+        locator.setServices( WagonProvider.class, new ManualWagonProvider( HttpClients.createClient(null, null), 10000 ) );
         locator.addService( TransporterFactory.class, WagonTransporterFactory.class );
         system = locator.getService( RepositorySystem.class );
 

@@ -29,12 +29,19 @@ public class ManualWagonProvider implements WagonProvider
 {
 
     private CloseableHttpClient client;
-    private int timeout;
+    private int readTimeout;
+    private int connectionTimeout;
 
-    public ManualWagonProvider( CloseableHttpClient client, int timeout )
+    public ManualWagonProvider( CloseableHttpClient client, int readTimeout )
+    {
+        this( client, readTimeout, readTimeout );
+    }
+
+    public ManualWagonProvider( CloseableHttpClient client, int readTimeout, int connectionTimeout )
     {
         this.client = client;
-        this.timeout = timeout;
+        this.readTimeout = readTimeout;
+        this.connectionTimeout = connectionTimeout;
     }
 
     public Wagon lookup( String roleHint ) throws Exception
@@ -45,7 +52,7 @@ public class ManualWagonProvider implements WagonProvider
         }
         else if( "http".equals( roleHint ) || "https".equals( roleHint) )
         {
-            return new ConfigurableHttpWagon( client, timeout );
+            return new ConfigurableHttpWagon( client, readTimeout, connectionTimeout);
         }
 
         return null;

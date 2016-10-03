@@ -101,7 +101,7 @@ public interface MavenConfiguration {
     Boolean useFallbackRepositories();
 
     /**
-     * Returns the timeout configured in case the maven artifact is retrieved from a
+     * Returns the read timeout configured in case the maven artifact is retrieved from a
      * remote location.
      *
      * @return the timeout in case artifacts are retrieved from a remote location
@@ -136,4 +136,22 @@ public interface MavenConfiguration {
     String getSecuritySettings();
 
     PropertyResolver getPropertyResolver();
+
+    /**
+     * Returns generic property by name.
+     *
+     * @param name
+     * @param defaultValue
+     * @param clazz
+     * @return
+     */
+    <T> T getProperty(String name, T defaultValue, Class<T> clazz);
+
+    /**
+     * Returns PID for properties used by this configuration. It's used as prefix for properties in
+     * associated {@link PropertyResolver}
+     * @return
+     */
+    String getPid();
+
 }

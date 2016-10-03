@@ -674,4 +674,43 @@ public class MavenConfigurationImpl extends PropertyStore implements MavenConfig
         }
         return get(key);
     }
+
+    @Override
+    public <T> T getProperty(String name, T defaultValue, Class<T> clazz) {
+        if (!contains(m_pid + name)) {
+            String value = m_propertyResolver.get(m_pid + name);
+            return set(m_pid + name, value == null ? defaultValue : convert(value, clazz));
+        }
+        return get(m_pid + name);
+    }
+
+    @Override
+    public String getPid() {
+        return m_pid;
+    }
+
+    /**
+     * Supports String to [ Integer, Long, String, Boolean ] conversion
+     * @param value
+     * @param clazz
+     * @param <T>
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    private <T> T convert(String value, Class<T> clazz) {
+        if (String.class == clazz) {
+            return (T) value;
+        }
+        if (Integer.class == clazz) {
+            return (T) Integer.valueOf(value);
+        }
+        if (Long.class == clazz) {
+            return (T) Long.valueOf(value);
+        }
+        if (Boolean.class == clazz) {
+            return (T) Boolean.valueOf("true".equals(value));
+        }
+        throw new IllegalArgumentException("Can't convert \"" + value + "\" to " + clazz + ".");
+    }
+
 }

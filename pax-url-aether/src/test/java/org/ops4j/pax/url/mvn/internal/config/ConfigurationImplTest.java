@@ -33,9 +33,11 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.maven.settings.Profile;
 import org.apache.maven.settings.Repository;
@@ -50,6 +52,7 @@ import org.apache.maven.settings.building.SettingsProblem;
 import org.junit.Assume;
 import org.junit.Test;
 import org.ops4j.io.FileUtils;
+import org.ops4j.util.property.PropertiesPropertyResolver;
 import org.ops4j.util.property.PropertyResolver;
 
 public class ConfigurationImplTest
@@ -707,6 +710,40 @@ public class ConfigurationImplTest
         assertEquals("fail", mavenRepositoryURL.getReleasesChecksumPolicy());
         assertEquals("warn", mavenRepositoryURL.getSnapshotsChecksumPolicy());
         verify( propertyResolver );
+    }
+
+    @Test
+    public void getRepositoryProperties()
+    {
+        Properties props = new Properties();
+        PropertyResolver propertyResolver = new PropertiesPropertyResolver(props);
+        props.setProperty("org.ops4j.pax.url.mvn.i", "1");
+        props.setProperty("org.ops4j.pax.url.mvn.l", "1");
+        props.setProperty("org.ops4j.pax.url.mvn.s", "hello");
+        props.setProperty("org.ops4j.pax.url.mvn.x", "hello");
+        props.setProperty("org.ops4j.pax.url.mvn.b1", "true");
+        props.setProperty("org.ops4j.pax.url.mvn.b2", "false");
+        props.setProperty("org.ops4j.pax.url.mvn.b3", "0");
+
+        MavenConfiguration config = new MavenConfigurationImpl(propertyResolver, PID);
+        assertThat(config.getProperty("i", 42, Integer.class), equalTo(1));
+        assertThat(config.getProperty("i2", 42, Integer.class), equalTo(42));
+        assertThat(config.getProperty("l", 42L, Long.class), equalTo(1L));
+        assertThat(config.getProperty("s", "unknown", String.class), equalTo("hello"));
+        assertThat(config.getProperty("b1", false, Boolean.class), equalTo(true));
+        assertThat(config.getProperty("b2", true, Boolean.class), equalTo(false));
+        assertThat(config.getProperty("b3", true, Boolean.class), equalTo(false));
+        assertThat(config.getProperty("b4", true, Boolean.class), equalTo(true));
+        try {
+            config.getProperty("x", null, InputStream.class);
+            fail("Should not be able to convert");
+        } catch (IllegalArgumentException ignored) {
+        }
+        try {
+            Integer i = config.getProperty("s", null, Integer.class);
+            fail("Should throw ClassCastException, because \"s\" was already cached");
+        } catch (ClassCastException ignored) {
+        }
     }
 
 }

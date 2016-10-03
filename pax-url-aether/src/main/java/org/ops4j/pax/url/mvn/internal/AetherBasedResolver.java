@@ -94,7 +94,6 @@ import org.eclipse.aether.transport.wagon.WagonTransporterFactory;
 import org.eclipse.aether.util.repository.AuthenticationBuilder;
 import org.eclipse.aether.util.repository.DefaultMirrorSelector;
 import org.eclipse.aether.util.repository.DefaultProxySelector;
-import org.eclipse.aether.util.repository.SimpleResolutionErrorPolicy;
 import org.eclipse.aether.util.version.GenericVersionScheme;
 import org.eclipse.aether.version.InvalidVersionSpecificationException;
 import org.eclipse.aether.version.Version;
@@ -152,7 +151,7 @@ public class AetherBasedResolver implements MavenResolver {
      */
     public AetherBasedResolver( final MavenConfiguration configuration, final Mirror mirror ) {
         NullArgumentException.validateNotNull( configuration, "Maven configuration");
-        m_client = HttpClients.createClient(configuration.getPropertyResolver());
+        m_client = HttpClients.createClient(configuration.getPropertyResolver(), configuration.getPid());
         m_config = configuration;
         m_settings = configuration.getSettings();
         m_repoSystem = newRepositorySystem();
@@ -901,6 +900,19 @@ public class AetherBasedResolver implements MavenResolver {
             }
         }
 
+        // org.eclipse.aether.transport.wagon.WagonTransporter.connectWagon() sets connection timeout
+        // as max of connection timeout and request timeout taken from aether session config
+        // but on the other hand, request timeout is used in org.eclipse.aether.connector.basic.PartialFile.Factory
+        //
+        // because real socket read timeout is used again (correctly) in
+        // org.ops4j.pax.url.mvn.internal.wagon.ConfigurableHttpWagon.execute() - directly from wagon configuration
+        // (from org.apache.maven.wagon.AbstractWagon.getReadTimeout()), we explicitly configure aether session
+        // config with: PartialFile.Factory timeout == connection timeout
+        int defaultTimeut = m_config.getTimeout();
+        Integer timeout = m_config.getProperty( ServiceConstants.PROPERTY_SOCKET_CONNECTION_TIMEOUT, defaultTimeut, Integer.class );
+        session.setConfigProperty( ConfigurationProperties.CONNECT_TIMEOUT, timeout );
+        session.setConfigProperty( ConfigurationProperties.REQUEST_TIMEOUT, timeout );
+
         session.setOffline( m_config.isOffline() );
 
         return session;
@@ -956,7 +968,13 @@ public class AetherBasedResolver implements MavenResolver {
     private RepositorySystem newRepositorySystem() {
         DefaultServiceLocator locator = MavenRepositorySystemUtils.newServiceLocator();
 
-        locator.setServices( WagonProvider.class, new ManualWagonProvider( m_client, m_config.getTimeout() ) );
+        // default timeout (both connection and read timeouts)
+        int defaultTimeout = m_config.getTimeout();
+        // connection timeout
+        int connectionTimeout = m_config.getProperty( ServiceConstants.PROPERTY_SOCKET_CONNECTION_TIMEOUT, defaultTimeout, Integer.class );
+        // read timeout
+        int soTimeout = m_config.getProperty( ServiceConstants.PROPERTY_SOCKET_SO_TIMEOUT, defaultTimeout, Integer.class );
+        locator.setServices( WagonProvider.class, new ManualWagonProvider( m_client, soTimeout, connectionTimeout ) );
         locator.addService( TransporterFactory.class, WagonTransporterFactory.class );
         locator.addService(RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class);
 

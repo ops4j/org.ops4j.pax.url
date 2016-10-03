@@ -87,6 +87,21 @@ public class AetherTimeoutTest {
     }
 
     @Test
+    public void connectionTimeout() throws Exception {
+        final MavenConfigurationImpl mavenConfiguration = basicMavenConfigurationWithTwoTimeouts(5000, 500);
+        mavenConfiguration.setSettings(settingsWithUnresponsiveRepository());
+
+        Future<Boolean> ok = pool.submit(new ResolveArtifactTask(mavenConfiguration, 0));
+
+        try {
+            boolean resolved = ok.get(2000, TimeUnit.MILLISECONDS);
+            assertFalse(resolved);
+        } catch (TimeoutException e) {
+            fail("Should fail due to connection timeout earlier.");
+        }
+    }
+
+    @Test
     public void readTimeout() throws Exception {
         // case 1: resolution fails because of timeout
         //  - aether uses 500ms read timeout
@@ -136,6 +151,32 @@ public class AetherTimeoutTest {
         return new MavenConfigurationImpl(new PropertiesPropertyResolver(properties), "pid");
     }
 
+    private MavenConfigurationImpl basicMavenConfigurationWithTwoTimeouts(int readTimeoutInMs, int connectTimeoutInMs) {
+        Properties properties = new Properties();
+        properties.setProperty("pid.localRepository", "target/" + UUID.randomUUID().toString());
+        properties.setProperty("pid.timeout", Integer.toString(readTimeoutInMs));
+        properties.setProperty("pid.socket.connectionTimeout", Integer.toString(connectTimeoutInMs));
+        properties.setProperty("pid.globalChecksumPolicy", "ignore");
+        return new MavenConfigurationImpl(new PropertiesPropertyResolver(properties), "pid");
+    }
+
+    private Settings settingsWithUnresponsiveRepository()
+    {
+        Settings settings = new Settings();
+        Profile defaultProfile = new Profile();
+        defaultProfile.setId("default");
+        Repository repo1 = new Repository();
+        repo1.setId("repo1");
+        // see:
+        //  - https://tools.ietf.org/html/rfc5737
+        //  - https://en.wikipedia.org/wiki/Reserved_IP_addresses
+        repo1.setUrl("http://192.0.2.0/repository");
+        defaultProfile.addRepository(repo1);
+        settings.addProfile(defaultProfile);
+        settings.addActiveProfile("default");
+        return settings;
+    }
+
     private Settings settingsWithJettyRepository()
     {
         Settings settings = new Settings();
@@ -176,11 +217,11 @@ public class AetherTimeoutTest {
                         "pax-web-api", "", "jar", Integer.toString(expectedTimeout));
                 return resolved.isFile();
             } catch (IOException e) {
-                assertTrue(e.getMessage().endsWith("Read timed out"));
                 return false;
             } finally {
                 resolver.close();
             }
         }
     }
+
 }
