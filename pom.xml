@@ -126,6 +126,8 @@
                         <compilerArgs>
                             <arg>-Xlint:all</arg>
                         </compilerArgs>
+                        <source>1.7</source>
+                        <target>1.7</target>
                     </configuration>
                 </plugin>
                 <plugin>
