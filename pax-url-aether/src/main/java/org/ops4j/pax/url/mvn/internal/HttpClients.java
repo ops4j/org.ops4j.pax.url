@@ -52,10 +52,10 @@ public class HttpClients {
     private static PoolingHttpClientConnectionManager createConnManager(PropertyResolver resolver, String pid)
     {
         boolean SSL_INSECURE = getBoolean( resolver, "maven.wagon.http.ssl.insecure",
-                                !getBoolean( resolver, "org.ops4j.pax.url.mvn.certificateCheck", false ) );
+                                !getBoolean( resolver, pid + "certificateCheck", false ) );
         boolean IGNORE_SSL_VALIDITY_DATES = getBoolean( resolver, "maven.wagon.http.ssl.ignore.validity.dates", false );
         boolean SSL_ALLOW_ALL = getBoolean( resolver, "maven.wagon.http.ssl.allowall",
-                                !getBoolean( resolver, "org.ops4j.pax.url.mvn.certificateCheck", false ) );
+                                !getBoolean( resolver, pid + "certificateCheck", false ) );
         boolean PERSISTENT_POOL = getBoolean( resolver, "maven.wagon.http.pool", true );
         int MAX_CONN_PER_ROUTE = getInteger( resolver, "maven.wagon.httpconnectionManager.maxPerRoute", 20 );
         int MAX_CONN_TOTAL = getInteger( resolver, "maven.wagon.httpconnectionManager.maxTotal", 40 );
