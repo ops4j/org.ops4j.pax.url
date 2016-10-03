@@ -233,7 +233,7 @@ public class MavenConfigurationImpl extends PropertyStore implements MavenConfig
                     defaultRepositoriesProperty.add(new MavenRepositoryURL(repositoryURL.trim()));
                 }
             }
-            LOGGER.trace("Using repositories [" + defaultRepositoriesProperty + "]");
+            LOGGER.trace("Using default repositories [" + defaultRepositoriesProperty + "]");
             return set(m_pid + ServiceConstants.PROPERTY_DEFAULT_REPOSITORIES,
                 defaultRepositoriesProperty);
         }
