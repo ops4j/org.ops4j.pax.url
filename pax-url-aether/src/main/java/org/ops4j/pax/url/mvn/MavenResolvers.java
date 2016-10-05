@@ -17,7 +17,6 @@ package org.ops4j.pax.url.mvn;
 
 import java.util.Dictionary;
 
-import org.apache.maven.settings.Mirror;
 import org.ops4j.pax.url.mvn.internal.AetherBasedResolver;
 import org.ops4j.pax.url.mvn.internal.config.MavenConfigurationImpl;
 import org.ops4j.util.property.DictionaryPropertyResolver;
@@ -29,7 +28,7 @@ public final class MavenResolvers {
         return createMavenResolver(null, properties, pid);
     }
 
-    public static MavenResolver createMavenResolver(Mirror mirror, Dictionary<String, String> properties, String pid) {
+    public static MavenResolver createMavenResolver(MirrorInfo mirror, Dictionary<String, String> properties, String pid) {
         PropertiesPropertyResolver syspropsResolver = new PropertiesPropertyResolver(System.getProperties());
         DictionaryPropertyResolver propertyResolver = new DictionaryPropertyResolver(properties, syspropsResolver);
         MavenConfigurationImpl config = new MavenConfigurationImpl(propertyResolver, pid);

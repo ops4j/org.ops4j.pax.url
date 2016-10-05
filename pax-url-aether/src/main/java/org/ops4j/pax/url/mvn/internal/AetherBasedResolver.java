@@ -110,6 +110,7 @@ import org.eclipse.aether.version.Version;
 import org.eclipse.aether.version.VersionConstraint;
 import org.ops4j.lang.NullArgumentException;
 import org.ops4j.pax.url.mvn.MavenResolver;
+import org.ops4j.pax.url.mvn.MirrorInfo;
 import org.ops4j.pax.url.mvn.ServiceConstants;
 import org.ops4j.pax.url.mvn.internal.config.MavenConfiguration;
 import org.ops4j.pax.url.mvn.internal.config.MavenRepositoryURL;
@@ -159,7 +160,7 @@ public class AetherBasedResolver implements MavenResolver {
      *
      * @param configuration (must be not null)
      */
-    public AetherBasedResolver( final MavenConfiguration configuration, final Mirror mirror ) {
+    public AetherBasedResolver( final MavenConfiguration configuration, final MirrorInfo mirror ) {
         NullArgumentException.validateNotNull( configuration, "Maven configuration");
         m_client = HttpClients.createClient(configuration.getPropertyResolver(), configuration.getPid());
         m_config = configuration;
@@ -357,7 +358,7 @@ public class AetherBasedResolver implements MavenResolver {
         return authentication;
     }
 
-    private MirrorSelector selectMirrors( Mirror mirror ) {
+    private MirrorSelector selectMirrors( MirrorInfo mirror ) {
         // configure mirror
 
        	// The class org.eclipse.aether.util.repository.DefaultMirrorSelector is final therefore it needs to be
