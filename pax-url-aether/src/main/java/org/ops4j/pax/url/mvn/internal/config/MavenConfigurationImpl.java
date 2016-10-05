@@ -318,7 +318,7 @@ public class MavenConfigurationImpl extends PropertyStore implements MavenConfig
                     repositoriesProperty.add(new MavenRepositoryURL(repositoryURL.trim()));
                 }
             }
-            LOGGER.trace("Using repositories [" + repositoriesProperty + "]");
+            LOGGER.trace("Using remote repositories [" + repositoriesProperty + "]");
             return set(m_pid + ServiceConstants.PROPERTY_REPOSITORIES, repositoriesProperty);
         }
         return get(m_pid + ServiceConstants.PROPERTY_REPOSITORIES);

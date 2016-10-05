@@ -75,7 +75,39 @@ public interface MavenResolver extends Closeable {
     /**
      * Install the specified artifact metadata in the local repository
      */
+
     void uploadMetadata( String groupId, String artifactId,
                          String type, String version, File artifact ) throws IOException;
+
+    /**
+     * Returns a hint about possible retry of operation that ended with <code>exception</code>
+     * @param exception
+     * @return
+     */
+    RetryChance isRetryableException(Exception exception);
+
+    /**
+     * Enumeration of retry hints that may be used by client code when trying to repeat failed resolution attempt
+     */
+    enum RetryChance {
+        NEVER(0),
+        LOW(1),
+        HIGH(2),
+        UNKNOWN(Integer.MAX_VALUE);
+
+        private int chance;
+
+        RetryChance(int chance) {
+            this.chance = chance;
+        }
+
+        /**
+         * Ordering information for {@link RetryChance chances of retry}
+         * @return
+         */
+        public int chance() {
+            return chance;
+        }
+    }
 
 }

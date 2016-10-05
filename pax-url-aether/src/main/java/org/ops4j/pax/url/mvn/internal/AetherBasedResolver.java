@@ -30,7 +30,10 @@ import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.MalformedURLException;
+import java.net.NoRouteToHostException;
+import java.net.SocketTimeoutException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,6 +41,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -81,6 +86,7 @@ import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.repository.RepositoryPolicy;
 import org.eclipse.aether.resolution.ArtifactRequest;
 import org.eclipse.aether.resolution.ArtifactResolutionException;
+import org.eclipse.aether.resolution.ArtifactResult;
 import org.eclipse.aether.resolution.MetadataRequest;
 import org.eclipse.aether.resolution.MetadataResult;
 import org.eclipse.aether.resolution.VersionRangeRequest;
@@ -89,6 +95,10 @@ import org.eclipse.aether.resolution.VersionRangeResult;
 import org.eclipse.aether.spi.connector.RepositoryConnectorFactory;
 import org.eclipse.aether.spi.connector.transport.TransporterFactory;
 import org.eclipse.aether.spi.localrepo.LocalRepositoryManagerFactory;
+import org.eclipse.aether.transfer.ArtifactNotFoundException;
+import org.eclipse.aether.transfer.ArtifactTransferException;
+import org.eclipse.aether.transfer.MetadataNotFoundException;
+import org.eclipse.aether.transfer.MetadataTransferException;
 import org.eclipse.aether.transport.wagon.WagonProvider;
 import org.eclipse.aether.transport.wagon.WagonTransporterFactory;
 import org.eclipse.aether.util.repository.AuthenticationBuilder;
@@ -540,7 +550,12 @@ public class AetherBasedResolver implements MavenResolver {
     }
 
     @Override
-	public File resolve(String url) throws IOException {
+    public File resolve(String url) throws IOException {
+        return resolve(url, null);
+    }
+
+    @Override
+    public File resolve(String url, Exception previousException) throws IOException {
         if (!url.startsWith(ServiceConstants.PROTOCOL + ":")) {
             throw new IllegalArgumentException("url should be a mvn based url");
         }
@@ -552,7 +567,8 @@ public class AetherBasedResolver implements MavenResolver {
                 parser.getClassifier(),
                 parser.getType(),
                 parser.getVersion(),
-                parser.getRepositoryURL()
+                parser.getRepositoryURL(),
+                previousException
         );
     }
 
@@ -560,39 +576,75 @@ public class AetherBasedResolver implements MavenResolver {
      * Resolve maven artifact as file in repository.
      */
     @Override
-	public File resolve( String groupId, String artifactId, String classifier,
+    public File resolve( String groupId, String artifactId, String classifier,
                              String extension, String version ) throws IOException {
-        return resolve(groupId, artifactId, classifier, extension, version, null);
+        return resolve(groupId, artifactId, classifier, extension, version, null, null);
+    }
+
+    @Override
+    public File resolve(String groupId, String artifactId, String classifier, String extension, String version, Exception previousException) throws IOException {
+        return resolve(groupId, artifactId, classifier, extension, version, null, previousException);
     }
 
     /**
      * Resolve maven artifact as file in repository.
      */
     public File resolve( String groupId, String artifactId, String classifier,
-                             String extension, String version,
-                             MavenRepositoryURL repositoryURL ) throws IOException {
+                         String extension, String version,
+                         MavenRepositoryURL repositoryURL,
+                         Exception previousException) throws IOException {
         Artifact artifact = new DefaultArtifact( groupId, artifactId, classifier, extension, version );
-        return resolve(artifact, repositoryURL);
+        return resolve(artifact, repositoryURL, previousException);
     }
 
     /**
      * Resolve maven artifact as file in repository.
      */
     public File resolve( Artifact artifact ) throws IOException {
-        return resolve(artifact, null);
+        return resolve(artifact, null, null);
     }
 
     /**
      * Resolve maven artifact as file in repository.
      */
     public File resolve( Artifact artifact,
-                         MavenRepositoryURL repositoryURL ) throws IOException {
+                         MavenRepositoryURL repositoryURL,
+                         Exception previousException ) throws IOException {
 
         List<LocalRepository> defaultRepos = selectDefaultRepositories();
         List<RemoteRepository> remoteRepos = selectRepositories();
         if (repositoryURL != null) {
             addRepo(remoteRepos, repositoryURL);
         }
+
+        // PAXURL-337: use previousException as hint to alter remote repositories to query
+        if (previousException != null) {
+            List<RemoteRepository> altered = new LinkedList<>();
+            Map<String, RemoteRepository> temp = new LinkedHashMap<>();
+            for (RemoteRepository rr : remoteRepos) {
+                temp.put(rr.getUrl(), rr);
+            }
+            RepositoryException repositoryException = findAetherException(previousException);
+            if (repositoryException instanceof ArtifactResolutionException) {
+                // check only this aggregate exception and assume it's related to current artifact
+                ArtifactResult result = ((ArtifactResolutionException) repositoryException).getResult();
+                if (result != null && result.getRequest() != null && result.getRequest().getArtifact().equals(artifact)) {
+                    for (Exception exception : result.getExceptions()) {
+                        RepositoryException singleException = findAetherException(exception);
+                        if (singleException instanceof ArtifactNotFoundException) {
+                            RemoteRepository repository = ((ArtifactNotFoundException) singleException).getRepository();
+                            LOG.debug("Removing {} from list of repositories, previous exception: {}", repository, singleException.getMessage());
+                            temp.remove(repository.getUrl());
+                        }
+                    }
+
+                    // swap list of repos now
+                    altered.addAll(temp.values());
+                    remoteRepos = altered;
+                }
+            }
+        }
+
         assignProxyAndMirrors( remoteRepos );
         File resolved = resolve( defaultRepos, remoteRepos, artifact );
 
@@ -678,12 +730,19 @@ public class AetherBasedResolver implements MavenResolver {
 
     @Override
     public File resolveMetadata(String groupId, String artifactId, String type, String version) throws IOException {
+        return resolveMetadata(groupId, artifactId, type, version, null);
+    }
+
+    @Override
+    public File resolveMetadata(String groupId, String artifactId, String type, String version,
+                                Exception previousException) throws IOException {
         RepositorySystem system = getRepositorySystem();
         RepositorySystemSession session = newSession();
         try {
             Metadata metadata = new DefaultMetadata(groupId, artifactId, version,
                                                     type, Metadata.Nature.RELEASE_OR_SNAPSHOT);
             List<MetadataRequest> requests = new ArrayList<MetadataRequest>();
+            // TODO: previousException may be a hint to alter remote repository list to query
             for (RemoteRepository repository : getRepositories()) {
                 MetadataRequest request = new MetadataRequest(metadata, repository, null);
                 request.setFavorLocalRepository(false);
@@ -771,6 +830,88 @@ public class AetherBasedResolver implements MavenResolver {
         } finally {
             releaseSession(session);
         }
+    }
+
+    @Override
+    public RetryChance isRetryableException(Exception exception) {
+        RetryChance retry = RetryChance.NEVER;
+
+        RepositoryException aetherException = findAetherException(exception);
+
+        if (aetherException instanceof ArtifactResolutionException) {
+            // aggregate case - exception that contains exceptions - usually per repository
+            ArtifactResolutionException resolutionException = (ArtifactResolutionException) aetherException;
+            if (resolutionException.getResult() != null) {
+                for (Exception ex : resolutionException.getResult().getExceptions()) {
+                    RetryChance singleRetry = isRetryableException(ex);
+                    if (retry.chance() < singleRetry.chance()) {
+                        retry = singleRetry;
+                    }
+                }
+            }
+        } else if (aetherException != null) {
+            // single exception case
+
+            if (aetherException instanceof ArtifactNotFoundException) {
+                // very little chance we'll find the artifact next time
+                retry = RetryChance.NEVER;
+            } else if (aetherException instanceof MetadataNotFoundException) {
+                retry = RetryChance.NEVER;
+            } else if (aetherException instanceof ArtifactTransferException
+                    || aetherException instanceof MetadataTransferException) {
+                // we could try again
+                Throwable root = rootException(aetherException);
+                if (root instanceof SocketTimeoutException) {
+                    // we could try again - but without assuming we'll succeed eventually
+                    retry = RetryChance.LOW;
+                } else if (root instanceof ConnectException) {
+                    // "connection refused" - not retryable
+                    retry = RetryChance.NEVER;
+                } else if (root instanceof NoRouteToHostException) {
+                    // not retryable
+                    retry = RetryChance.NEVER;
+                }
+            } else {
+                // general aether exception - let's fallback to NEVER, as retryable cases should be
+                // handled explicitly
+                retry = RetryChance.NEVER;
+            }
+        } else {
+            // we don't know about non-aether exceptions, so let's allow
+            retry = RetryChance.UNKNOWN;
+        }
+
+        return retry;
+    }
+
+    /**
+     * Find top-most Aether exception
+     * @param e
+     * @return
+     */
+    protected RepositoryException findAetherException(Exception e) {
+        Throwable ex = e;
+        while (ex != null && !(ex instanceof RepositoryException)) {
+            ex = ex.getCause();
+        }
+        return ex == null ? null : (RepositoryException) ex;
+    }
+
+    /**
+     * Find root exception
+     * @param ex
+     * @return
+     */
+    protected Throwable rootException(Exception ex) {
+        Throwable root = ex;
+        while (true) {
+            if (root.getCause() != null) {
+                root = root.getCause();
+            } else {
+                break;
+            }
+        }
+        return root;
     }
 
     private Comparator<String> VERSION_COMPARATOR = new Comparator<String>() {
