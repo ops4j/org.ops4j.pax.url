@@ -704,7 +704,9 @@ public class AetherBasedResolver implements MavenResolver {
         defaultRepositorySystemSession.setLocalRepositoryManager(new QosAwareSimpleLocalRepositoryManager(session, session.getLocalRepository()));
         defaultRepositorySystemSession.setReadOnly();
 
-        session = defaultRepositorySystemSession;
+        // https://ops4j1.jira.com/browse/PAXURL-322?focusedCommentId=36948&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-36948
+//        session = defaultRepositorySystemSession;
+
         try {
             artifact = resolveLatestVersionRange( session, remoteRepos, artifact );
             return m_repoSystem
