@@ -26,7 +26,6 @@ import org.eclipse.aether.spi.locator.ServiceLocator;
 import org.eclipse.aether.spi.log.Logger;
 import org.eclipse.aether.spi.log.LoggerFactory;
 import org.eclipse.aether.spi.log.NullLoggerFactory;
-import org.ops4j.pax.url.mvn.ServiceConstants;
 
 public class PaxLocalRepositoryManagerFactory extends SimpleLocalRepositoryManagerFactory {
 
