@@ -218,4 +218,12 @@ public interface ServiceConstants
      */
     String PROPERTY_CONNECTION_RETRY_COUNT = "connection.retryCount";
 
+    /**
+     * <p>Property for configuration of non-canonical Maven behavior. If set to <code>true</code>,
+     * {@link MavenResolver} will use Aether policies to determine whether already available non-SNAPSHOT
+     * artifact should be redownloaded.</p>
+     * <p>Default value is <code>false</code>.</p>
+     */
+    String PROPERTY_UPDATE_RELEASES = "updateReleases";
+
 }

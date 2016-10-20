@@ -72,7 +72,7 @@ import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory;
 import org.eclipse.aether.impl.DefaultServiceLocator;
 import org.eclipse.aether.installation.InstallRequest;
-import org.eclipse.aether.internal.impl.SimpleLocalRepositoryManagerFactory;
+import org.eclipse.aether.internal.impl.PaxLocalRepositoryManager;
 import org.eclipse.aether.internal.impl.slf4j.Slf4jLoggerFactory;
 import org.eclipse.aether.metadata.DefaultMetadata;
 import org.eclipse.aether.metadata.Metadata;
@@ -699,14 +699,6 @@ public class AetherBasedResolver implements MavenResolver {
             // Should not happen
         }
         RepositorySystemSession session = newSession( null );
-        // extension to support the semantics of remote repos with update=always policies.
-        DefaultRepositorySystemSession defaultRepositorySystemSession = new DefaultRepositorySystemSession(session);
-        defaultRepositorySystemSession.setLocalRepositoryManager(new QosAwareSimpleLocalRepositoryManager(session, session.getLocalRepository()));
-        defaultRepositorySystemSession.setReadOnly();
-
-        // https://ops4j1.jira.com/browse/PAXURL-322?focusedCommentId=36948&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-36948
-//        session = defaultRepositorySystemSession;
-
         try {
             artifact = resolveLatestVersionRange( session, remoteRepos, artifact );
             return m_repoSystem
@@ -1089,6 +1081,10 @@ public class AetherBasedResolver implements MavenResolver {
 
         session.setOffline( m_config.isOffline() );
 
+        // PAXURL-322
+        boolean updateReleases = m_config.getProperty( ServiceConstants.PROPERTY_UPDATE_RELEASES, false, Boolean.class );
+        session.setConfigProperty( PaxLocalRepositoryManager.PROPERTY_UPDATE_RELEASES, updateReleases );
+
         return session;
     }
 
@@ -1170,7 +1166,7 @@ public class AetherBasedResolver implements MavenResolver {
 
 
         locator.setService( LocalRepositoryManagerFactory.class,
-            SimpleLocalRepositoryManagerFactory.class );
+            PaxLocalRepositoryManagerFactory.class );
         locator.setService( org.eclipse.aether.spi.log.LoggerFactory.class,
             Slf4jLoggerFactory.class );
 

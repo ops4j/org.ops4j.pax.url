@@ -20,6 +20,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Properties;
 
 import org.apache.maven.shared.invoker.DefaultInvocationRequest;
@@ -38,7 +39,6 @@ import org.slf4j.LoggerFactory;
  */
 public class GlobalUpdatePolicyTest
 {
-
     /**
      * Test project used to deploy snapshots.
      */
@@ -96,7 +96,6 @@ public class GlobalUpdatePolicyTest
      */
     private void mavenDeploy(String suffix) throws Exception
     {
-
         InvocationRequest request = new DefaultInvocationRequest();
         request.setLocalRepositoryDirectory( REPO );
         request.setPomFile( POM );
@@ -119,15 +118,14 @@ public class GlobalUpdatePolicyTest
         InvocationResult result = invoker.execute( request );
 
         assertTrue( "deploy success", result.getExitCode() == 0 );
-
     }
 
     /**
      * Use custom test settings.
+     * @param updateReleases whether we allow to update locally available non-SNAPSHOT artifacts
      */
-    private MavenConfiguration testConfig() throws Exception
+    private MavenConfiguration testConfig(boolean updateReleases) throws Exception
     {
-
         final Properties props = new Properties();
 
         /** Relax SSL requirements. */
@@ -138,13 +136,18 @@ public class GlobalUpdatePolicyTest
         props.setProperty( ServiceConstants.PID + "."
                 + ServiceConstants.PROPERTY_GLOBAL_UPDATE_POLICY, "always" );
 
+        props.setProperty( ServiceConstants.PID + "."
+                + ServiceConstants.PROPERTY_LOCAL_REPOSITORY, "target/localrepo_" + (new Date().getTime()) );
+
+        props.setProperty( ServiceConstants.PID + "."
+                + ServiceConstants.PROPERTY_UPDATE_RELEASES, Boolean.toString(updateReleases) );
+
         MavenConfiguration config = UnitHelp.getConfig( SETTINGS, props );
 
         assertEquals( false, config.getCertificateCheck() );
         assertEquals( "always", config.getGlobalUpdatePolicy() );
 
         return config;
-
     }
 
     /**
@@ -153,24 +156,36 @@ public class GlobalUpdatePolicyTest
     @Test
     public void verifySnapshotUpdates() throws Exception
     {
-
-        verifyUpdates("-SNAPSHOT");
+        verifyUpdates("-SNAPSHOT", false /* default, not-relevant with SNAPSHOTS */);
     }
 
     /**
      * Deploy two releases in sequence, resolve and ensure proper time stamp relations.
      */
     @Test
-    public void verifyReleasesUpdates() throws Exception
+    public void verifyCanonicalReleasesUpdates() throws Exception
     {
-
-        verifyUpdates("");
+        verifyUpdates("", false);
     }
 
-    public void verifyUpdates(String suffix) throws Exception
+    /**
+     * Deploy two releases in sequence, resolve and ensure proper time stamp relations.
+     */
+    @Test
+    public void verifyNonCanonicalReleasesUpdates() throws Exception
     {
-    	System.setProperty("aether.updateCheckManager.sessionState", "bypass");
-        final AetherBasedResolver resolver = new AetherBasedResolver( testConfig() );
+        verifyUpdates("", true);
+    }
+
+    /**
+     * @param suffix
+     * @param updateReleases whether we allow to update locally available non-SNAPSHOT artifacts
+     * @throws Exception
+     */
+    public void verifyUpdates(String suffix, boolean updateReleases) throws Exception
+    {
+        System.setProperty("aether.updateCheckManager.sessionState", "bypass");
+        final AetherBasedResolver resolver = new AetherBasedResolver(testConfig(updateReleases));
 
         LOG.info( "init" );
 
@@ -206,8 +221,17 @@ public class GlobalUpdatePolicyTest
 
         assertTrue( "first is fresh", time1 > time0 );
         assertTrue( "second is fresh", time2 > time0 );
-
-        assertTrue( "second after first", time2 > time1 );
+        if ("".equals(suffix)) {
+            // releases
+            if (updateReleases) {
+                assertTrue( "second after first", time2 > time1 );
+            } else {
+                assertTrue( "second is the same as first", time2 == time1 );
+            }
+        } else {
+            // snapshots
+            assertTrue( "second after first", time2 > time1 );
+        }
 
         LOG.info( "done" );
 

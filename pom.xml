@@ -23,6 +23,7 @@
     <url>${wiki.url}</url>
 
     <modules>
+        <module>pax-url-aether-support</module>
         <module>pax-url-aether</module>
         <module>pax-url-assembly</module>
         <module>pax-url-cache</module>
