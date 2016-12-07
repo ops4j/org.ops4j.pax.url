@@ -173,6 +173,9 @@ public class Activator extends AbstractURLStreamHandlerService
             propertyResolver = new DictionaryPropertyResolver(config);
         }
         MavenConfiguration mavenConfig = new MavenConfigurationImpl(propertyResolver, ServiceConstants.PID);
+        if (!((MavenConfigurationImpl) mavenConfig).isValid()) {
+             return;
+        }
         MavenResolver resolver = new AetherBasedResolver(mavenConfig);
         MavenResolver oldResolver = m_resolver.getAndSet( resolver );
         Dictionary<String, Object> properties = new Hashtable<String, Object>();
