@@ -88,4 +88,33 @@ public class RegistrationTest {
         assertThat((String)registrationProperties.getValue().get("configuration"), equalTo("configadmin"));
     }
 
+    @Test
+    @SuppressWarnings("unchecked")
+    public void registerWithoutRequiredConfigAdmin() {
+        final Properties properties = new Properties();
+        properties.setProperty("org.ops4j.pax.url.mvn.localRepository", "target/repository");
+        properties.setProperty("org.ops4j.pax.url.mvn.requireConfigAdminConfig", "true");
+
+        BundleContext context = createMock(BundleContext.class);
+        expect(context.getProperty(anyObject(String.class))).andAnswer(new IAnswer<String>() {
+            @Override
+            public String answer() throws Throwable {
+                String key = (String) getCurrentArguments()[0];
+                return properties.getProperty(key);
+            }
+        }).anyTimes();
+
+        expect(context.registerService(same("org.osgi.service.url.URLStreamHandlerService"),
+                anyObject(), anyObject(Dictionary.class))).andReturn(null);
+        expect(context.registerService(same("org.osgi.service.cm.ManagedService"),
+                anyObject(), anyObject(Dictionary.class))).andReturn(null);
+        // no registration of org.ops4j.pax.url.mvn.MavenResolver
+
+        replay(context);
+
+        Activator activator = new Activator();
+        activator.start(context);
+        verify(context);
+    }
+
 }
