@@ -175,10 +175,12 @@ public class Activator extends AbstractURLStreamHandlerService
         MavenConfiguration mavenConfig = new MavenConfigurationImpl(propertyResolver, ServiceConstants.PID);
         MavenResolver resolver = new AetherBasedResolver(mavenConfig);
         MavenResolver oldResolver = m_resolver.getAndSet( resolver );
+        Dictionary<String, Object> properties = new Hashtable<String, Object>();
+        properties.put("configuration", config == null ? "bundlecontext" : "configadmin");
         ServiceRegistration<MavenResolver> registration = safeRegisterService(
                 MavenResolver.class,
                 resolver,
-                null);
+                properties);
         registration = m_resolverReg.getAndSet(registration);
         if (registration != null) {
             registration.unregister();
