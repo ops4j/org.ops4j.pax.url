@@ -27,6 +27,7 @@ import org.osgi.framework.BundleContext;
 
 import static org.easymock.EasyMock.*;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 
 public class RegistrationTest {
@@ -71,6 +72,8 @@ public class RegistrationTest {
 
         BundleContext context = createMock(BundleContext.class);
 
+        expect(context.registerService(same("org.osgi.service.url.URLStreamHandlerService"),
+                anyObject(), anyObject(Dictionary.class))).andReturn(null);
         Capture<Dictionary<String, Object>> registrationProperties = new Capture<>();
         expect(context.registerService(same("org.ops4j.pax.url.mvn.MavenResolver"),
                 anyObject(), capture(registrationProperties))).andReturn(null);
@@ -104,17 +107,25 @@ public class RegistrationTest {
             }
         }).anyTimes();
 
+        Capture<Object> urlStreamHandlerService = new Capture<>();
+        Capture<Object> mavenResolver = new Capture<>();
         expect(context.registerService(same("org.osgi.service.url.URLStreamHandlerService"),
-                anyObject(), anyObject(Dictionary.class))).andReturn(null);
+                capture(urlStreamHandlerService), anyObject(Dictionary.class))).andReturn(null).anyTimes();
         expect(context.registerService(same("org.osgi.service.cm.ManagedService"),
                 anyObject(), anyObject(Dictionary.class))).andReturn(null);
-        // no registration of org.ops4j.pax.url.mvn.MavenResolver
+        expect(context.registerService(same("org.ops4j.pax.url.mvn.MavenResolver"),
+                capture(mavenResolver), anyObject(Dictionary.class))).andReturn(null).anyTimes();
 
         replay(context);
 
         Activator activator = new Activator();
         activator.start(context);
         verify(context);
+
+        assertFalse("org.osgi.service.url.URLStreamHandlerService should not be registered",
+                urlStreamHandlerService.hasCaptured());
+        assertFalse("org.ops4j.pax.url.mvn.MavenResolver should not be registered",
+                mavenResolver.hasCaptured());
     }
 
 }

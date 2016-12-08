@@ -89,7 +89,6 @@ public class Activator extends AbstractURLStreamHandlerService
         m_bundleContext = bundleContext;
         updated(null);
         registerManagedService();
-        registerHandler();
     }
 
     /**
@@ -194,6 +193,9 @@ public class Activator extends AbstractURLStreamHandlerService
             } catch (IOException e) {
                 // Ignore
             }
+        } else {
+            // first registration of URLStreamHandlerService
+            registerHandler();
         }
     }
 
