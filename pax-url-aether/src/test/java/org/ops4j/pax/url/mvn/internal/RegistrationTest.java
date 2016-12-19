@@ -51,7 +51,7 @@ public class RegistrationTest {
                 anyObject(), anyObject(Dictionary.class))).andReturn(null);
         expect(context.registerService(same("org.osgi.service.cm.ManagedService"),
                 anyObject(), anyObject(Dictionary.class))).andReturn(null);
-        Capture<Dictionary<String, Object>> registrationProperties = new Capture<>();
+        Capture<Dictionary<String, Object>> registrationProperties = new Capture<Dictionary<String, Object>>();
         expect(context.registerService(same("org.ops4j.pax.url.mvn.MavenResolver"),
                 anyObject(), capture(registrationProperties))).andReturn(null);
 
@@ -67,14 +67,14 @@ public class RegistrationTest {
     @Test
     @SuppressWarnings("unchecked")
     public void registerWithConfigAdmin() throws NoSuchFieldException, IllegalAccessException {
-        final Hashtable<String, Object> properties = new Hashtable<>();
+        final Hashtable<String, Object> properties = new Hashtable<String, Object>();
         properties.put("org.ops4j.pax.url.mvn.localRepository", "target/repository");
 
         BundleContext context = createMock(BundleContext.class);
 
         expect(context.registerService(same("org.osgi.service.url.URLStreamHandlerService"),
                 anyObject(), anyObject(Dictionary.class))).andReturn(null);
-        Capture<Dictionary<String, Object>> registrationProperties = new Capture<>();
+        Capture<Dictionary<String, Object>> registrationProperties = new Capture<Dictionary<String, Object>>();
         expect(context.registerService(same("org.ops4j.pax.url.mvn.MavenResolver"),
                 anyObject(), capture(registrationProperties))).andReturn(null);
 
@@ -107,8 +107,8 @@ public class RegistrationTest {
             }
         }).anyTimes();
 
-        Capture<Object> urlStreamHandlerService = new Capture<>();
-        Capture<Object> mavenResolver = new Capture<>();
+        Capture<Object> urlStreamHandlerService = new Capture<Object>();
+        Capture<Object> mavenResolver = new Capture<Object>();
         expect(context.registerService(same("org.osgi.service.url.URLStreamHandlerService"),
                 capture(urlStreamHandlerService), anyObject(Dictionary.class))).andReturn(null).anyTimes();
         expect(context.registerService(same("org.osgi.service.cm.ManagedService"),
