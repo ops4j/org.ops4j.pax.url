@@ -337,6 +337,28 @@ public class ConfigurationImplTest
     }
 
     @Test
+    public void getMessyRepositoriesWithMoreRepositories()
+        throws MalformedURLException
+    {
+        PropertyResolver propertyResolver = createMock( PropertyResolver.class );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.settings" ) ).andReturn( null );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.useFallbackRepositories" ) ).andReturn( null );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.repositories" ) ).andReturn(
+            "file:repository1/@id=repository1 , file:repository2/@id=repository2, "
+        );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.defaultLocalRepoAsRemote" ) ).andReturn( null );
+        replay( propertyResolver );
+        MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
+        List<MavenRepositoryURL> repositories = config.getRepositories();
+        assertNotNull( "Repositories is null", repositories );
+        assertEquals( "Repositories size", 2, repositories.size() );
+        assertEquals( "Repository 1", new URL( "file:repository1/" ), repositories.get( 0 ).getURL() );
+        assertEquals( "Repository 2", new URL( "file:repository2/" ), repositories.get( 1 ).getURL() );
+        verify( propertyResolver );
+    }
+
+    @Test
     public void getRepositoriesFromSettings()
         throws MalformedURLException
     {

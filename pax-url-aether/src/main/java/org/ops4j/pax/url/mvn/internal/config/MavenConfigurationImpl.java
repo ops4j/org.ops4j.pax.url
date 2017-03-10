@@ -73,6 +73,7 @@ public class MavenConfigurationImpl extends PropertyStore implements MavenConfig
      * Repositories separator.
      */
     private final static String REPOSITORIES_SEPARATOR = ",";
+    private final static String REPOSITORIES_SEPARATOR_SPLIT = "\\s*,\\s*";
     /**
      * Use a default timeout of 5 seconds.
      */
@@ -228,7 +229,7 @@ public class MavenConfigurationImpl extends PropertyStore implements MavenConfig
             // build repositories list
             final List<MavenRepositoryURL> defaultRepositoriesProperty = new ArrayList<MavenRepositoryURL>();
             if (defaultRepositoriesProp != null && defaultRepositoriesProp.trim().length() > 0) {
-                String[] repositories = defaultRepositoriesProp.split(REPOSITORIES_SEPARATOR);
+                String[] repositories = defaultRepositoriesProp.split(REPOSITORIES_SEPARATOR_SPLIT);
                 for (String repositoryURL : repositories) {
                     defaultRepositoriesProperty.add(new MavenRepositoryURL(repositoryURL.trim()));
                 }
@@ -313,9 +314,11 @@ public class MavenConfigurationImpl extends PropertyStore implements MavenConfig
                 }
             }
             if (repositoriesProp != null && repositoriesProp.trim().length() > 0) {
-                String[] repositories = repositoriesProp.split(REPOSITORIES_SEPARATOR);
+                String[] repositories = repositoriesProp.split(REPOSITORIES_SEPARATOR_SPLIT);
                 for (String repositoryURL : repositories) {
-                    repositoriesProperty.add(new MavenRepositoryURL(repositoryURL.trim()));
+                    if (!"".equals(repositoryURL.trim())) {
+                        repositoriesProperty.add(new MavenRepositoryURL(repositoryURL.trim()));
+                    }
                 }
             }
             LOGGER.trace("Using remote repositories [" + repositoriesProperty + "]");
