@@ -151,6 +151,7 @@ public class Connection
     {
         connect();
         final File workingDir = m_configuration.getWorkingDirectory();
+        workingDir.mkdirs();
         final File cacheMetaFile = new File( workingDir, m_cacheName + EXT_META );
         final File cacheDateFile = new File( workingDir, m_cacheName + EXT_DATA );
 
