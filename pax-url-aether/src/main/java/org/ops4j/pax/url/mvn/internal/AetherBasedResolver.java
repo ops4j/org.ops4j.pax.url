@@ -123,7 +123,7 @@ import org.sonatype.plexus.components.cipher.PlexusCipherException;
 public class AetherBasedResolver implements MavenResolver {
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger( AetherBasedResolver.class );
-    private static final String LATEST_VERSION_RANGE = "(0.0,]";
+    private static final String LATEST_VERSION_RANGE = "[0.0,)";
     private static final String REPO_TYPE = "default";
     private static final String SCHEMA_HTTP = "http";
     private static final String SCHEMA_HTTPS = "https";
@@ -1173,4 +1173,3 @@ public class AetherBasedResolver implements MavenResolver {
         return locator.getService( RepositorySystem.class );
     }
 }
-
