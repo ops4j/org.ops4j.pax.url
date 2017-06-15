@@ -99,7 +99,10 @@ public class ConfigurableHttpWagon extends HttpWagon {
             requestConfigBuilder.setConnectTimeout( getTimeout() );
         }
 
-        getLocalContext().setRequestConfig(requestConfigBuilder.build());
+        HttpClientContext localContext = HttpClientContext.create();
+        localContext.setCredentialsProvider(getCredentialsProvider());
+        localContext.setAuthCache(getAuthCache());
+        localContext.setRequestConfig(requestConfigBuilder.build());
 
         if ( config != null && config.isUsePreemptive() )
         {
@@ -146,7 +149,7 @@ public class ConfigurableHttpWagon extends HttpWagon {
             }
         }
         
-        return client.execute( httpMethod, getLocalContext() );
+        return client.execute( httpMethod, localContext );
     }
 
     @Override
@@ -181,10 +184,6 @@ public class ConfigurableHttpWagon extends HttpWagon {
 
     private CredentialsProvider getCredentialsProvider() {
         return getField(CredentialsProvider.class, "credentialsProvider");
-    }
-
-    private HttpClientContext getLocalContext() {
-        return getField(HttpClientContext.class, "localContext");
     }
 
     private <T> T getField(Class<T> clazz, String name) {
