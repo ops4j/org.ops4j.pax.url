@@ -193,7 +193,7 @@ public class MavenRepositoryURL
         m_releasesEnabled = releasesEnabled;
         m_multi = multi;
         if (name == null) {
-            String warn = "Repository spec " + spec + " does not contain an identifier. This is deprecated & discouraged & just evil.";
+            String warn = "Repository spec " + spec + " does not contain an identifier. Give your repository a name, for example: " + repositorySpec + "@id=MyName";
             LOG.warn( warn );
             name = "repo_" + spec.hashCode();
         }
