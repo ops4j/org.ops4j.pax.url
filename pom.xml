@@ -212,7 +212,17 @@
                 <artifactId>wagon-http</artifactId>
                 <version>${dependency.wagon.version}</version>
             </dependency>
-
+            <!-- smallest possible fix for PAXURL-345 -->
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>4.3.6</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpcore</artifactId>
+                <version>4.3.3</version>
+            </dependency>
             <dependency>
                 <groupId>org.apache.maven.wagon</groupId>
                 <artifactId>wagon-provider-api</artifactId>
