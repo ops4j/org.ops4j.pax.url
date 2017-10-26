@@ -32,6 +32,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.maven.settings.Profile;
 import org.apache.maven.settings.Repository;
@@ -45,7 +46,6 @@ import org.apache.maven.settings.building.SettingsBuildingResult;
 import org.ops4j.lang.NullArgumentException;
 import org.ops4j.pax.url.mvn.ServiceConstants;
 import org.ops4j.util.property.PropertyResolver;
-import org.ops4j.util.property.PropertyStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +57,7 @@ import org.slf4j.LoggerFactory;
  * @see MavenConfiguration
  * @since August 11, 2007
  */
-public class MavenConfigurationImpl extends PropertyStore implements MavenConfiguration {
+public class MavenConfigurationImpl implements MavenConfiguration {
 
     /**
      * Logger.
@@ -714,6 +714,53 @@ public class MavenConfigurationImpl extends PropertyStore implements MavenConfig
             return (T) Boolean.valueOf("true".equals(value));
         }
         throw new IllegalArgumentException("Can't convert \"" + value + "\" to " + clazz + ".");
+    }
+
+    /**
+     * Map of properties.
+     */
+    private final Map<String, Object> m_properties = new ConcurrentHashMap<>();
+
+    private static final Object NULL_VALUE = new Object();
+
+    /**
+     * Returns true if the the property was set.
+     *
+     * @param propertyName name of the property
+     *
+     * @return true if property is set
+     */
+    public boolean contains( final String propertyName )
+    {
+        return m_properties.containsKey( propertyName );
+    }
+
+    /**
+     * Sets a property.
+     *
+     * @param propertyName  name of the property to set
+     * @param propertyValue value of the property to set
+     *
+     * @return the value of property set (fluent api)
+     */
+    public <T> T set( final String propertyName, final T propertyValue )
+    {
+        m_properties.put( propertyName, propertyValue != null ? propertyValue : NULL_VALUE );
+        return propertyValue;
+    }
+
+    /**
+     * Returns the property by name.
+     *
+     * @param propertyName name of the property
+     *
+     * @return property value
+     */
+    @SuppressWarnings( "unchecked" )
+    public <T> T get( final String propertyName )
+    {
+        Object v = m_properties.get( propertyName );
+        return v != NULL_VALUE ? (T) v : null;
     }
 
 }
