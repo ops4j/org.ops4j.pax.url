@@ -22,6 +22,7 @@ import java.io.File;
 import java.net.Authenticator;
 import java.net.MalformedURLException;
 import java.net.PasswordAuthentication;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -103,7 +104,7 @@ public class MavenConfigurationImpl implements MavenConfiguration {
 
         m_pid = pid == null ? "" : pid + ".";
         m_propertyResolver = propertyResolver;
-        settings = buildSettings(getLocalRepoPath(propertyResolver), getSettingsPath(),
+        settings = buildSettings(getLocalRepoPath(propertyResolver), getSettingsFileUrl(),
             useFallbackRepositories());
     }
 
@@ -618,17 +619,11 @@ public class MavenConfigurationImpl implements MavenConfiguration {
         }
     }
 
-    private String getSettingsPath() {
-        URL url = getSettingsFileUrl();
-        return url == null ? null : url.getPath();
-    }
-
     private String getLocalRepoPath(PropertyResolver props) {
         return props.get(ServiceConstants.PID + "." + ServiceConstants.PROPERTY_LOCAL_REPOSITORY);
     }
 
-    private Settings buildSettings(String localRepoPath, String settingsPath,
-        boolean useFallbackRepositories) {
+    private Settings buildSettings(String localRepoPath, URL settingsPath, boolean useFallbackRepositories) {
         Settings settings;
         if (settingsPath == null) {
             settings = new Settings();
@@ -637,7 +632,11 @@ public class MavenConfigurationImpl implements MavenConfiguration {
             DefaultSettingsBuilderFactory factory = new DefaultSettingsBuilderFactory();
             DefaultSettingsBuilder builder = factory.newInstance();
             SettingsBuildingRequest request = new DefaultSettingsBuildingRequest();
-            request.setUserSettingsFile(new File(settingsPath));
+            try {
+                request.setUserSettingsFile(new File(settingsPath.toURI()));
+            } catch (URISyntaxException e) {
+                // should never happens because it is returned by safeGetFile
+            }
             try {
                 SettingsBuildingResult result = builder.build(request);
                 settings = result.getEffectiveSettings();
