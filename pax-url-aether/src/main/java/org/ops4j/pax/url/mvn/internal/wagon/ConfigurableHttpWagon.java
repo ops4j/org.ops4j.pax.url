@@ -32,6 +32,7 @@ import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.impl.auth.BasicScheme;
@@ -41,12 +42,12 @@ import org.apache.http.protocol.HTTP;
 import org.apache.maven.wagon.ConnectionException;
 import org.apache.maven.wagon.authentication.AuthenticationException;
 import org.apache.maven.wagon.authentication.AuthenticationInfo;
-import org.apache.maven.wagon.providers.http.AbstractHttpClientWagon;
-import org.apache.maven.wagon.providers.http.HttpMethodConfiguration;
 import org.apache.maven.wagon.providers.http.HttpWagon;
 import org.apache.maven.wagon.proxy.ProxyInfo;
 import org.apache.maven.wagon.proxy.ProxyInfoProvider;
 import org.apache.maven.wagon.repository.Repository;
+import org.apache.maven.wagon.shared.http.AbstractHttpClientWagon;
+import org.apache.maven.wagon.shared.http.HttpMethodConfiguration;
 import org.ops4j.net.URLUtils;
 
 /**
@@ -76,7 +77,7 @@ public class ConfigurableHttpWagon extends HttpWagon {
 
         RequestConfig.Builder requestConfigBuilder = RequestConfig.custom();
         // WAGON-273: default the cookie-policy to browser compatible
-        requestConfigBuilder.setCookieSpec( CookieSpecs.BROWSER_COMPATIBILITY );
+        requestConfigBuilder.setCookieSpec( CookieSpecs.DEFAULT );
 
         Repository repo = getRepository();
         ProxyInfo proxyInfo = getProxyInfo( repo.getProtocol(), repo.getHost() );
@@ -97,9 +98,21 @@ public class ConfigurableHttpWagon extends HttpWagon {
         {
             requestConfigBuilder.setSocketTimeout( getReadTimeout() );
             requestConfigBuilder.setConnectTimeout( getTimeout() );
+            if ( httpMethod instanceof HttpPut )
+            {
+                requestConfigBuilder.setExpectContinueEnabled( true );
+            }
         }
 
-        getLocalContext().setRequestConfig(requestConfigBuilder.build());
+        if ( httpMethod instanceof HttpPut )
+        {
+            requestConfigBuilder.setRedirectsEnabled( false );
+        }
+
+        HttpClientContext localContext = HttpClientContext.create();
+        localContext.setCredentialsProvider( getCredentialsProvider() );
+        localContext.setAuthCache( getAuthCache() );
+        localContext.setRequestConfig( requestConfigBuilder.build() );
 
         if ( config != null && config.isUsePreemptive() )
         {
@@ -146,7 +159,7 @@ public class ConfigurableHttpWagon extends HttpWagon {
             }
         }
         
-        return client.execute( httpMethod, getLocalContext() );
+        return client.execute( httpMethod, localContext );
     }
 
     @Override
@@ -175,11 +188,11 @@ public class ConfigurableHttpWagon extends HttpWagon {
         super.connect(repository, authenticationInfo, proxyInfoProvider);
     }
 
-    private AuthCache getAuthCache() {
+    protected AuthCache getAuthCache() {
         return getField(AuthCache.class, "authCache");
     }
 
-    private CredentialsProvider getCredentialsProvider() {
+    protected CredentialsProvider getCredentialsProvider() {
         return getField(CredentialsProvider.class, "credentialsProvider");
     }
 

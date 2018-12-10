@@ -49,7 +49,6 @@
         <version.plugin.maven-checkstyle-plugin>3.0.0</version.plugin.maven-checkstyle-plugin>
         <version.com.puppycrawl.tools.checkstyle>8.9</version.com.puppycrawl.tools.checkstyle>
         <version.plugin.maven-compiler-plugin>3.8.0</version.plugin.maven-compiler-plugin>
-        <version.plugin.maven-dependency-plugin>3.0.0-M2</version.plugin.maven-dependency-plugin>
         <version.plugin.maven-enforcer-plugin>3.0.0-M2</version.plugin.maven-enforcer-plugin>
         <version.plugin.maven-invoker-plugin>3.1.0</version.plugin.maven-invoker-plugin>
         <version.plugin.maven-javadoc-plugin>3.0.1</version.plugin.maven-javadoc-plugin>
@@ -75,12 +74,12 @@
         <dependency.slf4j.version>1.6.6</dependency.slf4j.version>
         <dependency.logback.version>1.0.7</dependency.logback.version>
 
-        <dependency.aether.version>1.0.2.v20150114</dependency.aether.version>
-        <dependency.maven.version>3.2.1</dependency.maven.version>
-        <dependency.wagon.version>2.8</dependency.wagon.version>
+        <dependency.maven.version>3.6.0</dependency.maven.version>
+        <dependency.maven.resolver.version>1.3.1</dependency.maven.resolver.version>
+        <dependency.wagon.version>3.2.0</dependency.wagon.version>
 
-        <dependency.httpcomponents.core>4.3.3</dependency.httpcomponents.core>
-        <dependency.httpcomponents.client>4.3.6</dependency.httpcomponents.client>
+        <dependency.httpcomponents.core>4.4.10</dependency.httpcomponents.core>
+        <dependency.httpcomponents.client>4.5.6</dependency.httpcomponents.client>
 
         <dependency.jackson.version>1.2.0</dependency.jackson.version>
         <dependency.jetty.version>7.3.1.v20110307</dependency.jetty.version>
@@ -226,49 +225,39 @@
             </dependency>
 
             <dependency>
-                <groupId>org.eclipse.aether</groupId>
-                <artifactId>aether-api</artifactId>
-                <version>${dependency.aether.version}</version>
+                <groupId>org.apache.maven.resolver</groupId>
+                <artifactId>maven-resolver-api</artifactId>
+                <version>${dependency.maven.resolver.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.eclipse.aether</groupId>
-                <artifactId>aether-impl</artifactId>
-                <version>${dependency.aether.version}</version>
+                <groupId>org.apache.maven.resolver</groupId>
+                <artifactId>maven-resolver-impl</artifactId>
+                <version>${dependency.maven.resolver.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.eclipse.aether</groupId>
-                <artifactId>aether-spi</artifactId>
-                <version>${dependency.aether.version}</version>
+                <groupId>org.apache.maven.resolver</groupId>
+                <artifactId>maven-resolver-spi</artifactId>
+                <version>${dependency.maven.resolver.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.eclipse.aether</groupId>
-                <artifactId>aether-util</artifactId>
-                <version>${dependency.aether.version}</version>
+                <groupId>org.apache.maven.resolver</groupId>
+                <artifactId>maven-resolver-util</artifactId>
+                <version>${dependency.maven.resolver.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.eclipse.aether</groupId>
-                <artifactId>aether-connector-basic</artifactId>
-                <version>${dependency.aether.version}</version>
+                <groupId>org.apache.maven.resolver</groupId>
+                <artifactId>maven-resolver-connector-basic</artifactId>
+                <version>${dependency.maven.resolver.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.eclipse.aether</groupId>
-                <artifactId>aether-transport-wagon</artifactId>
-                <version>${dependency.aether.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.sonatype.sisu</groupId>
-                        <artifactId>sisu-inject-plexus</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.codehaus.plexus</groupId>
-                        <artifactId>plexus-classworlds</artifactId>
-                    </exclusion>
-                </exclusions>
+                <groupId>org.apache.maven.resolver</groupId>
+                <artifactId>maven-resolver-transport-wagon</artifactId>
+                <version>${dependency.maven.resolver.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.maven</groupId>
-                <artifactId>maven-aether-provider</artifactId>
+                <artifactId>maven-resolver-provider</artifactId>
                 <version>${dependency.maven.version}</version>
             </dependency>
             <dependency>
@@ -276,10 +265,11 @@
                 <artifactId>maven-settings-builder</artifactId>
                 <version>${dependency.maven.version}</version>
             </dependency>
+
             <dependency>
                 <groupId>org.apache.maven.shared</groupId>
                 <artifactId>maven-invoker</artifactId>
-                <version>2.1.1</version>
+                <version>3.0.1</version>
                 <scope>test</scope>
             </dependency>
 

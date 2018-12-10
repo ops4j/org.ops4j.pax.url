@@ -68,11 +68,13 @@ import org.slf4j.LoggerFactory;
 //The following ignores are required to allow Logger classes to load up
 //during unit testing without errors.
 @PowerMockIgnore({"javax.xml.*",
+                  "javax.net.ssl.*",
                   "org.xml.sax.*",
                   "org.w3c.dom.*",
                   "org.springframework.context.*",
                   "org.apache.log4j.*",
                   "javax.xml.parsers.*",
+                  "org.apache.http.ssl.*",
                   "org.apache.http.conn.ssl.*"})
 public class AetherMultiTest {
 

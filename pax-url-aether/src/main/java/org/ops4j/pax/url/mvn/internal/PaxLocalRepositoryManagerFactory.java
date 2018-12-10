@@ -22,20 +22,16 @@ import org.eclipse.aether.internal.impl.PaxLocalRepositoryManager;
 import org.eclipse.aether.internal.impl.SimpleLocalRepositoryManagerFactory;
 import org.eclipse.aether.repository.LocalRepository;
 import org.eclipse.aether.repository.LocalRepositoryManager;
+import org.eclipse.aether.spi.locator.Service;
 import org.eclipse.aether.spi.locator.ServiceLocator;
-import org.eclipse.aether.spi.log.Logger;
-import org.eclipse.aether.spi.log.LoggerFactory;
-import org.eclipse.aether.spi.log.NullLoggerFactory;
 
-public class PaxLocalRepositoryManagerFactory extends SimpleLocalRepositoryManagerFactory {
+public class PaxLocalRepositoryManagerFactory extends SimpleLocalRepositoryManagerFactory implements Service {
 
-    private Logger logger;
     private UpdatePolicyAnalyzer updatePolicyAnalyzer;
     private RemoteRepositoryManager remoteRepositoryManager;
 
     @Override
     public void initService(ServiceLocator locator) {
-        super.initService(locator);
         updatePolicyAnalyzer = locator.getService(UpdatePolicyAnalyzer.class);
         remoteRepositoryManager = locator.getService(RemoteRepositoryManager.class);
     }
@@ -43,14 +39,7 @@ public class PaxLocalRepositoryManagerFactory extends SimpleLocalRepositoryManag
     @Override
     public LocalRepositoryManager newInstance(RepositorySystemSession session, LocalRepository repository) {
         return new PaxLocalRepositoryManager(repository.getBasedir(),
-                updatePolicyAnalyzer, remoteRepositoryManager).setLogger(logger);
-    }
-
-    @Override
-    public SimpleLocalRepositoryManagerFactory setLoggerFactory(LoggerFactory loggerFactory) {
-        SimpleLocalRepositoryManagerFactory localRepositoryManagerFactory = super.setLoggerFactory(loggerFactory);
-        this.logger = NullLoggerFactory.getSafeLogger(loggerFactory, PaxLocalRepositoryManagerFactory.class);
-        return localRepositoryManagerFactory;
+                updatePolicyAnalyzer, remoteRepositoryManager);
     }
 
 }

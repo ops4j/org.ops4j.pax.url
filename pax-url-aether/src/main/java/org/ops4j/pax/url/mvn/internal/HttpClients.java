@@ -27,14 +27,16 @@ import org.apache.http.config.RegistryBuilder;
 import org.apache.http.config.SocketConfig;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
+import org.apache.http.conn.ssl.DefaultHostnameVerifier;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.conn.ssl.SSLContextBuilder;
-import org.apache.http.conn.ssl.SSLInitializationException;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.apache.maven.wagon.providers.http.RelaxedTrustStrategy;
+import org.apache.http.ssl.SSLContextBuilder;
+import org.apache.http.ssl.SSLInitializationException;
+import org.apache.maven.wagon.shared.http.RelaxedTrustStrategy;
 import org.ops4j.pax.url.mvn.ServiceConstants;
 import org.ops4j.util.property.PropertyResolver;
 
@@ -70,13 +72,13 @@ public class HttpClients {
         {
             try
             {
-                SSLContext sslContext = new SSLContextBuilder().useSSL().loadTrustMaterial( null,
+                SSLContext sslContext = new SSLContextBuilder().setProtocol("TLS").loadTrustMaterial( null,
                         new RelaxedTrustStrategy(
                                 IGNORE_SSL_VALIDITY_DATES ) ).build();
                 sslConnectionSocketFactory = new SSLConnectionSocketFactory( sslContext, sslProtocols, cipherSuites,
                         SSL_ALLOW_ALL
-                                ? SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER
-                                : SSLConnectionSocketFactory.BROWSER_COMPATIBLE_HOSTNAME_VERIFIER );
+                                ? new NoopHostnameVerifier()
+                                : new DefaultHostnameVerifier());
             }
             catch ( Exception ex )
             {
@@ -88,7 +90,7 @@ public class HttpClients {
             sslConnectionSocketFactory =
                     new SSLConnectionSocketFactory( HttpsURLConnection.getDefaultSSLSocketFactory(), sslProtocols,
                             cipherSuites,
-                            SSLConnectionSocketFactory.BROWSER_COMPATIBLE_HOSTNAME_VERIFIER );
+                            new DefaultHostnameVerifier() );
         }
 
         Registry<ConnectionSocketFactory> registry = RegistryBuilder.<ConnectionSocketFactory>create().register( "http",
