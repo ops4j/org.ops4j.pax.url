@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 import org.eclipse.aether.collection.DependencyCollectionException;
+import org.eclipse.aether.repository.RepositoryPolicy;
 import org.eclipse.aether.resolution.ArtifactResolutionException;
 import org.junit.Test;
 import org.ops4j.pax.url.mvn.ServiceConstants;
@@ -55,6 +56,11 @@ public class AetherTest extends TestBase
         props.setProperty( //
             ServiceConstants.PID + "." + ServiceConstants.PROPERTY_SETTINGS_FILE, //
             Util.getTestSettings().toURI().toASCIIString() //
+            );
+
+        props.setProperty( //
+            ServiceConstants.PID + "." + ServiceConstants.PROPERTY_GLOBAL_CHECKSUM_POLICY, //
+            RepositoryPolicy.CHECKSUM_POLICY_IGNORE //
             );
 
         File file = Util.getTestSettings();

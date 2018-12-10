@@ -72,6 +72,7 @@ public class MirrorAuthenticationTest
         /*
          * Oracle JDK specific workaround to disable HTTP authentication caching.
          * See http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6626700.
+         * See https://bugs.openjdk.java.net/browse/JDK-6626700
          * 
          * The cache would break our tests for failing authentication.
          */

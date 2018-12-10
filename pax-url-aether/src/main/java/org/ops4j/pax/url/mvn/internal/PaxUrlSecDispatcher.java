@@ -59,7 +59,7 @@ implements SecDispatcher
      * 
      * @plexus.requirement role="org.sonatype.plexus.components.sec.dispatcher.PasswordDecryptor"
      */
-    protected Map _decryptors;
+    protected Map<String, PasswordDecryptor> _decryptors;
 
     /**
      * 
@@ -87,7 +87,7 @@ implements SecDispatcher
         
         try
         {
-            Map attr = stripAttributes( bare );
+            Map<String, String> attr = stripAttributes( bare );
             
             String res = null;
 
@@ -101,14 +101,14 @@ implements SecDispatcher
             }
             else
             {
-                String type = (String) attr.get( TYPE_ATTR );
+                String type = attr.get( TYPE_ATTR );
                 
                 if( _decryptors == null )
                     throw new SecDispatcherException( "plexus container did not supply any required dispatchers - cannot lookup "+type );
                 
-                Map conf = SecUtil.getConfig( sec, type );
+                Map<?, ?> conf = SecUtil.getConfig( sec, type );
                 
-                PasswordDecryptor dispatcher = (PasswordDecryptor) _decryptors.get( type );
+                PasswordDecryptor dispatcher = _decryptors.get( type );
                 
                 if( dispatcher == null )
                     throw new SecDispatcherException( "no dispatcher for hint "+type );
@@ -139,7 +139,7 @@ implements SecDispatcher
         return str;
     }
     
-    private Map stripAttributes( String str )
+    private Map<String, String> stripAttributes( String str )
     {
         int start = str.indexOf( ATTR_START );
         int stop = str.indexOf( ATTR_STOP );

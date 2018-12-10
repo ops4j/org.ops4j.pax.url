@@ -19,8 +19,8 @@ package org.ops4j.pax.url.mvn.internal;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -70,6 +70,7 @@ public class AuthenticationTest
         /*
          * Oracle JDK specific workaround to disable HTTP authentication caching.
          * See http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6626700.
+         * See https://bugs.openjdk.java.net/browse/JDK-6626700
          * 
          * The cache would break our tests for failing authentication.
          */
@@ -198,7 +199,7 @@ public class AuthenticationTest
         Connection c = new Connection( new URL( null, "mvn:ant/ant/1.5.1", new Handler() ),
                                        new AetherBasedResolver( config ) );
         c.getInputStream().close();
-        assertEquals( "the artifact must be downloaded", true, new File( localRepo,
+        assertTrue( "the artifact must be downloaded", new File( localRepo,
             "ant/ant/1.5.1/ant-1.5.1.jar" ).exists() );
     }
     
@@ -214,7 +215,7 @@ public class AuthenticationTest
         Connection c = new Connection( new URL( null, "mvn:ant/ant/1.5.1", new Handler() ),
                                        new AetherBasedResolver( config ) );
         c.getInputStream().close();
-        assertEquals( "the artifact must be downloaded", true, new File( localRepo,
+        assertTrue( "the artifact must be downloaded", new File( localRepo,
             "ant/ant/1.5.1/ant-1.5.1.jar" ).exists() );
     }
     

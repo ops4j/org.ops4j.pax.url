@@ -484,6 +484,7 @@ public class MavenConfigurationImpl implements MavenConfiguration {
      * 
      * @deprecated This method has side-effects and is only used in the "old" resolver.
      */
+    @Deprecated
     public void enableProxy(URL url) {
         final String protocol = url.getProtocol();
 

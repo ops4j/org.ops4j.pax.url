@@ -49,7 +49,9 @@
         <version.plugin.maven-checkstyle-plugin>3.0.0</version.plugin.maven-checkstyle-plugin>
         <version.com.puppycrawl.tools.checkstyle>8.9</version.com.puppycrawl.tools.checkstyle>
         <version.plugin.maven-compiler-plugin>3.8.0</version.plugin.maven-compiler-plugin>
+        <version.plugin.maven-dependency-plugin>3.0.0-M2</version.plugin.maven-dependency-plugin>
         <version.plugin.maven-enforcer-plugin>3.0.0-M2</version.plugin.maven-enforcer-plugin>
+        <version.plugin.maven-invoker-plugin>3.1.0</version.plugin.maven-invoker-plugin>
         <version.plugin.maven-javadoc-plugin>3.0.1</version.plugin.maven-javadoc-plugin>
         <version.plugin.maven-shade-plugin>3.2.1</version.plugin.maven-shade-plugin>
         <version.plugin.maven-site-plugin>3.7.1</version.plugin.maven-site-plugin>
@@ -79,6 +81,9 @@
 
         <dependency.httpcomponents.core>4.3.3</dependency.httpcomponents.core>
         <dependency.httpcomponents.client>4.3.6</dependency.httpcomponents.client>
+
+        <dependency.jackson.version>1.2.0</dependency.jackson.version>
+        <dependency.jetty.version>7.3.1.v20110307</dependency.jetty.version>
     </properties>
 
     <scm>
@@ -89,12 +94,12 @@
     </scm>
 
     <modules>
+        <module>pax-url-commons</module>
         <module>pax-url-aether-support</module>
         <module>pax-url-aether</module>
         <module>pax-url-assembly</module>
         <module>pax-url-cache</module>
         <module>pax-url-classpath</module>
-        <module>pax-url-commons</module>
         <module>pax-url-dir</module>
         <module>pax-url-link</module>
         <module>pax-url-obr</module>
@@ -106,6 +111,19 @@
 
     <dependencyManagement>
         <dependencies>
+
+            <!-- PAX-URL own dependencies -->
+
+            <dependency>
+                <groupId>org.ops4j.pax.url</groupId>
+                <artifactId>pax-url-commons</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ops4j.pax.url</groupId>
+                <artifactId>pax-url-aether-support</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
             <!-- ops4j dependencies -->
 
@@ -258,6 +276,12 @@
                 <artifactId>maven-settings-builder</artifactId>
                 <version>${dependency.maven.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.maven.shared</groupId>
+                <artifactId>maven-invoker</artifactId>
+                <version>2.1.1</version>
+                <scope>test</scope>
+            </dependency>
 
             <dependency>
                 <groupId>org.apache.maven.wagon</groupId>
@@ -287,6 +311,12 @@
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpcore</artifactId>
                 <version>${dependency.httpcomponents.core}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.codehaus.jackson</groupId>
+                <artifactId>jackson-core-asl</artifactId>
+                <version>${dependency.jackson.version}</version>
             </dependency>
 
             <!-- Logging -->
@@ -320,13 +350,34 @@
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
                 <version>4.11</version>
-                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.easymock</groupId>
                 <artifactId>easymock</artifactId>
                 <version>3.1</version>
-                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.powermock</groupId>
+                <artifactId>powermock-api-easymock</artifactId>
+                <version>1.6.4</version>
+            </dependency>
+            <dependency>
+                <groupId>org.powermock</groupId>
+                <artifactId>powermock-module-junit4</artifactId>
+                <version>1.6.4</version>
+            </dependency>
+
+            <!-- Jetty -->
+
+            <dependency>
+                <groupId>org.eclipse.jetty.aggregate</groupId>
+                <artifactId>jetty-server</artifactId>
+                <version>${dependency.jetty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jetty.aggregate</groupId>
+                <artifactId>jetty-plus</artifactId>
+                <version>${dependency.jetty.version}</version>
             </dependency>
 
         </dependencies>
@@ -339,6 +390,11 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>${version.plugin.maven-compiler-plugin}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-invoker-plugin</artifactId>
+                    <version>${version.plugin.maven-invoker-plugin}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>

@@ -2,8 +2,8 @@ package org.ops4j.pax.url.mvn.internal;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.net.URL;
@@ -62,6 +62,7 @@ public class ProxyTest
 
         Properties properties = new Properties();
         properties.setProperty( TEST_PID + "." + ServiceConstants.PROPERTY_LOCAL_REPOSITORY, repoPath );
+        properties.setProperty( TEST_PID + "." + ServiceConstants.PROPERTY_GLOBAL_CHECKSUM_POLICY, "ignore" );
         properties.setProperty( TEST_PID + "." + ServiceConstants.PROPERTY_REPOSITORIES,
             "http://qfdqfqfqf.fra@id=fake" );
 
@@ -75,7 +76,7 @@ public class ProxyTest
                                        new AetherBasedResolver( config ) );
         c.getInputStream();
 
-        assertEquals( "the artifact must be downloaded", true, new File( localRepo,
+        assertTrue( "the artifact must be downloaded", new File( localRepo,
             "ant/ant/1.5.1/ant-1.5.1.jar" ).exists() );
         
         // test for PAXURL-209
@@ -91,6 +92,7 @@ public class ProxyTest
 
         Properties properties = new Properties();
         properties.setProperty( TEST_PID + "." + ServiceConstants.PROPERTY_LOCAL_REPOSITORY, repoPath );
+        properties.setProperty( TEST_PID + "." + ServiceConstants.PROPERTY_GLOBAL_CHECKSUM_POLICY, "ignore" );
         properties.setProperty( TEST_PID + "." + ServiceConstants.PROPERTY_REPOSITORIES,
             "http://qfdqfqfqf.fra@id=fake" );
 
@@ -104,7 +106,7 @@ public class ProxyTest
                                        new AetherBasedResolver( config ) );
         c.getInputStream();
 
-        assertEquals( "the artifact must be downloaded", true, new File( localRepo,
+        assertTrue( "the artifact must be downloaded", new File( localRepo,
             "ant/ant/1.5.1/ant-1.5.1.jar" ).exists() );
         System.clearProperty("http.proxyHost");
         System.clearProperty("http.proxyPort");

@@ -40,6 +40,8 @@ public class HandlerTest extends TestBase
 
         System.setProperty( "org.ops4j.pax.url.mvn.localRepository", localRepo );
 
+        System.setProperty( "org.ops4j.pax.url.mvn.globalChecksumPolicy", "ignore" );
+
         System.setProperty( "org.ops4j.pax.url.mvn.certificateCheck", "false" );
 
         System.setProperty( "org.ops4j.pax.url.mvn.useFallbackRepositories",
