@@ -1,3 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
@@ -5,7 +26,7 @@
     <parent>
         <groupId>org.ops4j</groupId>
         <artifactId>master</artifactId>
-        <version>4.2.0</version>
+        <version>4.3.0</version>
     </parent>
 
     <groupId>org.ops4j.pax</groupId>
@@ -15,12 +36,57 @@
 
     <name>OPS4J Pax Url</name>
     <description>Pax Url - OSGi URL handlers</description>
-    
-    <prerequisites>
-        <maven>3.0.0</maven>
-    </prerequisites>
 
-    <url>${wiki.url}</url>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <release-paxurl-altGitURL>scm:git:git@github.com:ops4j/org.ops4j.pax.url.git</release-paxurl-altGitURL>
+        <wiki.url>https://ops4j1.jira.com/wiki/spaces/paxurl/overview</wiki.url>
+
+        <!-- versions of Maven plugins -->
+
+        <version.plugin.maven-checkstyle-plugin>3.0.0</version.plugin.maven-checkstyle-plugin>
+        <version.com.puppycrawl.tools.checkstyle>8.9</version.com.puppycrawl.tools.checkstyle>
+        <version.plugin.maven-compiler-plugin>3.8.0</version.plugin.maven-compiler-plugin>
+        <version.plugin.maven-enforcer-plugin>3.0.0-M2</version.plugin.maven-enforcer-plugin>
+        <version.plugin.maven-javadoc-plugin>3.0.1</version.plugin.maven-javadoc-plugin>
+        <version.plugin.maven-shade-plugin>3.2.1</version.plugin.maven-shade-plugin>
+        <version.plugin.maven-site-plugin>3.7.1</version.plugin.maven-site-plugin>
+        <version.plugin.maven-surefire-plugin>2.21.0</version.plugin.maven-surefire-plugin>
+        <version.plugin.felix.maven-bundle-plugin>3.5.1</version.plugin.felix.maven-bundle-plugin>
+        <version.plugin.mojo.build-helper-maven-plugin>3.0.0</version.plugin.mojo.build-helper-maven-plugin>
+        <version.plugin.mycila.license-maven-plugin>3.0</version.plugin.mycila.license-maven-plugin>
+        <version.plugin.servicemix.depends-maven-plugin>1.4.0</version.plugin.servicemix.depends-maven-plugin>
+
+        <!-- versions of Maven dependencies -->
+
+        <dependency.osgicore.version>4.3.1</dependency.osgicore.version>
+        <dependency.osgicomp.version>4.3.1</dependency.osgicomp.version>
+        <dependency.base.version>1.5.0</dependency.base.version>
+        <dependency.bndlib.version>2.3.0</dependency.bndlib.version>
+        <dependency.obr.version>1.0.2</dependency.obr.version>
+        <dependency.paxexam.version>3.5.0</dependency.paxexam.version>
+        <dependency.swissbox.version>1.8.3</dependency.swissbox.version>
+
+        <!-- higher versions of logback import slf4j 1.7 -->
+        <dependency.slf4j.version>1.6.6</dependency.slf4j.version>
+        <dependency.logback.version>1.0.7</dependency.logback.version>
+
+        <dependency.aether.version>1.0.2.v20150114</dependency.aether.version>
+        <dependency.maven.version>3.2.1</dependency.maven.version>
+        <dependency.wagon.version>2.8</dependency.wagon.version>
+
+        <dependency.httpcomponents.core>4.3.3</dependency.httpcomponents.core>
+        <dependency.httpcomponents.client>4.3.6</dependency.httpcomponents.client>
+    </properties>
+
+    <scm>
+        <connection>scm:git:git@github.com:ops4j/org.ops4j.pax.url.git</connection>
+        <developerConnection>${release-paxurl-altGitURL}</developerConnection>
+        <url>https://github.com/ops4j/org.ops4j.pax.url/tree/master</url>
+        <tag>HEAD</tag>
+    </scm>
 
     <modules>
         <module>pax-url-aether-support</module>
@@ -38,122 +104,13 @@
         <module>itest</module>
     </modules>
 
-    <issueManagement>
-        <system>jira</system>
-        <url>http://team.ops4j.org/browse/PAXURL</url>
-    </issueManagement>
-
-    <scm>
-        <connection>scm:git:git://github.com/ops4j/org.ops4j.pax.url.git</connection>
-        <developerConnection>${release-paxurl-altGitURL}</developerConnection>
-        <url>http://github.com/ops4j/org.ops4j.pax.url/tree/master</url>
-        <tag>HEAD</tag>
-    </scm>
-
-    <properties>
-        <release-paxurl-altGitURL>scm:git:ssh://git@github.com/ops4j/org.ops4j.pax.url.git</release-paxurl-altGitURL>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <dependency.aether.version>1.0.2.v20150114</dependency.aether.version>
-        <dependency.base.version>1.5.0</dependency.base.version>
-        <dependency.bndlib.version>2.3.0</dependency.bndlib.version>
-        <!-- higher versions of logback import slf4j 1.7 -->
-        <dependency.logback.version>1.0.7</dependency.logback.version>
-        <dependency.maven.version>3.2.1</dependency.maven.version>
-        <dependency.osgicore.version>4.3.1</dependency.osgicore.version>
-        <dependency.osgicomp.version>4.3.1</dependency.osgicomp.version>
-        <dependency.paxexam.version>3.5.0</dependency.paxexam.version>
-        <dependency.swissbox.version>1.8.2</dependency.swissbox.version>
-        <dependency.slf4j.version>1.6.6</dependency.slf4j.version>
-        <dependency.wagon.version>2.8</dependency.wagon.version>
-        <wiki.url>http://team.ops4j.org/wiki/display/paxurl</wiki.url>
-    </properties>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>retrotranslator-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>translate-project</goal>
-                        </goals>
-                        <configuration>
-                            <classifier>jdk14</classifier>
-                            <embed>jdk14</embed>
-                            <attach>true</attach>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-enforcer-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>enforce</id>
-                        <configuration>
-                            <rules>
-                                <requireMavenVersion>
-                                    <version>(3.0.0,)</version>
-                                    <message>This project requires Maven 3</message>
-                                </requireMavenVersion>
-                                <DependencyConvergence />
-                            </rules>
-                        </configuration>
-                        <goals>
-                            <goal>enforce</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.felix</groupId>
-                    <artifactId>maven-bundle-plugin</artifactId>
-                    <configuration>
-                        <instructions>
-                            <Bundle-DocURL>${wiki.url}</Bundle-DocURL>
-                            <_include>-osgi.bnd</_include>
-                        </instructions>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <configuration>
-                        <compilerArgs>
-                            <arg>-Xlint:all</arg>
-                        </compilerArgs>
-                        <source>1.7</source>
-                        <target>1.7</target>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-shade-plugin</artifactId>
-                    <version>2.2</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-site-plugin</artifactId>
-                    <version>3.3</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-    </build>
-
     <dependencyManagement>
         <dependencies>
-            <!-- Felix -->
-            <dependency>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>org.osgi.service.obr</artifactId>
-                <version>1.0.2</version>
-            </dependency>
+
+            <!-- ops4j dependencies -->
+
             <!-- OPS4J Base -->
+
             <dependency>
                 <groupId>org.ops4j.base</groupId>
                 <artifactId>ops4j-base-lang</artifactId>
@@ -179,7 +136,9 @@
                 <artifactId>ops4j-base-util-xml</artifactId>
                 <version>${dependency.base.version}</version>
             </dependency>
+
             <!-- OPS4J Pax Swissbox -->
+
             <dependency>
                 <groupId>org.ops4j.pax.swissbox</groupId>
                 <artifactId>pax-swissbox-bnd</artifactId>
@@ -201,46 +160,47 @@
                 <version>${dependency.swissbox.version}</version>
             </dependency>
 
-            <dependency>
-                <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-file</artifactId>
-                <version>${dependency.wagon.version}</version>
-            </dependency>
+            <!-- OSGi -->
 
             <dependency>
-                <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-http</artifactId>
-                <version>${dependency.wagon.version}</version>
-            </dependency>
-            <!-- smallest possible fix for PAXURL-345 -->
-            <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpclient</artifactId>
-                <version>4.3.6</version>
+                <groupId>org.osgi</groupId>
+                <artifactId>org.osgi.core</artifactId>
+                <version>${dependency.osgicore.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpcore</artifactId>
-                <version>4.3.3</version>
+                <groupId>org.osgi</groupId>
+                <artifactId>org.osgi.compendium</artifactId>
+                <version>${dependency.osgicomp.version}</version>
             </dependency>
+
+            <!-- Felix -->
+
             <dependency>
-                <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-provider-api</artifactId>
-                <version>${dependency.wagon.version}</version>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>org.osgi.service.obr</artifactId>
+                <version>${dependency.obr.version}</version>
             </dependency>
+
+            <!-- BND -->
+
+            <dependency>
+                <groupId>biz.aQute.bnd</groupId>
+                <artifactId>bndlib</artifactId>
+                <version>${dependency.bndlib.version}</version>
+            </dependency>
+
+            <!-- Maven -->
 
             <dependency>
                 <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-utils</artifactId>
                 <version>3.0.17</version>
             </dependency>
-
             <dependency>
                 <groupId>org.sonatype.plexus</groupId>
                 <artifactId>plexus-sec-dispatcher</artifactId>
                 <version>1.4</version>
             </dependency>
-
             <dependency>
                 <groupId>org.sonatype.plexus</groupId>
                 <artifactId>plexus-cipher</artifactId>
@@ -252,31 +212,26 @@
                 <artifactId>aether-api</artifactId>
                 <version>${dependency.aether.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.eclipse.aether</groupId>
                 <artifactId>aether-impl</artifactId>
                 <version>${dependency.aether.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.eclipse.aether</groupId>
                 <artifactId>aether-spi</artifactId>
                 <version>${dependency.aether.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.eclipse.aether</groupId>
                 <artifactId>aether-util</artifactId>
                 <version>${dependency.aether.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.eclipse.aether</groupId>
                 <artifactId>aether-connector-basic</artifactId>
                 <version>${dependency.aether.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.eclipse.aether</groupId>
                 <artifactId>aether-transport-wagon</artifactId>
@@ -298,7 +253,6 @@
                 <artifactId>maven-aether-provider</artifactId>
                 <version>${dependency.maven.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.apache.maven</groupId>
                 <artifactId>maven-settings-builder</artifactId>
@@ -306,10 +260,36 @@
             </dependency>
 
             <dependency>
-                <groupId>biz.aQute.bnd</groupId>
-                <artifactId>bndlib</artifactId>
-                <version>${dependency.bndlib.version}</version>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-file</artifactId>
+                <version>${dependency.wagon.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-http</artifactId>
+                <version>${dependency.wagon.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-provider-api</artifactId>
+                <version>${dependency.wagon.version}</version>
+            </dependency>
+
+            <!-- Other -->
+
+            <!-- smallest possible fix for PAXURL-345 -->
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>${dependency.httpcomponents.client}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpcore</artifactId>
+                <version>${dependency.httpcomponents.core}</version>
+            </dependency>
+
+            <!-- Logging -->
 
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -326,30 +306,16 @@
                 <artifactId>jcl-over-slf4j</artifactId>
                 <version>${dependency.slf4j.version}</version>
             </dependency>
+
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
                 <version>${dependency.logback.version}</version>
                 <scope>test</scope>
             </dependency>
-            <dependency>
-                <groupId>commons-logging</groupId>
-                <artifactId>commons-logging</artifactId>
-                <version>1.1.3</version>
-            </dependency>
 
-            <!-- OSGi Alliance -->
-            <dependency>
-                <groupId>org.osgi</groupId>
-                <artifactId>org.osgi.core</artifactId>
-                <version>${dependency.osgicore.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.osgi</groupId>
-                <artifactId>org.osgi.compendium</artifactId>
-                <version>${dependency.osgicomp.version}</version>
-            </dependency>
             <!-- Test dependencies -->
+
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
@@ -362,22 +328,111 @@
                 <version>3.1</version>
                 <scope>test</scope>
             </dependency>
+
         </dependencies>
     </dependencyManagement>
 
-    <repositories>
-        <repository>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <id>sonatype-nexus-snapshots</id>
-            <name>Sonatype Nexus Snapshots</name>
-            <url>https://oss.sonatype.org/content/repositories/ops4j-snapshots</url>
-        </repository>
-    </repositories>
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${version.plugin.maven-compiler-plugin}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>${version.plugin.maven-javadoc-plugin}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-enforcer-plugin</artifactId>
+                    <version>${version.plugin.maven-enforcer-plugin}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>${version.plugin.maven-shade-plugin}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>${version.plugin.maven-site-plugin}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.felix</groupId>
+                    <artifactId>maven-bundle-plugin</artifactId>
+                    <version>${version.plugin.felix.maven-bundle-plugin}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>com.mycila</groupId>
+                    <artifactId>license-maven-plugin</artifactId>
+                    <version>${version.plugin.mycila.license-maven-plugin}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <compilerArgs>
+                        <arg>-Xlint:all</arg>
+                    </compilerArgs>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <obrRepository>NONE</obrRepository>
+                    <instructions>
+                        <Bundle-DocURL>${wiki.url}</Bundle-DocURL>
+                        <_include>-osgi.bnd</_include>
+                    </instructions>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>enforce</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireMavenVersion>
+                                    <version>[3.0.0,)</version>
+                                    <message>This project requires Maven 3</message>
+                                </requireMavenVersion>
+                                <requireJavaVersion>
+                                    <version>[1.7,)</version>
+                                </requireJavaVersion>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <url>${wiki.url}</url>
+
+    <issueManagement>
+        <system>jira</system>
+        <url>https://ops4j1.jira.com/projects/PAXURL/summary/statistics</url>
+    </issueManagement>
 
     <developers>
         <developer>
@@ -416,30 +471,84 @@
             </roles>
             <timezone>UTC+1</timezone>
         </developer>
+        <developer>
+            <id>ggrzybek</id>
+            <name>Grzegorz Grzybek</name>
+            <email>gr.grzybek@gmail.com</email>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <timezone>UTC+1</timezone>
+        </developer>
     </developers>
-    
-    <!-- don't treat Javadoc warnings as errors when running under JDK 8 -->
+
+    <repositories>
+        <repository>
+            <id>sonatype-nexus-snapshots</id>
+            <name>Sonatype Nexus Snapshots</name>
+            <url>https://oss.sonatype.org/content/repositories/ops4j-snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
     <profiles>
+
+        <!-- License generation: `mvn -Plicense process-sources` -->
         <profile>
-            <id>jdk8</id>
-            <activation>
-                <jdk>1.8</jdk>
-            </activation>
+            <id>license</id>
             <build>
-                <pluginManagement>
-                    <plugins>
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-javadoc-plugin</artifactId>
-                            <configuration>
-                                <additionalparam>-Xdoclint:none</additionalparam>
-                            </configuration>
-                        </plugin>
-                    </plugins>
-                </pluginManagement>
+                <plugins>
+                    <plugin>
+                        <groupId>com.mycila</groupId>
+                        <artifactId>license-maven-plugin</artifactId>
+                        <configuration>
+                            <aggregate>true</aggregate>
+                            <useDefaultExcludes>true</useDefaultExcludes>
+                            <header>license-header.txt</header>
+                            <includes>
+                                <include>src/main/java/**/*.java</include>
+                                <include>src/test/java/**/*.java</include>
+                                <!--<include>**/README</include>-->
+                                <include>pom.xml</include>
+                                <include>**/*.xml</include>
+                                <include>**/*.cfg</include>
+                                <include>**/*.properties</include>
+                            </includes>
+                            <excludes />
+                            <mapping>
+                                <!--<README>SCRIPT_STYLE</README>-->
+                            </mapping>
+                            <headerDefinitions>
+                                <headerDefinition>license-headers.xml</headerDefinition>
+                            </headerDefinitions>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>license-format</id>
+                                <phase>process-sources</phase>
+                                <goals>
+                                    <goal>format</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>license-check</id>
+                                <!-- This is the phase this plugin runs by default. Just an explicit information -->
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
             </build>
         </profile>
+
     </profiles>
 
 </project>
-
