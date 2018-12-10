@@ -383,10 +383,11 @@ public class MavenConfigurationImpl implements MavenConfiguration {
 
     /**
      * Resolves local repository directory by using the following resolution:<br/>
-     * 1. looks for a configuration property named localRepository; 2. looks for a framework
-     * property/system setting localRepository;<br/>
+     * 1. looks for a configuration property named {@code localRepository};<br/>
+     * 2. looks for a framework property/system setting localRepository;<br/>
      * 3. looks in settings.xml (see settings.xml resolution);<br/>
-     * 4. falls back to ${user.home}/.m2/repository.
+     * 4. looks for system property {@code maven.repo.local} (PAXURL-231);<br/>
+     * 5. falls back to ${user.home}/.m2/repository.
      * 
      * @see MavenConfiguration#getLocalRepository()
      */
@@ -397,6 +398,17 @@ public class MavenConfigurationImpl implements MavenConfiguration {
             // if not set get local repository from maven settings
             if (spec == null && settings != null) {
                 spec = settings.getLocalRepository();
+            }
+            // check -Dmaven.repo.local property - useful for batch runs within external maven build
+            // that accept maven.repo.local as alternative local repository
+            if (spec == null) {
+                spec = System.getProperty("maven.repo.local");
+                if (spec != null) {
+                    if (!new File(spec).isDirectory()) {
+                        LOGGER.warn("Can't use maven.repo.local=" + spec + ". Location invalid.");
+                        spec = null;
+                    }
+                }
             }
             if (spec == null) {
                 spec = System.getProperty("user.home") + "/.m2/repository";
