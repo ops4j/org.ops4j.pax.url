@@ -638,8 +638,8 @@ public class ConfigurationImplTest
         MavenConfigurationImpl config = new MavenConfigurationImpl( propertyResolver, PID );
         config.setSettings( settings );
         assertEquals( "Local repository",
-                      new URL( "file:" + new File("repository").getAbsolutePath() + "/" ),
-                      config.getLocalRepository().getURL()
+                      new File("repository").toURI().toURL().toString() + "/",
+                      config.getLocalRepository().getURL().toString()
         );
         verify( propertyResolver );
     }
