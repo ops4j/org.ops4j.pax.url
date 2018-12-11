@@ -55,6 +55,8 @@ public class AetherLocalRepositoryTest {
         } finally {
             if (previousMavenRepoLocal != null) {
                 System.setProperty("maven.repo.local", previousMavenRepoLocal);
+            } else {
+                System.getProperties().remove("maven.repo.local");
             }
         }
     }
