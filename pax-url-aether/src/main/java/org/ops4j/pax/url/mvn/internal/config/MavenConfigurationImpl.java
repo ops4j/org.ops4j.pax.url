@@ -633,7 +633,11 @@ public class MavenConfigurationImpl implements MavenConfiguration {
             DefaultSettingsBuilder builder = factory.newInstance();
             SettingsBuildingRequest request = new DefaultSettingsBuildingRequest();
             try {
-                request.setUserSettingsFile(new File(settingsPath.toURI()));
+                if (settingsPath.toURI().isOpaque()) {
+                    request.setUserSettingsFile(new File(settingsPath.getPath()));
+                } else {
+                    request.setUserSettingsFile(new File(settingsPath.toURI()));
+                }
             } catch (URISyntaxException e) {
                 // should never happens because it is returned by safeGetFile
             }
