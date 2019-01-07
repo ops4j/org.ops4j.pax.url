@@ -44,6 +44,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentMap;
@@ -77,7 +79,9 @@ import org.eclipse.aether.internal.impl.slf4j.Slf4jLoggerFactory;
 import org.eclipse.aether.metadata.DefaultMetadata;
 import org.eclipse.aether.metadata.Metadata;
 import org.eclipse.aether.repository.Authentication;
+import org.eclipse.aether.repository.LocalMetadataRequest;
 import org.eclipse.aether.repository.LocalRepository;
+import org.eclipse.aether.repository.LocalRepositoryManager;
 import org.eclipse.aether.repository.MirrorSelector;
 import org.eclipse.aether.repository.Proxy;
 import org.eclipse.aether.repository.ProxySelector;
@@ -676,22 +680,88 @@ public class AetherBasedResolver implements MavenResolver {
             );
         }
 
+        if (artifact.getVersion().equals(VERSION_LATEST)) {
+            artifact = artifact.setVersion(LATEST_VERSION_RANGE);
+        }
+
         // Try with default repositories
         try {
-            VersionConstraint vc = new GenericVersionScheme().parseVersionConstraint(artifact.getVersion());
-            if (vc.getVersion() != null) {
-                for (LocalRepository repo : defaultRepos) {
-                    RepositorySystemSession session = newSession( repo );
-                    try {
-                        return m_repoSystem
-                                .resolveArtifact(session, new ArtifactRequest(artifact, null, null))
-                                .getArtifact().getFile();
+            GenericVersionScheme genericVersionScheme = new GenericVersionScheme();
+            VersionConstraint vc = genericVersionScheme.parseVersionConstraint(artifact.getVersion());
+
+            // first, each "default repo" will be treated as local repo and resolution will be performed
+            // without remote repositories
+            for (LocalRepository repo : defaultRepos) {
+                RepositorySystemSession session = newSession(repo);
+                try {
+                    if (vc.getVersion() == null && vc.getRange() != null) {
+                        // KARAF-6005: try to resolve version range against local repository (default repository)
+                        Metadata metadata =
+                                new DefaultMetadata(artifact.getGroupId(), artifact.getArtifactId(),
+                                        "maven-metadata.xml", Metadata.Nature.RELEASE_OR_SNAPSHOT);
+                        new LocalMetadataRequest(metadata, null, null);
+
+                        LocalRepositoryManager lrm = session.getLocalRepositoryManager();
+                        String path = lrm.getPathForLocalMetadata(metadata);
+                        File metadataLocation = new File(lrm.getRepository().getBasedir(), path).getParentFile();
+
+                        Set<Version> versions = new TreeSet<>();
+                        if (metadataLocation.isDirectory()) {
+                            if (!new File(metadataLocation, "maven-metadata.xml").isFile()) {
+                                // we will generate (kind of) maven-metadata.xml manually
+                                String[] versionDirs = metadataLocation.list();
+                                if (versionDirs != null) {
+                                    for (String vd : versionDirs) {
+                                        Version ver = genericVersionScheme.parseVersion(vd);
+                                        if (vc.containsVersion(ver)) {
+                                            versions.add(ver);
+                                        }
+                                    }
+                                }
+                                VersionRangeResult vrr = new VersionRangeResult(new VersionRangeRequest());
+                                vrr.setVersions(new LinkedList<>(versions));
+
+                                if (vrr.getHighestVersion() != null) {
+                                    if (LOG.isDebugEnabled()) {
+                                        LOG.debug("Resolved version range {} as {}", vc.getRange(), vrr.getHighestVersion().toString());
+                                    }
+                                    vc = new GenericVersionScheme().parseVersionConstraint(vrr.getHighestVersion().toString());
+                                    artifact = artifact.setVersion(vc.getVersion().toString());
+                                }
+                            } else {
+                                // we can use normal metadata resolution algorithm
+                                try {
+                                    VersionRangeResult versionResult = m_repoSystem.resolveVersionRange(session,
+                                            new VersionRangeRequest(artifact, null, null));
+                                    if (versionResult != null) {
+                                        Version v = versionResult.getHighestVersion();
+                                        if (v != null) {
+                                            if (LOG.isDebugEnabled()) {
+                                                LOG.debug("Resolved version range {} as {}", vc.getRange(), v.toString());
+                                            }
+                                            vc = new GenericVersionScheme().parseVersionConstraint(v.toString());
+                                            artifact = artifact.setVersion(vc.getVersion().toString());
+                                        }
+                                    }
+                                } catch (VersionRangeResolutionException e) {
+                                    // Ignore
+                                }
+                            }
+                        }
                     }
-                    catch( ArtifactResolutionException e ) {
-                        // Ignore
-                    } finally {
-                        releaseSession(session);
+                    if (vc.getVersion() != null) {
+                        // normal resolution without ranges
+                        try {
+                            return m_repoSystem
+                                    .resolveArtifact(session, new ArtifactRequest(artifact, null, null))
+                                    .getArtifact().getFile();
+                        }
+                        catch( ArtifactResolutionException e ) {
+                            // Ignore
+                        }
                     }
+                } finally {
+                    releaseSession(session);
                 }
             }
         }
@@ -709,27 +779,44 @@ public class AetherBasedResolver implements MavenResolver {
             // we know there's one ArtifactResult, because there was one ArtifactRequest
             ArtifactResolutionException original = new ArtifactResolutionException(e.getResults(),
                     "Error resolving artifact " + artifact.toString(), null);
-            original.setStackTrace(e.getStackTrace());
 
-            List<String> messages = new ArrayList<>(e.getResult().getExceptions().size());
-            List<Exception> suppressed = new ArrayList<>();
-            for (Exception ex : e.getResult().getExceptions()) {
-                messages.add(ex.getMessage() == null ? ex.getClass().getName() : ex.getMessage());
-                suppressed.add(ex);
-            }
-            IOException exception = new IOException(original.getMessage() + ": " + messages, original);
-            for (Exception ex : suppressed) {
-                exception.addSuppressed(ex);
-            }
-            LOG.warn( exception.getMessage(), exception );
-
-            throw exception;
+            throw configureIOException(original, e, e.getResult().getExceptions());
         }
-        catch( RepositoryException e ) {
-            throw new IOException( "Error resolving artifact " + artifact.toString(), e );
+        catch( VersionRangeResolutionException e ) {
+            // we know there's one ArtifactResult, because there was one ArtifactRequest
+            VersionRangeResolutionException original = new VersionRangeResolutionException(e.getResult(),
+                    "Error resolving artifact " + artifact.toString(), null);
+
+            throw configureIOException(original, e, e.getResult().getExceptions());
         } finally {
             releaseSession(session);
         }
+    }
+
+    /**
+     * Take original maven exception's message and stack trace without suppressed exceptions. Suppressed
+     * exceptions will be taken from {@code ArtifactResult} or {@link VersionRangeResult}
+     * @param newMavenException exception with reconfigured suppressed exceptions
+     * @param cause original Maven exception
+     * @param resultExceptions
+     * @return
+     */
+    private IOException configureIOException(Exception newMavenException, Exception cause, List<Exception> resultExceptions) {
+        newMavenException.setStackTrace(cause.getStackTrace());
+
+        List<String> messages = new ArrayList<>(resultExceptions.size());
+        List<Exception> suppressed = new ArrayList<>();
+        for (Exception ex : resultExceptions) {
+            messages.add(ex.getMessage() == null ? ex.getClass().getName() : ex.getMessage());
+            suppressed.add(ex);
+        }
+        IOException exception = new IOException(newMavenException.getMessage() + ": " + messages, newMavenException);
+        for (Exception ex : suppressed) {
+            exception.addSuppressed(ex);
+        }
+        LOG.warn( exception.getMessage(), exception );
+
+        return exception;
     }
 
     @Override
@@ -982,9 +1069,6 @@ public class AetherBasedResolver implements MavenResolver {
     private Artifact resolveLatestVersionRange( RepositorySystemSession session,
         List<RemoteRepository> remoteRepos, Artifact artifact )
         throws VersionRangeResolutionException {
-        if( artifact.getVersion().equals( VERSION_LATEST ) ) {
-            artifact = artifact.setVersion( LATEST_VERSION_RANGE );
-        }
 
         VersionRangeResult versionResult = m_repoSystem.resolveVersionRange( session,
             new VersionRangeRequest( artifact, remoteRepos, null ) );
@@ -1022,7 +1106,7 @@ public class AetherBasedResolver implements MavenResolver {
     }
 
     /**
-     * @see org.eclipse.aether.internal.impl.DefaultUpdateCheckManager#SESSION_CHECKS
+     * @see "org.eclipse.aether.internal.impl.DefaultUpdateCheckManager#SESSION_CHECKS"
      */
     private static final String SESSION_CHECKS = "updateCheckManager.checks";
 
