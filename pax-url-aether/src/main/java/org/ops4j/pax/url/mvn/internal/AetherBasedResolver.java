@@ -16,15 +16,6 @@
  */
 package org.ops4j.pax.url.mvn.internal;
 
-import static org.eclipse.aether.repository.RepositoryPolicy.CHECKSUM_POLICY_FAIL;
-import static org.eclipse.aether.repository.RepositoryPolicy.CHECKSUM_POLICY_IGNORE;
-import static org.eclipse.aether.repository.RepositoryPolicy.CHECKSUM_POLICY_WARN;
-import static org.eclipse.aether.repository.RepositoryPolicy.UPDATE_POLICY_ALWAYS;
-import static org.eclipse.aether.repository.RepositoryPolicy.UPDATE_POLICY_DAILY;
-import static org.eclipse.aether.repository.RepositoryPolicy.UPDATE_POLICY_INTERVAL;
-import static org.eclipse.aether.repository.RepositoryPolicy.UPDATE_POLICY_NEVER;
-import static org.ops4j.pax.url.mvn.internal.Parser.VERSION_LATEST;
-
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
@@ -121,12 +112,21 @@ import org.slf4j.LoggerFactory;
 import org.sonatype.plexus.components.cipher.DefaultPlexusCipher;
 import org.sonatype.plexus.components.cipher.PlexusCipherException;
 
+import static org.eclipse.aether.repository.RepositoryPolicy.CHECKSUM_POLICY_FAIL;
+import static org.eclipse.aether.repository.RepositoryPolicy.CHECKSUM_POLICY_IGNORE;
+import static org.eclipse.aether.repository.RepositoryPolicy.CHECKSUM_POLICY_WARN;
+import static org.eclipse.aether.repository.RepositoryPolicy.UPDATE_POLICY_ALWAYS;
+import static org.eclipse.aether.repository.RepositoryPolicy.UPDATE_POLICY_DAILY;
+import static org.eclipse.aether.repository.RepositoryPolicy.UPDATE_POLICY_INTERVAL;
+import static org.eclipse.aether.repository.RepositoryPolicy.UPDATE_POLICY_NEVER;
+import static org.ops4j.pax.url.mvn.internal.Parser.VERSION_LATEST;
+
 /**
  * Aether based, drop in replacement for mvn protocol
  */
 public class AetherBasedResolver implements MavenResolver {
 
-    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger( AetherBasedResolver.class );
+    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(AetherBasedResolver.class);
     private static final String LATEST_VERSION_RANGE = "[0.0,)";
     private static final String REPO_TYPE = "default";
     private static final String SCHEMA_HTTP = "http";
@@ -154,8 +154,8 @@ public class AetherBasedResolver implements MavenResolver {
      *
      * @param configuration (must be not null)
      */
-    public AetherBasedResolver( final MavenConfiguration configuration ) {
-        this( configuration, null );
+    public AetherBasedResolver(final MavenConfiguration configuration) {
+        this(configuration, null);
     }
 
     /**
@@ -163,15 +163,15 @@ public class AetherBasedResolver implements MavenResolver {
      *
      * @param configuration (must be not null)
      */
-    public AetherBasedResolver( final MavenConfiguration configuration, final MirrorInfo mirror ) {
-        NullArgumentException.validateNotNull( configuration, "Maven configuration");
+    public AetherBasedResolver(final MavenConfiguration configuration, final MirrorInfo mirror) {
+        NullArgumentException.validateNotNull(configuration, "Maven configuration");
         m_client = HttpClients.createClient(configuration.getPropertyResolver(), configuration.getPid());
         m_config = configuration;
         m_settings = configuration.getSettings();
         m_repoSystem = newRepositorySystem();
         decryptSettings();
         m_proxySelector = selectProxies();
-        m_mirrorSelector = selectMirrors( mirror );
+        m_mirrorSelector = selectMirrors(mirror);
     }
 
     @Override
@@ -179,15 +179,14 @@ public class AetherBasedResolver implements MavenResolver {
         m_client.close();
     }
 
-    private void decryptSettings()
-    {
-        SettingsDecryptionRequest request = new DefaultSettingsDecryptionRequest( m_settings );
-        SettingsDecryptionResult result = decrypter.decrypt( request );
-        m_settings.setProxies( result.getProxies() );
-        m_settings.setServers( result.getServers() );
+    private void decryptSettings() {
+        SettingsDecryptionRequest request = new DefaultSettingsDecryptionRequest(m_settings);
+        SettingsDecryptionResult result = decrypter.decrypt(request);
+        m_settings.setProxies(result.getProxies());
+        m_settings.setServers(result.getServers());
     }
 
-    private void assignProxyAndMirrors( List<RemoteRepository> remoteRepos ) {
+    private void assignProxyAndMirrors(List<RemoteRepository> remoteRepos) {
         Map<String, List<String>> map = new HashMap<String, List<String>>();
         Map<String, RemoteRepository> naming = new HashMap<String, RemoteRepository>();
         boolean aggregateReleaseEnabled = false, aggregateSnapshotEnabled = false;
@@ -196,135 +195,135 @@ public class AetherBasedResolver implements MavenResolver {
 
         List<RemoteRepository> resultingRepos = new ArrayList<RemoteRepository>();
 
-        for( RemoteRepository r : remoteRepos ) {
-            naming.put( r.getId(), r );
+        for (RemoteRepository r : remoteRepos) {
+            naming.put(r.getId(), r);
 
-            RemoteRepository rProxy = new RemoteRepository.Builder( r ).setProxy(
-                m_proxySelector.getProxy( r ) ).build();
-            resultingRepos.add( rProxy );
+            RemoteRepository rProxy = new RemoteRepository.Builder(r).setProxy(
+                    m_proxySelector.getProxy(r)).build();
+            resultingRepos.add(rProxy);
 
-            RemoteRepository mirror = m_mirrorSelector.getMirror( r );
-            if( mirror != null ) {
+            RemoteRepository mirror = m_mirrorSelector.getMirror(r);
+            if (mirror != null) {
                 String key = mirror.getId();
-                naming.put( key, mirror );
-                if( !map.containsKey( key ) ) {
-                    map.put( key, new ArrayList<String>() );
+                naming.put(key, mirror);
+                if (!map.containsKey(key)) {
+                    map.put(key, new ArrayList<String>());
                 }
-                List<String> mirrored = map.get( key );
-                mirrored.add( r.getId() );
+                List<String> mirrored = map.get(key);
+                mirrored.add(r.getId());
 
                 // Aggregate policy settings of the mirror repos.
-            	aggregateReleaseEnabled |= r.getPolicy( false ).isEnabled();
-            	aggregateSnapshotEnabled |= r.getPolicy( true ).isEnabled();
-            	aggregateReleaseUpdateInterval = minUpdateInterval( aggregateReleaseUpdateInterval, r.getPolicy( false ).getUpdatePolicy() );
-            	aggregateSnapshotUpdateInterval = minUpdateInterval( aggregateSnapshotUpdateInterval, r.getPolicy( true ).getUpdatePolicy() );
-            	aggregateReleaseChecksumPolicy = aggregateChecksumPolicy( aggregateReleaseChecksumPolicy, r.getPolicy( false ).getChecksumPolicy() );
-            	aggregateSnapshotChecksumPolicy = aggregateChecksumPolicy( aggregateSnapshotChecksumPolicy, r.getPolicy( true ).getChecksumPolicy() );
+                aggregateReleaseEnabled |= r.getPolicy(false).isEnabled();
+                aggregateSnapshotEnabled |= r.getPolicy(true).isEnabled();
+                aggregateReleaseUpdateInterval = minUpdateInterval(aggregateReleaseUpdateInterval, r.getPolicy(false).getUpdatePolicy());
+                aggregateSnapshotUpdateInterval = minUpdateInterval(aggregateSnapshotUpdateInterval, r.getPolicy(true).getUpdatePolicy());
+                aggregateReleaseChecksumPolicy = aggregateChecksumPolicy(aggregateReleaseChecksumPolicy, r.getPolicy(false).getChecksumPolicy());
+                aggregateSnapshotChecksumPolicy = aggregateChecksumPolicy(aggregateSnapshotChecksumPolicy, r.getPolicy(true).getChecksumPolicy());
             }
         }
 
-        for( String mirrorId : map.keySet() ) {
-            RemoteRepository mirror = naming.get( mirrorId );
+        for (String mirrorId : map.keySet()) {
+            RemoteRepository mirror = naming.get(mirrorId);
             List<RemoteRepository> mirroredRepos = new ArrayList<RemoteRepository>();
 
-            for( String rep : map.get( mirrorId ) ) {
-                mirroredRepos.add( naming.get( rep ) );
+            for (String rep : map.get(mirrorId)) {
+                mirroredRepos.add(naming.get(rep));
             }
             RepositoryPolicy releasePolicy = new RepositoryPolicy(aggregateReleaseEnabled, aggregateReleaseUpdateInterval, aggregateReleaseChecksumPolicy);
             RepositoryPolicy snapshotPolicy = new RepositoryPolicy(aggregateSnapshotEnabled, aggregateSnapshotUpdateInterval, aggregateSnapshotChecksumPolicy);
-            mirror = new RemoteRepository.Builder( mirror ).setMirroredRepositories( mirroredRepos )
-                .setProxy( m_proxySelector.getProxy( mirror ) )
-                .setReleasePolicy( releasePolicy )
-                .setSnapshotPolicy( snapshotPolicy )
-                .build();
-            resultingRepos.removeAll( mirroredRepos );
-            resultingRepos.add( 0, mirror );
+            mirror = new RemoteRepository.Builder(mirror).setMirroredRepositories(mirroredRepos)
+                    .setProxy(m_proxySelector.getProxy(mirror))
+                    .setReleasePolicy(releasePolicy)
+                    .setSnapshotPolicy(snapshotPolicy)
+                    .build();
+            resultingRepos.removeAll(mirroredRepos);
+            resultingRepos.add(0, mirror);
         }
 
         remoteRepos.clear();
-        remoteRepos.addAll( resultingRepos );
+        remoteRepos.addAll(resultingRepos);
     }
 
     private String minUpdateInterval(String interval1, String interval2) {
-    	LOG.debug("interval1: {}, interval2: {}", interval1, interval2);
-    	if( interval1 == null ) {
-    		return interval2;
-    	} else if( interval2 == null ) {
-    		return interval1;
-    	}
+        LOG.debug("interval1: {}, interval2: {}", interval1, interval2);
+        if (interval1 == null) {
+            return interval2;
+        } else if (interval2 == null) {
+            return interval1;
+        }
 
-    	int interval1InMin = getIntervalInMinutes( interval1 );
-    	int interval2InMin = getIntervalInMinutes( interval2 );
-    	if( interval1InMin <= interval2InMin ) {
-    		return getUpdatePolicyInterval( interval1InMin );
-    	} else {
-    		return getUpdatePolicyInterval( interval2InMin );
-    	}
+        int interval1InMin = getIntervalInMinutes(interval1);
+        int interval2InMin = getIntervalInMinutes(interval2);
+        if (interval1InMin <= interval2InMin) {
+            return getUpdatePolicyInterval(interval1InMin);
+        } else {
+            return getUpdatePolicyInterval(interval2InMin);
+        }
     }
 
     private int getIntervalInMinutes(String interval) {
-    	int intervalInMin;
-    	if (interval.equals( UPDATE_POLICY_NEVER )) {
-    		intervalInMin = Integer.MAX_VALUE;
-    	} else if (interval.equals( UPDATE_POLICY_DAILY )) {
-    		intervalInMin = 24 * 60;
-    	} else if (interval.equals( UPDATE_POLICY_ALWAYS )) {
-    		intervalInMin = Integer.MIN_VALUE;
-    	} else if (interval.startsWith( UPDATE_POLICY_INTERVAL + ":")) {
-    		try {
-				intervalInMin = Integer.parseInt(interval.substring( UPDATE_POLICY_INTERVAL.length() + 1 ));
-			} catch (NumberFormatException e) {
-				LOG.warn("unable to parse update policy interval: \"{}\"", interval);
-				intervalInMin = 24 * 60;
-			}
-    	} else {
-    		throw new IllegalArgumentException( String.format( "Invalid update policy \"%s\"", interval ) );
-    	}
-    	return intervalInMin;
+        int intervalInMin;
+        if (interval.equals(UPDATE_POLICY_NEVER)) {
+            intervalInMin = Integer.MAX_VALUE;
+        } else if (interval.equals(UPDATE_POLICY_DAILY)) {
+            intervalInMin = 24 * 60;
+        } else if (interval.equals(UPDATE_POLICY_ALWAYS)) {
+            intervalInMin = Integer.MIN_VALUE;
+        } else if (interval.startsWith(UPDATE_POLICY_INTERVAL + ":")) {
+            try {
+                intervalInMin = Integer.parseInt(interval.substring(UPDATE_POLICY_INTERVAL.length() + 1));
+            } catch (NumberFormatException e) {
+                LOG.warn("unable to parse update policy interval: \"{}\"", interval);
+                intervalInMin = 24 * 60;
+            }
+        } else {
+            throw new IllegalArgumentException(String.format("Invalid update policy \"%s\"", interval));
+        }
+        return intervalInMin;
     }
 
     private String getUpdatePolicyInterval(int intervalInMin) {
-    	switch (intervalInMin) {
-    	case Integer.MAX_VALUE:
-    		return UPDATE_POLICY_NEVER;
-    	case Integer.MIN_VALUE:
-    		return UPDATE_POLICY_ALWAYS;
-    	case 24 * 60:
-    		return UPDATE_POLICY_DAILY;
-    	default:
-    		return String.format("%s:%d", UPDATE_POLICY_INTERVAL, intervalInMin);
-    	}
+        switch (intervalInMin) {
+            case Integer.MAX_VALUE:
+                return UPDATE_POLICY_NEVER;
+            case Integer.MIN_VALUE:
+                return UPDATE_POLICY_ALWAYS;
+            case 24 * 60:
+                return UPDATE_POLICY_DAILY;
+            default:
+                return String.format("%s:%d", UPDATE_POLICY_INTERVAL, intervalInMin);
+        }
     }
 
-    private String aggregateChecksumPolicy( String policy1, String policy2 ) {
-    	if( policy1 == null ) {
-    		return policy2;
-    	}
-    	if( policy2 == null ) {
-    		return policy1;
-    	}
-    	if( policy1.equals( CHECKSUM_POLICY_FAIL ) || policy2.equals( CHECKSUM_POLICY_FAIL ) ) {
-    		return CHECKSUM_POLICY_FAIL;
-    	} else if( policy1.equals( CHECKSUM_POLICY_WARN ) || policy2.equals( CHECKSUM_POLICY_WARN ) ) {
-    		return CHECKSUM_POLICY_WARN;
-    	} else {
-    		return CHECKSUM_POLICY_IGNORE;
-    	}
+    private String aggregateChecksumPolicy(String policy1, String policy2) {
+        if (policy1 == null) {
+            return policy2;
+        }
+        if (policy2 == null) {
+            return policy1;
+        }
+        if (policy1.equals(CHECKSUM_POLICY_FAIL) || policy2.equals(CHECKSUM_POLICY_FAIL)) {
+            return CHECKSUM_POLICY_FAIL;
+        } else if (policy1.equals(CHECKSUM_POLICY_WARN) || policy2.equals(CHECKSUM_POLICY_WARN)) {
+            return CHECKSUM_POLICY_WARN;
+        } else {
+            return CHECKSUM_POLICY_IGNORE;
+        }
     }
 
     private ProxySelector selectProxies() {
         DefaultProxySelector proxySelector = new DefaultProxySelector();
-        for( org.apache.maven.settings.Proxy proxy : m_settings.getProxies() ) {
+        for (org.apache.maven.settings.Proxy proxy : m_settings.getProxies()) {
             if (!proxy.isActive()) {
                 continue;
             }
             String nonProxyHosts = proxy.getNonProxyHosts();
-            Proxy proxyObj = new Proxy( proxy.getProtocol(), proxy.getHost(), proxy.getPort(),
-                getAuthentication( proxy ) );
-            proxySelector.add( proxyObj, nonProxyHosts );
+            Proxy proxyObj = new Proxy(proxy.getProtocol(), proxy.getHost(), proxy.getPort(),
+                    getAuthentication(proxy));
+            proxySelector.add(proxyObj, nonProxyHosts);
         }
 
-        if(m_settings.getProxies().size() == 0) {
+        if (m_settings.getProxies().size() == 0) {
             javaDefaultProxy(proxySelector);
         }
         return proxySelector;
@@ -337,7 +336,7 @@ public class AetherBasedResolver implements MavenResolver {
         if (proxyHost == null) {
             proxyHost = System.getProperty(schema + "." + PROXY_HOST);
         }
-        if(proxyHost == null) {
+        if (proxyHost == null) {
             return;
         }
 
@@ -351,9 +350,9 @@ public class AetherBasedResolver implements MavenResolver {
         proxySelector.add(proxyObj, nonProxyHosts);
     }
 
-    private Authentication createAuthentication( String proxyUser, String proxyPassword ) {
+    private Authentication createAuthentication(String proxyUser, String proxyPassword) {
         Authentication authentication = null;
-        if(proxyUser != null) {
+        if (proxyUser != null) {
             authentication = new AuthenticationBuilder()
                     .addUsername(proxyUser)
                     .addPassword(proxyPassword).build();
@@ -361,44 +360,45 @@ public class AetherBasedResolver implements MavenResolver {
         return authentication;
     }
 
-    private MirrorSelector selectMirrors( MirrorInfo mirror ) {
+    private MirrorSelector selectMirrors(MirrorInfo mirror) {
         // configure mirror
 
-       	// The class org.eclipse.aether.util.repository.DefaultMirrorSelector is final therefore it needs to be
-    	// wrapped to fix PAXURL-289.
-    	class DefaultMirrorSelectorWrapper implements MirrorSelector {
+        // The class org.eclipse.aether.util.repository.DefaultMirrorSelector is final therefore it needs to be
+        // wrapped to fix PAXURL-289.
+        class DefaultMirrorSelectorWrapper implements MirrorSelector {
+
             final DefaultMirrorSelector delegate = new DefaultMirrorSelector();
             final Map<String, Authentication> authMap = new HashMap<String, Authentication>();
 
-			@Override
-			public RemoteRepository getMirror(RemoteRepository repository) {
-				RemoteRepository repo = delegate.getMirror( repository );
-				if( repo != null ) {
-					Authentication mirrorAuth = authMap.get( repo.getId() );
-					if( mirrorAuth != null ) {
-						RemoteRepository.Builder builder = new RemoteRepository.Builder( repo );
-						repo = builder.setAuthentication( mirrorAuth ).build();
-					}
-				}
-				return repo;
-			}
+            @Override
+            public RemoteRepository getMirror(RemoteRepository repository) {
+                RemoteRepository repo = delegate.getMirror(repository);
+                if (repo != null) {
+                    Authentication mirrorAuth = authMap.get(repo.getId());
+                    if (mirrorAuth != null) {
+                        RemoteRepository.Builder builder = new RemoteRepository.Builder(repo);
+                        repo = builder.setAuthentication(mirrorAuth).build();
+                    }
+                }
+                return repo;
+            }
 
-			public DefaultMirrorSelector add( String id, String url, String type, boolean repositoryManager,
-					String mirrorOfIds, String mirrorOfTypes, Authentication authentication ) {
-				LOG.trace("adding mirror {} auth = {}", id, authentication != null);
-				if( authentication != null ) {
-					authMap.put(id, authentication);
-				}
-				return delegate.add( id, url, type, repositoryManager, mirrorOfIds, mirrorOfTypes );
-			}
-    	}
-
-    	DefaultMirrorSelectorWrapper selector = new DefaultMirrorSelectorWrapper();
-        for( Mirror m : m_settings.getMirrors() ) {
-            selector.add( m.getId(), m.getUrl(), null, false, m.getMirrorOf(), "*", getAuthentication( m.getId() ) );
+            public DefaultMirrorSelector add(String id, String url, String type, boolean repositoryManager,
+                                             String mirrorOfIds, String mirrorOfTypes, Authentication authentication) {
+                LOG.trace("adding mirror {} auth = {}", id, authentication != null);
+                if (authentication != null) {
+                    authMap.put(id, authentication);
+                }
+                return delegate.add(id, url, type, repositoryManager, mirrorOfIds, mirrorOfTypes);
+            }
         }
-        if( mirror != null ) {
-            selector.add(mirror.getId(), mirror.getUrl(), null, false, mirror.getMirrorOf(), "*", getAuthentication( mirror.getId() ) );
+
+        DefaultMirrorSelectorWrapper selector = new DefaultMirrorSelectorWrapper();
+        for (Mirror m : m_settings.getMirrors()) {
+            selector.add(m.getId(), m.getUrl(), null, false, m.getMirrorOf(), "*", getAuthentication(m.getId()));
+        }
+        if (mirror != null) {
+            selector.add(mirror.getId(), mirror.getUrl(), null, false, mirror.getMirrorOf(), "*", getAuthentication(mirror.getId()));
         }
         return selector;
     }
@@ -408,16 +408,14 @@ public class AetherBasedResolver implements MavenResolver {
         List<MavenRepositoryURL> urls = Collections.emptyList();
         try {
             urls = m_config.getRepositories();
+        } catch (MalformedURLException exc) {
+            LOG.error("invalid repository URLs", exc);
         }
-        catch( MalformedURLException exc ) {
-            LOG.error( "invalid repository URLs", exc );
-        }
-        for( MavenRepositoryURL r : urls ) {
-            if( r.isMulti() ) {
-                addSubDirs( list, r.getFile() );
-            }
-            else {
-                addRepo( list, r );
+        for (MavenRepositoryURL r : urls) {
+            if (r.isMulti()) {
+                addSubDirs(list, r.getFile());
+            } else {
+                addRepo(list, r);
             }
         }
 
@@ -429,15 +427,13 @@ public class AetherBasedResolver implements MavenResolver {
         List<MavenRepositoryURL> urls = Collections.emptyList();
         try {
             urls = m_config.getDefaultRepositories();
+        } catch (MalformedURLException exc) {
+            LOG.error("invalid repository URLs", exc);
         }
-        catch( MalformedURLException exc ) {
-            LOG.error( "invalid repository URLs", exc );
-        }
-        for( MavenRepositoryURL r : urls ) {
-            if( r.isMulti() ) {
+        for (MavenRepositoryURL r : urls) {
+            if (r.isMulti()) {
                 addLocalSubDirs(list, r.getFile());
-            }
-            else {
+            } else {
                 addLocalRepo(list, r);
             }
         }
@@ -445,21 +441,20 @@ public class AetherBasedResolver implements MavenResolver {
         return list;
     }
 
-    private void addSubDirs( List<RemoteRepository> list, File parentDir ) {
-        if( !parentDir.isDirectory() ) {
-            LOG.debug( "Repository marked with @multi does not resolve to a directory: "
-                + parentDir );
+    private void addSubDirs(List<RemoteRepository> list, File parentDir) {
+        if (!parentDir.isDirectory()) {
+            LOG.debug("Repository marked with @multi does not resolve to a directory: "
+                    + parentDir);
             return;
         }
 
-        for( File repo : getSortedChildDirectories(parentDir) ) {
+        for (File repo : getSortedChildDirectories(parentDir)) {
             try {
                 String repoURI = repo.toURI().toString() + "@id=" + repo.getName();
-                LOG.debug( "Adding repo from inside multi dir: " + repoURI );
-                addRepo( list, new MavenRepositoryURL( repoURI ) );
-            }
-            catch( MalformedURLException e ) {
-                LOG.error( "Error resolving repo url of a multi repo " + repo.toURI() );
+                LOG.debug("Adding repo from inside multi dir: " + repoURI);
+                addRepo(list, new MavenRepositoryURL(repoURI));
+            } catch (MalformedURLException e) {
+                LOG.error("Error resolving repo url of a multi repo " + repo.toURI());
             }
         }
     }
@@ -473,17 +468,17 @@ public class AetherBasedResolver implements MavenResolver {
      * @param parent A non-null parent File for which you want to get the sorted list of child directories.
      * @return The alphabetically sorted list of files, or an empty list if parent.listFiles() returns null.
      */
-    private static File[] getSortedChildDirectories( File parent ){
-        File[] files = parent.listFiles( new FileFilter(){
+    private static File[] getSortedChildDirectories(File parent) {
+        File[] files = parent.listFiles(new FileFilter() {
             @Override
             public boolean accept(File pathname) {
                 return pathname.isDirectory();
             }
         });
-        if( files == null ){
+        if (files == null) {
             return new File[0];
         }
-        Arrays.sort(files, new Comparator<File>(){
+        Arrays.sort(files, new Comparator<File>() {
             @Override
             public int compare(File o1, File o2) {
                 return o1.getName().compareTo(o2.getName());
@@ -492,7 +487,7 @@ public class AetherBasedResolver implements MavenResolver {
         return files;
     }
 
-    private void addRepo( List<RemoteRepository> list, MavenRepositoryURL repo ) {
+    private void addRepo(List<RemoteRepository> list, MavenRepositoryURL repo) {
         String releasesUpdatePolicy = repo.getReleasesUpdatePolicy();
         if (releasesUpdatePolicy == null || releasesUpdatePolicy.isEmpty()) {
             releasesUpdatePolicy = UPDATE_POLICY_DAILY;
@@ -509,40 +504,39 @@ public class AetherBasedResolver implements MavenResolver {
         if (snapshotsChecksumPolicy == null || snapshotsChecksumPolicy.isEmpty()) {
             snapshotsChecksumPolicy = CHECKSUM_POLICY_WARN;
         }
-        RemoteRepository.Builder builder = new RemoteRepository.Builder( repo.getId(), REPO_TYPE, repo.getURL().toExternalForm() );
-        RepositoryPolicy releasePolicy = new RepositoryPolicy( repo.isReleasesEnabled(), releasesUpdatePolicy, releasesChecksumPolicy );
-        builder.setReleasePolicy( releasePolicy );
-        RepositoryPolicy snapshotPolicy = new RepositoryPolicy( repo.isSnapshotsEnabled(), snapshotsUpdatePolicy, snapshotsChecksumPolicy );
-        builder.setSnapshotPolicy( snapshotPolicy );
-        Authentication authentication = getAuthentication( repo.getId() );
+        RemoteRepository.Builder builder = new RemoteRepository.Builder(repo.getId(), REPO_TYPE, repo.getURL().toExternalForm());
+        RepositoryPolicy releasePolicy = new RepositoryPolicy(repo.isReleasesEnabled(), releasesUpdatePolicy, releasesChecksumPolicy);
+        builder.setReleasePolicy(releasePolicy);
+        RepositoryPolicy snapshotPolicy = new RepositoryPolicy(repo.isSnapshotsEnabled(), snapshotsUpdatePolicy, snapshotsChecksumPolicy);
+        builder.setSnapshotPolicy(snapshotPolicy);
+        Authentication authentication = getAuthentication(repo.getId());
         if (authentication != null) {
-            builder.setAuthentication( authentication );
+            builder.setAuthentication(authentication);
         }
-        list.add( builder.build() );
+        list.add(builder.build());
     }
 
-    private void addLocalSubDirs( List<LocalRepository> list, File parentDir ) {
-        if( !parentDir.isDirectory() ) {
-            LOG.debug( "Repository marked with @multi does not resolve to a directory: "
-                    + parentDir );
+    private void addLocalSubDirs(List<LocalRepository> list, File parentDir) {
+        if (!parentDir.isDirectory()) {
+            LOG.debug("Repository marked with @multi does not resolve to a directory: "
+                    + parentDir);
             return;
         }
-        for( File repo : getSortedChildDirectories(parentDir) ) {
+        for (File repo : getSortedChildDirectories(parentDir)) {
             try {
                 String repoURI = repo.toURI().toString() + "@id=" + repo.getName();
-                LOG.debug( "Adding repo from inside multi dir: " + repoURI );
+                LOG.debug("Adding repo from inside multi dir: " + repoURI);
                 addLocalRepo(list, new MavenRepositoryURL(repoURI));
-            }
-            catch( MalformedURLException e ) {
-                LOG.error( "Error resolving repo url of a multi repo " + repo.toURI() );
+            } catch (MalformedURLException e) {
+                LOG.error("Error resolving repo url of a multi repo " + repo.toURI());
             }
         }
     }
 
-    private void addLocalRepo( List<LocalRepository> list, MavenRepositoryURL repo ) {
+    private void addLocalRepo(List<LocalRepository> list, MavenRepositoryURL repo) {
         if (repo.getFile() != null) {
-            LocalRepository local = new LocalRepository( repo.getFile(), "simple" );
-            list.add( local );
+            LocalRepository local = new LocalRepository(repo.getFile(), "simple");
+            list.add(local);
         }
     }
 
@@ -583,8 +577,8 @@ public class AetherBasedResolver implements MavenResolver {
      * Resolve maven artifact as file in repository.
      */
     @Override
-    public File resolve( String groupId, String artifactId, String classifier,
-                             String extension, String version ) throws IOException {
+    public File resolve(String groupId, String artifactId, String classifier,
+                        String extension, String version) throws IOException {
         return resolve(groupId, artifactId, classifier, extension, version, null, null);
     }
 
@@ -596,27 +590,27 @@ public class AetherBasedResolver implements MavenResolver {
     /**
      * Resolve maven artifact as file in repository.
      */
-    public File resolve( String groupId, String artifactId, String classifier,
-                         String extension, String version,
-                         MavenRepositoryURL repositoryURL,
-                         Exception previousException) throws IOException {
-        Artifact artifact = new DefaultArtifact( groupId, artifactId, classifier, extension, version );
+    public File resolve(String groupId, String artifactId, String classifier,
+                        String extension, String version,
+                        MavenRepositoryURL repositoryURL,
+                        Exception previousException) throws IOException {
+        Artifact artifact = new DefaultArtifact(groupId, artifactId, classifier, extension, version);
         return resolve(artifact, repositoryURL, previousException);
     }
 
     /**
      * Resolve maven artifact as file in repository.
      */
-    public File resolve( Artifact artifact ) throws IOException {
+    public File resolve(Artifact artifact) throws IOException {
         return resolve(artifact, null, null);
     }
 
     /**
      * Resolve maven artifact as file in repository.
      */
-    public File resolve( Artifact artifact,
-                         MavenRepositoryURL repositoryURL,
-                         Exception previousException ) throws IOException {
+    public File resolve(Artifact artifact,
+                        MavenRepositoryURL repositoryURL,
+                        Exception previousException) throws IOException {
 
         List<LocalRepository> defaultRepos = selectDefaultRepositories();
         List<RemoteRepository> remoteRepos = selectRepositories();
@@ -659,16 +653,16 @@ public class AetherBasedResolver implements MavenResolver {
             }
         }
 
-        assignProxyAndMirrors( remoteRepos );
-        File resolved = resolve( defaultRepos, remoteRepos, artifact );
+        assignProxyAndMirrors(remoteRepos);
+        File resolved = resolve(defaultRepos, remoteRepos, artifact);
 
-        LOG.debug( "Resolved ({}) as {}", artifact.toString(), resolved.getAbsolutePath() );
+        LOG.debug("Resolved ({}) as {}", artifact.toString(), resolved.getAbsolutePath());
         return resolved;
     }
 
-    private File resolve( List<LocalRepository> defaultRepos,
-                          List<RemoteRepository> remoteRepos,
-                          Artifact artifact ) throws IOException {
+    private File resolve(List<LocalRepository> defaultRepos,
+                         List<RemoteRepository> remoteRepos,
+                         Artifact artifact) throws IOException {
 
         if (artifact.getExtension().isEmpty()) {
             artifact = new DefaultArtifact(
@@ -755,8 +749,7 @@ public class AetherBasedResolver implements MavenResolver {
                             return m_repoSystem
                                     .resolveArtifact(session, new ArtifactRequest(artifact, null, null))
                                     .getArtifact().getFile();
-                        }
-                        catch( ArtifactResolutionException e ) {
+                        } catch (ArtifactResolutionException e) {
                             // Ignore
                         }
                     }
@@ -764,25 +757,22 @@ public class AetherBasedResolver implements MavenResolver {
                     releaseSession(session);
                 }
             }
-        }
-        catch( InvalidVersionSpecificationException e ) {
+        } catch (InvalidVersionSpecificationException e) {
             // Should not happen
         }
-        RepositorySystemSession session = newSession( null );
+        RepositorySystemSession session = newSession(null);
         try {
-            artifact = resolveLatestVersionRange( session, remoteRepos, artifact );
+            artifact = resolveLatestVersionRange(session, remoteRepos, artifact);
             return m_repoSystem
-                .resolveArtifact( session, new ArtifactRequest( artifact, remoteRepos, null ) )
-                .getArtifact().getFile();
-        }
-        catch( ArtifactResolutionException e ) {
+                    .resolveArtifact(session, new ArtifactRequest(artifact, remoteRepos, null))
+                    .getArtifact().getFile();
+        } catch (ArtifactResolutionException e) {
             // we know there's one ArtifactResult, because there was one ArtifactRequest
             ArtifactResolutionException original = new ArtifactResolutionException(e.getResults(),
                     "Error resolving artifact " + artifact.toString(), null);
 
             throw configureIOException(original, e, e.getResult().getExceptions());
-        }
-        catch( VersionRangeResolutionException e ) {
+        } catch (VersionRangeResolutionException e) {
             // we know there's one ArtifactResult, because there was one ArtifactRequest
             VersionRangeResolutionException original = new VersionRangeResolutionException(e.getResult(),
                     "Error resolving artifact " + artifact.toString(), null);
@@ -814,7 +804,7 @@ public class AetherBasedResolver implements MavenResolver {
         for (Exception ex : suppressed) {
             exception.addSuppressed(ex);
         }
-        LOG.warn( exception.getMessage(), exception );
+        LOG.warn(exception.getMessage(), exception);
 
         return exception;
     }
@@ -831,7 +821,7 @@ public class AetherBasedResolver implements MavenResolver {
         RepositorySystemSession session = newSession();
         try {
             Metadata metadata = new DefaultMetadata(groupId, artifactId, version,
-                                                    type, Metadata.Nature.RELEASE_OR_SNAPSHOT);
+                    type, Metadata.Nature.RELEASE_OR_SNAPSHOT);
             List<MetadataRequest> requests = new ArrayList<MetadataRequest>();
             // TODO: previousException may be a hint to alter remote repository list to query
             for (RemoteRepository repository : getRepositories()) {
@@ -872,11 +862,8 @@ public class AetherBasedResolver implements MavenResolver {
                 Collections.sort(mr.getVersioning().getVersions(), VERSION_COMPARATOR);
                 Collections.sort(mr.getVersioning().getSnapshotVersions(), SNAPSHOT_VERSION_COMPARATOR);
                 File tmpFile = Files.createTempFile("mvn-", ".tmp").toFile();
-                FileOutputStream fos = new FileOutputStream(tmpFile);
-                try {
+                try (FileOutputStream fos = new FileOutputStream(tmpFile)) {
                     new MetadataXpp3Writer().write(fos, mr);
-                } finally {
-                    fos.close();
                 }
                 return tmpFile;
             }
@@ -894,7 +881,7 @@ public class AetherBasedResolver implements MavenResolver {
         RepositorySystemSession session = newSession();
         try {
             Artifact artifact = new DefaultArtifact(groupId, artifactId, classifier, extension, version,
-                                                    null, file);
+                    null, file);
             InstallRequest request = new InstallRequest();
             request.addArtifact(artifact);
             system.install(session, request);
@@ -911,8 +898,8 @@ public class AetherBasedResolver implements MavenResolver {
         RepositorySystemSession session = newSession();
         try {
             Metadata metadata = new DefaultMetadata(groupId, artifactId, version,
-                                                    type, Metadata.Nature.RELEASE_OR_SNAPSHOT,
-                                                    file);
+                    type, Metadata.Nature.RELEASE_OR_SNAPSHOT,
+                    file);
             InstallRequest request = new InstallRequest();
             request.addMetadata(metadata);
             system.install(session, request);
@@ -1037,7 +1024,7 @@ public class AetherBasedResolver implements MavenResolver {
             return t2;
         } else if (t2 == null) {
             return t1;
-        }  else {
+        } else {
             return t1.compareTo(t2) < 0 ? t2 : t1;
         }
     }
@@ -1066,28 +1053,27 @@ public class AetherBasedResolver implements MavenResolver {
      * @throws org.eclipse.aether.resolution.VersionRangeResolutionException
      *             in case of resolver errors.
      */
-    private Artifact resolveLatestVersionRange( RepositorySystemSession session,
-        List<RemoteRepository> remoteRepos, Artifact artifact )
-        throws VersionRangeResolutionException {
+    private Artifact resolveLatestVersionRange(RepositorySystemSession session,
+                                               List<RemoteRepository> remoteRepos, Artifact artifact)
+            throws VersionRangeResolutionException {
 
-        VersionRangeResult versionResult = m_repoSystem.resolveVersionRange( session,
-            new VersionRangeRequest( artifact, remoteRepos, null ) );
-        if( versionResult != null ) {
+        VersionRangeResult versionResult = m_repoSystem.resolveVersionRange(session,
+                new VersionRangeRequest(artifact, remoteRepos, null));
+        if (versionResult != null) {
             Version v = versionResult.getHighestVersion();
-            if( v != null ) {
+            if (v != null) {
 
-                artifact = artifact.setVersion( v.toString() );
-            }
-            else {
-                throw new VersionRangeResolutionException( versionResult,
-                    "No highest version found for " + artifact );
+                artifact = artifact.setVersion(v.toString());
+            } else {
+                throw new VersionRangeResolutionException(versionResult,
+                        "No highest version found for " + artifact);
             }
         }
         return artifact;
     }
 
     public RepositorySystemSession newSession() {
-        return newSession( null );
+        return newSession(null);
     }
 
     private RepositorySystemSession newSession(LocalRepository repo) {
@@ -1124,28 +1110,28 @@ public class AetherBasedResolver implements MavenResolver {
     private RepositorySystemSession createSession(LocalRepository repo) {
         DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
 
-        if( repo != null ) {
-            session.setLocalRepositoryManager( m_repoSystem.newLocalRepositoryManager( session, repo ) );
+        if (repo != null) {
+            session.setLocalRepositoryManager(m_repoSystem.newLocalRepositoryManager(session, repo));
         } else {
-            session.setLocalRepositoryManager( m_repoSystem.newLocalRepositoryManager( session, getLocalRepository() ) );
+            session.setLocalRepositoryManager(m_repoSystem.newLocalRepositoryManager(session, getLocalRepository()));
         }
 
-        session.setMirrorSelector( m_mirrorSelector );
-        session.setProxySelector( m_proxySelector );
+        session.setMirrorSelector(m_mirrorSelector);
+        session.setProxySelector(m_proxySelector);
 
         String updatePolicy = m_config.getGlobalUpdatePolicy();
-        if( null != updatePolicy ) {
-            session.setUpdatePolicy( updatePolicy );
+        if (null != updatePolicy) {
+            session.setUpdatePolicy(updatePolicy);
         }
 
         String checksumPolicy = m_config.getGlobalChecksumPolicy();
-        if( null != checksumPolicy ) {
+        if (null != checksumPolicy) {
             session.setChecksumPolicy(checksumPolicy);
         }
 
         for (Server server : m_settings.getServers()) {
             if (server.getConfiguration() != null
-                && ((Xpp3Dom)server.getConfiguration()).getChild("httpHeaders") != null) {
+                    && ((Xpp3Dom) server.getConfiguration()).getChild("httpHeaders") != null) {
                 addServerConfig(session, server);
             }
         }
@@ -1159,61 +1145,60 @@ public class AetherBasedResolver implements MavenResolver {
         // (from org.apache.maven.wagon.AbstractWagon.getReadTimeout()), we explicitly configure aether session
         // config with: PartialFile.Factory timeout == connection timeout
         int defaultTimeut = m_config.getTimeout();
-        Integer timeout = m_config.getProperty( ServiceConstants.PROPERTY_SOCKET_CONNECTION_TIMEOUT, defaultTimeut, Integer.class );
-        session.setConfigProperty( ConfigurationProperties.CONNECT_TIMEOUT, timeout );
-        session.setConfigProperty( ConfigurationProperties.REQUEST_TIMEOUT, timeout );
+        Integer timeout = m_config.getProperty(ServiceConstants.PROPERTY_SOCKET_CONNECTION_TIMEOUT, defaultTimeut, Integer.class);
+        session.setConfigProperty(ConfigurationProperties.CONNECT_TIMEOUT, timeout);
+        session.setConfigProperty(ConfigurationProperties.REQUEST_TIMEOUT, timeout);
 
-        session.setOffline( m_config.isOffline() );
+        session.setOffline(m_config.isOffline());
 
         // PAXURL-322
-        boolean updateReleases = m_config.getProperty( ServiceConstants.PROPERTY_UPDATE_RELEASES, false, Boolean.class );
-        session.setConfigProperty( PaxLocalRepositoryManager.PROPERTY_UPDATE_RELEASES, updateReleases );
+        boolean updateReleases = m_config.getProperty(ServiceConstants.PROPERTY_UPDATE_RELEASES, false, Boolean.class);
+        session.setConfigProperty(PaxLocalRepositoryManager.PROPERTY_UPDATE_RELEASES, updateReleases);
 
         return session;
     }
 
     private LocalRepository getLocalRepository() {
-      if (localRepository == null) {
-          File local;
-          if( m_config.getLocalRepository() != null ) {
-              local = m_config.getLocalRepository().getFile();
-          } else {
-              local = new File(System.getProperty( "user.home" ), ".m2/repository");
-          }
-          localRepository = new LocalRepository(local, "simple");
-      }
-      return localRepository;
-    }
-
-    private void addServerConfig( DefaultRepositorySystemSession session, Server server )
-    {
-        Map<String,String> headers = new HashMap<String, String>();
-        Xpp3Dom configuration = (Xpp3Dom) server.getConfiguration();
-        Xpp3Dom httpHeaders = configuration.getChild( "httpHeaders" );
-        for (Xpp3Dom httpHeader : httpHeaders.getChildren( "httpHeader" )) {
-            Xpp3Dom name = httpHeader.getChild( "name" );
-            String headerName = name.getValue();
-            Xpp3Dom value = httpHeader.getChild( "value" );
-            String headerValue = value.getValue();
-            headers.put( headerName, headerValue );
+        if (localRepository == null) {
+            File local;
+            if (m_config.getLocalRepository() != null) {
+                local = m_config.getLocalRepository().getFile();
+            } else {
+                local = new File(System.getProperty("user.home"), ".m2/repository");
+            }
+            localRepository = new LocalRepository(local, "simple");
         }
-        session.setConfigProperty( String.format("%s.%s", ConfigurationProperties.HTTP_HEADERS, server.getId() ), headers );
+        return localRepository;
     }
 
-    private Authentication getAuthentication( org.apache.maven.settings.Proxy proxy ) {
+    private void addServerConfig(DefaultRepositorySystemSession session, Server server) {
+        Map<String, String> headers = new HashMap<String, String>();
+        Xpp3Dom configuration = (Xpp3Dom) server.getConfiguration();
+        Xpp3Dom httpHeaders = configuration.getChild("httpHeaders");
+        for (Xpp3Dom httpHeader : httpHeaders.getChildren("httpHeader")) {
+            Xpp3Dom name = httpHeader.getChild("name");
+            String headerName = name.getValue();
+            Xpp3Dom value = httpHeader.getChild("value");
+            String headerValue = value.getValue();
+            headers.put(headerName, headerValue);
+        }
+        session.setConfigProperty(String.format("%s.%s", ConfigurationProperties.HTTP_HEADERS, server.getId()), headers);
+    }
+
+    private Authentication getAuthentication(org.apache.maven.settings.Proxy proxy) {
         // user, pass
-        if( proxy.getUsername() != null ) {
-            return new AuthenticationBuilder().addUsername( proxy.getUsername() )
-                .addPassword( proxy.getPassword() ).build();
+        if (proxy.getUsername() != null) {
+            return new AuthenticationBuilder().addUsername(proxy.getUsername())
+                    .addPassword(proxy.getPassword()).build();
         }
         return null;
     }
 
-    private Authentication getAuthentication( String repoId ) {
-        Server server = m_settings.getServer( repoId );
+    private Authentication getAuthentication(String repoId) {
+        Server server = m_settings.getServer(repoId);
         if (server != null && server.getUsername() != null) {
             AuthenticationBuilder authBuilder = new AuthenticationBuilder();
-            authBuilder.addUsername( server.getUsername() ).addPassword( server.getPassword() );
+            authBuilder.addUsername(server.getUsername()).addPassword(server.getPassword());
             return authBuilder.build();
         }
         return null;
@@ -1225,35 +1210,31 @@ public class AetherBasedResolver implements MavenResolver {
         // default timeout (both connection and read timeouts)
         int defaultTimeout = m_config.getTimeout();
         // connection timeout
-        int connectionTimeout = m_config.getProperty( ServiceConstants.PROPERTY_SOCKET_CONNECTION_TIMEOUT, defaultTimeout, Integer.class );
+        int connectionTimeout = m_config.getProperty(ServiceConstants.PROPERTY_SOCKET_CONNECTION_TIMEOUT, defaultTimeout, Integer.class);
         // read timeout
-        int soTimeout = m_config.getProperty( ServiceConstants.PROPERTY_SOCKET_SO_TIMEOUT, defaultTimeout, Integer.class );
-        locator.setServices( WagonProvider.class, new ManualWagonProvider( m_client, soTimeout, connectionTimeout ) );
-        locator.addService( TransporterFactory.class, WagonTransporterFactory.class );
+        int soTimeout = m_config.getProperty(ServiceConstants.PROPERTY_SOCKET_SO_TIMEOUT, defaultTimeout, Integer.class);
+        locator.setServices(WagonProvider.class, new ManualWagonProvider(m_client, soTimeout, connectionTimeout));
+        locator.addService(TransporterFactory.class, WagonTransporterFactory.class);
         locator.addService(RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class);
 
         decrypter = new ConfigurableSettingsDecrypter();
         PaxUrlSecDispatcher secDispatcher = new PaxUrlSecDispatcher();
-        try
-        {
-            secDispatcher.setCipher( new DefaultPlexusCipher() );
+        try {
+            secDispatcher.setCipher(new DefaultPlexusCipher());
+        } catch (PlexusCipherException exc) {
+            throw new IllegalStateException(exc);
         }
-        catch( PlexusCipherException exc )
-        {
-            throw new IllegalStateException( exc );
-        }
-        secDispatcher.setConfigurationFile( m_config.getSecuritySettings() );
-        decrypter.setSecurityDispatcher( secDispatcher );
+        secDispatcher.setConfigurationFile(m_config.getSecuritySettings());
+        decrypter.setSecurityDispatcher(secDispatcher);
 
-        locator.setServices( SettingsDecrypter.class, decrypter );
+        locator.setServices(SettingsDecrypter.class, decrypter);
 
+        locator.setService(LocalRepositoryManagerFactory.class,
+                PaxLocalRepositoryManagerFactory.class);
+        locator.setService(org.eclipse.aether.spi.log.LoggerFactory.class,
+                Slf4jLoggerFactory.class);
 
-
-        locator.setService( LocalRepositoryManagerFactory.class,
-            PaxLocalRepositoryManagerFactory.class );
-        locator.setService( org.eclipse.aether.spi.log.LoggerFactory.class,
-            Slf4jLoggerFactory.class );
-
-        return locator.getService( RepositorySystem.class );
+        return locator.getService(RepositorySystem.class);
     }
+
 }
