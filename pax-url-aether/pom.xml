@@ -265,6 +265,7 @@
                 <filtering>true</filtering>
                 <excludes>
                     <exclude>repo2/**</exclude>
+                    <exclude>repo3/**</exclude>
                     <exclude>repomulti/**</exclude>
                     <exclude>repomulti_with_file/**</exclude>
                 </excludes>
@@ -274,6 +275,7 @@
                 <filtering>false</filtering>
                 <includes>
                     <include>repo2/**</include>
+                    <include>repo3/**</include>
                     <include>repomulti/**</include>
                     <include>repomulti_with_file/**</include>
                 </includes>
@@ -317,6 +319,25 @@
                                     </includes>
                                 </relocation>
                             </relocations>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>org/apache/commons/codec/language/**</exclude>
+                                        <exclude>org/apache/commons/lang3/arch/**</exclude>
+                                        <exclude>org/apache/commons/lang3/builder/**</exclude>
+                                        <exclude>org/apache/commons/lang3/concurrent/**</exclude>
+                                        <exclude>org/apache/commons/lang3/event/**</exclude>
+                                        <exclude>org/apache/commons/lang3/exception/**</exclude>
+                                        <exclude>org/apache/commons/lang3/math/**</exclude>
+                                        <exclude>org/apache/commons/lang3/mutable/**</exclude>
+                                        <exclude>org/apache/commons/lang3/reflect/**</exclude>
+                                        <exclude>org/apache/commons/lang3/text/**</exclude>
+                                        <exclude>org/apache/commons/lang3/time/**</exclude>
+                                        <exclude>org/apache/commons/lang3/tuple/**</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
                         </configuration>
                     </execution>
                 </executions>
