@@ -34,6 +34,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Pattern;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -257,6 +258,7 @@ abstract class AbstractConnection
             	        dbf.setAttribute("http://xml.org/sax/features/validation", false);
             	        dbf.setAttribute("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
             	        dbf.setAttribute("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+                        dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
 
             		}
             		DocumentBuilder db = dbf.newDocumentBuilder();
