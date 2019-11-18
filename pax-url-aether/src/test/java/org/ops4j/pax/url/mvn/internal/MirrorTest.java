@@ -287,4 +287,34 @@ public class MirrorTest {
 		assertEquals( CHECKSUM_POLICY_FAIL, mirrors2.get( 0 ).getPolicy( false ).getChecksumPolicy() );
 
 	}
+
+	@Test
+	public void mirrorFromSysProperty() throws IOException, InterruptedException {
+
+		MavenConfigurationImpl config = getConfig("settings-no-mirror.xml", "fake", "http://qfdqfqfqf.fra/repo");
+		File localRepo = new File(config.getSettings().getLocalRepository());
+		localRepo.mkdirs();
+
+		String previous = System.getProperty(ServiceConstants.PROPERTY_MAVEN_MIRROR_URL_SYS);
+		try {
+			System.setProperty(ServiceConstants.PROPERTY_MAVEN_MIRROR_URL_SYS, "my-mirror::http://localhost:" + System.getProperty("jetty.http.port"));
+			Properties p = new Properties();
+			MavenConfigurationImpl config2 = new MavenConfigurationImpl(new PropertiesPropertyResolver(
+					p), ServiceConstants.PID);
+			config.getSettings().setMirrors(config2.getSettings().getMirrors());
+
+			Connection c = new Connection(new URL(null, "mvn:ant/ant/1.5.1", new org.ops4j.pax.url.mvn.Handler()),
+					new AetherBasedResolver(config));
+			c.getInputStream();
+			assertEquals("the artifact must be downloaded", true, new File(localRepo,
+					"ant/ant/1.5.1/ant-1.5.1.jar").exists());
+
+			assertEquals("my-mirror", config.getSettings().getMirrors().get(0).getId());
+		} finally {
+			if (previous != null) {
+				System.setProperty(ServiceConstants.PROPERTY_MAVEN_MIRROR_URL_SYS, previous);
+			}
+		}
+	}
+
 }

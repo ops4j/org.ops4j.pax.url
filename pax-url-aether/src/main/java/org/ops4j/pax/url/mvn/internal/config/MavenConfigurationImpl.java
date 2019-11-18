@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.maven.settings.Mirror;
 import org.apache.maven.settings.Profile;
 import org.apache.maven.settings.Repository;
 import org.apache.maven.settings.Settings;
@@ -663,6 +664,30 @@ public class MavenConfigurationImpl implements MavenConfiguration {
         if (localRepoPath != null) {
             settings.setLocalRepository(localRepoPath);
         }
+        // PAXURL-351 - external configuration of _single_ Mirror for all repositories
+        String mirror = System.getenv(ServiceConstants.PROPERTY_MAVEN_MIRROR_URL_ENV);
+        if (mirror == null || mirror.trim().equals("")) {
+            mirror = System.getProperty(ServiceConstants.PROPERTY_MAVEN_MIRROR_URL_SYS, "");
+        }
+        if (mirror != null && !mirror.trim().equals("")) {
+            String[] mirrorData = mirror.split("::");
+            String id = "mirror";
+            String url = null;
+            if (mirrorData.length > 1) {
+                id = mirrorData[0];
+                url = mirrorData[1];
+            } else {
+                url = mirrorData[0];
+            }
+            Mirror m = new Mirror();
+            m.setId(id);
+            m.setUrl(url);
+            m.setLayout("default");
+            m.setMirrorOf("*");
+            settings.setMirrors(Collections.singletonList(m));
+            LOGGER.debug("Setting global Maven mirror to " + url);
+        }
+
         return settings;
     }
 

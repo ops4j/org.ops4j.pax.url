@@ -39,6 +39,16 @@ public interface ServiceConstants
     String PROTOCOL = "mvn";
 
     /**
+     * If this environmental variable is specified, the value will be used as global Maven mirror (for all repositories)
+     */
+    String PROPERTY_MAVEN_MIRROR_URL_ENV = "MAVEN_MIRROR_URL";
+
+    /**
+     * If this system property is specified, the value will be used as global Maven mirror (for all repositories)
+     */
+    String PROPERTY_MAVEN_MIRROR_URL_SYS = "mavenMirrorUrl";
+
+    /**
      * Warning: use only in framework properties.  If present, do not accept configuration, wait for one without this flag.
      */
     String REQUIRE_CONFIG_ADMIN_CONFIG = "requireConfigAdminConfig";
