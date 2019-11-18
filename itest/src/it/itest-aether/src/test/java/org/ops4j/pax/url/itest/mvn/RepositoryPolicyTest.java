@@ -27,6 +27,7 @@ import java.util.UUID;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -85,6 +86,7 @@ public class RepositoryPolicyTest
     }
 
     @Test
+    @Ignore
     public void resolveSnapshotWhenSnapshotsEnabled() throws IOException
     {
         System.setProperty( "org.ops4j.pax.url.mvn.repositories",
@@ -102,6 +104,7 @@ public class RepositoryPolicyTest
      * @throws IOException
      */
     @Test
+    @Ignore
     public void resolveUniqueSnapshot() throws IOException
     {
         System.setProperty( "org.ops4j.pax.url.mvn.repositories",
