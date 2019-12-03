@@ -80,14 +80,17 @@ public class Parser
      */
     private final OverwriteMode m_overwriteMode;
 
+    private final boolean m_certificateCheck;
+
     /**
      * Creates a new protocol parser.
      *
      * @param path the path part of the url (without starting wrap:)
+     * @param certificateCheck whether to enable trust verification in the TLS certificate
      *
      * @throws MalformedURLException if provided path does not comply to expected syntax or has malformed urls
      */
-    public Parser( final String path )
+    public Parser( final String path, final boolean certificateCheck )
         throws MalformedURLException
     {
         if( path == null || path.trim().length() == 0 )
@@ -138,6 +141,7 @@ public class Parser
             overwriteMode = OverwriteMode.KEEP;
         }
         m_overwriteMode = overwriteMode;
+        m_certificateCheck = certificateCheck;
     }
 
     /**
@@ -150,13 +154,12 @@ public class Parser
     private void parseInstructionsFile( final URL bndFileURL )
         throws MalformedURLException
     {
-        // TODO use the certificate check property from the handler instead of true bellow
         try
         {
             InputStream is = null;
             try
             {
-                is = URLUtils.prepareInputStream( bndFileURL, true );
+                is = URLUtils.prepareInputStream( bndFileURL, !m_certificateCheck );
                 m_wrappingProperties.load( is );
             }
             finally
