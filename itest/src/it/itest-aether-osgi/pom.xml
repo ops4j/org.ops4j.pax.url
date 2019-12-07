@@ -48,6 +48,12 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.ops4j.base</groupId>
+            <artifactId>ops4j-base-io</artifactId>
+            <version>${dependency.base.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
             <artifactId>pax-exam-container-native</artifactId>
             <version>${dependency.paxexam.version}</version>

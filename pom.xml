@@ -64,7 +64,7 @@
 
         <dependency.osgicore.version>4.3.1</dependency.osgicore.version>
         <dependency.osgicomp.version>4.3.1</dependency.osgicomp.version>
-        <dependency.base.version>1.5.0</dependency.base.version>
+        <dependency.base.version>1.5.1</dependency.base.version>
         <dependency.bndlib.version>2.3.0</dependency.bndlib.version>
         <dependency.obr.version>1.0.2</dependency.obr.version>
         <dependency.paxexam.version>3.5.0</dependency.paxexam.version>
