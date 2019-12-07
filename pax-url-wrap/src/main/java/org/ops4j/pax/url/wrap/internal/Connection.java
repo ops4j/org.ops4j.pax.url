@@ -64,7 +64,7 @@ public class Connection
         NullArgumentException.validateNotNull( configuration, "Service configuration" );
 
         m_configuration = configuration;
-        m_parser = new Parser( url.getPath() );
+        m_parser = new Parser( url.getPath(), m_configuration.getCertificateCheck() );
     }
 
     /**
