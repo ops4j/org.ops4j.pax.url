@@ -347,7 +347,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <environmentVariables>
-                        <NEXUS_ROOT>http://oss.sonatype.org</NEXUS_ROOT>
+                        <NEXUS_ROOT>https://oss.sonatype.org</NEXUS_ROOT>
                     </environmentVariables>
                     <systemPropertyVariables>
                         <jetty.http.port>${jetty.http.port}</jetty.http.port>

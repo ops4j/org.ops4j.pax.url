@@ -20,6 +20,7 @@ package org.ops4j.pax.url.mvn.s3mock;
 import java.io.InputStream;
 import java.net.URL;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -28,6 +29,7 @@ public class HandlerTest extends TestBase
 {
 
     @Test
+    @Ignore
     public void test() throws Exception
     {
 

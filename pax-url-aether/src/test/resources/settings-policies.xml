@@ -16,7 +16,7 @@
 			<repositories>
 				<repository>
 					<id>policy-repo</id>
-					<url>http://repo1.maven.org/maven2</url>
+					<url>https://repo1.maven.org/maven2</url>
 					<releases>
 						<enabled>true</enabled>
 						<checksumPolicy>fail</checksumPolicy>

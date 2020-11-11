@@ -80,7 +80,7 @@ public class AetherTest {
         centralProfile.setId( "central" );
         Repository central = new Repository();
         central.setId( "central" );
-        central.setUrl( "http://repo1.maven.org/maven2");
+        central.setUrl( "https://repo1.maven.org/maven2");
         centralProfile.addRepository( central );
         settings.addProfile( centralProfile );
         settings.addActiveProfile( "central" );
