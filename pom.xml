@@ -41,7 +41,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <release-paxurl-altGitURL>scm:git:git@github.com:ops4j/org.ops4j.pax.url.git</release-paxurl-altGitURL>
+        <release-paxurl-altGitURL>scm:git:https://github.com/ops4j/org.ops4j.pax.url.git</release-paxurl-altGitURL>
         <wiki.url>https://ops4j1.jira.com/wiki/spaces/paxurl/overview</wiki.url>
 
         <!-- versions of Maven plugins -->
@@ -86,7 +86,7 @@
     </properties>
 
     <scm>
-        <connection>scm:git:git@github.com:ops4j/org.ops4j.pax.url.git</connection>
+        <connection>scm:git:https://github.com/ops4j/org.ops4j.pax.url.git</connection>
         <developerConnection>${release-paxurl-altGitURL}</developerConnection>
         <url>https://github.com/ops4j/org.ops4j.pax.url/tree/master</url>
         <tag>HEAD</tag>
