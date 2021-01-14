@@ -12,6 +12,7 @@ Export-Service:\
 
 Import-Package:\
   javax.net.ssl,\
+  org.osgi.framework;version="[1.6,2)",\
   javax.xml.transform; resolution:=optional,\
   javax.xml.transform.stream; resolution:=optional,\
   aQute.service.scripting; resolution:=optional,\
