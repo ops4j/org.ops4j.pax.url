@@ -23,6 +23,9 @@ Import-Package:\
   org.w3c.dom; resolution:=optional,\
   org.xml.sax; resolution:=optional,\
   org.osgi.service.cm; resolution:=optional,\
+  org.osgi.framework;version="[1.6,2)",\
+  org.osgi.util.function;version="[1,2)",\
+  org.osgi.util.promise;version="[1,2)",\
   !org.slf4j.impl,\
   *
   
