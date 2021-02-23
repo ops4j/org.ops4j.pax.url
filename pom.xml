@@ -106,7 +106,6 @@
         <module>pax-url-war</module>
         <module>pax-url-wrap</module>
         <module>itest</module>
-        <module>pax-url-report</module>
     </modules>
 
     <dependencyManagement>
