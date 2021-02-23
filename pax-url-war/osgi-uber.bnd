@@ -16,6 +16,7 @@ Export-Service:\
 Import-Package:\
   org.osgi.service.component.annotations; resolution:=optional,\
   org.osgi.service.cm; resolution:=optional,\
+  org.osgi.service.repository; resolution:=optional,\
   org.osgi.framework;version="[1.6,2)",\
   org.osgi.util.function;version="[1,2)",\
   org.osgi.util.promise;version="[1,2)",\
