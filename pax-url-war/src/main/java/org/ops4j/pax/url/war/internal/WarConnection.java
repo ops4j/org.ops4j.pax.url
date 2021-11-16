@@ -41,6 +41,7 @@ public class WarConnection
 	private static final String APACHE_JASPER = "org.apache.jasper";
 	private static final String APACHE_TAGLIBS = "org.apache.taglibs";
 	private static final String SUN_EL = "com.sun.el";
+	private static final String JASPI = "org.apache.geronimo.components.jaspi";
 
 	/**
      * @see AbstractConnection#AbstractConnection(URL, Configuration)
@@ -72,6 +73,7 @@ public class WarConnection
                 + "javax.servlet.jsp.el; resolution:=optional,"
                 + "javax.servlet.jsp.jstl.*; resolution:=optional,"
                 + "javax.*; resolution:=optional,"
+				+ "org.apache.geronimo.components.jaspi;resolution:=optional,"
                 + "org.apache.jasper.*;resolution:=optional," //extra dependencies for JSP/JSF War Bundles
                 + "org.apache.taglibs.*;resolution:=optional,"
                 + "com.sun.el.*;resolution:=optional,"
@@ -130,6 +132,10 @@ public class WarConnection
         	if (!importPackages.contains(SUN_EL)) {
         		importPackages += ","+SUN_EL+".*;resolution:=optional";
         	}
+
+			if (!importPackages.contains(JASPI)) {
+				importPackages += ","+JASPI+";resolution:=optional";
+			}
         	
         	instructions.setProperty("Import-Package", importPackages);
         }
