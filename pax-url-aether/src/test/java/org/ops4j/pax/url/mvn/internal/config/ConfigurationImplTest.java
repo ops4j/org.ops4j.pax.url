@@ -66,6 +66,21 @@ public class ConfigurationImplTest
         new MavenConfigurationImpl( null, PID );
     }
 
+    @Test( expected = AssertionError.class )
+    public void getMalformedSettings()
+            throws FileNotFoundException
+    {
+        PropertyResolver propertyResolver = createMock( PropertyResolver.class );
+        File malformedSettings = FileUtils.getFileFromClasspath( "configuration/malformed-settings.xml" );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.useFallbackRepositories" ) ).andReturn( null );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.settings" ) ).andReturn(
+                malformedSettings.getAbsolutePath()
+        );
+        replay( propertyResolver );
+        new MavenConfigurationImpl( propertyResolver, PID );
+    }
+
     @Test
     public void getCertificateCheck()
     {
