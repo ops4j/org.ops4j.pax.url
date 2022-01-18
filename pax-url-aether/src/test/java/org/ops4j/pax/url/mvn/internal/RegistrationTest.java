@@ -15,6 +15,8 @@
  */
 package org.ops4j.pax.url.mvn.internal;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.lang.reflect.Field;
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -23,6 +25,7 @@ import java.util.Properties;
 import org.easymock.Capture;
 import org.easymock.IAnswer;
 import org.junit.Test;
+import org.ops4j.io.FileUtils;
 import org.osgi.framework.BundleContext;
 
 import static org.easymock.EasyMock.*;
@@ -62,6 +65,33 @@ public class RegistrationTest {
         verify(context);
 
         assertThat((String)registrationProperties.getValue().get("configuration"), equalTo("bundlecontext"));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void registerWithoutConfigAdminAndMalformedSettings() throws FileNotFoundException {
+        final Properties properties = new Properties();
+        properties.setProperty("org.ops4j.pax.url.mvn.localRepository", "target/repository");
+        File malformedSettings = FileUtils.getFileFromClasspath("configuration/malformed-settings.xml");
+        properties.setProperty("org.ops4j.pax.url.mvn.settings", malformedSettings.getAbsolutePath());
+
+        BundleContext context = createMock(BundleContext.class);
+        expect(context.getProperty(anyObject(String.class))).andAnswer(new IAnswer<String>() {
+            @Override
+            public String answer() throws Throwable {
+                String key = (String) getCurrentArguments()[0];
+                return properties.getProperty(key);
+            }
+        }).anyTimes();
+
+        expect(context.registerService(same("org.osgi.service.cm.ManagedService"),
+                anyObject(), anyObject(Dictionary.class))).andReturn(null);
+
+        replay(context);
+
+        Activator activator = new Activator();
+        activator.start(context);
+        verify(context);
     }
 
     @Test

@@ -87,7 +87,11 @@ public class Activator extends AbstractURLStreamHandlerService
     public void start( final BundleContext bundleContext )
     {
         m_bundleContext = bundleContext;
-        updated(null);
+        try {
+            updated(null);
+        } catch (AssertionError e) {
+            LOG.error("Unable to load MavenConfiguration '{}' : '{}'", e.getMessage(), e.getCause() != null ? e.getCause().getMessage() : "", e);
+        }
         registerManagedService();
     }
 
@@ -263,7 +267,12 @@ public class Activator extends AbstractURLStreamHandlerService
                     new ManagedService() {
                         @Override
                         public void updated(Dictionary<String, ?> dictionary) throws ConfigurationException {
-                            activator.updated(dictionary);
+                            try {
+                                activator.updated(dictionary);
+                            } catch (AssertionError e) {
+                                LOG.error("Unable to reload MavenConfiguration '{}' : '{}'", e.getMessage(), e.getCause() != null ? e.getCause().getMessage() : "", e);
+                                throw new ConfigurationException("", "", e.getCause());
+                            }
                         }
                     },
                     props
