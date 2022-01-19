@@ -14,14 +14,26 @@ Import-Package:\
   org.osgi.service.component.annotations; resolution:=optional,\
   org.osgi.service.cm; resolution:=optional,\
   org.osgi.framework;version="[1.6,2)",\
+  !aQute.bnd,\
   *
 
 Export-Package:\
-  ${bundle.namespace}; version="${pom.version}"
-  
+  ${bundle.namespace}; version="${pom.version}",\
+  !aQute.bnd.annotation.*
+
 Private-Package:\
   ${bundle.namespace}.internal.*,\
   aQute.*,\
+  aQute.bnd.annotation,\
+  aQute.bnd.annotation.baseline,\
+  aQute.bnd.annotation.component,\
+  aQute.bnd.annotation.headers,\
+  aQute.bnd.annotation.jpms,\
+  aQute.bnd.annotation.licenses,\
+  aQute.bnd.annotation.metatype,\
+  aQute.bnd.annotation.plugin,\
+  aQute.bnd.annotation.spi,\
+  aQute.bnd.annotation.xml,\
   org.ops4j.lang,\
   org.ops4j.monitors,\
   org.ops4j.monitors.exception,\
@@ -38,4 +50,5 @@ Private-Package:\
   Private-Package,\
   Embed-Dependency,\
   Embed-Transitive,\
-  Ignore-Package
+  Ignore-Package,\
+  Provide-Capability

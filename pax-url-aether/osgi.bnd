@@ -26,6 +26,8 @@ Import-Package:\
   !org.codehaus.plexus.*,\
   !org.jsoup.*,\
   !org.eclipse.sisu.*,\
+  sun.misc; resolution:=optional,\
+  sun.nio.ch; resolution:=optional,\
   *
 
 Export-Package:\
