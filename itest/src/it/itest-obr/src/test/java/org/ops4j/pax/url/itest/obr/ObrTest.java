@@ -28,6 +28,7 @@ import java.net.URL;
 
 import javax.inject.Inject;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Configuration;
@@ -43,6 +44,7 @@ import org.osgi.framework.BundleException;
  * @author Harald Wellmann
  */
 @RunWith(PaxExam.class)
+@Ignore
 public class ObrTest
 {
     @Inject

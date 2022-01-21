@@ -183,7 +183,7 @@ public class AuthenticationTest
                                        new AetherBasedResolver( config ) );
 
         thrown.expect( IOException.class );
-        thrown.expectMessage( "Not authorized" );
+        thrown.expectMessage( "status: 401 Unauthorized" );
         c.getInputStream();
     }
 
@@ -232,7 +232,7 @@ public class AuthenticationTest
         Connection c = new Connection( new URL( null, "mvn:ant/ant/1.5.1", new Handler() ),
                                        new AetherBasedResolver( config ) );
         thrown.expect( IOException.class );
-        thrown.expectMessage( "Not authorized" );
+        thrown.expectMessage( "status: 401 Unauthorized" );
         c.getInputStream();
     }    
 }

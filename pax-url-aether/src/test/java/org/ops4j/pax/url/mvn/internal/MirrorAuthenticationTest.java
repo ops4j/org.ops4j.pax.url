@@ -186,7 +186,7 @@ public class MirrorAuthenticationTest
                                        new AetherBasedResolver( config ) );
 
         thrown.expect( IOException.class );
-        thrown.expectMessage( "Not authorized" );
+        thrown.expectMessage( "status: 401 Unauthorized" );
         c.getInputStream();
     }
 

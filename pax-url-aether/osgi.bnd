@@ -94,4 +94,5 @@ Ignore-Package:\
   Embed-Dependency,\
   TEST_REPO,\
   Embed-Transitive,\
-  Ignore-Package
+  Ignore-Package,\
+  Require-Capability

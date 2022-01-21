@@ -1219,11 +1219,7 @@ public class AetherBasedResolver implements MavenResolver {
 
         decrypter = new ConfigurableSettingsDecrypter();
         PaxUrlSecDispatcher secDispatcher = new PaxUrlSecDispatcher();
-        try {
-            secDispatcher.setCipher(new DefaultPlexusCipher());
-        } catch (PlexusCipherException exc) {
-            throw new IllegalStateException(exc);
-        }
+        secDispatcher.setCipher(new DefaultPlexusCipher());
         secDispatcher.setConfigurationFile(m_config.getSecuritySettings());
         decrypter.setSecurityDispatcher(secDispatcher);
 
