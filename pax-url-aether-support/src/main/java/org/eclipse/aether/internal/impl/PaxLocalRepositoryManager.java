@@ -42,12 +42,12 @@ public class PaxLocalRepositoryManager extends SimpleLocalRepositoryManager {
     public PaxLocalRepositoryManager(File basedir,
                                      UpdatePolicyAnalyzer updatePolicyAnalyzer,
                                      RemoteRepositoryManager remoteRepositoryManager) {
-        super(basedir);
+        super(basedir, "pax-url", new DefaultLocalPathComposer());
         this.updatePolicyAnalyzer = updatePolicyAnalyzer;
         this.remoteRepositoryManager = remoteRepositoryManager;
 
         trackingFilename = "_pax-url-aether-remote.repositories";
-        trackingFileManager = new TrackingFileManager();
+        trackingFileManager = new DefaultTrackingFileManager();
     }
 
     @Override
@@ -92,7 +92,7 @@ public class PaxLocalRepositoryManager extends SimpleLocalRepositoryManager {
         super.add(session, request);
         if (!request.getArtifact().isSnapshot()
                 && (Boolean) session.getConfigProperties().get(PROPERTY_UPDATE_RELEASES)) {
-            String path = getPathForArtifact(request.getArtifact(), request.getRepository() == null);
+            String path = getPathForLocalArtifact(request.getArtifact());
             File artifactFile = new File(getRepository().getBasedir(), path);
             File trackingFile = getTrackingFile(artifactFile);
             String repoId = request.getRepository() == null ? "" : request.getRepository().getId();

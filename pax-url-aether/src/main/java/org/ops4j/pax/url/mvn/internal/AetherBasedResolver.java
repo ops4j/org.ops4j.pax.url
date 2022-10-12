@@ -1217,11 +1217,10 @@ public class AetherBasedResolver implements MavenResolver {
         locator.addService(TransporterFactory.class, WagonTransporterFactory.class);
         locator.addService(RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class);
 
-        decrypter = new ConfigurableSettingsDecrypter();
         PaxUrlSecDispatcher secDispatcher = new PaxUrlSecDispatcher();
         secDispatcher.setCipher(new DefaultPlexusCipher());
         secDispatcher.setConfigurationFile(m_config.getSecuritySettings());
-        decrypter.setSecurityDispatcher(secDispatcher);
+        decrypter = new ConfigurableSettingsDecrypter(secDispatcher);
 
         locator.setServices(SettingsDecrypter.class, decrypter);
 

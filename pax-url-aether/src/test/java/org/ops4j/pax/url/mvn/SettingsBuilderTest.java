@@ -81,11 +81,10 @@ public class SettingsBuilderTest {
         Settings settings = result.getEffectiveSettings();
         
         DefaultSettingsDecryptionRequest decryptionRequest = new DefaultSettingsDecryptionRequest( settings );
-        ConfigurableSettingsDecrypter decrypter = new ConfigurableSettingsDecrypter();
         PaxUrlSecDispatcher secDispatcher = new PaxUrlSecDispatcher();
         secDispatcher.setCipher( new DefaultPlexusCipher() );
         secDispatcher.setConfigurationFile( "src/test/resources/settings-security.xml" );
-        decrypter.setSecurityDispatcher( secDispatcher );
+        ConfigurableSettingsDecrypter decrypter = new ConfigurableSettingsDecrypter(secDispatcher);
         
         SettingsDecryptionResult decryptionResult = decrypter.decrypt( decryptionRequest );
         Server server = decryptionResult.getServer();
