@@ -88,7 +88,7 @@
 
     <scm>
         <connection>scm:git:https://github.com/ops4j/org.ops4j.pax.url.git</connection>
-        <developerConnection>${release-paxurl-altGitURL}</developerConnection>
+        <developerConnection>scm:git:git@github.com:ops4j/org.ops4j.pax.url.git</developerConnection>
         <url>https://github.com/ops4j/org.ops4j.pax.url/tree/master</url>
         <tag>HEAD</tag>
     </scm>
