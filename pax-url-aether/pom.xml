@@ -163,7 +163,7 @@
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>org.sonatype.plexus</groupId>
+            <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-sec-dispatcher</artifactId>
             <exclusions>
                 <exclusion>
@@ -176,6 +176,11 @@
         <dependency>
             <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-cipher</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.plexus</groupId>
+            <artifactId>plexus-utils</artifactId>
             <optional>true</optional>
         </dependency>
         <dependency>

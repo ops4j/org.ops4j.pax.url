@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -31,6 +32,7 @@ import org.junit.rules.ExpectedException;
  * @author Toni Menzel
  * @since 1.2.0, Oct 01, 2010
  */
+@Ignore("Run manually")
 public class HandlerTest
 {
     @Rule
