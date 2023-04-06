@@ -535,7 +535,7 @@ public class AetherBasedResolver implements MavenResolver {
 
     private void addLocalRepo(List<LocalRepository> list, MavenRepositoryURL repo) {
         if (repo.getFile() != null) {
-            LocalRepository local = new LocalRepository(repo.getFile(), "simple");
+            LocalRepository local = new LocalRepository(repo.getFile(), "pax-url");
             list.add(local);
         }
     }
