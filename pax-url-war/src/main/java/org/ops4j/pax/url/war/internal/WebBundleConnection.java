@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
+import java.util.jar.Attributes;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
 
@@ -61,7 +62,12 @@ public class WebBundleConnection extends WarConnection {
             	}
             };
             Manifest man = jis.getManifest();
-            if (man.getMainAttributes().getValue(Constants.BUNDLE_SYMBOLICNAME) != null)
+            Attributes mainAttributes = man.getMainAttributes();
+            if (mainAttributes.getValue(Constants.BUNDLE_SYMBOLICNAME) != null
+                    || mainAttributes.getValue(Constants.BUNDLE_VERSION) != null
+                    || mainAttributes.getValue(Constants.BUNDLE_MANIFESTVERSION) != null
+                    || mainAttributes.getValue(Constants.IMPORT_PACKAGE) != null
+                    || mainAttributes.getValue("Web-ContextPath") != null)
             {
                 isBundle = true;
             }
@@ -89,6 +95,11 @@ public class WebBundleConnection extends WarConnection {
                     || originalInstructions.size() == 1 && !originalInstructions.containsKey("Web-ContextPath"))
             {
                 throw new MalformedURLException("The webbundle URL handler can not be used with bundles");
+            }
+            String manifestVersion = originalInstructions.getProperty(Constants.BUNDLE_MANIFESTVERSION );
+            if (manifestVersion != null && !"2".equals(manifestVersion)) {
+                throw new IllegalArgumentException("Can't support " + Constants.BUNDLE_MANIFESTVERSION
+                        + ": " + manifestVersion);
             }
 
             instructions.remove(Analyzer.IMPORT_PACKAGE);

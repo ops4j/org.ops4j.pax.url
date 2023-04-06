@@ -19,32 +19,51 @@ package org.ops4j.pax.url.war.internal;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.net.JarURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Queue;
+import java.util.Set;
+import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.jar.JarInputStream;
+import java.util.jar.Manifest;
 import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import aQute.bnd.osgi.Analyzer;
+import aQute.bnd.osgi.Jar;
 import org.ops4j.lang.NullArgumentException;
+import org.ops4j.lang.Ops4jException;
 import org.ops4j.lang.PreConditionException;
 import org.ops4j.net.URLUtils;
 import org.ops4j.pax.swissbox.bnd.BndUtils;
 import org.ops4j.pax.swissbox.bnd.OverwriteMode;
 import org.ops4j.pax.url.war.ServiceConstants;
+import org.osgi.framework.Constants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -60,12 +79,13 @@ import org.xml.sax.SAXException;
 abstract class AbstractConnection
     extends URLConnection
 {
+    private static final Logger LOG = LoggerFactory.getLogger( BndUtils.class );
 
     /**
      * Service configuration.
      */
     private final Configuration m_configuration;
-    
+
 	/**
 	 * DocumentBuilderFactory for parsing web.xml files
 	 */
@@ -137,6 +157,12 @@ abstract class AbstractConnection
             );
         }
 
+        String manifestVersion = instructions.getProperty(Constants.BUNDLE_MANIFESTVERSION );
+        if (manifestVersion != null && !"2".equals(manifestVersion)) {
+            throw new IllegalArgumentException("Can't support " + Constants.BUNDLE_MANIFESTVERSION
+                    + ": " + manifestVersion);
+        }
+
         generateClassPathInstruction( instructions );
         
         generateImportPackageFromWebXML( instructions );
@@ -161,18 +187,166 @@ abstract class AbstractConnection
     
     /**
      * Actually create the bundle based on the parsed instructions and  the given stream
-     * @param inputStream
+     * @param jarInputStream
      * @param instructions
-     * @param warUri
+     * @param jarInfo
      * @param overwriteMode
      * @return an input stream for the generated bundle
      * @throws IOException
      * 
-     * @see BndUtils.createBundle
+     * @see {@code org.ops4j.pax.swissbox.bnd.BndUtils#createBundle()}
      */
-    protected InputStream createBundle(InputStream inputStream, Properties instructions, String warUri, OverwriteMode overwriteMode) throws IOException
+    protected InputStream createBundle(InputStream jarInputStream, Properties instructions, String jarInfo, OverwriteMode overwriteMode) throws IOException
     {
-        return BndUtils.createBundle( inputStream, instructions, warUri, overwriteMode );
+        // a copy from pax-swissbox-bnd, because we have to get rid of signing attributes
+
+        NullArgumentException.validateNotNull( jarInputStream, "Jar URL" );
+        NullArgumentException.validateNotNull( instructions, "Instructions" );
+        NullArgumentException.validateNotEmpty( jarInfo, "Jar info" );
+
+        LOG.debug( "Creating bundle for [" + jarInfo + "]" );
+        LOG.debug( "Overwrite mode: " + overwriteMode );
+        LOG.trace( "Using instructions " + instructions );
+
+        final Jar jar = new Jar( "dot", jarInputStream );
+        Manifest manifest = null;
+        try
+        {
+            manifest = jar.getManifest();
+        }
+        catch ( Exception e )
+        {
+            jar.close();
+            throw new Ops4jException( e );
+        }
+
+
+        // Make the jar a bundle if it is not already a bundle
+        if( manifest == null
+                || OverwriteMode.KEEP != overwriteMode
+                || ( manifest.getMainAttributes().getValue( Analyzer.EXPORT_PACKAGE ) == null
+                && manifest.getMainAttributes().getValue( Analyzer.IMPORT_PACKAGE ) == null )
+        )
+        {
+            // Do not use instructions as default for properties because it looks like BND uses the props
+            // via some other means then getProperty() and so the instructions will not be used at all
+            // So, just copy instructions to properties
+            final Properties properties = new Properties();
+            properties.putAll( instructions );
+
+            properties.put( "Generated-By-Ops4j-Pax-From", jarInfo );
+
+            final Analyzer analyzer = new Analyzer();
+            analyzer.setJar( jar );
+            analyzer.setProperties( properties );
+            if( manifest != null && OverwriteMode.MERGE == overwriteMode )
+            {
+                analyzer.mergeManifest( manifest );
+            }
+            checkMandatoryProperties( analyzer, jar, jarInfo );
+            try
+            {
+                Manifest newManifest = analyzer.calcManifest();
+                for (Map.Entry<String, Attributes> e : newManifest.getEntries().entrySet()) {
+                    Attributes attrs = e.getValue();
+                    for (Object k : attrs.keySet()) {
+                        String key = k.toString();
+                        if (key.matches("^[a-zA-Z0-9-]+-Digest(-[a-zA-Z0-9]+)?")) {
+                            attrs.remove(k);
+                        }
+                    }
+                }
+
+                jar.setManifest( newManifest );
+            }
+            catch ( Exception e )
+            {
+                jar.close();
+                throw new Ops4jException( e );
+            }
+        }
+
+        return createInputStream( jar );
+    }
+
+    /**
+     * Creates an piped input stream for the wrapped jar.
+     * This is done in a thread so we can return quickly.
+     *
+     * @param jar the wrapped jar
+     *
+     * @return an input stream for the wrapped jar
+     *
+     * @throws java.io.IOException re-thrown
+     */
+    private static PipedInputStream createInputStream( final Jar jar )
+            throws IOException
+    {
+        final CloseAwarePipedInputStream pin = new CloseAwarePipedInputStream();
+        final PipedOutputStream pout = new PipedOutputStream( pin );
+
+        new Thread()
+        {
+            public void run()
+            {
+                try
+                {
+                    jar.write( pout );
+                }
+                catch( Exception e )
+                {
+                    if (pin.closed)
+                    {
+                        // logging the message at DEBUG logging instead
+                        // -- reading thread probably stopped reading
+                        LOG.debug( "Bundle cannot be generated, pipe closed by reader", e );
+                    }
+                    else {
+                        LOG.warn( "Bundle cannot be generated", e );
+                    }
+                }
+                finally
+                {
+                    try
+                    {
+                        jar.close();
+                        pout.close();
+                    }
+                    catch( IOException ignore )
+                    {
+                        // if we get here something is very wrong
+                        LOG.error( "Bundle cannot be generated", ignore );
+                    }
+                }
+            }
+        }.start();
+
+        return pin;
+    }
+
+    /**
+     * Check if manadatory properties are present, otherwise generate default.
+     *
+     * @param analyzer     bnd analyzer
+     * @param jar          bnd jar
+     * @param symbolicName bundle symbolic name
+     */
+    private static void checkMandatoryProperties( final Analyzer analyzer,
+            final Jar jar,
+            final String symbolicName )
+    {
+        final String importPackage = analyzer.getProperty( Analyzer.IMPORT_PACKAGE );
+        if( importPackage == null || importPackage.trim().length() == 0 )
+        {
+            analyzer.setProperty( Analyzer.IMPORT_PACKAGE, "*;resolution:=optional" );
+        }
+        final String exportPackage = analyzer.getProperty( Analyzer.EXPORT_PACKAGE );
+        if( exportPackage == null || exportPackage.trim().length() == 0 )
+        {
+            analyzer.setProperty( Analyzer.EXPORT_PACKAGE, "*" );
+        }
+        final String localSymbolicName = analyzer.getProperty( Analyzer.BUNDLE_SYMBOLICNAME, symbolicName );
+        analyzer.setProperty( Analyzer.BUNDLE_SYMBOLICNAME, localSymbolicName.replaceAll( "[^a-zA-Z_0-9.-]", "_" ) );
     }
 
     /**
@@ -209,22 +383,19 @@ abstract class AbstractConnection
         throws IOException
     {
         final List<String> bundleClassPath = new ArrayList<String>();
+        // according to 128.4.5 WAR Manifest Processing, we need to deduct Bundle-ClassPath ONLY if it's not
+        // specified.
         // first take the bundle class path if present
         bundleClassPath.addAll( toList( instructions.getProperty( ServiceConstants.INSTR_BUNDLE_CLASSPATH ), "," ) );
-        // then get the list of jars in WEB-INF/lib
-        bundleClassPath.addAll( extractJarListFromWar( instructions.getProperty( ServiceConstants.INSTR_WAR_URL ) ) );
-        // check if we have a "WEB-INF/classpath" entry
-        if( !bundleClassPath.contains( "WEB-INF/classes" ) )
-        {
-            bundleClassPath.add( 0, "WEB-INF/classes" );
+        boolean needsDefault = bundleClassPath.isEmpty();
+        if (needsDefault) {
+            // only now add the defaults - even if original Bundle-ClassPath doesn't contain e.g., /WEB-INF/classes
+            bundleClassPath.add("WEB-INF/classes");
+            // then get the list of jars in WEB-INF/lib - but also sanitazed list of entries referenced from those
+            // jars' Class-Path header (non-OSGi)
+            bundleClassPath.addAll( extractJarListFromWar( instructions.getProperty( ServiceConstants.INSTR_WAR_URL ) ) );
         }
-        // check if we have a "." entry
-        /* War archives do have the required classes at WEB-INF/classes "." is not allowed
-        if( !bundleClassPath.contains( "." ) )
-        {
-            bundleClassPath.add( 0, "." );
-        }
-        */
+
         // set back the new bundle classpath
         instructions.setProperty( ServiceConstants.INSTR_BUNDLE_CLASSPATH, join( bundleClassPath, "," ) );
     }
@@ -307,7 +478,7 @@ abstract class AbstractConnection
                 }
             }
         }
-                	
+
     }
 
 
@@ -355,6 +526,9 @@ abstract class AbstractConnection
     {
         final List<String> list = new ArrayList<String>();
         JarFile jarFile = null;
+        // record all JARs inside the WAR - even if outside WEB-INF/lib, because they may be referenced
+        // from other JARs
+        Set<String> webInfLibJars = new HashSet<>();
         try
         {
             final JarURLConnection conn = (JarURLConnection) new URL( "jar:" + warUri + "!/" ).openConnection();
@@ -365,9 +539,9 @@ abstract class AbstractConnection
             {
                 JarEntry entry = (JarEntry) entries.nextElement();
                 String name = entry.getName();
-                if( !name.startsWith( "WEB-INF/lib/" ) )
+                while( name.startsWith("/") )
                 {
-                    continue;
+                    name = name.substring(1);
                 }
                 if( !name.endsWith( ".jar" ) )
                 {
@@ -375,9 +549,12 @@ abstract class AbstractConnection
                 }
                 if ( !checkJarIsLegal(name) )
                 {
-                	continue;
+                    continue;
                 }
-                list.add( name );
+                if( name.startsWith( "WEB-INF/lib/" ) )
+                {
+                    webInfLibJars.add(name);
+                }
             }
         }
         catch( ClassCastException e )
@@ -398,6 +575,47 @@ abstract class AbstractConnection
                 }
             }
         }
+
+        // now recursively process all WEB-INF/lib/*.jar to check their Class-Path - and if there are any valid
+        // jars referenced, process them too
+        Queue<String> toProcess = new LinkedList<>();
+        Set<String> processed = new HashSet<>();
+        toProcess.addAll(webInfLibJars);
+        processed.addAll(webInfLibJars);
+        while (!toProcess.isEmpty()) {
+            String jarName = toProcess.remove();
+
+            // never starts with "/" and jarName is always relative to the root of the bundle
+            final JarURLConnection conn = (JarURLConnection) new URL("jar:" + warUri + "!/" + jarName).openConnection();
+            conn.setUseCaches(false);
+            try (JarFile jf = conn.getJarFile()) {
+                ZipEntry entry = jf.getEntry(jarName);
+                try (InputStream is = jf.getInputStream(entry)) {
+                    // existence verified
+                    list.add(jarName);
+                    JarInputStream embeddedJar = new JarInputStream(is);
+                    String cp = embeddedJar.getManifest().getMainAttributes().getValue("Class-Path");
+                    String[] cpTab = cp.split("\\s*,\\s*");
+                    Path root = Paths.get("/", jarName).getParent();
+                    for (String elem : cpTab) {
+                        if (!elem.startsWith("/")) {
+                            // relativize
+                            Path newJar = root.resolve(elem).normalize();
+                            elem = newJar.toString();
+                        }
+                        while (elem.startsWith("/")) {
+                            elem = elem.substring(1);
+                        }
+                        if (processed.add(elem)) {
+                            toProcess.add(elem);
+                        }
+                    }
+                } catch (Exception ignored) {
+                }
+            } catch (Exception ignored) {
+            }
+        }
+
         return list;
     }
 
@@ -461,6 +679,20 @@ abstract class AbstractConnection
             }
         }
         return buffer.toString();
+    }
+
+    /**
+     * PipedInputStream implementation that keeps track of whether it has been closed or not.
+     */
+    private static final class CloseAwarePipedInputStream extends PipedInputStream
+    {
+        private boolean closed = false;
+
+        public void close() throws IOException
+        {
+            closed = true;
+            super.close();
+        }
     }
 
 }
