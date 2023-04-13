@@ -121,6 +121,10 @@ public class WebBundleConnection extends WarConnection {
 	        	ctxtPath = "/"+ctxtPath;
 	        	instructions.setProperty("Web-ContextPath", ctxtPath);
 	        }
+        } else {
+            // according to 128.4.5 WAR Manifest Processing, Web-ContextPath MUST be specified as query parameter
+            // to webbundle: URI
+            throw new IllegalArgumentException("Can't install a webbundle WAR without Web-ContextPath configured");
         }
         
         return super.createBundle(bis, instructions, warUri, OverwriteMode.MERGE);
