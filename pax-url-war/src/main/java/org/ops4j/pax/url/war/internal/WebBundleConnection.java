@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Iterator;
 import java.util.Properties;
 import java.util.jar.Attributes;
 import java.util.jar.JarInputStream;
@@ -31,15 +32,13 @@ import org.ops4j.pax.swissbox.bnd.BndUtils;
 import org.ops4j.pax.swissbox.bnd.OverwriteMode;
 import org.osgi.framework.Constants;
 
-import aQute.bnd.osgi.Analyzer;
-
 /**
  * Url connection for webbundle protocol handler.
  *
  * @author Guillaume Nodet
  */
 public class WebBundleConnection extends WarConnection {
-	
+
     public WebBundleConnection(URL url, Configuration config) throws MalformedURLException
     {
         super(url, config);
@@ -102,8 +101,16 @@ public class WebBundleConnection extends WarConnection {
                         + ": " + manifestVersion);
             }
 
-            instructions.remove(Analyzer.IMPORT_PACKAGE);
-            instructions.remove(Analyzer.EXPORT_PACKAGE);
+            // 128.4.4 WAB Modification
+            // if it's a bundle, we can change only Web-ContextPath
+            for (Iterator<?> it = instructions.keySet().iterator(); it.hasNext(); ) {
+                Object k = it.next();
+                String key = k == null ? "" : k.toString();
+                if (key.startsWith("-") || "WAR-URL".equals(key) || "Web-ContextPath".equals(key)) {
+                    continue;
+                }
+                it.remove();
+            }
         }
         
         //OSGi-Spec 128.3.1 WAB Definition
