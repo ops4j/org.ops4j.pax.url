@@ -11,7 +11,7 @@ Export-Service:\
   org.osgi.service.url.URLStreamHandlerService; url.handler.protocol=dir
 
 Import-Package:\
-  org.osgi.service.cm; resolution:=optional,\
+  org.osgi.service.cm;version="[1.4,2)"; resolution:=optional,\
   aQute.service.scripting; resolution:=optional,\
   javax.xml.parsers; resolution:=optional,\
   org.osgi.service.log; resolution:=optional,\

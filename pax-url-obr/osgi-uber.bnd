@@ -11,8 +11,9 @@ Export-Service:\
   org.osgi.service.url.URLStreamHandlerService; url.handler.protocol=obr
 
 Import-Package:\
+  org.osgi.framework;version="[1.6,2)",\
   org.osgi.service.obr; version="0.0.0",\
-  org.osgi.service.cm; resolution:=optional,\
+  org.osgi.service.cm;version="[1.4,2)"; resolution:=optional,\
   *
 
 Export-Package:\

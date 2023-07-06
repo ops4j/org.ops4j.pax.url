@@ -14,8 +14,8 @@ Export-Service:\
   org.osgi.service.url.URLStreamHandlerService; url.handler.protocol=webbundle
 
 Import-Package:\
-  org.osgi.service.component.annotations; resolution:=optional,\
-  org.osgi.service.cm; resolution:=optional,\
+  org.osgi.service.component.annotations;version="[1.2,2)"; resolution:=optional,\
+  org.osgi.service.cm;version="[1.4,2)"; resolution:=optional,\
   org.osgi.service.repository; resolution:=optional,\
   org.osgi.framework;version="[1.6,2)",\
   org.osgi.util.function;version="[1.1,2)",\

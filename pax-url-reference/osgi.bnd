@@ -11,6 +11,7 @@ Export-Service:\
   org.osgi.service.url.URLStreamHandlerService; url.handler.protocol=reference
 
 Import-Package:\
+  org.osgi.framework;version="[1.6,2)",\
   !org.slf4j.impl,\
   *
 

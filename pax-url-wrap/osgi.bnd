@@ -20,7 +20,7 @@ Import-Package:\
   org.osgi.service.log; resolution:=optional,\
   org.w3c.dom; resolution:=optional,\
   org.xml.sax; resolution:=optional,\
-  org.osgi.service.cm; resolution:=optional,\
+  org.osgi.service.cm;version="[1.4,2)"; resolution:=optional,\
   !org.slf4j.impl,\
   *
   
