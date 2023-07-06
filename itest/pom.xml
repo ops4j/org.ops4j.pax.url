@@ -81,28 +81,15 @@
                                 </configuration>
                             </execution>
                             <execution>
-                                <id>aether-osgi-eclipse-3.6</id>
+                                <id>aether-osgi-eclipse-3.12</id>
                                 <goals>
                                     <goal>run</goal>
                                 </goals>
                                 <configuration>
                                     <profiles>
-                                        <profile>eclipse-3.6</profile>
+                                        <profile>eclipse-3.12</profile>
                                     </profiles>
-                                    <cloneProjectsTo>${project.build.directory}/it/aether-osgi-eclipse-3.6</cloneProjectsTo>
-                                    <pom>src/it/itest-aether-osgi/pom.xml</pom>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>aether-osgi-eclipse-3.7</id>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                                <configuration>
-                                    <profiles>
-                                        <profile>eclipse-3.7</profile>
-                                    </profiles>
-                                    <cloneProjectsTo>${project.build.directory}/it/aether-osgi-eclipse-3.7</cloneProjectsTo>
+                                    <cloneProjectsTo>${project.build.directory}/it/aether-osgi-eclipse-3.12</cloneProjectsTo>
                                     <pom>src/it/itest-aether-osgi/pom.xml</pom>
                                 </configuration>
                             </execution>
@@ -123,29 +110,17 @@
         </profile>
 
         <profile>
-            <id>eclipse-3.6</id>
-            <dependencyManagement>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.eclipse.tycho</groupId>
-                        <artifactId>org.eclipse.osgi</artifactId>
-                        <version>3.6.2.R36x_v20110210</version>
-                    </dependency>
-                </dependencies>
-            </dependencyManagement>
-        </profile>
-
-        <profile>
-            <id>eclipse-3.7</id>
+            <id>eclipse-3.12</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
             <dependencyManagement>
                 <dependencies>
+                    <!-- 3.12.100 is the last version exporting org.osgi.framework 1.8 (R6) -->
                     <dependency>
-                        <groupId>org.eclipse.tycho</groupId>
+                        <groupId>org.eclipse.platform</groupId>
                         <artifactId>org.eclipse.osgi</artifactId>
-                        <version>3.7.0.v20110613</version>
+                        <version>3.12.100</version>
                     </dependency>
                 </dependencies>
             </dependencyManagement>

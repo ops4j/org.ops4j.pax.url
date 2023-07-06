@@ -35,7 +35,7 @@ public class ConnectionTest
     public void constructorWithNullURL()
         throws MalformedURLException
     {
-        new Connection( null, createMock( BundleContext.class ) );
+        new Connection( null, (BundleContext) createMock( BundleContext.class ) );
     }
 
     @Test()

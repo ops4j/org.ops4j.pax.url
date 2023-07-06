@@ -114,7 +114,7 @@
         <dependency>
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.metatype</artifactId>
-            <version>1.0.4</version>
+            <version>1.2.4</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -124,7 +124,7 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.tycho</groupId>
+            <groupId>org.eclipse.platform</groupId>
             <artifactId>org.eclipse.osgi</artifactId>
             <scope>test</scope>
         </dependency>
@@ -136,7 +136,7 @@
             <exclusions>
                 <exclusion>
                     <groupId>org.osgi</groupId>
-                    <artifactId>org.osgi.core</artifactId>
+                    <artifactId>osgi.core</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -160,8 +160,8 @@
         <dependencies>
             <dependency>
                 <groupId>org.osgi</groupId>
-                <artifactId>org.osgi.core</artifactId>
-                <version>4.3.1</version>
+                <artifactId>osgi.core</artifactId>
+                <version>6.0.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

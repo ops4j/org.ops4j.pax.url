@@ -75,7 +75,8 @@ import org.slf4j.LoggerFactory;
                   "org.apache.log4j.*",
                   "javax.xml.parsers.*",
                   "org.apache.http.ssl.*",
-                  "org.apache.http.conn.ssl.*"})
+                  "org.apache.http.conn.ssl.*",
+                  "com.sun.org.apache.xerces.*"})
 public class AetherMultiTest {
 
     private static Logger LOG = LoggerFactory.getLogger( AetherMultiTest.class );
@@ -194,7 +195,7 @@ public class AetherMultiTest {
          * mock that provides a predicatableBAD order to the file names returned
          * from listFiles, so we can thus make sure that our sorting logic works.
          */
-        final Capture<String> createCapture = new Capture<String>();
+        final Capture<String> createCapture = Capture.newInstance();
         PowerMock.expectNew(File.class, new Class<?>[]{String.class},
                             capture(createCapture) ).andStubAnswer(
             new IAnswer<File>() {
@@ -260,7 +261,7 @@ public class AetherMultiTest {
                                                     new String[]{"listFiles"},
                                                     fileName );
 
-        final Capture<FilenameFilter> filenameFilter = new Capture<FilenameFilter>();
+        final Capture<FilenameFilter> filenameFilter = Capture.newInstance();
         expect(mockFile.listFiles(capture(filenameFilter))).andStubAnswer(
             new IAnswer<File[]>(){
                 @Override
@@ -272,7 +273,7 @@ public class AetherMultiTest {
             }
         );
 
-        final Capture<FileFilter> filter = new Capture<FileFilter>();
+        final Capture<FileFilter> filter = Capture.newInstance();
         expect(mockFile.listFiles(capture(filter))).andStubAnswer(
             new IAnswer<File[]>(){
                 @Override

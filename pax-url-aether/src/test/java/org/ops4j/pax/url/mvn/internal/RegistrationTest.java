@@ -54,7 +54,7 @@ public class RegistrationTest {
                 anyObject(), anyObject(Dictionary.class))).andReturn(null);
         expect(context.registerService(same("org.osgi.service.cm.ManagedService"),
                 anyObject(), anyObject(Dictionary.class))).andReturn(null);
-        Capture<Dictionary<String, Object>> registrationProperties = new Capture<>();
+        Capture<Dictionary<String, Object>> registrationProperties = Capture.newInstance();
         expect(context.registerService(same("org.ops4j.pax.url.mvn.MavenResolver"),
                 anyObject(), capture(registrationProperties))).andReturn(null);
 
@@ -104,7 +104,7 @@ public class RegistrationTest {
 
         expect(context.registerService(same("org.osgi.service.url.URLStreamHandlerService"),
                 anyObject(), anyObject(Dictionary.class))).andReturn(null);
-        Capture<Dictionary<String, Object>> registrationProperties = new Capture<>();
+        Capture<Dictionary<String, Object>> registrationProperties = Capture.newInstance();
         expect(context.registerService(same("org.ops4j.pax.url.mvn.MavenResolver"),
                 anyObject(), capture(registrationProperties))).andReturn(null);
 
@@ -137,8 +137,8 @@ public class RegistrationTest {
             }
         }).anyTimes();
 
-        Capture<Object> urlStreamHandlerService = new Capture<>();
-        Capture<Object> mavenResolver = new Capture<>();
+        Capture<Object> urlStreamHandlerService = Capture.newInstance();
+        Capture<Object> mavenResolver = Capture.newInstance();
         expect(context.registerService(same("org.osgi.service.url.URLStreamHandlerService"),
                 capture(urlStreamHandlerService), anyObject(Dictionary.class))).andReturn(null).anyTimes();
         expect(context.registerService(same("org.osgi.service.cm.ManagedService"),

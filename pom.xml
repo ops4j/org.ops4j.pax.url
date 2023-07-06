@@ -64,12 +64,13 @@
 
         <!-- versions of Maven dependencies -->
 
-        <dependency.osgicore.version>4.3.1</dependency.osgicore.version>
-        <dependency.osgicomp.version>4.3.1</dependency.osgicomp.version>
+        <dependency.osgiannotation.version>6.0.0</dependency.osgiannotation.version>
+        <dependency.osgicore.version>6.0.0</dependency.osgicore.version>
+        <dependency.osgicomp.version>6.0.0</dependency.osgicomp.version>
         <dependency.base.version>1.5.1</dependency.base.version>
         <dependency.bndlib.version>6.1.0</dependency.bndlib.version>
         <dependency.obr.version>1.0.2</dependency.obr.version>
-        <dependency.paxexam.version>3.5.0</dependency.paxexam.version>
+        <dependency.paxexam.version>4.13.5</dependency.paxexam.version>
         <dependency.swissbox.version>1.8.5</dependency.swissbox.version>
 
         <dependency.slf4j.version>1.7.32</dependency.slf4j.version>
@@ -202,13 +203,18 @@
 
             <dependency>
                 <groupId>org.osgi</groupId>
-                <artifactId>org.osgi.core</artifactId>
+                <artifactId>osgi.core</artifactId>
                 <version>${dependency.osgicore.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.osgi</groupId>
-                <artifactId>org.osgi.compendium</artifactId>
+                <artifactId>osgi.cmpn</artifactId>
                 <version>${dependency.osgicomp.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.osgi</groupId>
+                <artifactId>org.osgi.annotation</artifactId>
+                <version>${dependency.osgiannotation.version}</version>
             </dependency>
 
             <!-- Felix -->
@@ -378,17 +384,17 @@
             <dependency>
                 <groupId>org.easymock</groupId>
                 <artifactId>easymock</artifactId>
-                <version>3.1</version>
+                <version>5.1.0</version>
             </dependency>
             <dependency>
                 <groupId>org.powermock</groupId>
                 <artifactId>powermock-api-easymock</artifactId>
-                <version>1.6.4</version>
+                <version>2.0.9</version>
             </dependency>
             <dependency>
                 <groupId>org.powermock</groupId>
                 <artifactId>powermock-module-junit4</artifactId>
-                <version>1.6.4</version>
+                <version>2.0.9</version>
             </dependency>
             <dependency>
                 <groupId>org.objenesis</groupId>
