@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-  Licensed  under the  Apache License,  Version 2.0  (the "License");
-  you may not use  this file  except in  compliance with the License.
-  You may obtain a copy of the License at
+    Copyright 2023 OPS4J.
 
-    http://www.apache.org/licenses/LICENSE-2.0
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
 
-  Unless required by applicable law or agreed to in writing, software
-  distributed  under the  License is distributed on an "AS IS" BASIS,
-  WITHOUT  WARRANTIES OR CONDITIONS  OF ANY KIND, either  express  or
-  implied.
+        http://www.apache.org/licenses/LICENSE-2.0
 
-  See the License for the specific language governing permissions and
-  limitations under the License.
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -45,44 +45,72 @@
 
         <!-- versions of Maven plugins -->
 
-        <version.plugin.maven-checkstyle-plugin>3.0.0</version.plugin.maven-checkstyle-plugin>
-        <version.com.puppycrawl.tools.checkstyle>8.9</version.com.puppycrawl.tools.checkstyle>
-        <version.plugin.maven-compiler-plugin>3.12.1</version.plugin.maven-compiler-plugin>
-        <version.plugin.maven-enforcer-plugin>3.4.1</version.plugin.maven-enforcer-plugin>
-        <version.plugin.maven-invoker-plugin>3.6.1</version.plugin.maven-invoker-plugin>
-        <version.plugin.maven-javadoc-plugin>3.6.3</version.plugin.maven-javadoc-plugin>
-        <version.plugin.maven-shade-plugin>3.5.1</version.plugin.maven-shade-plugin>
-        <version.plugin.maven-site-plugin>3.12.1</version.plugin.maven-site-plugin>
-        <version.plugin.maven-surefire-plugin>2.21.0</version.plugin.maven-surefire-plugin>
-        <version.plugin.felix.maven-bundle-plugin>5.1.9</version.plugin.felix.maven-bundle-plugin>
-        <version.plugin.mojo.build-helper-maven-plugin>3.0.0</version.plugin.mojo.build-helper-maven-plugin>
-        <version.plugin.mycila.license-maven-plugin>4.3</version.plugin.mycila.license-maven-plugin>
-        <version.plugin.servicemix.depends-maven-plugin>1.4.0</version.plugin.servicemix.depends-maven-plugin>
-        <version.plugin.sonatype.central-publishing-maven-plugin>0.7.0</version.plugin.sonatype.central-publishing-maven-plugin>
+        <!-- Core plugins -->
+        <plugin.maven-clean-plugin>3.5.0</plugin.maven-clean-plugin>
+        <plugin.maven-compiler-plugin>3.14.0</plugin.maven-compiler-plugin>
+        <plugin.maven-deploy-plugin>3.1.4</plugin.maven-deploy-plugin>
+        <plugin.maven-failsafe-plugin>2.22.2</plugin.maven-failsafe-plugin>
+        <plugin.maven-install-plugin>3.1.4</plugin.maven-install-plugin>
+        <plugin.maven-resources-plugin>3.3.1</plugin.maven-resources-plugin>
+        <plugin.dependency.maven-filtering>3.4.0</plugin.dependency.maven-filtering>
+        <plugin.maven-site-plugin>3.12.1</plugin.maven-site-plugin>
+        <plugin.maven-surefire-plugin>2.22.2</plugin.maven-surefire-plugin>
+        <!-- Packaging types/tools -->
+        <plugin.maven-jar-plugin>3.4.2</plugin.maven-jar-plugin>
+        <plugin.maven-shade-plugin>3.6.0</plugin.maven-shade-plugin>
+        <plugin.maven-source-plugin>3.3.1</plugin.maven-source-plugin>
+        <plugin.maven-war-plugin>3.4.0</plugin.maven-war-plugin>
+        <!-- Reporting plugins -->
+        <plugin.maven-checkstyle-plugin>3.0.0</plugin.maven-checkstyle-plugin>
+        <plugin.dependency.com.puppycrawl.tools.checkstyle>8.9</plugin.dependency.com.puppycrawl.tools.checkstyle>
+        <plugin.maven-javadoc-plugin>3.11.2</plugin.maven-javadoc-plugin>
+        <!-- Tools -->
+        <plugin.maven-antrun-plugin>3.1.0</plugin.maven-antrun-plugin>
+        <plugin.maven-assembly-plugin>3.7.1</plugin.maven-assembly-plugin>
+        <plugin.maven-dependency-plugin>3.8.1</plugin.maven-dependency-plugin>
+        <plugin.maven-enforcer-plugin>3.5.0</plugin.maven-enforcer-plugin>
+        <plugin.maven-invoker-plugin>3.9.0</plugin.maven-invoker-plugin>
+        <plugin.maven-release-plugin>3.1.1</plugin.maven-release-plugin>
+        <plugin.maven-toolchains-plugin>3.2.0</plugin.maven-toolchains-plugin>
+        <!-- Other plugins -->
+        <plugin.felix.maven-bundle-plugin>5.1.9</plugin.felix.maven-bundle-plugin>
+        <plugin.mojo.build-helper-maven-plugin>3.6.1</plugin.mojo.build-helper-maven-plugin>
+        <plugin.mycila.license-maven-plugin>4.6</plugin.mycila.license-maven-plugin>
+        <plugin.servicemix.depends-maven-plugin>1.5.0</plugin.servicemix.depends-maven-plugin>
+        <plugin.sonatype.nexus-staging-maven-plugin>1.7.0</plugin.sonatype.nexus-staging-maven-plugin>
+        <plugin.sonatype.central-publishing-maven-plugin>0.7.0</plugin.sonatype.central-publishing-maven-plugin>
 
         <!-- versions of Maven dependencies -->
 
-        <dependency.osgiannotation.version>6.0.0</dependency.osgiannotation.version>
-        <dependency.osgicore.version>6.0.0</dependency.osgicore.version>
-        <dependency.osgicomp.version>6.0.0</dependency.osgicomp.version>
-        <dependency.base.version>1.5.1</dependency.base.version>
-        <dependency.bndlib.version>6.1.0</dependency.bndlib.version>
-        <dependency.obr.version>1.0.2</dependency.obr.version>
-        <dependency.paxexam.version>4.13.5</dependency.paxexam.version>
-        <dependency.swissbox.version>1.8.5</dependency.swissbox.version>
-
-        <dependency.slf4j.version>1.7.32</dependency.slf4j.version>
-        <dependency.logback.version>1.2.3</dependency.logback.version>
-
-        <dependency.maven.version>3.8.6</dependency.maven.version>
-        <dependency.maven.resolver.version>1.8.2</dependency.maven.resolver.version>
-        <dependency.wagon.version>3.5.2</dependency.wagon.version>
-
-        <dependency.httpcomponents.core>4.4.16</dependency.httpcomponents.core>
-        <dependency.httpcomponents.client>4.5.14</dependency.httpcomponents.client>
-
-        <dependency.jackson.version>1.2.0</dependency.jackson.version>
-        <dependency.jetty.version>7.3.1.v20110307</dependency.jetty.version>
+        <dependency.biz.aQute.bndlib>6.4.1</dependency.biz.aQute.bndlib>
+        <dependency.com.fasterxml.jackson.core>2.19.1</dependency.com.fasterxml.jackson.core>
+        <dependency.commons-io>2.19.0</dependency.commons-io>
+        <dependency.eu.maveniverse.maven.mima>2.4.29</dependency.eu.maveniverse.maven.mima>
+        <dependency.junit>4.13.2</dependency.junit>
+        <dependency.org.apache.felix.service.obr>1.0.2</dependency.org.apache.felix.service.obr>
+        <dependency.org.apache.httpcomponents.core>4.4.16</dependency.org.apache.httpcomponents.core>
+        <dependency.org.apache.httpcomponents.client>4.5.14</dependency.org.apache.httpcomponents.client>
+        <dependency.org.apache.maven>3.9.10</dependency.org.apache.maven>
+        <dependency.org.apache.maven.resolver>1.9.23</dependency.org.apache.maven.resolver>
+        <dependency.org.apache.maven.shared.invoker>3.3.0</dependency.org.apache.maven.shared.invoker>
+        <!--
+            2.1.0 is ultra-slow...
+            See: https://github.com/codehaus-plexus/plexus-cipher/commit/176289fcc2780668208ea089fdcacc0c7145f7b1
+        -->
+        <dependency.org.codehaus.plexus.plexus-cipher>2.0</dependency.org.codehaus.plexus.plexus-cipher>
+        <dependency.org.codehaus.plexus.plexus-interpolation>1.28</dependency.org.codehaus.plexus.plexus-interpolation>
+        <dependency.org.codehaus.plexus.plexus-sec-dispatcher>2.0</dependency.org.codehaus.plexus.plexus-sec-dispatcher>
+        <dependency.org.codehaus.plexus.plexus-utils>3.6.0</dependency.org.codehaus.plexus.plexus-utils>
+        <dependency.org.easymock>5.6.0</dependency.org.easymock>
+        <dependency.org.eclipse.jetty>11.0.25</dependency.org.eclipse.jetty>
+        <dependency.org.ops4j.base>1.5.1</dependency.org.ops4j.base>
+        <dependency.org.ops4j.pax.exam>4.13.5</dependency.org.ops4j.pax.exam>
+        <dependency.org.ops4j.pax.swissbox>1.8.5</dependency.org.ops4j.pax.swissbox>
+        <dependency.org.osgi.core>6.0.0</dependency.org.osgi.core>
+        <dependency.org.osgi.service.cm>1.6.1</dependency.org.osgi.service.cm>
+        <dependency.org.powermock>2.0.9</dependency.org.powermock>
+        <dependency.org.slf4j>1.7.36</dependency.org.slf4j>
+        <dependency.org.apache.logging.log4j>2.24.3</dependency.org.apache.logging.log4j>
     </properties>
 
     <scm>
@@ -94,7 +122,6 @@
 
     <modules>
         <module>pax-url-commons</module>
-        <module>pax-url-aether-support</module>
         <module>pax-url-aether</module>
         <module>pax-url-assembly</module>
         <module>pax-url-cache</module>
@@ -125,53 +152,33 @@
             </dependency>
             <dependency>
                 <groupId>org.ops4j.pax.url</groupId>
-                <artifactId>pax-url-aether-support</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.ops4j.pax.url</groupId>
                 <artifactId>pax-url-link</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
-            <!-- ops4j dependencies -->
+            <!-- OPS4J -->
 
             <!-- OPS4J Base -->
 
             <dependency>
                 <groupId>org.ops4j.base</groupId>
                 <artifactId>ops4j-base-lang</artifactId>
-                <version>${dependency.base.version}</version>
+                <version>${dependency.org.ops4j.base}</version>
             </dependency>
             <dependency>
                 <groupId>org.ops4j.base</groupId>
                 <artifactId>ops4j-base-io</artifactId>
-                <version>${dependency.base.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.ops4j.base</groupId>
-                <artifactId>ops4j-base-net</artifactId>
-                <version>${dependency.base.version}</version>
+                <version>${dependency.org.ops4j.base}</version>
             </dependency>
             <dependency>
                 <groupId>org.ops4j.base</groupId>
                 <artifactId>ops4j-base-util-property</artifactId>
-                <version>${dependency.base.version}</version>
+                <version>${dependency.org.ops4j.base}</version>
             </dependency>
             <dependency>
                 <groupId>org.ops4j.base</groupId>
-                <artifactId>ops4j-base-util-xml</artifactId>
-                <version>${dependency.base.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.ops4j.base</groupId>
-                <artifactId>ops4j-base-spi</artifactId>
-                <version>${dependency.base.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.ops4j.base</groupId>
-                <artifactId>ops4j-base-store</artifactId>
-                <version>${dependency.base.version}</version>
+                <artifactId>ops4j-base-net</artifactId>
+                <version>${dependency.org.ops4j.base}</version>
             </dependency>
 
             <!-- OPS4J Pax Swissbox -->
@@ -179,22 +186,22 @@
             <dependency>
                 <groupId>org.ops4j.pax.swissbox</groupId>
                 <artifactId>pax-swissbox-bnd</artifactId>
-                <version>${dependency.swissbox.version}</version>
+                <version>${dependency.org.ops4j.pax.swissbox}</version>
             </dependency>
             <dependency>
                 <groupId>org.ops4j.pax.swissbox</groupId>
                 <artifactId>pax-swissbox-optional-jcl</artifactId>
-                <version>${dependency.swissbox.version}</version>
+                <version>${dependency.org.ops4j.pax.swissbox}</version>
             </dependency>
             <dependency>
                 <groupId>org.ops4j.pax.swissbox</groupId>
                 <artifactId>pax-swissbox-property</artifactId>
-                <version>${dependency.swissbox.version}</version>
+                <version>${dependency.org.ops4j.pax.swissbox}</version>
             </dependency>
             <dependency>
                 <groupId>org.ops4j.pax.swissbox</groupId>
                 <artifactId>pax-swissbox-tracker</artifactId>
-                <version>${dependency.swissbox.version}</version>
+                <version>${dependency.org.ops4j.pax.swissbox}</version>
             </dependency>
 
             <!-- OSGi -->
@@ -202,17 +209,12 @@
             <dependency>
                 <groupId>org.osgi</groupId>
                 <artifactId>osgi.core</artifactId>
-                <version>${dependency.osgicore.version}</version>
+                <version>${dependency.org.osgi.core}</version>
             </dependency>
             <dependency>
                 <groupId>org.osgi</groupId>
-                <artifactId>osgi.cmpn</artifactId>
-                <version>${dependency.osgicomp.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.osgi</groupId>
-                <artifactId>org.osgi.annotation</artifactId>
-                <version>${dependency.osgiannotation.version}</version>
+                <artifactId>org.osgi.service.cm</artifactId>
+                <version>${dependency.org.osgi.service.cm}</version>
             </dependency>
 
             <!-- Felix -->
@@ -220,7 +222,7 @@
             <dependency>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>org.osgi.service.obr</artifactId>
-                <version>${dependency.obr.version}</version>
+                <version>${dependency.org.apache.felix.service.obr}</version>
             </dependency>
 
             <!-- BND -->
@@ -228,123 +230,178 @@
             <dependency>
                 <groupId>biz.aQute.bnd</groupId>
                 <artifactId>biz.aQute.bndlib</artifactId>
-                <version>${dependency.bndlib.version}</version>
+                <version>${dependency.biz.aQute.bndlib}</version>
             </dependency>
 
             <!-- Maven -->
 
+            <!-- We get ALL our Maven / Maven Resolver dependencies through MiMa -->
+
             <dependency>
-                <groupId>org.codehaus.plexus</groupId>
-                <artifactId>plexus-utils</artifactId>
-                <version>3.3.1</version>
+                <groupId>eu.maveniverse.maven.mima</groupId>
+                <artifactId>context</artifactId>
+                <version>${dependency.eu.maveniverse.maven.mima}</version>
             </dependency>
             <dependency>
-                <groupId>org.codehaus.plexus</groupId>
-                <artifactId>plexus-sec-dispatcher</artifactId>
-                <version>2.0</version>
+                <groupId>eu.maveniverse.maven.mima.runtime</groupId>
+                <artifactId>standalone-static</artifactId>
+                <version>${dependency.eu.maveniverse.maven.mima}</version>
+            </dependency>
+
+            <!-- But we override the version of Maven and Maven Resolver used -->
+
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-artifact</artifactId>
+                <version>${dependency.org.apache.maven}</version>
             </dependency>
             <dependency>
-                <groupId>org.codehaus.plexus</groupId>
-                <artifactId>plexus-cipher</artifactId>
-                <version>2.0</version>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-builder-support</artifactId>
+                <version>${dependency.org.apache.maven}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-model-builder</artifactId>
+                <version>${dependency.org.apache.maven}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-model</artifactId>
+                <version>${dependency.org.apache.maven}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-repository-metadata</artifactId>
+                <version>${dependency.org.apache.maven}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-resolver-provider</artifactId>
+                <version>${dependency.org.apache.maven}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-settings-builder</artifactId>
+                <version>${dependency.org.apache.maven}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-settings</artifactId>
+                <version>${dependency.org.apache.maven}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.maven.resolver</groupId>
                 <artifactId>maven-resolver-api</artifactId>
-                <version>${dependency.maven.resolver.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.maven.resolver</groupId>
-                <artifactId>maven-resolver-impl</artifactId>
-                <version>${dependency.maven.resolver.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.maven.resolver</groupId>
-                <artifactId>maven-resolver-spi</artifactId>
-                <version>${dependency.maven.resolver.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.maven.resolver</groupId>
-                <artifactId>maven-resolver-util</artifactId>
-                <version>${dependency.maven.resolver.version}</version>
+                <version>${dependency.org.apache.maven.resolver}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.maven.resolver</groupId>
                 <artifactId>maven-resolver-connector-basic</artifactId>
-                <version>${dependency.maven.resolver.version}</version>
+                <version>${dependency.org.apache.maven.resolver}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.maven.resolver</groupId>
-                <artifactId>maven-resolver-transport-wagon</artifactId>
-                <version>${dependency.maven.resolver.version}</version>
+                <artifactId>maven-resolver-impl</artifactId>
+                <version>${dependency.org.apache.maven.resolver}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven.resolver</groupId>
+                <artifactId>maven-resolver-named-locks</artifactId>
+                <version>${dependency.org.apache.maven.resolver}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven.resolver</groupId>
+                <artifactId>maven-resolver-spi</artifactId>
+                <version>${dependency.org.apache.maven.resolver}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven.resolver</groupId>
+                <artifactId>maven-resolver-supplier</artifactId>
+                <version>${dependency.org.apache.maven.resolver}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven.resolver</groupId>
+                <artifactId>maven-resolver-transport-file</artifactId>
+                <version>${dependency.org.apache.maven.resolver}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven.resolver</groupId>
+                <artifactId>maven-resolver-transport-http</artifactId>
+                <version>${dependency.org.apache.maven.resolver}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven.resolver</groupId>
+                <artifactId>maven-resolver-util</artifactId>
+                <version>${dependency.org.apache.maven.resolver}</version>
             </dependency>
 
             <dependency>
-                <groupId>org.apache.maven</groupId>
-                <artifactId>maven-resolver-provider</artifactId>
-                <version>${dependency.maven.version}</version>
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-cipher</artifactId>
+                <version>${dependency.org.codehaus.plexus.plexus-cipher}</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.maven</groupId>
-                <artifactId>maven-settings-builder</artifactId>
-                <version>${dependency.maven.version}</version>
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-interpolation</artifactId>
+                <version>${dependency.org.codehaus.plexus.plexus-interpolation}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-sec-dispatcher</artifactId>
+                <version>${dependency.org.codehaus.plexus.plexus-sec-dispatcher}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.sonatype.plexus</groupId>
+                        <artifactId>plexus-cipher</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-utils</artifactId>
+                <version>${dependency.org.codehaus.plexus.plexus-utils}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.maven.shared</groupId>
                 <artifactId>maven-invoker</artifactId>
-                <version>3.0.1</version>
+                <version>${dependency.org.apache.maven.shared.invoker}</version>
                 <scope>test</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-file</artifactId>
-                <version>${dependency.wagon.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-http</artifactId>
-                <version>${dependency.wagon.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-provider-api</artifactId>
-                <version>${dependency.wagon.version}</version>
             </dependency>
 
             <!-- Other -->
 
-            <!-- smallest possible fix for PAXURL-345 -->
-            <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpclient</artifactId>
-                <version>${dependency.httpcomponents.client}</version>
-            </dependency>
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpcore</artifactId>
-                <version>${dependency.httpcomponents.core}</version>
+                <version>${dependency.org.apache.httpcomponents.core}</version>
+            </dependency>
+            <dependency>
+                <!-- explicit dependency, even if we get it from maven-resolver-transport-http -->
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>${dependency.org.apache.httpcomponents.client}</version>
             </dependency>
 
             <dependency>
-                <groupId>org.codehaus.jackson</groupId>
-                <artifactId>jackson-core-asl</artifactId>
-                <version>${dependency.jackson.version}</version>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>${dependency.com.fasterxml.jackson.core}</version>
             </dependency>
 
             <!-- Commons -->
 
-            <dependency>
-                <groupId>commons-codec</groupId>
-                <artifactId>commons-codec</artifactId>
-                <version>1.17.1</version>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>commons-codec</groupId>-->
+<!--                <artifactId>commons-codec</artifactId>-->
+<!--                <version>1.17.1</version>-->
+<!--            </dependency>-->
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
-                <version>2.18.0</version>
+                <version>${dependency.commons-io}</version>
             </dependency>
 
             <!-- Logging -->
@@ -352,47 +409,56 @@
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
-                <version>${dependency.slf4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-simple</artifactId>
-                <version>${dependency.slf4j.version}</version>
+                <version>${dependency.org.slf4j}</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>jcl-over-slf4j</artifactId>
-                <version>${dependency.slf4j.version}</version>
+                <version>${dependency.org.slf4j}</version>
             </dependency>
-
             <dependency>
-                <groupId>ch.qos.logback</groupId>
-                <artifactId>logback-classic</artifactId>
-                <version>${dependency.logback.version}</version>
-                <scope>test</scope>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-api</artifactId>
+                <version>${dependency.org.apache.logging.log4j}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-slf4j-impl</artifactId>
+                <version>${dependency.org.apache.logging.log4j}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-core</artifactId>
+                <version>${dependency.org.apache.logging.log4j}</version>
             </dependency>
 
-            <!-- Test dependencies -->
+            <!-- Test -->
 
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
-                <version>4.13.2</version>
+                <version>${dependency.junit}</version>
             </dependency>
             <dependency>
                 <groupId>org.easymock</groupId>
                 <artifactId>easymock</artifactId>
-                <version>5.1.0</version>
+                <version>${dependency.org.easymock}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.objenesis</groupId>
+                        <artifactId>objenesis</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.powermock</groupId>
                 <artifactId>powermock-api-easymock</artifactId>
-                <version>2.0.9</version>
+                <version>${dependency.org.powermock}</version>
             </dependency>
             <dependency>
                 <groupId>org.powermock</groupId>
                 <artifactId>powermock-module-junit4</artifactId>
-                <version>2.0.9</version>
+                <version>${dependency.org.powermock}</version>
             </dependency>
             <dependency>
                 <groupId>org.objenesis</groupId>
@@ -403,14 +469,14 @@
             <!-- Jetty -->
 
             <dependency>
-                <groupId>org.eclipse.jetty.aggregate</groupId>
+                <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-server</artifactId>
-                <version>${dependency.jetty.version}</version>
+                <version>${dependency.org.eclipse.jetty}</version>
             </dependency>
             <dependency>
-                <groupId>org.eclipse.jetty.aggregate</groupId>
-                <artifactId>jetty-plus</artifactId>
-                <version>${dependency.jetty.version}</version>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-security</artifactId>
+                <version>${dependency.org.eclipse.jetty}</version>
             </dependency>
 
         </dependencies>
@@ -419,91 +485,197 @@
     <build>
         <pluginManagement>
             <plugins>
+                <!-- Core plugins -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>${plugin.maven-clean-plugin}</version>
+                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>${version.plugin.maven-compiler-plugin}</version>
-                    <configuration>
-                        <source>${maven.compiler.source}</source>
-                        <target>${maven.compiler.target}</target>
-                    </configuration>
+                    <version>${plugin.maven-compiler-plugin}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-invoker-plugin</artifactId>
-                    <version>${version.plugin.maven-invoker-plugin}</version>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>${plugin.maven-deploy-plugin}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>${version.plugin.maven-javadoc-plugin}</version>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>${plugin.maven-failsafe-plugin}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-enforcer-plugin</artifactId>
-                    <version>${version.plugin.maven-enforcer-plugin}</version>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <version>${plugin.maven-install-plugin}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-shade-plugin</artifactId>
-                    <version>${version.plugin.maven-shade-plugin}</version>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>${plugin.maven-resources-plugin}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.maven.shared</groupId>
+                            <artifactId>maven-filtering</artifactId>
+                            <version>${plugin.dependency.maven-filtering}</version>
+                        </dependency>
+                    </dependencies>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
-                    <version>${version.plugin.maven-site-plugin}</version>
+                    <version>${plugin.maven-site-plugin}</version>
                 </plugin>
-
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${plugin.maven-surefire-plugin}</version>
+                </plugin>
+                <!-- Packaging types/tools -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>${plugin.maven-jar-plugin}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>${plugin.maven-shade-plugin}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>${plugin.maven-source-plugin}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <version>${plugin.maven-war-plugin}</version>
+                </plugin>
+                <!-- Reporting plugins -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <version>${plugin.maven-checkstyle-plugin}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>com.puppycrawl.tools</groupId>
+                            <artifactId>checkstyle</artifactId>
+                            <version>${plugin.dependency.com.puppycrawl.tools.checkstyle}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>${plugin.maven-javadoc-plugin}</version>
+                </plugin>
+                <!-- Tools -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <version>${plugin.maven-antrun-plugin}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>${plugin.maven-assembly-plugin}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>${plugin.maven-dependency-plugin}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-enforcer-plugin</artifactId>
+                    <version>${plugin.maven-enforcer-plugin}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-invoker-plugin</artifactId>
+                    <version>${plugin.maven-invoker-plugin}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>${plugin.maven-release-plugin}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-toolchains-plugin</artifactId>
+                    <version>${plugin.maven-toolchains-plugin}</version>
+                </plugin>
+                <!-- Other plugins -->
                 <plugin>
                     <groupId>org.apache.felix</groupId>
                     <artifactId>maven-bundle-plugin</artifactId>
-                    <version>${version.plugin.felix.maven-bundle-plugin}</version>
+                    <version>${plugin.felix.maven-bundle-plugin}</version>
                 </plugin>
-
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>${plugin.mojo.build-helper-maven-plugin}</version>
+                </plugin>
                 <plugin>
                     <groupId>com.mycila</groupId>
                     <artifactId>license-maven-plugin</artifactId>
-                    <version>${version.plugin.mycila.license-maven-plugin}</version>
+                    <version>${plugin.mycila.license-maven-plugin}</version>
                 </plugin>
-
+                <plugin>
+                    <groupId>org.apache.servicemix.tooling</groupId>
+                    <artifactId>depends-maven-plugin</artifactId>
+                    <version>${plugin.servicemix.depends-maven-plugin}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.sonatype.plugins</groupId>
+                    <artifactId>nexus-staging-maven-plugin</artifactId>
+                    <version>${plugin.sonatype.nexus-staging-maven-plugin}</version>
+                </plugin>
                 <plugin>
                     <groupId>org.sonatype.central</groupId>
                     <artifactId>central-publishing-maven-plugin</artifactId>
-                    <version>${version.plugin.sonatype.central-publishing-maven-plugin}</version>
+                    <version>${plugin.sonatype.central-publishing-maven-plugin}</version>
                 </plugin>
             </plugins>
         </pluginManagement>
 
         <plugins>
             <plugin>
+                <!-- Core plugins -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
                     <compilerArgs>
                         <arg>-Xlint:all</arg>
                     </compilerArgs>
                 </configuration>
             </plugin>
+            <!-- Reporting plugins -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                            <goal>test-javadoc</goal>
+                        </goals>
+                    </execution>
+                </executions>
                 <configuration>
                     <doclint>none</doclint>
+                    <additionalOptions>
+                        <additionalOption>-Xdoclint:none</additionalOption>
+                    </additionalOptions>
                 </configuration>
             </plugin>
-
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <configuration>
-                    <obrRepository>NONE</obrRepository>
-                    <instructions>
-                        <Bundle-DocURL>${wiki.url}</Bundle-DocURL>
-                        <_include>-osgi.bnd</_include>
-                    </instructions>
-                </configuration>
-            </plugin>
-
+            <!-- Tools -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
@@ -517,7 +689,7 @@
                         <configuration>
                             <rules>
                                 <requireMavenVersion>
-                                    <version>[3.2.5,)</version>
+                                    <version>[3.8,)</version>
                                     <message>This project requires Maven 3</message>
                                 </requireMavenVersion>
                                 <requireJavaVersion>
@@ -528,7 +700,18 @@
                     </execution>
                 </executions>
             </plugin>
-
+            <!-- Other plugins -->
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <obrRepository>NONE</obrRepository>
+                    <instructions>
+                        <Bundle-DocURL>${wiki.url}</Bundle-DocURL>
+                        <_include>-osgi.bnd</_include>
+                    </instructions>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>nexus-staging-maven-plugin</artifactId>
@@ -609,20 +792,6 @@
         </developer>
     </developers>
 
-    <repositories>
-        <repository>
-            <id>sonatype-nexus-snapshots</id>
-            <name>Sonatype Nexus Snapshots</name>
-            <url>https://oss.sonatype.org/content/repositories/ops4j-snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-
     <profiles>
 
         <!-- License generation: `mvn -Plicense process-sources` -->
@@ -686,3 +855,4 @@
     </profiles>
 
 </project>
+
