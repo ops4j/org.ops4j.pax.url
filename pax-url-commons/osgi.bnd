@@ -3,12 +3,12 @@ Bundle-Version:\
 
 Bundle-SymbolicName:\
   ${bundle.symbolicName}  
-  
+
 Import-Package:\
   org.osgi.framework;version="[1.6,2)",\
   org.osgi.service.cm;version="[1.4,2)";resolution:=optional,\
   *
-  
+
 -removeheaders:\
   Include-Resource,\
   Private-Package,\
