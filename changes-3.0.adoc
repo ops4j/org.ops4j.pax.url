@@ -1,0 +1,223 @@
+= Changes in version 3.0
+
+.Highlights
+* Pax URL War now supports JakartaEE 9+ (`jakarta.servlet` packages). This change is for compatibility with Pax Web 10.
+* Pax URL Aether uses https://github.com/maveniverse/mima[MiMa] project to make it easier working with Maven (3.9+) and Maven Resolver (1.9+).
+* Pax URL Aether supports https://maven.apache.org/resolver/local-repository.html#split-local-repository[split repositories].
+
+.Details
+* Pax URL Aether no longer supports `defaultLocalRepoAsRemote` option (see https://github.com/ops4j/org.ops4j.pax.url/issues/200[why it was introduced in the first place]). This use case should be configured using _default repositories_.
+* Pax URL Aether no longer sets `http.proxyHost` (and related) properties. Maven proxies can be set via `settings.xml`, but existing system properties (see `sun.net.spi.DefaultProxySelector`) are also checked to configure Maven Resolver's proxies.
+* Existing `http.proxyHost` (and related) properties are supported only when new `org.ops4j.pax.url.mvn.useProxySystemProperties` is set to `true`. But even if, no Maven Proxy object (like the one from `settings.xml`) is configured based on `http.proxyHost` property (and related). Plain HTTP proxy is configured at maven-resolver-transport-http (HttpClient 4) level.
+* `org.ops4j.pax.url.mvn.proxies` property is no longer supported. It was used to translate value like `http:host=example.com,port=8080;https:host=example.org,port=9090` into `http.proxyHost` (and related) global system properties. Same for `org.ops4j.pax.url.mvn.proxySupport` property
+* Pax URL Aether no longer uses maven-resolver-transport-wagon with manually created instance of HttpClient. maven-resolver-transport-http is used instead (also based on HttpClient 4), where all the details are specified using https://maven.apache.org/resolver/configuration.html[Aether/Resolver configuration properties]. Because we control the HttpClient only via Maven Resolver properties, some options are no longer supported:
+** `socket.keepAlive` (defaults to `false`)
+** `socket.linger` (defaults to `-1`)
+** `socket.reuseAddress` (defaults to `false`)
+** `socket.tcpNoDelay` (defaults to `true`)
+** `connection.bufferSize` (defaults to `8192`)
+* Global update/checksum policy is no longer set in `org.eclipse.aether.RepositorySystemSession` (because it overrides repository-specific policy), it's rather used as defult repository-policy if not specified.
+* Maven repository URLs (in configuration and as part of `mvn:` URIs) may now use (not recommended for production!) user authority/userInfo part for server credentials.
+* Pax URL 2.6 contains custom logic to merge checksum/update policies when mirroring several repositories. It used "least favorable policy wins" so if two repositories were mirrored by single mirror and the repositories had "fail" and "warn" checksum policies, the mirror was configured with "fail" policy. In Pax URL 3, `org.eclipse.aether.internal.impl.DefaultChecksumPolicyProvider` is used which uses the "most favorable policy". Thus Pax URL 3 behavior matches Maven default behavior.
+
+== A note about HTTP(S) proxies
+
+`org.ops4j.pax.url.mvn.internal.config.MavenConfigurationImpl.enableProxy()` was deprecated already in 2011. However usage of system properties like `http.proxyHost`, `http.proxyPort` is built-in into HttpClient 4 when _system properties mode_ is enabled on HttpClientBuilder.
+Maven Resolver turns this mode on when `aether.connector.http.useSystemProperties` is set to `true` (default is to NOT use this property, as it is _not recommended_. See https://maven.apache.org/resolver/configuration.html[Resolver Configuration Options]).
+
+At JDK level, proxies are handled using `java.net.ProxySelector` interface.
+
+`java.net.http.HttpClient` uses `java.net.http.HttpClient.Builder.proxy(ProxySelector)`, but if it's null, it obtains one from `java.net.ProxySelector.getDefault()` which returns `sun.net.spi.DefaultProxySelector`.
+
+The same happens with `java.net.HttpURLConnection` (which under JDK11 also uses `java.net.http.HttpClient`). This old way for http connections manually checks calls `java.net.ProxySelector.getDefault()` and calls `sun.net.www.http.HttpClient.New()` for each proxy (checking each proxy until one works).
+JDK 8 also uses `sun.net.www.http.HttpClient`.
+
+However JDK 11 introduced new `java.net.http.HttpClient` which is NOT the same as `sun.net.www.http.HttpClient` (implementation is actually `jdk.internal.net.http.HttpClientImpl`). One of the differences is that we can't pass single `java.net.Proxy` there, but only a proxy selector, which is used to select a list of proxies, but **only the first one is used**.
+
+`sun.net.spi.DefaultProxySelector` is the class that handles `http.proxyHost` and related system properties.
+
+While proxies can be globally configured using system properties, default selector simply creates `java.net.Proxy()` instance for given URI. It is always better to simply create the instance manually:
+[,java]
+----
+Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 1234));
+----
+
+and pass it to `java.net.URL.openConnection(java.net.Proxy)`.
+
+With JDK 11 a selector returning desired `java.net.Proxy` has to be set in the builder (only first one is used by the client anyway).
+
+== A note about split repositories
+
+Since Maven Resolver 1.9, we have support for _split repositories_ (see https://maven.apache.org/resolver/local-repository.html#split-local-repository).
+
+This is a big deal, as for long time, _local repository_ in Maven played rather dual role:
+* to store locally installed artifacts (result of `mvn clean install` and work of `maven-install-plugin`)
+* to _cache_ remote artifacts downloaded from remote Maven repositories (most importantly - from Maven Central).
+
+With just one new property, `-Daether.enhancedLocalRepository.split=true`, our well-known `~/.m2/repository` directory starts to use only two subdirectories:
+* `installed` (name configured using `-Daether.enhancedLocalRepository.localPrefix`)
+* `cached` (name configured using `-Daether.enhancedLocalRepository.remotePrefix`)
+
+Starting with empty repository and performing `mvn clean install` on any Maven project, `installed` directory gets filled with the installed project artifacts and `cached` contains remote artifacts (like Apache parent, Maven plugins or dependencies of our project).
+
+We can split the repositories further. Using `-Daether.enhancedLocalRepository.splitLocal` and/or `-Daether.enhancedLocalRepository.splitRemote`, the above (`installed`, `cached`) directories get new subdirectories:
+* `releases` (name configured using `-Daether.enhancedLocalRepository.releasesPrefix`)
+* `snapshots` (name configured using `-Daether.enhancedLocalRepository.snapshotsPrefix`)
+
+Last level of splitting may be configured for remote (cached) artifacts. 3rd subdirectory may be created when `-Daether.enhancedLocalRepository.splitRemoteRepository` is set to `true`. Then a subdirectory named after origin remote repository ID may be created.
+To complete the splitting options, with `-Daether.enhancedLocalRepository.splitRemoteRepositoryLast` we may decide whether (when `-Daether.enhancedLocalRepository.splitRemote` is also used) we want `releases`/`snapshots` before or after repository ID.
+
+With full configuration of splitting, we may get the following tree:
+
+----
+$ pwd
+~/.m2/repository
+
+$ tree -L 4
+.
+├── cached
+│   └── central
+│       └── releases
+│           ├── com
+│           ├── commons-codec
+│           ├── commons-io
+│           ├── io
+│           ├── jakarta
+│           ├── net
+│           └── org
+└── installed
+    └── releases
+        └── com
+            └── example
+----
+
+It's worth reminding the resolution process of Maven. When using any project, dependencies are always looked up in local repository first and only if there's no locally stored artifact, remote resolution is performed.
+
+The key method is `org.eclipse.aether.repository.LocalRepositoryManager.find()`. With the help of `org.eclipse.aether.internal.impl.LocalPathPrefixComposer`, `com.example/library-1.0.pom` is tried to be found in two stages:
+* locally installed, where path is prependend like this: `installed/releases/com/example/library/1.0/library-1.0.pom`
+* remote cached, where path is prepended like this: `cached/central/releases/com/example/library/1.0/library-1.0.pom` (where only `central` remote repository is used).
+
+If both attempts fail, remote resolution happens.
+
+So while `mvn clean install` always puts artifacts into `installed` subdirectory of local repository, when looking for dependencies, both locally installed and remote cached locations are checked.
+
+NOTE: Of course it is crucial to not mix `mvn` invocations with different split settings, othwerwise we may get artifacts cached directly under `~/.m2/repository` and under `cached/central` subdirectory for example.
+
+In Pax URL Aether, where we may use multiple _default repositories_, care must be taken when mixed configurations are to be used.
+
+== Example configuration and recommendations
+
+Split configuration may be applied to:
+
+* single local repository (used for caching local artifacts)
+* list of _default repositories_ which use `file:` protocol
+
+Referring to real example, let's set some recommendations for https://karaf.apache.org[Apache Karaf].
+
+Default Karaf 4.4.4 uses this configuration:
+----
+#
+# Path to the local Maven repository which is used to avoid downloading
+# artifacts when they already exist locally.
+# The value of this property will be extracted from the settings.xml file
+# above, or defaulted to:
+#     System.getProperty( "user.home" ) + "/.m2/repository"
+# leaving this option commented makes the system dependent on external
+# configuration, which is not always desired
+# "localRepository" is the target location for artifacts downloaded from
+# "remote repositories"
+#org.ops4j.pax.url.mvn.localRepository=
+...
+#
+# Comma separated list of repositories scanned when resolving an artifact.
+# list of repositories searched in the first place, should contain
+# ${runtime.home}/${karaf.default.repository}.
+# if "org.ops4j.pax.url.mvn.localRepository" is defined and it's not
+# ~/.m2/repository, it's recommended (at least for dev purposes) to add
+# ~/.m2/repository to defaultRepositories
+# each of these repositories is checked by aether as "local repository". if
+# artifact isn't found, "repositories" are searched next
+#
+# Those repositories will be checked before iterating through the
+#    below list of repositories and even before the local repository
+# A repository url can be appended with zero or more of the following flags:
+#    @snapshots  : the repository contains snapshots
+#    @noreleases : the repository does not contain any released artifacts
+#
+# The following property value will add the system folder as a repo.
+#
+org.ops4j.pax.url.mvn.defaultRepositories=\
+    ${karaf.home.uri}${karaf.default.repository}@id=system.repository@snapshots, \
+    ${karaf.data.uri}kar@id=kar.repository@multi@snapshots, \
+    ${karaf.base.uri}${karaf.default.repository}@id=child.system.repository@snapshots
+----
+
+Highlights:
+
+* no `localRepository` is declared by default, so `~/.m2/repository` is used (even if not existing - it'll be created)
+* _default repositories_ include most important `$KARAF_HOME/system` directory
+
+Implicit `~/.m2/repository` local repository means that when Karaf resolves remote artifact (not available locally), it is cached into `~/.m2/repository`.
+
+From my experience it's better to change the configuration to:
+----
+org.ops4j.pax.url.mvn.localRepository = ${karaf.data}/repository
+
+org.ops4j.pax.url.mvn.defaultRepositories = \
+    file:${karaf.home}/${karaf.default.repository}@id=karaf.${karaf.default.repository}, \
+    file:${user.home}/.m2/repository@id=local, \
+    ${karaf.data.uri}kar@id=kar.repository@multi, \
+    file:${karaf.base}/${karaf.default.repository}@id=karaf.child.${karaf.default.repository}
+----
+
+* Because local repository is now `${karaf.data}/repository`, your `~/.m2/repository` won't be affected when resolution is performed within Karaf
+* Because `file:${user.home}/.m2/repository` is included in `defaultRepositories`, your main local storage will be checked by Karaf, but in read-only mode.
+* `defaultRepositories` doesn't have to specify `@snapshots` option, because this is a policy applied only for remote repositories.
+
+=== Configuration of split repositories
+
+On my machine, I have an environment variable `MAVEN_OPTS` with this value:
+
+----
+$ echo $MAVEN_OPTS
+-Xmx3072m -Dmaven.repo.local.recordReverseTree=true \
+    -Dmaven.plugin.validation=BRIEF \
+    -Daether.enhancedLocalRepository.split=true \
+    -Daether.enhancedLocalRepository.splitLocal=true
+----
+
+Pax URL doesn't check and parse this option (also because these values may be specified by other means in your environment), but it is crucial to ensure that split configuration used for your local repository matches what Pax URL assumes when this local repository is used (whether local or _default_).
+
+.Local repository case
+
+When `~/.m2/repository` (or other location) is treated as _split_ by Maven itself (without Pax URL) and it is used as _local repository_ by Pax URL (either implicitly or using `org.ops4j.pax.url.mvn.localRepository` PID property or `maven.repo.local` system property), you have two options:
+
+1. Use global PID properties to configure matching split configuration (the commented options show default values):
++
+----
+org.ops4j.pax.url.mvn.split = true # defaults to false
+org.ops4j.pax.url.mvn.splitLocal = true # defaults to false
+#org.ops4j.pax.url.mvn.splitRemote = false
+#org.ops4j.pax.url.mvn.splitLocalPrefix = installed
+#org.ops4j.pax.url.mvn.splitRemotePrefix = cached
+#org.ops4j.pax.url.mvn.splitReleasesPrefix = releases
+#org.ops4j.pax.url.mvn.splitSnapshotsPrefix = snapshots
+#org.ops4j.pax.url.mvn.splitRemoteRepository = false
+#org.ops4j.pax.url.mvn.splitRemoteRepositoryLast = false
+----
+
+2. Configure `org.ops4j.pax.url.mvn.localRepository` explitly with split options separated by `@` (as it is done with default repositories):
++
+----
+org.ops4j.pax.url.mvn.localRepository = ${user.home}/.m2/repository@id=local@split@splitLocal@splitLocalPrefix=installed
+----
+
+.Default repository case
+
+When using any directory as _default repository_ (for example recommended `${user.home}/.m2/repository` as _default_ repository)) which is split (as treated by Maven 3.9+), split configuration can be specified within Maven Repository URL in `defaultRepositories` property:
+----
+org.ops4j.pax.url.mvn.defaultRepositories = \
+    file:${karaf.home}/${karaf.default.repository}@id=karaf.${karaf.default.repository}, \
+    file:${user.home}/.m2/repository@id=local@split@splitLocal@splitLocalPrefix=installed, \
+    ...
+----

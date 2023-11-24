@@ -28,7 +28,7 @@ public enum OS
 
     private final String term;
 
-    private OS( String term )
+    OS(String term)
     {
         this.term = term;
     }

@@ -20,7 +20,15 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * A maven resolver service
+ * <p>A Maven resolver service</p>
+ *
+ * <p>This is the main OSGi service <em>entry point</em> of this bundle. It can be tracked and used
+ * to perform Maven resolution for artifacts and metadata.</p>
+ *
+ * <p>While the underlying {@link org.eclipse.aether.RepositorySystem} is more powerful, not all functionality
+ * is exposed in this service (Maven/Resolver packages are not exported).</p>
+ *
+ * <p>The URLs handled must use {@code mvn:} scheme.</p>
  *
  * @author Guillaume Nodet
  * @author Grzegorz Grzybek
@@ -34,7 +42,7 @@ public interface MavenResolver extends Closeable {
 
     /**
      * Resolve and download a maven based url - possibly as another attempt.
-     * Specifying <code>previousException</code> is a hint to resolver.
+     * Specifying <code>previousException</code> is a hint for resolver.
      */
     File resolve( String url, Exception previousException ) throws IOException;
 
@@ -46,7 +54,7 @@ public interface MavenResolver extends Closeable {
 
     /**
      * Resolve and download an artifact - possibly as another attempt.
-     * Specifying <code>previousException</code> is a hint to resolver.
+     * Specifying <code>previousException</code> is a hint for resolver.
      */
     File resolve( String groupId, String artifactId, String classifier,
                   String extension, String version,
@@ -60,7 +68,7 @@ public interface MavenResolver extends Closeable {
 
     /**
      * Resolve the maven metadata xml for the specified groupId:artifactId:version - possibly as another attempt.
-     * Specifying <code>previousException</code> is a hint to resolver.
+     * Specifying <code>previousException</code> is a hint for resolver.
      */
     File resolveMetadata( String groupId, String artifactId,
                           String type, String version,
@@ -75,7 +83,6 @@ public interface MavenResolver extends Closeable {
     /**
      * Install the specified artifact metadata in the local repository
      */
-
     void uploadMetadata( String groupId, String artifactId,
                          String type, String version, File artifact ) throws IOException;
 
@@ -95,7 +102,7 @@ public interface MavenResolver extends Closeable {
         HIGH(2),
         UNKNOWN(Integer.MAX_VALUE);
 
-        private int chance;
+        private final int chance;
 
         RetryChance(int chance) {
             this.chance = chance;

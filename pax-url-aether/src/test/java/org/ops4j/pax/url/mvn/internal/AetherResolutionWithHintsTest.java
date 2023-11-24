@@ -21,9 +21,8 @@ import java.util.Properties;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.maven.settings.Profile;
 import org.apache.maven.settings.Proxy;
@@ -33,6 +32,7 @@ import org.eclipse.aether.RepositoryException;
 import org.eclipse.aether.resolution.ArtifactResolutionException;
 import org.eclipse.aether.transfer.ArtifactNotFoundException;
 import org.eclipse.aether.transfer.ArtifactTransferException;
+import org.eclipse.jetty.server.NetworkConnector;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
@@ -43,7 +43,11 @@ import org.ops4j.pax.url.mvn.internal.config.MavenConfigurationImpl;
 import org.ops4j.util.property.PropertiesPropertyResolver;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * Test cases for consecutive resolution attempts
@@ -53,17 +57,16 @@ public class AetherResolutionWithHintsTest {
     private static Server server;
     private static int port;
 
-    private static ExecutorService pool = Executors.newFixedThreadPool(1);
+    private static final ExecutorService pool = Executors.newFixedThreadPool(1);
 
     @BeforeClass
     public static void startJetty() throws Exception {
         server = new Server(0);
         server.setHandler(new AbstractHandler() {
             @Override
-            public void handle(String target, Request baseRequest, HttpServletRequest request,
-                               HttpServletResponse response) throws IOException, ServletException {
+            public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
                 try {
-                    int port = baseRequest.getUri().getPort();
+                    int port = baseRequest.getServerPort();
                     if (port == 3333) {
                         // explicit timeout
                         Thread.sleep(2000);
@@ -76,7 +79,7 @@ public class AetherResolutionWithHintsTest {
             }
         });
         server.start();
-        port = server.getConnectors()[0].getLocalPort();
+        port = ((NetworkConnector) server.getConnectors()[0]).getLocalPort();
     }
 
     @Test

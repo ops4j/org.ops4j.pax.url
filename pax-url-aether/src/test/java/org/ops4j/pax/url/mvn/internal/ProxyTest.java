@@ -17,7 +17,7 @@ package org.ops4j.pax.url.mvn.internal;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -27,10 +27,10 @@ import java.util.UUID;
 
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.DefaultHandler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
-import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,7 +47,7 @@ public class ProxyTest
     public void startHttp() throws Exception
     {
         server = new Server();
-        SelectChannelConnector connector = new SelectChannelConnector();
+        ServerConnector connector = new ServerConnector(server);
         connector.setPort( 8778 );
         server.addConnector( connector );
 
@@ -97,7 +97,7 @@ public class ProxyTest
         // test for PAXURL-209
         assertThat( System.getProperty( "http.proxyHost" ), is( nullValue() ) );
     }
-    
+
     @Test
     public void javaProxy() throws Exception
     {
@@ -106,6 +106,7 @@ public class ProxyTest
         String repoPath = "target/localrepo_" + UUID.randomUUID();
 
         Properties properties = new Properties();
+        properties.setProperty( TEST_PID + "." + ServiceConstants.PROPERTY_USE_SYSTEM_PROPERTIES, "true" );
         properties.setProperty( TEST_PID + "." + ServiceConstants.PROPERTY_LOCAL_REPOSITORY, repoPath );
         properties.setProperty( TEST_PID + "." + ServiceConstants.PROPERTY_GLOBAL_CHECKSUM_POLICY, "ignore" );
         properties.setProperty( TEST_PID + "." + ServiceConstants.PROPERTY_REPOSITORIES,

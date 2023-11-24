@@ -17,8 +17,8 @@ package org.ops4j.pax.url.mvn.internal;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,15 +36,15 @@ import org.apache.maven.settings.building.DefaultSettingsBuildingRequest;
 import org.apache.maven.settings.building.SettingsBuildingException;
 import org.apache.maven.settings.building.SettingsBuildingRequest;
 import org.apache.maven.settings.building.SettingsBuildingResult;
-import org.eclipse.jetty.http.security.Constraint;
 import org.eclipse.jetty.security.ConstraintMapping;
 import org.eclipse.jetty.security.ConstraintSecurityHandler;
 import org.eclipse.jetty.security.HashLoginService;
 import org.eclipse.jetty.security.LoginService;
 import org.eclipse.jetty.security.authentication.BasicAuthenticator;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.ResourceHandler;
-import org.eclipse.jetty.server.nio.SelectChannelConnector;
+import org.eclipse.jetty.util.security.Constraint;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -57,7 +57,6 @@ import org.ops4j.util.property.PropertiesPropertyResolver;
 
 public class MirrorAuthenticationTest
 {
-
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
@@ -67,17 +66,8 @@ public class MirrorAuthenticationTest
     @Before
     public void startHttp() throws Exception
     {
-        /*
-         * Oracle JDK specific workaround to disable HTTP authentication caching.
-         * See http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6626700.
-         * See https://bugs.openjdk.java.net/browse/JDK-6626700
-         * 
-         * The cache would break our tests for failing authentication.
-         */
-        sun.net.www.protocol.http.AuthCacheValue.setAuthCache( new sun.net.www.protocol.http.AuthCacheImpl() );
-        
         server = new Server();
-        SelectChannelConnector connector = new SelectChannelConnector();
+        ServerConnector connector = new ServerConnector(server);
         connector.setPort( 8778 );
         server.addConnector( connector );
 
@@ -116,13 +106,13 @@ public class MirrorAuthenticationTest
     @After
     public void stopHttp() throws Exception
     {
-        System.clearProperty( PaxUrlSecDispatcher.SYSTEM_PROPERTY_SEC_LOCATION );
+//        System.clearProperty( PaxUrlSecDispatcher.SYSTEM_PROPERTY_SEC_LOCATION );
         server.stop();
     }
 
     private Settings buildSettings( String settingsPath, String id, String url )
     {
-        Settings settings = null;
+        Settings settings;
         if( settingsPath == null )
         {
             settings = new Settings();
@@ -171,8 +161,7 @@ public class MirrorAuthenticationTest
     }
 
     @Test
-    public void authenticationShouldFail() throws IOException, InterruptedException
-    {
+    public void authenticationShouldFail() throws IOException {
         MavenConfigurationImpl config = getConfig( "src/test/resources/settings-mirror-auth-fail.xml",
         		 "fake", "http://google.com/repo" );
 
@@ -184,13 +173,12 @@ public class MirrorAuthenticationTest
                                        new AetherBasedResolver( config ) );
 
         thrown.expect( IOException.class );
-        thrown.expectMessage( "status: 401 Unauthorized" );
+        thrown.expectMessage( "status code: 401, reason phrase: Unauthorized (401)" );
         c.getInputStream();
     }
 
     @Test
-    public void authenticationShouldPassWithAMirrorWithAName() throws IOException, InterruptedException
-    {
+    public void authenticationShouldPassWithAMirrorWithAName() throws IOException {
         MavenConfigurationImpl config = getConfig( "src/test/resources/settings-mirror-with-name-auth-pass.xml",
         		 "fake", "http://google.com/repo" );
 
@@ -201,8 +189,8 @@ public class MirrorAuthenticationTest
         Connection c = new Connection( new URL( null, "mvn:ant/ant/1.5.1", new Handler() ),
                                        new AetherBasedResolver( config ) );
         c.getInputStream().close();
-        assertEquals( "the artifact must be downloaded", true, new File( localRepo,
-            "ant/ant/1.5.1/ant-1.5.1.jar" ).exists() );
+        assertTrue("the artifact must be downloaded", new File(localRepo,
+                "ant/ant/1.5.1/ant-1.5.1.jar").exists());
     }
     
     @Test
@@ -217,7 +205,7 @@ public class MirrorAuthenticationTest
        Connection c = new Connection( new URL( null, "mvn:ant/ant/1.5.1", new Handler() ),
                                       new AetherBasedResolver( config ) );
        c.getInputStream().close();
-       assertEquals( "the artifact must be downloaded", true, new File( localRepo,
-           "ant/ant/1.5.1/ant-1.5.1.jar" ).exists() );
+        assertTrue("the artifact must be downloaded", new File(localRepo,
+                "ant/ant/1.5.1/ant-1.5.1.jar").exists());
 	}
 }

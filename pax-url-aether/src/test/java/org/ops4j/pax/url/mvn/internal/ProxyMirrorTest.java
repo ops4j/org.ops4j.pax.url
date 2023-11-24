@@ -22,10 +22,10 @@ import java.util.UUID;
 
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.DefaultHandler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
-import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,8 +35,8 @@ import org.ops4j.pax.url.mvn.internal.config.MavenConfiguration;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class ProxyMirrorTest
 {
@@ -47,7 +47,7 @@ public class ProxyMirrorTest
     public void startHttp() throws Exception
     {
         server = new Server();
-        SelectChannelConnector connector = new SelectChannelConnector();
+        ServerConnector connector = new ServerConnector(server);
         connector.setPort( 8778 );
         server.addConnector( connector );
 
@@ -90,8 +90,8 @@ public class ProxyMirrorTest
                                        new AetherBasedResolver( config ) );
         c.getInputStream();
 
-        assertEquals( "the artifact must be downloaded", true, new File( localRepo,
-            "ant/ant/1.5.1/ant-1.5.1.jar" ).exists() );
+        assertTrue("the artifact must be downloaded", new File(localRepo,
+                "ant/ant/1.5.1/ant-1.5.1.jar").exists());
         
         // test for PAXURL-209
         assertThat( System.getProperty( "http.proxyHost" ), is( nullValue() ) );

@@ -18,10 +18,16 @@ package org.ops4j.pax.url.mvn.internal;
 
 import java.net.MalformedURLException;
 
+import org.ops4j.pax.url.mvn.ServiceConstants;
 import org.ops4j.pax.url.mvn.internal.config.MavenRepositoryURL;
 
 /**
- * Parser for mvn: protocol.<br/>
+ * Parser for mvn: protocol. The URL looks roughly like this:<pre>
+ *     mvn-url := mvn:[repository-part!]artifact-part
+ *     repository-part := {@link MavenRepositoryURL}
+ *     artifact-part := groupId/artifactId[/version[/type[/classifier]]]
+ * </pre>
+ * The URLs passed to the constructor must not contain the {@code mvn:} scheme
  *
  * @author Alin Dreghiciu
  * @author Toni Menzel
@@ -31,7 +37,6 @@ import org.ops4j.pax.url.mvn.internal.config.MavenRepositoryURL;
  */
 public class Parser
 {
-
      /**
      * Default version if none present in the url.
      */
@@ -40,7 +45,7 @@ public class Parser
     /**
      * Syntax for the url; to be shown on exception messages.
      */
-    private static final String SYNTAX = "mvn:[repository_url!]groupId/artifactId[/[version]/[type]]";
+    private static final String SYNTAX = "mvn:[repository_url!]groupId/artifactId[/[version[/type[/classifier]]]";
 
     /**
      * Separator between repository and artifact definition.
@@ -114,7 +119,7 @@ public class Parser
      */
     private String m_classifier;
     /**
-     * Artifact classifier to use to build artifact name.
+     * Artifact classifier to use to build artifact name (i.e., classifier prependend with dash).
      */
     private String m_fullClassifier;
 
@@ -142,6 +147,7 @@ public class Parser
         {
             int pos = path.lastIndexOf( REPOSITORY_SEPARATOR );
             parseArtifactPart( path.substring( pos + 1 ) );
+            // we have to include all ! up to the last one, because ZIP/JAR archives are accessed with "!/" path prefix
             m_repositoryURL = new MavenRepositoryURL( path.substring( 0, pos ) + "@snapshots" );
         }
         else
@@ -167,31 +173,31 @@ public class Parser
         }
         // we must have a valid group
         m_group = segments[ 0 ];
-        if( m_group.trim().length() == 0 )
+        if(m_group.trim().isEmpty())
         {
             throw new MalformedURLException( "Invalid groupId. Syntax " + SYNTAX );
         }
         // valid artifact
         m_artifact = segments[ 1 ];
-        if( m_artifact.trim().length() == 0 )
+        if(m_artifact.trim().isEmpty())
         {
             throw new MalformedURLException( "Invalid artifactId. Syntax " + SYNTAX );
         }
         // version is optional but we have a default value 
         m_version = VERSION_LATEST;
-        if( segments.length >= 3 && segments[ 2 ].trim().length() > 0 )
+        if( segments.length >= 3 && !segments[2].trim().isEmpty())
         {
             m_version = segments[ 2 ];
         }
         // type is optional but we have a default value
         m_type = TYPE_JAR;
-        if( segments.length >= 4 && segments[ 3 ].trim().length() > 0 )
+        if( segments.length >= 4 && !segments[3].trim().isEmpty())
         {
             m_type = segments[ 3 ];
         }
         // classifier is optional (if not pressent or empty we will have a null classsifier
         m_fullClassifier = "";
-        if( segments.length >= 5 && segments[ 4 ].trim().length() > 0 )
+        if( segments.length >= 5 && !segments[4].trim().isEmpty())
         {
             m_classifier = segments[ 4 ];
             m_fullClassifier = CLASSIFIER_SEPARATOR + m_classifier;

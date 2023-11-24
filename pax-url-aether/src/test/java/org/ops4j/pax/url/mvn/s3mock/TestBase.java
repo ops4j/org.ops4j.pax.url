@@ -15,9 +15,11 @@
  */
 package org.ops4j.pax.url.mvn.s3mock;
 
-import org.eclipse.jetty.http.ssl.SslContextFactory;
+import org.eclipse.jetty.server.HttpConnectionFactory;
+import org.eclipse.jetty.server.SecureRequestCustomizer;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.ssl.SslSocketConnector;
+import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.slf4j.Logger;
@@ -28,7 +30,6 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class TestBase
 {
-
     protected Logger log = LoggerFactory.getLogger( getClass() );
 
     private Server server;
@@ -36,23 +37,23 @@ public abstract class TestBase
     @Before
     public void startHttp() throws Exception
     {
+        /* client setup */
 
-        /** client setup */
-
-        /** TODO should work w/o this ? */
+        /* TODO should work w/o this ? */
         Util.setupClientSSL();
 
-        /** server setup */
+        /* server setup */
 
         server = new Server();
 
-        final SslContextFactory factory = new SslContextFactory();
-        factory.setKeyStore( Util.getTestKeystore().getAbsolutePath() );
+        final SslContextFactory.Server factory = new SslContextFactory.Server();
+        factory.setKeyStorePath( Util.getTestKeystore().getAbsolutePath() );
         factory.setKeyStorePassword( Util.getTestKeystorePassword() );
-        factory.setTrustStore( Util.getTestKeystore().getAbsolutePath() );
+        factory.setTrustStorePath( Util.getTestKeystore().getAbsolutePath() );
         factory.setKeyManagerPassword( Util.getTestKeystorePassword() );
 
-        final SslSocketConnector connector = new SslSocketConnector( factory );
+        final ServerConnector connector = new ServerConnector( server,  factory );
+        ((HttpConnectionFactory) connector.getConnectionFactory("HTTP/1.1")).getHttpConfiguration().getCustomizer(SecureRequestCustomizer.class).setSniHostCheck(false);
         connector.setPort( Util.getPort() );
 
         server.addConnector( connector );

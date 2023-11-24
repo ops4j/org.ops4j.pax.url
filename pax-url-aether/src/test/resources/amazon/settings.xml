@@ -29,10 +29,10 @@
 			<password>magic-token</password>
             <configuration>
                 <httpHeaders>
-                    <httpHeader>
+                    <property>
                        <name>User-Agent</name>
                        <value>magic-token</value>
-                    </httpHeader>
+                    </property>
                 </httpHeaders>
             </configuration>
 		</server>

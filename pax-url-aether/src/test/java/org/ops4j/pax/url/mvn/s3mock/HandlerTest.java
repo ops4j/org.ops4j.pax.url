@@ -30,7 +30,6 @@ public class HandlerTest extends TestBase
     @Ignore
     public void test() throws Exception
     {
-
         String settings = Util.getTestSettings().getAbsolutePath();
         String localRepo = Util.getTestRepo().getAbsolutePath();
 

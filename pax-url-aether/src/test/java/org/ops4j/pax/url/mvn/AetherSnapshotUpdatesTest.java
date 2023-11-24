@@ -17,18 +17,19 @@ package org.ops4j.pax.url.mvn;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
 import org.eclipse.aether.repository.RepositoryPolicy;
+import org.eclipse.jetty.server.NetworkConnector;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
@@ -41,7 +42,7 @@ import org.ops4j.pax.url.mvn.internal.config.MavenConfigurationImpl;
 import org.ops4j.util.property.PropertiesPropertyResolver;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * Test cases for connection and read timeouts
@@ -52,7 +53,7 @@ public class AetherSnapshotUpdatesTest {
     private static int port;
 
     private static boolean someoneDeploysNewerSnapshot = false;
-    private static Map<String, Integer> HITS = new HashMap<>();
+    private static final Map<String, Integer> HITS = new HashMap<>();
 
     @BeforeClass
     public static void startJetty() throws Exception {
@@ -60,7 +61,7 @@ public class AetherSnapshotUpdatesTest {
         server.setHandler(new AbstractHandler() {
             @Override
             public void handle(String target, Request baseRequest, HttpServletRequest request,
-                               HttpServletResponse response) throws IOException, ServletException {
+                               HttpServletResponse response) throws IOException {
                 try {
                     if (request.getRequestURI().endsWith("maven-metadata.xml")) {
                         String[] split = request.getRequestURI().split("/");
@@ -92,7 +93,7 @@ public class AetherSnapshotUpdatesTest {
                         sw.append("  </versioning>\n");
                         sw.append("</metadata>\n");
 
-                        response.getOutputStream().write(sw.toString().getBytes("UTF-8"));
+                        response.getOutputStream().write(sw.toString().getBytes(StandardCharsets.UTF_8));
                     } else if (request.getRequestURI().endsWith(".jar")) {
                         response.setStatus(HttpServletResponse.SC_OK);
                         response.getOutputStream().write(0x42);
@@ -107,7 +108,7 @@ public class AetherSnapshotUpdatesTest {
             }
         });
         server.start();
-        port = server.getConnectors()[0].getLocalPort();
+        port = ((NetworkConnector) server.getConnectors()[0]).getLocalPort();
     }
 
     @Before
@@ -132,6 +133,8 @@ public class AetherSnapshotUpdatesTest {
                 equalTo(3));
         assertThat(HITS.get("/repository/org/ops4j/pax/web/pax-web-api/1-SNAPSHOT/pax-web-api-1-20161017.101010-1.jar"),
                 equalTo(1));
+
+        resolver.close();
     }
 
     @Test
@@ -150,6 +153,8 @@ public class AetherSnapshotUpdatesTest {
                 equalTo(1));
         assertThat(HITS.get("/repository/org/ops4j/pax/web/pax-web-api/1-SNAPSHOT/pax-web-api-1-20161017.101010-1.jar"),
                 equalTo(1));
+
+        resolver.close();
     }
 
     @Test
@@ -171,6 +176,8 @@ public class AetherSnapshotUpdatesTest {
                 equalTo(1));
         assertThat(HITS.get("/repository/org/ops4j/pax/web/pax-web-api/1-SNAPSHOT/pax-web-api-1-20161017.111010-2.jar"),
                 equalTo(1));
+
+        resolver.close();
     }
 
     @Test
@@ -191,6 +198,8 @@ public class AetherSnapshotUpdatesTest {
                 equalTo(1));
         assertThat(HITS.get("/repository/org/ops4j/pax/web/pax-web-api/1-SNAPSHOT/pax-web-api-1-20161017.101010-1.jar"),
                 equalTo(1));
+
+        resolver.close();
     }
 
     @AfterClass

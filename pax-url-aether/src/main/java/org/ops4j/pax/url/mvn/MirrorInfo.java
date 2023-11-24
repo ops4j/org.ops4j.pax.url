@@ -49,6 +49,11 @@ public class MirrorInfo {
      */
     private String mirrorOfLayouts = "default,legacy";
 
+    /**
+     * Whether this mirror should be blocked from any download request but fail the download process, explaining why.
+     */
+    private boolean blocked = false;
+
     public MirrorInfo() {
     }
 
@@ -104,6 +109,14 @@ public class MirrorInfo {
 
     public void setMirrorOfLayouts(String mirrorOfLayouts) {
         this.mirrorOfLayouts = mirrorOfLayouts;
+    }
+
+    public boolean isBlocked() {
+        return blocked;
+    }
+
+    public void setBlocked(boolean blocked) {
+        this.blocked = blocked;
     }
 
 }

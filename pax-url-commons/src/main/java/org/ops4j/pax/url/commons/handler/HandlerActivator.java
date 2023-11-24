@@ -77,11 +77,11 @@ public class HandlerActivator<T>
     /**
      * Handler service registration. Usef for cleanup.
      */
-    private ServiceRegistration m_handlerReg;
+    private ServiceRegistration<URLStreamHandlerService> m_handlerReg;
     /**
      * Managed service registration. Used for cleanup.
      */
-    private ServiceRegistration m_managedServiceReg;
+    private ServiceRegistration<?> m_managedServiceReg;
 
     /**
      * Creates a protocol handler.
@@ -153,14 +153,9 @@ public class HandlerActivator<T>
      */
     private void registerHandler()
     {
-        final Dictionary<String, Object> props = new Hashtable<String, Object>();
+        final Dictionary<String, Object> props = new Hashtable<>();
         props.put( URLConstants.URL_HANDLER_PROTOCOL, m_protocols );
-        m_handlerReg = m_bundleContext.registerService(
-            URLStreamHandlerService.class.getName(),
-            new Handler(),
-            props
-        );
-
+        m_handlerReg = m_bundleContext.registerService(URLStreamHandlerService.class, new Handler(), props);
     }
 
     /**

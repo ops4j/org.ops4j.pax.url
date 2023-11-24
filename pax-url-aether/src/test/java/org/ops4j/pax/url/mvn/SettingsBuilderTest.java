@@ -15,11 +15,6 @@
  */
 package org.ops4j.pax.url.mvn;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assume.assumeNotNull;
-
 import java.io.File;
 
 import org.apache.maven.settings.Mirror;
@@ -31,13 +26,18 @@ import org.apache.maven.settings.building.DefaultSettingsBuildingRequest;
 import org.apache.maven.settings.building.SettingsBuildingException;
 import org.apache.maven.settings.building.SettingsBuildingRequest;
 import org.apache.maven.settings.building.SettingsBuildingResult;
+import org.apache.maven.settings.crypto.DefaultSettingsDecrypter;
 import org.apache.maven.settings.crypto.DefaultSettingsDecryptionRequest;
+import org.apache.maven.settings.crypto.SettingsDecrypter;
 import org.apache.maven.settings.crypto.SettingsDecryptionResult;
 import org.junit.Test;
-import org.ops4j.pax.url.mvn.internal.ConfigurableSettingsDecrypter;
-import org.ops4j.pax.url.mvn.internal.PaxUrlSecDispatcher;
 import org.sonatype.plexus.components.cipher.DefaultPlexusCipher;
-import org.sonatype.plexus.components.cipher.PlexusCipherException;
+import org.sonatype.plexus.components.sec.dispatcher.DefaultSecDispatcher;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assume.assumeNotNull;
 
 public class SettingsBuilderTest {
 
@@ -65,7 +65,7 @@ public class SettingsBuilderTest {
     }
 
     @Test
-    public void readSettingsWithEncryptedPassword() throws SettingsBuildingException, PlexusCipherException {
+    public void readSettingsWithEncryptedPassword() throws SettingsBuildingException {
 
         DefaultSettingsBuilderFactory factory = new DefaultSettingsBuilderFactory();
         DefaultSettingsBuilder builder = factory.newInstance();
@@ -79,11 +79,10 @@ public class SettingsBuilderTest {
         Settings settings = result.getEffectiveSettings();
         
         DefaultSettingsDecryptionRequest decryptionRequest = new DefaultSettingsDecryptionRequest( settings );
-        PaxUrlSecDispatcher secDispatcher = new PaxUrlSecDispatcher();
-        secDispatcher.setCipher( new DefaultPlexusCipher() );
+        DefaultSecDispatcher secDispatcher = new DefaultSecDispatcher(new DefaultPlexusCipher());
         secDispatcher.setConfigurationFile( "src/test/resources/settings-security.xml" );
-        ConfigurableSettingsDecrypter decrypter = new ConfigurableSettingsDecrypter(secDispatcher);
-        
+        SettingsDecrypter decrypter = new DefaultSettingsDecrypter(secDispatcher);
+
         SettingsDecryptionResult decryptionResult = decrypter.decrypt( decryptionRequest );
         Server server = decryptionResult.getServer();
         assertThat( server.getPassword(), is( "ops4j" ) );

@@ -19,10 +19,10 @@ import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -33,7 +33,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 import java.util.List;
 import java.util.Properties;
 
@@ -49,13 +49,12 @@ import org.apache.maven.settings.building.SettingsBuildingResult;
 import org.apache.maven.settings.building.SettingsProblem;
 import org.junit.Assume;
 import org.junit.Test;
-import org.ops4j.io.FileUtils;
+import org.ops4j.pax.url.mvn.internal.FileUtils;
 import org.ops4j.util.property.PropertiesPropertyResolver;
 import org.ops4j.util.property.PropertyResolver;
 
 public class ConfigurationImplTest
 {
-
     private static final String PID = "org.ops4j.pax.url.mvn";
 
     @Test( expected = IllegalArgumentException.class )
@@ -64,9 +63,8 @@ public class ConfigurationImplTest
         new MavenConfigurationImpl( null, PID );
     }
 
-    @Test( expected = AssertionError.class )
-    public void getMalformedSettings()
-            throws FileNotFoundException
+    @Test( expected = IllegalArgumentException.class )
+    public void getMalformedSettings() throws FileNotFoundException
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
         File malformedSettings = FileUtils.getFileFromClasspath( "configuration/malformed-settings.xml" );
@@ -79,53 +77,52 @@ public class ConfigurationImplTest
         new MavenConfigurationImpl( propertyResolver, PID );
     }
 
-    @Test
-    public void getCertificateCheck()
-    {
-        PropertyResolver propertyResolver = createMock( PropertyResolver.class );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.settings" ) ).andReturn( null );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.useFallbackRepositories" ) ).andReturn( null );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.certificateCheck" ) ).andReturn( "true" );
-        replay( propertyResolver );
-        MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
-        assertEquals( "Certificate check", true, config.getCertificateCheck() );
-        verify( propertyResolver );
-    }
-
-    @Test
-    public void getDefaultCertificateCheck()
-    {
-        PropertyResolver propertyResolver = createMock( PropertyResolver.class );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.settings" ) ).andReturn( null );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.useFallbackRepositories" ) ).andReturn( null );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.certificateCheck" ) ).andReturn( null );
-        replay( propertyResolver );
-        MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
-        assertEquals( "Certificate check", false, config.getCertificateCheck() );
-        verify( propertyResolver );
-    }
+//    @Test
+//    public void getCertificateCheck()
+//    {
+//        PropertyResolver propertyResolver = createMock( PropertyResolver.class );
+//        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null );
+//        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.settings" ) ).andReturn( null );
+//        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.useFallbackRepositories" ) ).andReturn( null );
+//        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.certificateCheck" ) ).andReturn( "true" );
+//        replay( propertyResolver );
+//        MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
+//        assertEquals( "Certificate check", true, config.getCertificateCheck() );
+//        verify( propertyResolver );
+//    }
+//
+//    @Test
+//    public void getDefaultCertificateCheck()
+//    {
+//        PropertyResolver propertyResolver = createMock( PropertyResolver.class );
+//        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null );
+//        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.settings" ) ).andReturn( null );
+//        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.useFallbackRepositories" ) ).andReturn( null );
+//        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.certificateCheck" ) ).andReturn( null );
+//        replay( propertyResolver );
+//        MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
+//        assertEquals( "Certificate check", false, config.getCertificateCheck() );
+//        verify( propertyResolver );
+//    }
 
     @Test
     public void getSettingsAsURL()
-        throws MalformedURLException
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null ).atLeastOnce();
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.useFallbackRepositories" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.settings" ) ).andReturn(
-            "file:somewhere/settings.xml"
+            "file:src/test/resources/settings/settingsEmpty.xml"
         );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.security" ) ).andReturn( null );
         replay( propertyResolver );
         MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
-        assertEquals( "Settings", new URL( "file:somewhere/settings.xml" ), config.getSettingsFileUrl() );
+        assertTrue( "Settings", config.getSettingsFile().toURI().getPath().endsWith("src/test/resources/settings/settingsEmpty.xml") );
         verify( propertyResolver );
     }
 
     @Test
-    public void getSettingsAsFilePath()
-        throws MalformedURLException, FileNotFoundException
+    public void getSettingsAsFilePath() throws FileNotFoundException
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
         File validSettings = FileUtils.getFileFromClasspath( "configuration/settings.xml" );
@@ -134,32 +131,31 @@ public class ConfigurationImplTest
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.settings" ) ).andReturn(
             validSettings.getAbsolutePath()
         );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.security" ) ).andReturn( null );
         replay( propertyResolver );
         MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
-        assertEquals( "Settings", validSettings.toURI().toURL(), config.getSettingsFileUrl() );
+        assertEquals( "Settings", validSettings.toURI(), config.getSettingsFile().toURI() );
         verify( propertyResolver );
     }
 
     /**
      * Test that a malformed url will not trigger an exception ( will be skipped)
      *
-     * @throws MalformedURLException not expected
      */
     @Test
     public void getSettingsAsMalformedURL()
-        throws MalformedURLException
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.useFallbackRepositories" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.settings" ) ).andReturn( "noprotocol:settings.xml" );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.security" ) ).andReturn( null );
         replay( propertyResolver );
-        new MavenConfigurationImpl( propertyResolver, PID ).getSettingsFileUrl();
+        new MavenConfigurationImpl( propertyResolver, PID ).getSettingsFile();
     }
 
     @Test
     public void getSettingsWithoutPropertySet()
-        throws MalformedURLException
     {
         File settingsFile = new File( System.getProperty( "user.home" ) + "/.m2/settings.xml" );
         Assume.assumeTrue( settingsFile.exists() );
@@ -168,25 +164,41 @@ public class ConfigurationImplTest
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.useFallbackRepositories" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.settings" ) ).andReturn( null ).atLeastOnce();
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.security" ) ).andReturn( null );
         replay( propertyResolver );
         MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
-        URL settings = config.getSettingsFileUrl();
+        File settings = config.getSettingsFile();
         assertNotNull( settings );
-        assertEquals( "Settings", settingsFile.toURI().toASCIIString(), settings.toExternalForm() );
+        assertEquals( "Settings", settingsFile.toURI().toASCIIString(), settings.toURI().toASCIIString() );
         verify( propertyResolver );
     }
 
     @Test
     public void getGetLocalRepository()
-        throws MalformedURLException
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.settings" ) ).andReturn( null );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.security" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.useFallbackRepositories" ) ).andReturn( null );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( "file:/user/home/.m2/repository" ).atLeastOnce();
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( "file:/xxx/home/.m2/repository" ).atLeastOnce();
         replay( propertyResolver );
         MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
-        MavenRepositoryURL localRepo = config.getLocalRepository();
+        File localRepo = config.getLocalRepository();
+        assertNotNull( localRepo );
+        verify( propertyResolver );
+    }
+
+    @Test
+    public void getGetDefaultLocalRepository()
+    {
+        PropertyResolver propertyResolver = createMock( PropertyResolver.class );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.settings" ) ).andReturn( null );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.security" ) ).andReturn( null );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.useFallbackRepositories" ) ).andReturn( null );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null ).atLeastOnce();
+        replay( propertyResolver );
+        MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
+        File localRepo = config.getLocalRepository();
         assertNotNull( localRepo );
         verify( propertyResolver );
     }
@@ -198,87 +210,83 @@ public class ConfigurationImplTest
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.settings" ) ).andReturn( null );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.security" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.useFallbackRepositories" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.repositories" ) ).andReturn( "file:repository1/@id=repository1" );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.defaultLocalRepoAsRemote" ) ).andReturn( null );
         replay( propertyResolver );
         MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
         List<MavenRepositoryURL> repositories = config.getRepositories();
         assertNotNull( "Repositories is null", repositories );
         assertEquals( "Repositories size", 1, repositories.size() );
-        assertEquals( "Repository", new URL( "file:repository1/" ), repositories.get( 0 ).getURL() );
+        assertEquals( "Repository", URI.create( "file:repository1/" ), repositories.get( 0 ).getURI() );
         verify( propertyResolver );
     }
 
     @Test
-    public void getRepositoriesWithoutSlash()
-        throws MalformedURLException
+    public void getRepositoriesWithoutSlash() throws MalformedURLException
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.settings" ) ).andReturn( null );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.security" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.useFallbackRepositories" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.repositories" ) ).andReturn( "file:repository1@id=repository1" );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.defaultLocalRepoAsRemote" ) ).andReturn( null );
         replay( propertyResolver );
         MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
         List<MavenRepositoryURL> repositories = config.getRepositories();
         assertNotNull( "Repositories is null", repositories );
         assertEquals( "Repositories size", 1, repositories.size() );
-        assertEquals( "Repository", new URL( "file:repository1/" ), repositories.get( 0 ).getURL() );
+        assertEquals( "Repository", URI.create( "file:repository1/" ), repositories.get( 0 ).getURI() );
         verify( propertyResolver );
     }
 
     @Test
-    public void getRepositoriesWithSlash()
-        throws MalformedURLException
+    public void getRepositoriesWithSlash() throws MalformedURLException
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.settings" ) ).andReturn( null );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.security" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.useFallbackRepositories" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.repositories" ) ).andReturn( "file:repository1/@id=repository1" );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.defaultLocalRepoAsRemote" ) ).andReturn( null );
         replay( propertyResolver );
         MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
         List<MavenRepositoryURL> repositories = config.getRepositories();
         assertNotNull( "Repositories is null", repositories );
         assertEquals( "Repositories size", 1, repositories.size() );
-        assertEquals( "Repository", new URL( "file:repository1/" ), repositories.get( 0 ).getURL() );
+        assertEquals( "Repository", URI.create( "file:repository1/" ), repositories.get( 0 ).getURI() );
         verify( propertyResolver );
     }
 
     @Test
-    public void getRepositoriesWithBackSlash()
-        throws MalformedURLException
+    public void getRepositoriesWithBackSlash() throws MalformedURLException
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.settings" ) ).andReturn( null );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.security" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.useFallbackRepositories" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.repositories" ) ).andReturn( "file:repository1\\@id=repository1" );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.defaultLocalRepoAsRemote" ) ).andReturn( null );
         replay( propertyResolver );
         MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
         List<MavenRepositoryURL> repositories = config.getRepositories();
         assertNotNull( "Repositories is null", repositories );
         assertEquals( "Repositories size", 1, repositories.size() );
-        assertEquals( "Repository", new URL( "file:repository1\\" ), repositories.get( 0 ).getURL() );
+        assertEquals( "Repository", URI.create( "file:repository1/" ), repositories.get( 0 ).getURI() );
         verify( propertyResolver );
     }
 
     @Test
-    public void getRepositoriesWithAtSnapshotsAndAtNoReleases()
-        throws MalformedURLException
+    public void getRepositoriesWithAtSnapshotsAndAtNoReleases() throws MalformedURLException
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.settings" ) ).andReturn( null );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.security" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.useFallbackRepositories" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.repositories" ) ).andReturn(
             "http:repository1@snapshots@noreleases@id=repository1"
         );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.defaultLocalRepoAsRemote" ) ).andReturn( null );
         replay( propertyResolver );
         MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
         List<MavenRepositoryURL> repositories = config.getRepositories();
@@ -288,17 +296,16 @@ public class ConfigurationImplTest
     }
 
     @Test
-    public void getRepositoriesWithAtSnapshots()
-        throws MalformedURLException
+    public void getRepositoriesWithAtSnapshots() throws MalformedURLException
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.settings" ) ).andReturn( null );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.security" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.useFallbackRepositories" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.repositories" ) ).andReturn(
             "http:repository1@snapshots@id=repository1"
         );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.defaultLocalRepoAsRemote" ) ).andReturn( null );
         replay( propertyResolver );
         MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
         List<MavenRepositoryURL> repositories = config.getRepositories();
@@ -308,17 +315,16 @@ public class ConfigurationImplTest
     }
 
     @Test
-    public void getRepositoriesWithAtNoReleases()
-        throws MalformedURLException
+    public void getRepositoriesWithAtNoReleases() throws MalformedURLException
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.settings" ) ).andReturn( null );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.security" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.useFallbackRepositories" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.repositories" ) ).andReturn(
             "http:repository1@noreleases@id=repository1"
         );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.defaultLocalRepoAsRemote" ) ).andReturn( null );
         replay( propertyResolver );
         MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
         List<MavenRepositoryURL> repositories = config.getRepositories();
@@ -328,59 +334,56 @@ public class ConfigurationImplTest
     }
 
     @Test
-    public void getRepositoriesWithMoreRepositories()
-        throws MalformedURLException
+    public void getRepositoriesWithMoreRepositories() throws MalformedURLException
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.settings" ) ).andReturn( null );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.security" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.useFallbackRepositories" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.repositories" ) ).andReturn(
             "file:repository1/@id=repository1,file:repository2/@id=repository2"
         );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.defaultLocalRepoAsRemote" ) ).andReturn( null );
         replay( propertyResolver );
         MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
         List<MavenRepositoryURL> repositories = config.getRepositories();
         assertNotNull( "Repositories is null", repositories );
         assertEquals( "Repositories size", 2, repositories.size() );
-        assertEquals( "Repository 1", new URL( "file:repository1/" ), repositories.get( 0 ).getURL() );
-        assertEquals( "Repository 2", new URL( "file:repository2/" ), repositories.get( 1 ).getURL() );
+        assertEquals( "Repository 1", URI.create( "file:repository1/" ), repositories.get( 0 ).getURI() );
+        assertEquals( "Repository 2", URI.create( "file:repository2/" ), repositories.get( 1 ).getURI() );
         verify( propertyResolver );
     }
 
     @Test
-    public void getMessyRepositoriesWithMoreRepositories()
-        throws MalformedURLException
+    public void getMessyRepositoriesWithMoreRepositories() throws MalformedURLException
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.settings" ) ).andReturn( null );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.security" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.useFallbackRepositories" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.repositories" ) ).andReturn(
             "file:repository1/@id=repository1 , file:repository2/@id=repository2, "
         );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.defaultLocalRepoAsRemote" ) ).andReturn( null );
         replay( propertyResolver );
         MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
         List<MavenRepositoryURL> repositories = config.getRepositories();
         assertNotNull( "Repositories is null", repositories );
         assertEquals( "Repositories size", 2, repositories.size() );
-        assertEquals( "Repository 1", new URL( "file:repository1/" ), repositories.get( 0 ).getURL() );
-        assertEquals( "Repository 2", new URL( "file:repository2/" ), repositories.get( 1 ).getURL() );
+        assertEquals( "Repository 1", URI.create( "file:repository1/" ), repositories.get( 0 ).getURI() );
+        assertEquals( "Repository 2", URI.create( "file:repository2/" ), repositories.get( 1 ).getURI() );
         verify( propertyResolver );
     }
 
     @Test
-    public void getRepositoriesFromSettings()
-        throws MalformedURLException
+    public void getRepositoriesFromSettings() throws MalformedURLException
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null ).atLeastOnce();
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.settings" ) ).andReturn( null );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.security" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.useFallbackRepositories" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.repositories" ) ).andReturn( null );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.defaultLocalRepoAsRemote" ) ).andReturn( null );
         Settings settings = settingsForRepository( "repository1", "file:repository1" );
         replay( propertyResolver );
         MavenConfigurationImpl config = new MavenConfigurationImpl( propertyResolver, PID );
@@ -388,7 +391,7 @@ public class ConfigurationImplTest
         List<MavenRepositoryURL> repositories = config.getRepositories();
         assertNotNull( "Repositories is null", repositories );
         assertEquals( "Repositories size", 1, repositories.size() );
-        assertEquals( "Repository", new URL( "file:repository1/" ), repositories.get( 0 ).getURL() );
+        assertEquals( "Repository", URI.create( "file:repository1/" ), repositories.get( 0 ).getURI() );
         verify( propertyResolver );
     }
     
@@ -407,15 +410,14 @@ public class ConfigurationImplTest
     }
 
     @Test
-    public void getRepositoriesFromConfigAndSettings()
-        throws MalformedURLException
+    public void getRepositoriesFromConfigAndSettings() throws MalformedURLException
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null ).atLeastOnce();
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.settings" ) ).andReturn( null );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.security" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.useFallbackRepositories" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.repositories" ) ).andReturn( "+file:repository1/@id=repository1" );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.defaultLocalRepoAsRemote" ) ).andReturn( null );
         Settings settings = settingsForRepository( "repository2", "file:repository2" );
         replay( propertyResolver );
         MavenConfigurationImpl config = new MavenConfigurationImpl( propertyResolver, PID );
@@ -423,98 +425,92 @@ public class ConfigurationImplTest
         List<MavenRepositoryURL> repositories = config.getRepositories();
         assertNotNull( "Repositories is null", repositories );
         assertEquals( "Repositories size", 2, repositories.size() );
-        assertEquals( "Repository 1", new URL( "file:repository1/" ), repositories.get( 0 ).getURL() );
-        assertEquals( "Repository 2", new URL( "file:repository2/" ), repositories.get( 1 ).getURL() );
+        assertEquals( "Repository 1", URI.create( "file:repository1/" ), repositories.get( 0 ).getURI() );
+        assertEquals( "Repository 2", URI.create( "file:repository2/" ), repositories.get( 1 ).getURI() );
         verify( propertyResolver );
     }
 
     @Test
-    public void getRepositoriesWithLocalRepository()
-        throws MalformedURLException
+    public void getRepositoriesWithLocalRepository() throws MalformedURLException
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.settings" ) ).andReturn( null );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.security" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.useFallbackRepositories" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.repositories" ) ).andReturn( "file:repository1/@id=repository1" );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn(
-            "file:localRepository/"
+            "file:src/test/resources/localRepository/"
         ).atLeastOnce();
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.defaultLocalRepoAsRemote" ) ).andReturn( null );
         replay( propertyResolver );
         MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
         List<MavenRepositoryURL> repositories = config.getRepositories();
         assertNotNull( "Repositories is null", repositories );
         assertEquals( "Repositories size", 1, repositories.size() );
-        assertEquals( "Local repository", new URL( "file:localRepository/" ), config.getLocalRepository().getURL()
+        assertTrue( "Local repository", config.getLocalRepository().toURI().getPath().endsWith("src/test/resources/localRepository/")
         );
-        assertEquals( "Repository", new URL( "file:repository1/" ), repositories.get( 0 ).getURL() );
+        assertEquals( "Repository", URI.create( "file:repository1/" ), repositories.get( 0 ).getURI() );
         verify( propertyResolver );
     }
 
     @Test
     public void getLocalRepositoryAsURL()
-        throws MalformedURLException
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.settings" ) ).andReturn( null );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.security" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.useFallbackRepositories" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn(
-            "file:somewhere/localrepository/"
+            "file:src/test/resources/somewhere/localrepository/"
         ).atLeastOnce();
         replay( propertyResolver );
         MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
-        assertEquals( "Local repository",
-                      new URL( "file:somewhere/localrepository/" ),
-                      config.getLocalRepository().getURL()
-        );
+        assertTrue( "Local repository", config.getLocalRepository().toURI().getPath().endsWith("src/test/resources/somewhere/localrepository/"));
         verify( propertyResolver );
     }
 
     @Test
     public void getLocalRepositoryAsURLWithoutSlash()
-        throws MalformedURLException
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.settings" ) ).andReturn( null );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.security" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.useFallbackRepositories" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn(
-            "file:somewhere/localrepository"
+            "file:src/test/resources/somewhere/localrepository"
         ).atLeastOnce();
         replay( propertyResolver );
         MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
-        assertEquals( "Local repository",
-                      new URL( "file:somewhere/localrepository/" ),
-                      config.getLocalRepository().getURL()
+        assertTrue( "Local repository",
+                      config.getLocalRepository().toURI().getPath().endsWith("src/test/resources/somewhere/localrepository/")
         );
         verify( propertyResolver );
     }
 
     @Test
     public void getLocalRepositoryAsURLWithBackSlash()
-        throws MalformedURLException
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.settings" ) ).andReturn( null );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.security" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.useFallbackRepositories" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn(
-            "file:somewhere/localrepository\\"
+            "file:src/test/resources/somewhere/localrepository%5C"
         ).atLeastOnce();
         replay( propertyResolver );
         MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
-        assertEquals( "Local repository",
-                      new URL( "file:somewhere/localrepository\\" ),
-                      config.getLocalRepository().getURL()
+        assertTrue( "Local repository",
+                      config.getLocalRepository().toURI().getPath().endsWith("src/test/resources/somewhere/localrepository/")
         );
         verify( propertyResolver );
     }
 
     @Test
-    public void getLocalRepositoryAsFilePath()
-        throws MalformedURLException, FileNotFoundException
+    public void getLocalRepositoryAsFilePath() throws MalformedURLException, FileNotFoundException
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
         File valid = FileUtils.getFileFromClasspath( "configuration/localrepository" );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.settings" ) ).andReturn( null );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.security" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.useFallbackRepositories" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn(
             valid.getAbsolutePath()
@@ -523,19 +519,19 @@ public class ConfigurationImplTest
         MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
         assertEquals( "Local repository",
                       valid.toURI().toURL(),
-                      config.getLocalRepository().getURL()
+                      config.getLocalRepository().toURI().toURL()
         );
         verify( propertyResolver );
     }
 
     @Test
-    public void getLocalRepositoryAsFilePathWithoutSlash()
-        throws MalformedURLException, FileNotFoundException
+    public void getLocalRepositoryAsFilePathWithoutSlash() throws MalformedURLException, FileNotFoundException
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
         File valid = FileUtils.getFileFromClasspath( "configuration/localrepository" );
         File validWithSlash = FileUtils.getFileFromClasspath( "configuration/localrepository/" );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.settings" ) ).andReturn( null );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.security" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.useFallbackRepositories" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn(
             valid.getAbsolutePath()
@@ -544,7 +540,7 @@ public class ConfigurationImplTest
         MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
         assertEquals( "Local repository",
                       validWithSlash.toURI().toURL(),
-                      config.getLocalRepository().getURL()
+                      config.getLocalRepository().toURI().toURL()
         );
         verify( propertyResolver );
     }
@@ -552,14 +548,13 @@ public class ConfigurationImplTest
     /**
      * Test that an url that is malformed will not trigger an exception.
      *
-     * @throws MalformedURLException never
      */
     @Test
     public void getLocalRepositoryAsMalformedURL()
-        throws MalformedURLException
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.settings" ) ).andReturn( null );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.security" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.useFallbackRepositories" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn(
             "noprotocol://localrepository"
@@ -571,14 +566,13 @@ public class ConfigurationImplTest
     /**
      * Test that a path to a file that does not exist will not trigger an exception.
      *
-     * @throws MalformedURLException never
      */
     @Test
     public void getLocalRepositoryToAnInexistentDirectory()
-        throws MalformedURLException
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.settings" ) ).andReturn( null );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.security" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.useFallbackRepositories" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn(
             "c:/this/should/be/an/inexistent/directory"
@@ -589,25 +583,25 @@ public class ConfigurationImplTest
 
     @Test
     public void getLocalRepositoryWithoutPropertySet()
-        throws MalformedURLException
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.settings" ) ).andReturn( null );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.security" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.useFallbackRepositories" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null ).atLeastOnce();
         replay( propertyResolver );
         MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
-        MavenRepositoryURL localRepo = config.getLocalRepository();
+        File localRepo = config.getLocalRepository();
         assertNotNull( localRepo );
 		assertEquals("Local repository", System.getProperty("user.home")
 				+ File.separator + ".m2" + File.separator + "repository",
-				localRepo.getFile().toString());
+				localRepo.toString());
         verify( propertyResolver );
     }
 
     private Settings buildSettings( String settingsPath )
     {
-        Settings settings = null;
+        Settings settings;
         if( settingsPath == null )
         {
             settings = new Settings();
@@ -639,52 +633,51 @@ public class ConfigurationImplTest
     }
 
     @Test
-    public void getLocalRepositoryFromSettings()
-        throws MalformedURLException
+    public void getLocalRepositoryFromSettings() throws MalformedURLException
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null ).atLeastOnce();
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.settings" ) ).andReturn( null );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.security" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.useFallbackRepositories" ) ).andReturn( null );
         Settings settings = buildSettings("src/test/resources/settings/settingsWithLocalRepository.xml");
         replay( propertyResolver );
         MavenConfigurationImpl config = new MavenConfigurationImpl( propertyResolver, PID );
         config.setSettings( settings );
         assertEquals( "Local repository",
-                      new File("repository").toURI().toURL().toString() + "/",
-                      config.getLocalRepository().getURL().toString()
+                      new File("target/test-classes").toURI().toURL().toString(),
+                      config.getLocalRepository().toURI().toURL().toString()
         );
         verify( propertyResolver );
     }
 
     @Test
-    public void getRepositoriesFromActiveProfilesInSettings()
-        throws MalformedURLException
+    public void getRepositoriesFromActiveProfilesInSettings() throws MalformedURLException
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null ).atLeastOnce();
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.settings" ) ).andReturn( null );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.security" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.useFallbackRepositories" ) ).andReturn( "false" );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.repositories" ) ).andReturn( null ).anyTimes();
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.defaultLocalRepoAsRemote" ) ).andReturn( null ).anyTimes();
         Settings settings = buildSettings("src/test/resources/settings/settingsWithRepositories.xml");
         replay( propertyResolver );
         MavenConfigurationImpl config = new MavenConfigurationImpl( propertyResolver, PID );
         config.setSettings( settings );
         assertThat(config.getRepositories().size(), equalTo(6));
+        assertThat(config.getRepositories().get(5).getUsername(), equalTo("user"));
         verify( propertyResolver );
     }
 
     @Test
-    public void getRepositoriesFromProfilesActiveByDefaultInSettings()
-        throws MalformedURLException
+    public void getRepositoriesFromProfilesActiveByDefaultInSettings() throws MalformedURLException
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null ).atLeastOnce();
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.settings" ) ).andReturn( null );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.security" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.useFallbackRepositories" ) ).andReturn( "false" );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.repositories" ) ).andReturn( null ).anyTimes();
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.defaultLocalRepoAsRemote" ) ).andReturn( null ).anyTimes();
         Settings settings = buildSettings("src/test/resources/settings/settingsWithActiveProfiles.xml");
         replay( propertyResolver );
         MavenConfigurationImpl config = new MavenConfigurationImpl( propertyResolver, PID );
@@ -702,10 +695,11 @@ public class ConfigurationImplTest
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.settings" ) ).andReturn( null );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.security" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.useFallbackRepositories" ) ).andReturn( "true" );
         replay( propertyResolver );
         MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
-        assertEquals( "Use Fallback Repositories", true, config.useFallbackRepositories() );
+        assertTrue("Use Fallback Repositories", config.useFallbackRepositories());
         verify( propertyResolver );
     }
 
@@ -715,26 +709,26 @@ public class ConfigurationImplTest
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.settings" ) ).andReturn( null );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.security" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.useFallbackRepositories" ) ).andReturn( null );
         replay( propertyResolver );
         MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
-        assertEquals("Use Fallback Repositories", true, config.useFallbackRepositories());
+        assertTrue("Use Fallback Repositories", config.useFallbackRepositories());
         verify( propertyResolver );
     }
 
     @Test
-    public void getRepossitoryPoliciesFromSettings()
-        throws MalformedURLException, FileNotFoundException
+    public void getRepossitoryPoliciesFromSettings() throws MalformedURLException, FileNotFoundException
     {
         PropertyResolver propertyResolver = createMock( PropertyResolver.class );
         File validSettings = FileUtils.getFileFromClasspath( "settings-policies.xml" );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.repositories" ) ).andReturn( null );
-        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.defaultLocalRepoAsRemote" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.localRepository" ) ).andReturn( null );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.useFallbackRepositories" ) ).andReturn( "false" );
         expect( propertyResolver.get( "org.ops4j.pax.url.mvn.settings" ) ).andReturn(
             validSettings.getAbsolutePath()
         );
+        expect( propertyResolver.get( "org.ops4j.pax.url.mvn.security" ) ).andReturn( null );
         replay( propertyResolver );
         MavenConfiguration config = new MavenConfigurationImpl( propertyResolver, PID );
         List<MavenRepositoryURL> repositories = config.getRepositories();

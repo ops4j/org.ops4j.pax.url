@@ -42,45 +42,18 @@
 
     <dependencies>
 
-        <dependency>
-            <groupId>org.ops4j.pax.url</groupId>
-            <artifactId>pax-url-aether-support</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.ops4j.pax.url</groupId>
-            <artifactId>pax-url-commons</artifactId>
-            <optional>true</optional>
-        </dependency>
-
-        <!-- Embeded dependencies (not transitive) -->
+        <!-- OPS4J -->
 
         <dependency>
             <groupId>org.ops4j.base</groupId>
             <artifactId>ops4j-base-lang</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.ops4j.base</groupId>
-            <artifactId>ops4j-base-io</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.ops4j.base</groupId>
-            <artifactId>ops4j-base-net</artifactId>
-            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.ops4j.base</groupId>
             <artifactId>ops4j-base-util-property</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.ops4j.base</groupId>
-            <artifactId>ops4j-base-util-xml</artifactId>
-            <optional>true</optional>
         </dependency>
 
-        <!-- Provided dependencies (not transitive) -->
+        <!-- OSGi -->
 
         <dependency>
             <groupId>org.osgi</groupId>
@@ -89,16 +62,11 @@
         </dependency>
         <dependency>
             <groupId>org.osgi</groupId>
-            <artifactId>osgi.cmpn</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.annotation</artifactId>
+            <artifactId>org.osgi.service.cm</artifactId>
             <scope>provided</scope>
         </dependency>
 
-        <!-- Logging (not embedded) -->
+        <!-- Logging -->
 
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -108,122 +76,35 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
-            <scope>compile</scope>
+            <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
             <scope>test</scope>
         </dependency>
 
-        <!-- mvn stuff -->
+        <!-- Maven -->
+
+        <!-- We get ALL our Maven / Maven Resolver dependencies through MiMa -->
 
         <dependency>
-            <groupId>org.apache.maven.resolver</groupId>
-            <artifactId>maven-resolver-api</artifactId>
-            <optional>true</optional>
+            <groupId>eu.maveniverse.maven.mima</groupId>
+            <artifactId>context</artifactId>
+            <version>${dependency.eu.maveniverse.maven.mima}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.maven.resolver</groupId>
-            <artifactId>maven-resolver-spi</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven.resolver</groupId>
-            <artifactId>maven-resolver-util</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven.resolver</groupId>
-            <artifactId>maven-resolver-impl</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven.resolver</groupId>
-            <artifactId>maven-resolver-connector-basic</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven.resolver</groupId>
-            <artifactId>maven-resolver-transport-wagon</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-resolver-provider</artifactId>
-            <optional>true</optional>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.inject</groupId>
-                    <artifactId>javax.inject</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-settings-builder</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.plexus</groupId>
-            <artifactId>plexus-sec-dispatcher</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.sonatype.plexus</groupId>
-                    <artifactId>plexus-cipher</artifactId>
-                </exclusion>
-            </exclusions>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.plexus</groupId>
-            <artifactId>plexus-cipher</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.plexus</groupId>
-            <artifactId>plexus-utils</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven.wagon</groupId>
-            <artifactId>wagon-provider-api</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven.wagon</groupId>
-            <artifactId>wagon-file</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven.wagon</groupId>
-            <artifactId>wagon-http</artifactId>
-            <optional>true</optional>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.httpcomponents</groupId>
-                    <artifactId>httpclients</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.jsoup</groupId>
-                    <artifactId>jsoup</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>nekohtml</groupId>
-                    <artifactId>nekohtml</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>nekohtml</groupId>
-                    <artifactId>xercesMinimal</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>eu.maveniverse.maven.mima.runtime</groupId>
+            <artifactId>standalone-static</artifactId>
+            <version>${dependency.eu.maveniverse.maven.mima}</version>
         </dependency>
 
-        <!-- Test dependencies -->
+        <!-- Test -->
 
         <dependency>
             <groupId>junit</groupId>
@@ -231,37 +112,31 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-module-junit4</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.easymock</groupId>
             <artifactId>easymock</artifactId>
             <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.objenesis</groupId>
-                    <artifactId>objenesis</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.powermock</groupId>
             <artifactId>powermock-api-easymock</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-module-junit4</artifactId>
-            <scope>test</scope>
-        </dependency>
 
-        <!-- Emulate amazon s3 -->
+        <!-- Jetty -->
 
         <dependency>
-            <groupId>org.eclipse.jetty.aggregate</groupId>
+            <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.jetty.aggregate</groupId>
-            <artifactId>jetty-plus</artifactId>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-security</artifactId>
             <scope>test</scope>
         </dependency>
 
@@ -281,9 +156,13 @@
                 <directory>src/test/resources</directory>
                 <filtering>true</filtering>
                 <excludes>
+                    <exclude>**/*.jks</exclude>
                     <exclude>repo2/**</exclude>
                     <exclude>repo3/**</exclude>
                     <exclude>repomulti/**</exclude>
+                    <exclude>repomulti_ordered/**</exclude>
+                    <exclude>repomulti_snapshots/**</exclude>
+                    <exclude>repomulti_with_file/**</exclude>
                     <exclude>repomulti_with_file/**</exclude>
                 </excludes>
             </testResource>
@@ -294,6 +173,8 @@
                     <include>repo2/**</include>
                     <include>repo3/**</include>
                     <include>repomulti/**</include>
+                    <include>repomulti_ordered/**</include>
+                    <include>repomulti_snapshots/**</include>
                     <include>repomulti_with_file/**</include>
                 </includes>
             </testResource>
@@ -309,49 +190,96 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
+                            <dependencyReducedPomLocation>${project.build.directory}/dependency-reduced-pom.xml</dependencyReducedPomLocation>
+                            <shadedClassifierName />
                             <artifactSet>
                                 <includes>
-                                    <include>null:null</include>
+                                    <!--
+                                        Normaly we'd include nothing here, because classes from required artifacts are already
+                                        included using Embed-Dependency for maven-bundle-plugin and all we'd have to do
+                                        now is to shade what we need.
+                                        The problem is that we also need dependency-reduced-pom.xml without
+                                        shaded and embedded artifacts...
+                                        That's why we repeat the information contained (in different form) in osgi.bnd
+                                    -->
+                                    <include>eu.maveniverse.maven.mima:context</include>
+                                    <include>eu.maveniverse.maven.mima.runtime:standalone-shared</include>
+                                    <include>eu.maveniverse.maven.mima.runtime:standalone-static</include>
+                                    <include>org.ops4j.base:*</include>
+                                    <include>commons-codec:commons-codec</include>
+                                    <include>org.apache.commons:commons-lang3</include>
+                                    <include>org.apache.httpcomponents:*</include>
+                                    <include>org.apache.maven:*</include>
+                                    <include>org.apache.maven.resolver:*</include>
+                                    <include>org.codehaus.plexus:*</include>
                                 </includes>
                             </artifactSet>
                             <relocations>
                                 <relocation>
                                     <shadedPattern>shaded.</shadedPattern>
                                     <includes>
+                                        <include>eu.maveniverse.maven.mima.**</include>
+                                        <include>org.ops4j.lang.**</include>
+                                        <include>org.ops4j.util.property.**</include>
                                         <include>org.apache.commons.codec.**</include>
                                         <include>org.apache.commons.lang3.**</include>
-                                        <include>org.apache.commons.io.**</include>
-                                        <include>org.apache.commons.logging.**</include>
                                         <include>org.apache.http.**</include>
                                         <include>org.apache.maven.**</include>
-                                        <include>org.codehaus.plexus.**</include>
                                         <include>org.eclipse.aether.**</include>
-                                        <include>org.ops4j.io.**</include>
-                                        <include>org.ops4j.lang.**</include>
-                                        <include>org.ops4j.net.**</include>
-                                        <include>org.ops4j.pax.swissbox.**</include>
-                                        <include>org.ops4j.util.**</include>
-                                        <include>org.ops4j.monitors.**</include>
-                                        <include>org.sonatype.plexus.**</include>
+                                        <include>org.codehaus.plexus.**</include>
+                                        <include>org.sonatype.plexus.components.**</include>
+                                        <include>licenses.**</include>
                                     </includes>
                                 </relocation>
+                                <relocation>
+                                    <pattern>META-INF.versions.9.org.codehaus.plexus</pattern>
+                                    <shadedPattern>META-INF.versions.9.shaded.org.codehaus.plexus</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>META-INF.versions.10.org.codehaus.plexus</pattern>
+                                    <shadedPattern>META-INF.versions.10.shaded.org.codehaus.plexus</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>META-INF.versions.11.org.codehaus.plexus</pattern>
+                                    <shadedPattern>META-INF.versions.11.shaded.org.codehaus.plexus</shadedPattern>
+                                </relocation>
                             </relocations>
+                            <transformers>
+                                <!--
+                                    ManifestResourceTransformer ensures we get our META-INF/MANIFEST.MF  when excluding
+                                    this resource from artifacts, but somehow it works painfully slow (didn't finish after 1 hour)...
+                                -->
+<!--                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer" />-->
+                            </transformers>
                             <filters>
                                 <filter>
+                                    <!--
+                                        we can't declare one filter that matches "all but us" and we'd have to
+                                        declare excludes for each individual dependency...
+                                        that's why I decided to end with a warning like this:
+                                        [INFO] Dependency-reduced POM written at: /data/sources/github.com/ops4j/org.ops4j.pax.url-3.0.x/pax-url-aether/target/dependency-reduced-pom.xml
+                                        [WARNING] context-2.4.2.jar, ops4j-base-lang-1.5.1.jar, ops4j-base-util-property-1.5.1.jar, pax-url-aether-3.0.0-SNAPSHOT.jar, standalone-shared-2.4.2.jar, standalone-static-2.4.2.jar define 1 overlapping resource:
+                                        [WARNING]   - META-INF/MANIFEST.MF
+                                        [WARNING] ops4j-base-lang-1.5.1.jar, ops4j-base-util-property-1.5.1.jar define 3 overlapping resources:
+                                        [WARNING]   - META-INF/DEPENDENCIES.txt
+                                        [WARNING]   - META-INF/LICENSE.txt
+                                        [WARNING]   - META-INF/NOTICE.txt
+                                        ...
+                                    -->
                                     <artifact>*:*</artifact>
                                     <excludes>
-                                        <exclude>org/apache/commons/codec/language/**</exclude>
-                                        <exclude>org/apache/commons/lang3/arch/**</exclude>
-                                        <exclude>org/apache/commons/lang3/builder/**</exclude>
-                                        <exclude>org/apache/commons/lang3/concurrent/**</exclude>
-                                        <exclude>org/apache/commons/lang3/event/**</exclude>
-                                        <exclude>org/apache/commons/lang3/exception/**</exclude>
-                                        <exclude>org/apache/commons/lang3/math/**</exclude>
-                                        <exclude>org/apache/commons/lang3/mutable/**</exclude>
-                                        <exclude>org/apache/commons/lang3/reflect/**</exclude>
-                                        <exclude>org/apache/commons/lang3/text/**</exclude>
-                                        <exclude>org/apache/commons/lang3/time/**</exclude>
-                                        <exclude>org/apache/commons/lang3/tuple/**</exclude>
+                                        <exclude>META-INF/DEPENDENCIES</exclude>
+                                        <exclude>META-INF/DEPENDENCIES.txt</exclude>
+<!--                                        <exclude>META-INF/LICENSE</exclude>-->
+                                        <exclude>META-INF/LICENSE.txt</exclude>
+<!--                                        <exclude>META-INF/MANIFEST.MF</exclude>-->
+                                        <exclude>META-INF/NOTICE</exclude>
+                                        <exclude>META-INF/NOTICE.txt</exclude>
+                                        <exclude>META-INF/.SF</exclude>
+                                        <exclude>META-INF/.DSA</exclude>
+                                        <exclude>META-INF/.RSA</exclude>
+                                        <exclude>META-INF/sisu/**</exclude>
+                                        <exclude>META-INF/services/eu.maveniverse.maven.mima.context.Runtime</exclude>
                                     </excludes>
                                 </filter>
                             </filters>
@@ -369,6 +297,7 @@
                     <systemPropertyVariables>
                         <jetty.http.port>${jetty.http.port}</jetty.http.port>
                     </systemPropertyVariables>
+                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
                 </configuration>
             </plugin>
             <plugin>
@@ -391,31 +320,5 @@
             </plugin>
         </plugins>
     </build>
-
-    <profiles>
-        <profile>
-            <id>jdk9+</id>
-            <activation>
-                <jdk>[9,)</jdk>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-compiler-plugin</artifactId>
-                        <configuration>
-                            <compilerArgs>
-                                <arg>--add-exports=java.base/sun.net.www.protocol.http=ALL-UNNAMED</arg>
-                            </compilerArgs>
-                            <source>11</source>
-                            <target>11</target>
-                            <testSource>11</testSource>
-                            <testTarget>11</testTarget>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 
 </project>

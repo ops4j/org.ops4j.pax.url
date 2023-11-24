@@ -16,7 +16,6 @@
 package org.ops4j.pax.url.mvn;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Properties;
@@ -51,7 +50,7 @@ public class UnitHelp
         throws Exception
     {
         final byte[] array = new byte[8 * 1024];
-        int size = 0;
+        int size;
         while( ( size = in.read( array ) ) >= 0 )
         {
             out.write( array, 0, size );
@@ -65,11 +64,7 @@ public class UnitHelp
     {
         if( folder.exists() )
         {
-            if( folder.isDirectory() )
-            {
-                return;
-            }
-            else
+            if( !folder.isDirectory() )
             {
                 throw new IllegalStateException(
                     "Entry exists but not a folder : " + folder );
@@ -78,11 +73,7 @@ public class UnitHelp
         else
         {
             folder.mkdirs();
-            if( folder.exists() && folder.isDirectory() )
-            {
-                return;
-            }
-            else
+            if( !(folder.exists() && folder.isDirectory()) )
             {
                 throw new IllegalStateException(
                     "Failed to create folder : " + folder );
@@ -154,11 +145,10 @@ public class UnitHelp
                 File file = new File( path, cmd );
                 if( file.exists() && file.isFile() && file.canExecute() )
                 {
-                    /** unwrap symbolic links */
+                    /* unwrap symbolic links */
                     File exec = file.getCanonicalFile();
-                    /** assume ${maven.home}/bin/exec convention */
-                    File home = exec.getParentFile().getParentFile();
-                    return home;
+                    /* assume ${maven.home}/bin/exec convention */
+                    return exec.getParentFile().getParentFile();
                 }
             }
         }
@@ -169,7 +159,6 @@ public class UnitHelp
      * Load default user configuration form user settings.xml with custom properties.
      */
     public static MavenConfiguration getUserConfig( final Properties props )
-        throws Exception
     {
         return getConfig( getUserSettings(), props );
     }
@@ -177,8 +166,7 @@ public class UnitHelp
     /**
      * Load default maven settings from user home.
      */
-    public static File getUserSettings() throws IOException
-    {
+    public static File getUserSettings() {
         return new File( System.getProperty( "user.home" ), ".m2/settings.xml" );
     }
 

@@ -82,7 +82,6 @@ public class Util
 
     static void setupClientSSL() throws Exception
     {
-
         KeyStore store = KeyStore.getInstance( KeyStore.getDefaultType() );
 
         FileInputStream storeInput = new FileInputStream( getTestKeystore() );
@@ -96,7 +95,7 @@ public class Util
 
         manager.init( store );
 
-        SSLContext context = SSLContext.getInstance( "TLS" );
+        SSLContext context = SSLContext.getInstance( "TLSv1.2" );
 
         context.init( null, manager.getTrustManagers(), null );
 

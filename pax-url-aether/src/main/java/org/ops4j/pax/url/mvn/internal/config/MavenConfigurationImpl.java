@@ -17,37 +17,51 @@
 package org.ops4j.pax.url.mvn.internal.config;
 
 import java.io.File;
-import java.net.Authenticator;
 import java.net.MalformedURLException;
-import java.net.PasswordAuthentication;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.net.URI;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import eu.maveniverse.maven.mima.context.ContextOverrides;
+import eu.maveniverse.maven.mima.runtime.standalonestatic.ProfileSelectorSupplier;
+import eu.maveniverse.maven.mima.runtime.standalonestatic.SettingsBuilderSupplier;
+import org.apache.maven.model.building.ModelProblemCollector;
+import org.apache.maven.model.building.ModelProblemCollectorRequest;
+import org.apache.maven.model.profile.DefaultProfileActivationContext;
+import org.apache.maven.model.profile.ProfileSelector;
+import org.apache.maven.settings.Activation;
+import org.apache.maven.settings.ActivationFile;
+import org.apache.maven.settings.ActivationOS;
+import org.apache.maven.settings.ActivationProperty;
 import org.apache.maven.settings.Mirror;
 import org.apache.maven.settings.Profile;
 import org.apache.maven.settings.Repository;
+import org.apache.maven.settings.RepositoryPolicy;
 import org.apache.maven.settings.Settings;
-import org.apache.maven.settings.building.DefaultSettingsBuilder;
-import org.apache.maven.settings.building.DefaultSettingsBuilderFactory;
 import org.apache.maven.settings.building.DefaultSettingsBuildingRequest;
+import org.apache.maven.settings.building.SettingsBuilder;
 import org.apache.maven.settings.building.SettingsBuildingException;
 import org.apache.maven.settings.building.SettingsBuildingRequest;
 import org.apache.maven.settings.building.SettingsBuildingResult;
+import org.apache.maven.settings.crypto.DefaultSettingsDecrypter;
+import org.apache.maven.settings.crypto.DefaultSettingsDecryptionRequest;
+import org.apache.maven.settings.crypto.SettingsDecrypter;
+import org.apache.maven.settings.crypto.SettingsDecryptionRequest;
+import org.apache.maven.settings.crypto.SettingsDecryptionResult;
 import org.ops4j.lang.NullArgumentException;
 import org.ops4j.pax.url.mvn.ServiceConstants;
 import org.ops4j.util.property.PropertyResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.sonatype.plexus.components.cipher.DefaultPlexusCipher;
+import org.sonatype.plexus.components.sec.dispatcher.DefaultSecDispatcher;
 
 /**
  * Service Configuration implementation.
@@ -59,52 +73,97 @@ import org.slf4j.LoggerFactory;
  */
 public class MavenConfigurationImpl implements MavenConfiguration {
 
-    /**
-     * Logger.
-     */
     private static final Logger LOGGER = LoggerFactory.getLogger(MavenConfigurationImpl.class);
+
+    /**
+     * Configuration PID. Cannot be null or empty.
+     */
+    private final String m_pid;
 
     /**
      * The character that should be the first character in repositories property in order to be
      * appended with the repositories from settings.xml.
      */
     private final static String REPOSITORIES_APPEND_SIGN = "+";
+
     /**
      * Repositories separator.
      */
     private final static String REPOSITORIES_SEPARATOR = ",";
+
     private final static String REPOSITORIES_SEPARATOR_SPLIT = "\\s*,\\s*";
+
     /**
      * Use a default timeout of 5 seconds.
      */
-    private final static String DEFAULT_TIMEOUT = "5000";
+    private final static Integer DEFAULT_TIMEOUT = 5000;
 
-    /**
-     * Configuration PID. Cannot be null or empty.
-     */
-    private final String m_pid;
     /**
      * Property resolver. Cannot be null.
      */
     private final PropertyResolver m_propertyResolver;
 
+    /**
+     * Built and decrypted settings.
+     */
     private Settings settings;
 
     /**
-     * Creates a new service configuration.
+     * Settings decrypter that can be used each time new settings are set
+     */
+    private final SettingsDecrypter decrypter;
+
+    /**
+     * Map of resolved/cached properties. Properties are stored with their expected type.
+     */
+    private final Map<String, Object> m_properties = new ConcurrentHashMap<>();
+
+    private static final Object NULL_VALUE = new Object();
+
+    /**
+     * Creates a new Maven configuration. Passed {@link PropertyResolver} is immediately used to determine
+     * location of {@code settings.xml} file and local repository (in such order, because settings may specify
+     * {@code <localRepository>} element).
      * 
-     * @param propertyResolver
-     *            propertyResolver used to resolve properties; mandatory
-     * @param pid
-     *            configuration PID; mandatory
+     * @param propertyResolver propertyResolver used to resolve properties; mandatory
+     * @param pid configuration PID. Set to "" if null.
      */
     public MavenConfigurationImpl(final PropertyResolver propertyResolver, final String pid) {
         NullArgumentException.validateNotNull(propertyResolver, "Property resolver");
 
-        m_pid = pid == null ? "" : pid + ".";
+        m_pid = pid == null || pid.trim().isEmpty() ? "" : pid.trim() + ".";
         m_propertyResolver = propertyResolver;
-        settings = buildSettings(getLocalRepoPath(propertyResolver), getSettingsFileUrl(),
-            useFallbackRepositories());
+
+        // build settings (not decrypted yet)
+        File settingsFile = getSettingsFile();
+        try {
+            settings = buildSettings(settingsFile, useFallbackRepositories());
+        } catch (SettingsBuildingException e) {
+            throw new IllegalArgumentException("Can't parse settings.xml file: " + e.getMessage(), e);
+        }
+
+        // determine local repository - possibly using a value from settings file
+        determineLocalRepository();
+
+        // build security settings (settings-security.xml) to decrypt settings.
+        File securitySettingsFile = getSecuritySettingsFile();
+        if (securitySettingsFile != null) {
+            DefaultPlexusCipher plexusCipher = new DefaultPlexusCipher();
+            DefaultSecDispatcher secDispatcher = new DefaultSecDispatcher(
+                    plexusCipher,
+                    Collections.emptyMap(),
+                    securitySettingsFile.getAbsolutePath());
+
+            decrypter = new DefaultSettingsDecrypter(secDispatcher);
+            decryptCurrentSettings();
+        } else {
+            decrypter = null;
+        }
+    }
+
+    @Override
+    public String getPid() {
+        return m_pid;
     }
 
     @Override
@@ -112,173 +171,195 @@ public class MavenConfigurationImpl implements MavenConfiguration {
         return m_propertyResolver;
     }
 
+    /**
+     * Should the configuration be used at all? If {@link ServiceConstants#REQUIRE_CONFIG_ADMIN_CONFIG} property
+     * is present, it is a hint that there should be new configuration (without this property) available soon from
+     * different source (in practice - when switchin from default, {@link org.osgi.framework.BundleContext} based
+     * configuration to Configuration Admin based configuration (thus the name of the property).
+     *
+     * @return
+     */
     public boolean isValid() {
-        return m_propertyResolver.get(m_pid + ServiceConstants.REQUIRE_CONFIG_ADMIN_CONFIG) == null;
+        return !getProperty(ServiceConstants.REQUIRE_CONFIG_ADMIN_CONFIG, false, Boolean.class);
     }
 
-    /**
-     * @see MavenConfiguration#isOffline()
-     */
+    @Override
     public boolean isOffline() {
-        if (!contains(m_pid + ServiceConstants.PROPERTY_OFFLINE)) {
-            return set(
-                    m_pid + ServiceConstants.PROPERTY_OFFLINE,
-                    Boolean.valueOf(m_propertyResolver.get(m_pid
-                            + ServiceConstants.PROPERTY_OFFLINE)));
+        return getProperty(ServiceConstants.PROPERTY_OFFLINE, false, Boolean.class);
+    }
+
+    @Override
+    public File getSettingsFile() {
+        String key = m_pid + ServiceConstants.PROPERTY_SETTINGS_FILE;
+        if (!contains(key)) {
+            List<String> fallbacks = new ArrayList<>(4);
+            fallbacks.add(m_propertyResolver.get(key));
+            fallbacks.add(System.getProperty("user.home") + "/.m2/settings.xml");
+            fallbacks.add(System.getProperty("maven.home") + "/conf/settings.xml");
+            fallbacks.add(System.getenv("M2_HOME") + "/conf/settings.xml");
+
+            File settingsFile = findFirstAccessibleFile(ServiceConstants.PROPERTY_SETTINGS_FILE, fallbacks, false);
+            return set(key, settingsFile);
         }
-        return get(m_pid + ServiceConstants.PROPERTY_OFFLINE);
+        return get(key);
+    }
+
+    @Override
+    public File getSecuritySettingsFile() {
+        String key = m_pid + ServiceConstants.PROPERTY_SETTINGS_SECURITY_FILE;
+        if (!contains(key)) {
+            List<String> fallbacks = new ArrayList<>(2);
+            fallbacks.add(m_propertyResolver.get(key));
+            fallbacks.add(System.getProperty("user.home") + "/.m2/settings-security.xml");
+
+            File settingsSecurityFile = findFirstAccessibleFile(ServiceConstants.PROPERTY_SETTINGS_SECURITY_FILE, fallbacks, false);
+            return set(key, settingsSecurityFile);
+        }
+        return get(key);
     }
 
     /**
-     * @see MavenConfiguration#getCertificateCheck()
+     * Iterates over locations and returns first file (or directory) that can be accessed.
+     *
+     * @param fallbacks
+     * @param directory
+     * @return
      */
-    public Boolean getCertificateCheck() {
-        if (!contains(m_pid + ServiceConstants.PROPERTY_CERTIFICATE_CHECK)) {
-            return set(
-                m_pid + ServiceConstants.PROPERTY_CERTIFICATE_CHECK,
-                Boolean.valueOf(m_propertyResolver.get(m_pid
-                    + ServiceConstants.PROPERTY_CERTIFICATE_CHECK)));
-        }
-        return get(m_pid + ServiceConstants.PROPERTY_CERTIFICATE_CHECK);
-    }
-
-    /**
-     * Returns the URL of settings file. Will try first to use the url as is. If a malformed url
-     * encountered then will try to use the url as a file path. If still not valid will throw the
-     * original Malformed URL exception.
-     * 
-     * @see MavenConfiguration#getSettingsFileUrl()
-     */
-    public URL getSettingsFileUrl() {
-        if (!contains(m_pid + ServiceConstants.PROPERTY_SETTINGS_FILE)) {
-            String spec = m_propertyResolver.get(m_pid + ServiceConstants.PROPERTY_SETTINGS_FILE);
-            if (spec == null) {
-                spec = safeGetFile(System.getProperty("user.home") + "/.m2/settings.xml");
-            }
-            if (spec == null) {
-                spec = safeGetFile(System.getProperty("maven.home") + "/conf/settings.xml");
-            }
-            if (spec == null) {
-                spec = safeGetFile(System.getenv("M2_HOME") + "/conf/settings.xml");
-            }
-            if (spec != null) {
-                try {
-                    return set(m_pid + ServiceConstants.PROPERTY_SETTINGS_FILE, new URL(spec));
-                }
-                catch (MalformedURLException e) {
-                    File file = new File(spec);
-                    if (file.exists()) {
-                        try {
-                            return set(m_pid + ServiceConstants.PROPERTY_SETTINGS_FILE, file.toURI()
-                                .toURL());
-                        }
-                        catch (MalformedURLException ignore) {
-                            // ignore as it usually should not happen since we already have a file
-                        }
-                    }
-                    else {
-                        LOGGER
-                            .warn("Settings file ["
-                                + spec
-                                + "] cannot be used and will be skipped (malformed url or file does not exist)");
-                        set(m_pid + ServiceConstants.PROPERTY_SETTINGS_FILE, null);
-                    }
-                }
-            }
-        }
-        return get(m_pid + ServiceConstants.PROPERTY_SETTINGS_FILE);
-    }
-
-    private String safeGetFile(String path) {
-        if (path != null) {
-            File file = new File(path);
-            if (file.exists() && file.canRead() && file.isFile()) {
-                try {
-                    return file.toURI().toURL().toExternalForm();
-                }
-                catch (MalformedURLException e) {
-                    // Ignore
-                }
+    private File findFirstAccessibleFile(String option, List<String> fallbacks, boolean directory) {
+        for (String location : fallbacks) {
+            File f = safeGetFile(option, location, directory);
+            if (f != null) {
+                return f;
             }
         }
         return null;
     }
 
     /**
-     * Repository is a comma separated list of repositories to be used. If repository acces requests
-     * authentication the user name and password must be specified in the repository url as for
-     * example http://user:password@repository.ops4j.org/maven2.<br/>
-     * If the repository from 1/2 bellow starts with a plus (+) the option 3 is also used and the
-     * repositories from settings.xml will be cummulated.<br/>
-     * Repository resolution:<br/>
-     * 1. looks for a configuration property named repository;<br/>
-     * 2. looks for a framework property/system setting repository;<br/>
-     * 3. looks in settings.xml (see settings.xml resolution). in this case all configured
-     * repositories will be used including configured user/password. In this case the central
-     * repository is also added. Note that the local repository is added as the first repository if
-     * exists.
-     * 
-     * @see MavenConfiguration#getRepositories()
-     * @see MavenConfiguration#getLocalRepository()
+     * If file for {@code path} is accessible, return related {@link File}.
+     *
+     * @param option if file is not accessible, option indicates the configuration property used for this file
+     * @param path
+     * @param directory
+     * @return
      */
+    private File safeGetFile(String option, String path, boolean directory) {
+        if (path != null && !path.trim().isEmpty()) {
+            path = path.trim().replace('\\', '/');
+            path = path.trim().replaceAll("%5C", "/");
+            path = path.trim().replaceAll("%5c", "/");
+            if (path.startsWith("file:")) {
+                URI uri = URI.create(path);
+                if (uri.isOpaque()) {
+                    // no slash after "file:"
+                    path = uri.getSchemeSpecificPart();
+                } else {
+                    path = uri.getPath();
+                }
+            }
+            File file = new File(path);
+            if (directory) {
+                // we're looking for location of local repository - it doesn't have to exist, but it can't
+                // be an existing file
+                if (!file.exists() || (file.canRead() && file.isDirectory())) {
+                    return file;
+                }
+            } else {
+                if (file.exists() && file.canRead() && file.isFile()) {
+                    return file;
+                }
+            }
+            LOGGER.warn("Location {} is not accessible (incorrect value for option \"{}\")", path, option);
+        }
+        return null;
+    }
+
+    @Override
+    public String getGlobalUpdatePolicy() {
+        return getProperty(ServiceConstants.PROPERTY_GLOBAL_UPDATE_POLICY, null, String.class);
+    }
+
+    @Override
+    public String getGlobalChecksumPolicy() {
+        return getProperty(ServiceConstants.PROPERTY_GLOBAL_CHECKSUM_POLICY, null, String.class);
+    }
+
+    /**
+     * Returns local repository directory by using the following resolution:<ol>
+     *     <li>looks for a configuration property named {@code localRepository}</li>
+     *     <li>looks for a framework property/system setting localRepository</li>
+     *     <li>looks in {@code settings.xml} (see settings.xml resolution)</li>
+     *     <li>looks for system property {@code maven.repo.local} (PAXURL-231)</li>
+     *     <li>falls back to {@code ${user.home}/.m2/repository}</li>
+     * </ol>
+     *
+     * {@inheritDoc}
+     */
+    @Override
+    public File getLocalRepository() {
+        // should be set in constructor
+        // but may be altered if new Settings object is created and added to this configuration
+        return get(m_pid + ServiceConstants.PROPERTY_LOCAL_REPOSITORY);
+    }
+
+    @Override
+    public MavenRepositoryURL getLocalMavenRepositoryURL() {
+        return get(m_pid + ServiceConstants.PROPERTY_LOCAL_REPOSITORY_URL);
+    }
+
+    @Override
+    public boolean useFallbackRepositories() {
+        return getProperty(ServiceConstants.PROPERTY_USE_FALLBACK_REPOSITORIES, true, Boolean.class);
+    }
+
+    @Override
+    public Integer getTimeout() {
+        return getProperty(ServiceConstants.PROPERTY_TIMEOUT, DEFAULT_TIMEOUT, Integer.class);
+    }
+
+    @Override
+    public boolean getCertificateCheck() {
+        return getProperty(ServiceConstants.PROPERTY_CERTIFICATE_CHECK, true, Boolean.class);
+    }
+
+    @Override
     public List<MavenRepositoryURL> getDefaultRepositories() throws MalformedURLException {
-        if (!contains(m_pid + ServiceConstants.PROPERTY_DEFAULT_REPOSITORIES)) {
-            // look for repositories property
-            String defaultRepositoriesProp = m_propertyResolver.get(m_pid
-                + ServiceConstants.PROPERTY_DEFAULT_REPOSITORIES);
-            // build repositories list
-            final List<MavenRepositoryURL> defaultRepositoriesProperty = new ArrayList<MavenRepositoryURL>();
-            if (defaultRepositoriesProp != null && defaultRepositoriesProp.trim().length() > 0) {
+        String key = m_pid + ServiceConstants.PROPERTY_DEFAULT_REPOSITORIES;
+        if (!contains(key)) {
+            String defaultRepositoriesProp = m_propertyResolver.get(key);
+
+            final List<MavenRepositoryURL> defaultRepositoriesProperty = new ArrayList<>();
+            if (defaultRepositoriesProp != null) {
                 String[] repositories = defaultRepositoriesProp.split(REPOSITORIES_SEPARATOR_SPLIT);
                 for (String repositoryURL : repositories) {
                     defaultRepositoriesProperty.add(new MavenRepositoryURL(repositoryURL.trim()));
                 }
             }
             LOGGER.trace("Using default repositories [" + defaultRepositoriesProperty + "]");
-            return set(m_pid + ServiceConstants.PROPERTY_DEFAULT_REPOSITORIES,
-                defaultRepositoriesProperty);
+            return set(key, defaultRepositoriesProperty);
         }
-        return get(m_pid + ServiceConstants.PROPERTY_DEFAULT_REPOSITORIES);
+        return get(key);
     }
 
-    /**
-     * Repository is a comma separated list of repositories to be used. If repository access requests
-     * authentication the user name and password must be specified in the repository url as for
-     * example http://user:password@repository.ops4j.org/maven2.<br/>
-     * If the repository from 1/2 bellow starts with a plus (+) the option 3 is also used and the
-     * repositories from settings.xml will be cummulated.<br/>
-     * Repository resolution:<br/>
-     * 1. looks for a configuration property named repository;<br/>
-     * 2. looks for a framework property/system setting repository;<br/>
-     * 3. looks in settings.xml (see settings.xml resolution). in this case all configured
-     * repositories will be used including configured user/password. In this case the central
-     * repository is also added. Note that the local repository is added as the first repository if
-     * exists.
-     * 
-     * @see MavenConfiguration#getRepositories()
-     * @see MavenConfiguration#getLocalRepository()
-     */
+    @Override
     public List<MavenRepositoryURL> getRepositories() throws MalformedURLException {
-        if (!contains(m_pid + ServiceConstants.PROPERTY_REPOSITORIES)) {
-            // look for repositories property
-            String repositoriesProp = m_propertyResolver.get(m_pid
-                + ServiceConstants.PROPERTY_REPOSITORIES);
-            // if not set or starting with a plus (+) get repositories from settings xml
-            if ((repositoriesProp == null || repositoriesProp.startsWith(REPOSITORIES_APPEND_SIGN))
-                && settings != null) {
+        String key = m_pid + ServiceConstants.PROPERTY_REPOSITORIES;
+        if (!contains(key)) {
+            String remoteRepositoriesProp = m_propertyResolver.get(key);
 
-                String init = (repositoriesProp == null) ? "" : repositoriesProp.substring(1);
-                StringBuilder builder = new StringBuilder(init);
+            final List<MavenRepositoryURL> repositoriesFromSettings = new ArrayList<>();
+            final List<MavenRepositoryURL> remoteRepositories = new ArrayList<>();
+
+            // get (if needed) repositories from settings.xml
+            if (remoteRepositoriesProp == null || remoteRepositoriesProp.trim().startsWith(REPOSITORIES_APPEND_SIGN)) {
                 Map<String, Profile> profiles = settings.getProfilesAsMap();
-                for (String activeProfile : getActiveProfiles(true)) {
-                    Profile profile = profiles.get(activeProfile);
+                for (String id : getActiveProfileIDs()) {
+                    Profile profile = profiles.get(id);
                     if (profile == null) {
                         continue;
                     }
                     for (org.apache.maven.settings.Repository repo : profile.getRepositories()) {
-                        if (builder.length() > 0) {
-                            builder.append(REPOSITORIES_SEPARATOR);
-                        }
+                        StringBuilder builder = new StringBuilder();
                         builder.append(repo.getUrl());
                         builder.append(ServiceConstants.SEPARATOR_OPTIONS);
                         builder.append(ServiceConstants.OPTION_ID);
@@ -301,49 +382,30 @@ public class MavenConfigurationImpl implements MavenConfiguration {
                             addPolicy(builder, repo.getSnapshots().getUpdatePolicy(), ServiceConstants.OPTION_SNAPSHOTS_UPDATE);
                             addPolicy(builder, repo.getSnapshots().getChecksumPolicy(), ServiceConstants.OPTION_SNAPSHOTS_CHECKSUM);
                         }
-                    }
-                }
-                repositoriesProp = builder.toString();
-            }
-            // build repositories list
-            final List<MavenRepositoryURL> repositoriesProperty = new ArrayList<MavenRepositoryURL>();
-            if (m_propertyResolver.get(m_pid + ServiceConstants.PROPERTY_LOCAL_REPO_AS_REMOTE) != null) {
-                MavenRepositoryURL localRepository = getDefaultLocalRepository();
-                if (localRepository != null) {
-                    repositoriesProperty.add(localRepository);
-                }
-            }
-            if (repositoriesProp != null && repositoriesProp.trim().length() > 0) {
-                String[] repositories = repositoriesProp.split(REPOSITORIES_SEPARATOR_SPLIT);
-                for (String repositoryURL : repositories) {
-                    if (!"".equals(repositoryURL.trim())) {
-                        repositoriesProperty.add(new MavenRepositoryURL(repositoryURL.trim()));
-                    }
-                }
-            }
-            LOGGER.trace("Using remote repositories [" + repositoriesProperty + "]");
-            return set(m_pid + ServiceConstants.PROPERTY_REPOSITORIES, repositoriesProperty);
-        }
-        return get(m_pid + ServiceConstants.PROPERTY_REPOSITORIES);
-    }
 
-    /**
-     * Returns active profile names from current settings
-     * @param alsoActiveByDefault if <code>true</code>, also return these profile names that are
-     * <code>&lt;activeByDefault&gt;</code>
-     * @return
-     */
-    private Collection<String> getActiveProfiles(boolean alsoActiveByDefault) {
-        Set<String> profileNames = new LinkedHashSet<String>(settings.getActiveProfiles());
-        if (alsoActiveByDefault) {
-            for (Profile profile : settings.getProfiles()) {
-                if (profile.getActivation() != null && profile.getActivation().isActiveByDefault()) {
-                    // TODO: check other activations - file/jdk/os/property?
-                    profileNames.add(profile.getId());
+                        repositoriesFromSettings.add(new MavenRepositoryURL(builder.toString()));
+                    }
                 }
             }
+
+            // repositories from the property itself
+            if (remoteRepositoriesProp != null) {
+                if (remoteRepositoriesProp.trim().startsWith(REPOSITORIES_APPEND_SIGN)) {
+                    remoteRepositoriesProp = remoteRepositoriesProp.trim().substring(1);
+                }
+                if (!remoteRepositoriesProp.trim().isEmpty()) {
+                    String[] repositories = remoteRepositoriesProp.split(REPOSITORIES_SEPARATOR_SPLIT);
+                    for (String repositoryURL : repositories) {
+                        remoteRepositories.add(new MavenRepositoryURL(repositoryURL.trim()));
+                    }
+                }
+            }
+            remoteRepositories.addAll(repositoriesFromSettings);
+
+            LOGGER.trace("Using remote repositories [" + remoteRepositories + "]");
+            return set(key, remoteRepositories);
         }
-        return profileNames;
+        return get(key);
     }
 
     private void addPolicy(StringBuilder builder, String policy, String option) {
@@ -355,322 +417,132 @@ public class MavenConfigurationImpl implements MavenConfiguration {
         }
     }
 
-    public String getGlobalUpdatePolicy() {
-        final String propertyName = m_pid + ServiceConstants.PROPERTY_GLOBAL_UPDATE_POLICY;
-        if (contains(propertyName)) {
-            return get(propertyName);
-        }
-        final String propertyValue = m_propertyResolver.get(propertyName);
-        if (propertyValue != null) {
-            set(propertyName, propertyValue);
-            return propertyValue;
-        }
-        return null;
-    }
+    /**
+     * Returns active profile names from current settings
+     * @return
+     */
+    private Collection<String> getActiveProfileIDs() {
+        ProfileSelector selector = new ProfileSelectorSupplier().get();
 
-    public String getGlobalChecksumPolicy() {
-        final String propertyName = m_pid + ServiceConstants.PROPERTY_GLOBAL_CHECKSUM_POLICY;
-        if (contains(propertyName)) {
-            return get(propertyName);
-        }
-        final String propertyValue = m_propertyResolver.get(propertyName);
-        if (propertyValue != null) {
-            set(propertyName, propertyValue);
-            return propertyValue;
-        }
-        return null;
+        // see eu.maveniverse.maven.mima.runtime.shared.StandaloneRuntimeSupport.convertToSettingsProfile()
+        List<Profile> settingsProfiles = settings.getProfiles();
+        List<org.apache.maven.model.Profile> profiles = new ArrayList<>(settingsProfiles.size());
+        settingsProfiles.forEach(p -> {
+            org.apache.maven.model.Profile mp = new org.apache.maven.model.Profile();
+            mp.setSource(org.apache.maven.model.Profile.SOURCE_SETTINGS);
+            mp.setId(p.getId());
+
+            Activation a = p.getActivation();
+            if (a != null) {
+                org.apache.maven.model.Activation ma = new org.apache.maven.model.Activation();
+                mp.setActivation(ma);
+                ma.setActiveByDefault(a.isActiveByDefault());
+
+                ActivationFile af = a.getFile();
+                if (af != null) {
+                    org.apache.maven.model.ActivationFile maf = new org.apache.maven.model.ActivationFile();
+                    maf.setExists(af.getExists());
+                    maf.setMissing(af.getMissing());
+                    ma.setFile(maf);
+                }
+                String aj = a.getJdk();
+                if (aj != null) {
+                    ma.setJdk(aj);
+                }
+                ActivationProperty ap = a.getProperty();
+                if (ap != null) {
+                    org.apache.maven.model.ActivationProperty map = new org.apache.maven.model.ActivationProperty();
+                    map.setName(ap.getName());
+                    map.setValue(ap.getValue());
+                    ma.setProperty(map);
+                }
+                ActivationOS ao = a.getOs();
+                if (ao != null) {
+                    org.apache.maven.model.ActivationOS mao = new org.apache.maven.model.ActivationOS();
+                    mao.setName(ao.getName());
+                    mao.setVersion(ao.getVersion());
+                    mao.setArch(ao.getArch());
+                    mao.setFamily(ao.getFamily());
+                    ma.setOs(mao);
+                }
+            }
+            // skip other profile data, because we care only about activation here
+
+            profiles.add(mp);
+        });
+
+        DefaultProfileActivationContext context = new DefaultProfileActivationContext();
+        context.setActiveProfileIds(settings.getActiveProfiles());
+        // we can't specify it via settings.xml - it's for `-P-xxx` mvn invocation
+        context.setInactiveProfileIds(Collections.emptyList());
+
+        // we need properties, but we have only PropertyResolver. It delegates to PID and BundleContext
+        // properties, but let's stick to system properties only
+        context.setSystemProperties(new Properties(System.getProperties()));
+
+        ModelProblemCollector problemCollector = new ModelProblemCollector() {
+            @Override
+            public void add(ModelProblemCollectorRequest req) {
+                LOGGER.warn(req.getMessage() + " " + req.getLocation());
+            }
+        };
+        List<org.apache.maven.model.Profile> activeProfiles = selector.getActiveProfiles(profiles, context, problemCollector);
+        Set<String> profileNames = new LinkedHashSet<>();
+        activeProfiles.forEach(ap -> profileNames.add(ap.getId()));
+
+        return profileNames;
     }
 
     /**
-     * Resolves local repository directory by using the following resolution:<br/>
-     * 1. looks for a configuration property named {@code localRepository};<br/>
-     * 2. looks for a framework property/system setting localRepository;<br/>
-     * 3. looks in settings.xml (see settings.xml resolution);<br/>
-     * 4. looks for system property {@code maven.repo.local} (PAXURL-231);<br/>
-     * 5. falls back to ${user.home}/.m2/repository.
-     * 
-     * @see MavenConfiguration#getLocalRepository()
+     * Constructs {@link Settings} object, possibly adding fallback Maven Central
+     * repository and configure global mirror if specified via env/sys properties.
+     *
+     * @param settingsFile
+     * @param useFallbackRepositories
+     * @return
      */
-    public MavenRepositoryURL getLocalRepository() {
-        if (!contains(m_pid + ServiceConstants.PROPERTY_LOCAL_REPOSITORY)) {
-            // look for a local repository property
-            String spec = m_propertyResolver.get(m_pid + ServiceConstants.PROPERTY_LOCAL_REPOSITORY);
-            // if not set get local repository from maven settings
-            if (spec == null && settings != null) {
-                spec = settings.getLocalRepository();
-            }
-            // check -Dmaven.repo.local property - useful for batch runs within external maven build
-            // that accept maven.repo.local as alternative local repository
-            if (spec == null) {
-                spec = System.getProperty("maven.repo.local");
-                if (spec != null) {
-                    if (!new File(spec).isDirectory()) {
-                        LOGGER.warn("Can't use maven.repo.local=" + spec + ". Location invalid.");
-                        spec = null;
-                    }
-                }
-            }
-            if (spec == null) {
-                spec = System.getProperty("user.home") + "/.m2/repository";
-            }
-            if (!spec.toLowerCase().contains("@snapshots")) {
-                spec += "@snapshots";
-            }
-            spec += "@id=local";
-            // check if we have a valid url
-            try {
-                return set(m_pid + ServiceConstants.PROPERTY_LOCAL_REPOSITORY,
-                    new MavenRepositoryURL(spec));
-            }
-            catch (MalformedURLException e) {
-                // maybe is just a file?
-                try {
-                    return set(m_pid + ServiceConstants.PROPERTY_LOCAL_REPOSITORY,
-                        new MavenRepositoryURL(new File(spec).toURI().toASCIIString()));
-                }
-                catch (MalformedURLException ignore) {
-                    LOGGER.warn("Local repository [" + spec
-                        + "] cannot be used and will be skipped");
-                    return set(m_pid + ServiceConstants.PROPERTY_LOCAL_REPOSITORY, null);
-                }
-
-            }
-        }
-        return get(m_pid + ServiceConstants.PROPERTY_LOCAL_REPOSITORY);
-    }
-
-    public MavenRepositoryURL getDefaultLocalRepository() {
-        if (settings != null) {
-            String spec = settings.getLocalRepository();
-            if (spec == null) {
-                spec = System.getProperty("user.home") + "/.m2/repository";
-            }
-            if (!spec.toLowerCase().contains("@snapshots")) {
-                spec += "@snapshots";
-            }
-            spec += "@id=defaultlocal";
-            // check if we have a valid url
-            try {
-                return new MavenRepositoryURL(spec);
-            }
-            catch (MalformedURLException e) {
-                // maybe is just a file?
-                try {
-                    return new MavenRepositoryURL(new File(spec).toURI().toASCIIString());
-                }
-                catch (MalformedURLException ignore) {
-                    LOGGER.warn("Local repository [" + spec
-                        + "] cannot be used and will be skipped");
-                    return null;
-                }
-
-            }
-        }
-        return null;
-    }
-
-    public Integer getTimeout() {
-        if (!contains(m_pid + ServiceConstants.PROPERTY_TIMEOUT)) {
-            String timeout = m_propertyResolver.get(m_pid + ServiceConstants.PROPERTY_TIMEOUT);
-            return set(m_pid + ServiceConstants.PROPERTY_TIMEOUT,
-                Integer.valueOf(timeout == null ? DEFAULT_TIMEOUT : timeout));
-        }
-        return get(m_pid + ServiceConstants.PROPERTY_TIMEOUT);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Boolean useFallbackRepositories() {
-        if (!contains(m_pid + ServiceConstants.PROPERTY_USE_FALLBACK_REPOSITORIES)) {
-            String useFallbackRepoProp = m_propertyResolver.get(m_pid
-                + ServiceConstants.PROPERTY_USE_FALLBACK_REPOSITORIES);
-            return set(m_pid + ServiceConstants.PROPERTY_USE_FALLBACK_REPOSITORIES,
-                Boolean.valueOf(useFallbackRepoProp == null ? "true" : useFallbackRepoProp));
-        }
-        return get(m_pid + ServiceConstants.PROPERTY_USE_FALLBACK_REPOSITORIES);
-    }
-
-    /**
-     * Enables the proxy server for a given URL.
-     * 
-     * @deprecated This method has side-effects and is only used in the "old" resolver.
-     */
-    @Deprecated
-    public void enableProxy(URL url) {
-        final String protocol = url.getProtocol();
-
-        Map<String, String> proxyDetails = getProxySettings(url.getProtocol()).get(protocol);
-        if (proxyDetails != null) {
-            LOGGER.trace("Enabling proxy [" + proxyDetails + "]");
-
-            final String user = proxyDetails.get("user");
-            final String pass = proxyDetails.get("pass");
-
-            Authenticator.setDefault(new Authenticator() {
-
-                @Override
-                protected PasswordAuthentication getPasswordAuthentication() {
-                    return new PasswordAuthentication(user, pass.toCharArray());
-                }
-            });
-
-            System.setProperty(protocol + ".proxyHost", proxyDetails.get("host"));
-            System.setProperty(protocol + ".proxyPort", proxyDetails.get("port"));
-
-            System.setProperty(protocol + ".nonProxyHosts", proxyDetails.get("nonProxyHosts"));
-
-            set(m_pid + ServiceConstants.PROPERTY_PROXY_SUPPORT, protocol);
-        }
-    }
-
-    private boolean isProtocolSupportEnabled(String... protocols) {
-        final String proxySupport = m_propertyResolver.get(m_pid
-            + ServiceConstants.PROPERTY_PROXY_SUPPORT);
-        if (proxySupport == null) {
-            return ServiceConstants.PROPERTY_PROXY_SUPPORT_DEFAULT;
-        }
-
-        // simple cases:
-        if ("true".equalsIgnoreCase(proxySupport)) {
-            return true;
-        }
-        if ("false".equalsIgnoreCase(proxySupport)) {
-            return false;
-        }
-
-        // giving no protocols to test against, default to true.
-        if (protocols.length == 0) {
-            return true;
-        }
-
-        // differentiate by protocol:
-        for (String protocol : protocols) {
-            if (proxySupport.contains(protocol)) {
-                return true;
-            }
-        }
-        // not in list appearingly.
-        return false;
-    }
-
-    public Map<String, Map<String, String>> getProxySettings(String... protocols) {
-        Map<String, Map<String, String>> pr = new HashMap<String, Map<String, String>>();
-
-        if (isProtocolSupportEnabled(protocols)) {
-
-            parseSystemWideProxySettings(pr);
-            parseProxiesFromProperty(
-                m_propertyResolver.get(m_pid + ServiceConstants.PROPERTY_PROXIES), pr);
-
-            // if( pr.isEmpty() ) {
-            // if( m_settings == null ) { return Collections.emptyMap(); }
-            //
-            // return m_settings.getProxySettings();
-            // }
-        }
-        return pr;
-    }
-
-    private void parseSystemWideProxySettings(Map<String, Map<String, String>> pr) {
-        String httpHost = m_propertyResolver.get("http.proxyHost");
-        String httpPort = m_propertyResolver.get("http.proxyPort");
-        String httpnonProxyHosts = m_propertyResolver.get("http.nonProxyHosts");
-
-        if (httpHost != null) {
-            parseProxiesFromProperty("http:host=" + httpHost + ",port=" + httpPort
-                + ",nonProxyHosts=" + httpnonProxyHosts, pr);
-        }
-    }
-
-    // example: http:host=foo,port=8080;https:host=bar,port=9090
-    private void parseProxiesFromProperty(String proxySettings, Map<String, Map<String, String>> pr) {
-        // TODO maybe make the parsing more clever via regex ;) Or not.
-        try {
-            if (proxySettings != null) {
-                String[] protocols = proxySettings.split(";");
-
-                for (String protocolSection : protocols) {
-                    String[] section = protocolSection.split(":");
-                    String protocolName = section[0];
-                    Map<String, String> keyvalue = new HashMap<String, String>();
-                    // set some defaults:
-                    keyvalue.put("protocol", protocolName);
-                    keyvalue.put("nonProxyHosts", "");
-                    keyvalue.put("host", "localhost");
-                    keyvalue.put("port", "80");
-
-                    for (String keyvalueList : section[1].split(",")) {
-                        String[] kv = keyvalueList.split("=");
-                        String key = kv[0];
-                        String value = kv[1];
-                        keyvalue.put(key, value);
-                    }
-                    pr.put(protocolName, keyvalue);
-                }
-            }
-        }
-        catch (ArrayIndexOutOfBoundsException ex) {
-            throw new IllegalArgumentException(
-                "Proxy setting is set to "
-                    + proxySettings
-                    + ". But it should have this format: <protocol>:<key>=<value>,<key=value>;protocol:<key>=<value>,..");
-        }
-    }
-
-    private String getLocalRepoPath(PropertyResolver props) {
-        return props.get(ServiceConstants.PID + "." + ServiceConstants.PROPERTY_LOCAL_REPOSITORY);
-    }
-
-    private Settings buildSettings(String localRepoPath, URL settingsPath, boolean useFallbackRepositories) {
+    private Settings buildSettings(File settingsFile, boolean useFallbackRepositories) throws SettingsBuildingException {
         Settings settings;
-        if (settingsPath == null) {
+        if (settingsFile == null) {
             settings = new Settings();
-        }
-        else {
-            DefaultSettingsBuilderFactory factory = new DefaultSettingsBuilderFactory();
-            DefaultSettingsBuilder builder = factory.newInstance();
+        } else {
+            // use Maven API (through MiMa high level class)
+            SettingsBuilder builder = new SettingsBuilderSupplier().get();
             SettingsBuildingRequest request = new DefaultSettingsBuildingRequest();
-            try {
-                if (settingsPath.toURI().isOpaque()) {
-                    request.setUserSettingsFile(new File(settingsPath.getPath()));
-                } else {
-                    request.setUserSettingsFile(new File(settingsPath.toURI()));
-                }
-            } catch (URISyntaxException e) {
-                // should never happens because it is returned by safeGetFile
-            }
-            try {
-                SettingsBuildingResult result = builder.build(request);
-                settings = result.getEffectiveSettings();
-            }
-            catch (SettingsBuildingException exc) {
-                throw new AssertionError("cannot build settings", exc);
-            }
-
+            request.setUserSettingsFile(settingsFile);
+            SettingsBuildingResult result = builder.build(request);
+            settings = result.getEffectiveSettings();
         }
+
         if (useFallbackRepositories) {
+            // Add Maven Central
             Profile fallbackProfile = new Profile();
+            fallbackProfile.setId("fallback");
+
             Repository central = new Repository();
             central.setId("central");
-            central.setUrl("https://repo1.maven.org/maven2");
-            fallbackProfile.setId("fallback");
-            fallbackProfile.setRepositories(Arrays.asList(central));
+            central.setUrl(ContextOverrides.CENTRAL.getUrl());
+            central.setReleases(new RepositoryPolicy());
+            central.getReleases().setEnabled(true);
+            central.getReleases().setUpdatePolicy(org.eclipse.aether.repository.RepositoryPolicy.UPDATE_POLICY_NEVER);
+            central.getReleases().setChecksumPolicy(org.eclipse.aether.repository.RepositoryPolicy.CHECKSUM_POLICY_WARN);
+            central.setSnapshots(new RepositoryPolicy());
+            central.getSnapshots().setEnabled(false);
+            fallbackProfile.setRepositories(Collections.singletonList(central));
+
             settings.addProfile(fallbackProfile);
             settings.addActiveProfile("fallback");
         }
-        if (localRepoPath != null) {
-            settings.setLocalRepository(localRepoPath);
-        }
+
         // PAXURL-351 - external configuration of _single_ Mirror for all repositories
-        String mirror = System.getenv(ServiceConstants.PROPERTY_MAVEN_MIRROR_URL_ENV);
-        if (mirror == null || mirror.trim().equals("")) {
-            mirror = System.getProperty(ServiceConstants.PROPERTY_MAVEN_MIRROR_URL_SYS, "");
+        String mirror = System.getenv(ServiceConstants.ENV_MAVEN_MIRROR_URL);
+        if (mirror == null || mirror.trim().isEmpty()) {
+            mirror = System.getProperty(ServiceConstants.SYS_MAVEN_MIRROR_URL, "");
         }
-        if (mirror != null && !mirror.trim().equals("")) {
-            String[] mirrorData = mirror.split("::");
+        if (mirror != null && !mirror.trim().isEmpty()) {
+            String[] mirrorData = mirror.trim().split("::");
             String id = "mirror";
-            String url = null;
+            String url;
             if (mirrorData.length > 1) {
                 id = mirrorData[0];
                 url = mirrorData[1];
@@ -683,39 +555,81 @@ public class MavenConfigurationImpl implements MavenConfiguration {
             m.setLayout("default");
             m.setMirrorOf("*");
             settings.setMirrors(Collections.singletonList(m));
-            LOGGER.debug("Setting global Maven mirror to " + url);
+            LOGGER.info("Setting global Maven mirror to {}", url);
         }
 
         return settings;
     }
 
-    public Map<String, Map<String, String>> getMirrors() {
-        // DO support mirrors via properties (just like we do for proxies.
-        // if( m_settings == null ) { return Collections.emptyMap(); }
-        // return m_settings.getMirrorSettings();
-        return Collections.emptyMap();
+    private void decryptCurrentSettings() {
+        SettingsDecryptionRequest request = new DefaultSettingsDecryptionRequest(settings);
+        SettingsDecryptionResult result = decrypter.decrypt(request);
+        // only servers and proxies are decrypted
+        settings.setServers(result.getServers());
+        settings.setProxies(result.getProxies());
     }
 
+    private void determineLocalRepository() {
+        String key = m_pid + ServiceConstants.PROPERTY_LOCAL_REPOSITORY;
+
+        String localRepositoryProperty = m_propertyResolver.get(key);
+        int at = localRepositoryProperty == null ? -1 : localRepositoryProperty.indexOf("@");
+        String localRepositoryLocation = at > 0 ? localRepositoryProperty.substring(0, at) : localRepositoryProperty;
+
+        List<String> fallbacks = new ArrayList<>(4);
+        fallbacks.add(localRepositoryLocation);
+        fallbacks.add(settings.getLocalRepository());
+        fallbacks.add(System.getProperty("maven.repo.local"));
+        fallbacks.add(System.getProperty("user.home") + "/.m2/repository");
+        fallbacks.add(System.getProperty("java.io.tmpdir") + "/.m2/repository");
+
+        File localRepository = findFirstAccessibleFile(ServiceConstants.PROPERTY_LOCAL_REPOSITORY, fallbacks, true);
+        // set the determined local repository back into settings (to make things consistent)
+        if (localRepository != null) {
+            settings.setLocalRepository(localRepository.getAbsolutePath());
+            set(key, localRepository);
+        }
+
+        MavenRepositoryURL localRepositoryURL = null;
+        File fromPid = safeGetFile(ServiceConstants.PROPERTY_LOCAL_REPOSITORY, localRepositoryLocation, true);
+        if (fromPid != null) {
+            // we can get some hints from the URI if there's @ sign - but this is handled by MavenRepositoryURL
+            // constructor anyway
+            if (at > 0) {
+                localRepositoryProperty = fromPid.toURI().toString() + localRepositoryProperty.substring(at);
+            } else {
+                localRepositoryProperty = fromPid.toURI().toString() + "@id=local";
+            }
+            try {
+                localRepositoryURL = new MavenRepositoryURL(localRepositoryProperty);
+            } catch (MalformedURLException unexpected) {
+                LOGGER.warn(unexpected.getMessage(), unexpected);
+            }
+        } else {
+            // no hints, just URL
+            try {
+                localRepositoryURL = localRepository == null ? null : new MavenRepositoryURL(localRepository.toURI().toString() + "@id=local");
+            } catch (MalformedURLException unexpected) {
+                LOGGER.warn(unexpected.getMessage(), unexpected);
+            }
+        }
+        set(m_pid + ServiceConstants.PROPERTY_LOCAL_REPOSITORY_URL, localRepositoryURL);
+    }
+
+    @Override
     public Settings getSettings() {
         return settings;
     }
 
     public void setSettings(Settings settings) {
         this.settings = settings;
+        determineLocalRepository();
+        if (decrypter != null) {
+            decryptCurrentSettings();
+        }
     }
 
-    public String getSecuritySettings() {
-        String key = m_pid + ServiceConstants.PROPERTY_SECURITY;
-        if (!contains(key)) {
-            String spec = m_propertyResolver.get(key);
-            if (spec == null) {
-                spec = new File(System.getProperty("user.home"), ".m2/settings-security.xml")
-                    .getPath();
-            }
-            return set(key, spec);
-        }
-        return get(key);
-    }
+    // ---- Property related methods
 
     @Override
     public <T> T getProperty(String name, T defaultValue, Class<T> clazz) {
@@ -724,11 +638,6 @@ public class MavenConfigurationImpl implements MavenConfiguration {
             return set(m_pid + name, value == null ? defaultValue : convert(value, clazz));
         }
         return get(m_pid + name);
-    }
-
-    @Override
-    public String getPid() {
-        return m_pid;
     }
 
     /**
@@ -749,18 +658,11 @@ public class MavenConfigurationImpl implements MavenConfiguration {
         if (Long.class == clazz) {
             return (T) Long.valueOf(value);
         }
-        if (Boolean.class == clazz) {
-            return (T) Boolean.valueOf("true".equals(value));
+        if (Boolean.class == clazz || Boolean.TYPE == clazz) {
+            return (T) Boolean.valueOf("true".equalsIgnoreCase(value) || "yes".equalsIgnoreCase(value));
         }
         throw new IllegalArgumentException("Can't convert \"" + value + "\" to " + clazz + ".");
     }
-
-    /**
-     * Map of properties.
-     */
-    private final Map<String, Object> m_properties = new ConcurrentHashMap<>();
-
-    private static final Object NULL_VALUE = new Object();
 
     /**
      * Returns true if the the property was set.

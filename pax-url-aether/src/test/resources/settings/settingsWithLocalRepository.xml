@@ -17,5 +17,5 @@
 
 -->
 <settings>
-  <localRepository>repository</localRepository>
+  <localRepository>target/test-classes</localRepository>
 </settings>

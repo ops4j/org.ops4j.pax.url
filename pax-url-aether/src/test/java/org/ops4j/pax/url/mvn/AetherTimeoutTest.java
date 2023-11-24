@@ -25,13 +25,20 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+//import jakarta.servlet.ServletException;
+//import jakarta.servlet.http.HttpServletRequest;
+//import jakarta.servlet.http.HttpServletResponse;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.maven.settings.Profile;
 import org.apache.maven.settings.Repository;
 import org.apache.maven.settings.Settings;
+//import org.eclipse.jetty.server.Request;
+//import org.eclipse.jetty.server.Server;
+//import org.eclipse.jetty.server.handler.AbstractHandler;
+import org.eclipse.jetty.server.NetworkConnector;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
@@ -83,7 +90,7 @@ public class AetherTimeoutTest {
             }
         });
         server.start();
-        port = server.getConnectors()[0].getLocalPort();
+        port = ((NetworkConnector) server.getConnectors()[0]).getLocalPort();
     }
 
     @Test
@@ -209,17 +216,14 @@ public class AetherTimeoutTest {
         }
 
         @Override
-        public Boolean call() throws Exception {
-            AetherBasedResolver resolver = new AetherBasedResolver(mavenConfiguration);
-            try {
+        public Boolean call() {
+            try (AetherBasedResolver resolver = new AetherBasedResolver(mavenConfiguration)) {
                 // version value will be used to simulate read timeout at server side
                 File resolved = resolver.resolve("org.ops4j.pax.web",
                         "pax-web-api", "", "jar", Integer.toString(expectedTimeout));
                 return resolved.isFile();
             } catch (IOException e) {
                 return false;
-            } finally {
-                resolver.close();
             }
         }
     }

@@ -16,6 +16,7 @@
 package org.ops4j.pax.url.mvn;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -23,6 +24,11 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Properties;
 
+//import org.apache.maven.shared.invoker.DefaultInvocationRequest;
+//import org.apache.maven.shared.invoker.DefaultInvoker;
+//import org.apache.maven.shared.invoker.InvocationRequest;
+//import org.apache.maven.shared.invoker.InvocationResult;
+//import org.apache.maven.shared.invoker.Invoker;
 import org.apache.maven.shared.invoker.DefaultInvocationRequest;
 import org.apache.maven.shared.invoker.DefaultInvoker;
 import org.apache.maven.shared.invoker.InvocationRequest;
@@ -107,7 +113,7 @@ public class GlobalUpdatePolicyTest
 
         Invoker invoker = new DefaultInvoker();
 
-        /** IDE invocation requires maven home discovery. */
+        /* IDE invocation requires maven home discovery. */
         if( System.getProperty( PROP_MAVEN_HOME ) == null )
         {
             File mavenHome = UnitHelp.getMavenHome();
@@ -117,22 +123,22 @@ public class GlobalUpdatePolicyTest
 
         InvocationResult result = invoker.execute( request );
 
-        assertTrue( "deploy success", result.getExitCode() == 0 );
+        assertEquals("deploy success", 0, result.getExitCode());
     }
 
     /**
      * Use custom test settings.
      * @param updateReleases whether we allow to update locally available non-SNAPSHOT artifacts
      */
-    private MavenConfiguration testConfig(boolean updateReleases) throws Exception
+    private MavenConfiguration testConfig(boolean updateReleases)
     {
         final Properties props = new Properties();
 
-        /** Relax SSL requirements. */
+        /* Relax SSL requirements. */
         props.setProperty( ServiceConstants.PID + "."
                 + ServiceConstants.PROPERTY_CERTIFICATE_CHECK, "false" );
 
-        /** Enable snapshot update on every resolve request. */
+        /* Enable snapshot update on every resolve request. */
         props.setProperty( ServiceConstants.PID + "."
                 + ServiceConstants.PROPERTY_GLOBAL_UPDATE_POLICY, "always" );
 
@@ -144,7 +150,7 @@ public class GlobalUpdatePolicyTest
 
         MavenConfiguration config = UnitHelp.getConfig( SETTINGS, props );
 
-        assertEquals( false, config.getCertificateCheck() );
+        assertFalse(config.getCertificateCheck());
         assertEquals( "always", config.getGlobalUpdatePolicy() );
 
         return config;
@@ -226,7 +232,7 @@ public class GlobalUpdatePolicyTest
             if (updateReleases) {
                 assertTrue( "second after first", time2 > time1 );
             } else {
-                assertTrue( "second is the same as first", time2 == time1 );
+                assertEquals("second is the same as first", time2, time1);
             }
         } else {
             // snapshots
