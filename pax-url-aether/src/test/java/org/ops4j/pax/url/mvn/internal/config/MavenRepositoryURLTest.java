@@ -1,17 +1,15 @@
 package org.ops4j.pax.url.mvn.internal.config;
 
-import static org.junit.Assert.*;
-
 import java.io.File;
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 
 import org.junit.Test;
-import org.ops4j.pax.url.mvn.internal.config.MavenRepositoryURL;
+
+import static org.junit.Assert.assertEquals;
 
 public class MavenRepositoryURLTest
 {
-
     @Test
     public void testMavenRepositoryURL() throws MalformedURLException
     {
@@ -35,21 +33,21 @@ public class MavenRepositoryURLTest
 
         spec = "file:somewhere/localrepository\\";
         mavenRepo = new MavenRepositoryURL( spec + "@id=repository1" );
-        assertEquals( new File( "somewhere/localrepository/" ), mavenRepo.getFile() );
-        assertEquals( new URL( spec ), mavenRepo.getURL() );
-
-        spec = "file:repository1\\";
-        mavenRepo = new MavenRepositoryURL( spec + "@id=repository1" );
-        assertEquals( new File( "repository1/" ), mavenRepo.getFile() );
-        assertEquals( new URL( spec ), mavenRepo.getURL() );
-
-        spec = "file:somewhere/localrepository%5C";
-        mavenRepo = new MavenRepositoryURL( spec + "@id=repository1" );
-        assertEquals( new URL( spec + "/" ), mavenRepo.getURL() );
+        assertEquals( new File( "somewhere/localrepository" ), mavenRepo.getFile() );
+        assertEquals( URI.create( "file:somewhere/localrepository/" ), mavenRepo.getURI() );
 
         spec = "file:repository1%5C";
         mavenRepo = new MavenRepositoryURL( spec + "@id=repository1" );
-        assertEquals( new URL( spec + "/" ), mavenRepo.getURL() );
+        assertEquals( new File( "repository1/" ), mavenRepo.getFile() );
+        assertEquals( URI.create( "file:repository1/" ), mavenRepo.getURI() );
+
+        spec = "file:somewhere/localrepository%5C";
+        mavenRepo = new MavenRepositoryURL( spec + "@id=repository1" );
+        assertEquals( URI.create( "file:somewhere/localrepository/" ), mavenRepo.getURI() );
+
+        spec = "file:repository1%5C";
+        mavenRepo = new MavenRepositoryURL( spec + "@id=repository1" );
+        assertEquals( URI.create( "file:repository1/" ), mavenRepo.getURI() );
 
         spec = "file:r%C3%A9positories%20/r%C3%A9pository1";
         mavenRepo = new MavenRepositoryURL( spec + "@id=repository1" );

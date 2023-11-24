@@ -30,12 +30,9 @@ import org.ops4j.pax.url.mvn.internal.config.MavenConfiguration;
 
 public class AetherTest extends TestBase
 {
-
     @Test
-    public void resolveArtifact() throws DependencyCollectionException,
-        ArtifactResolutionException, IOException
+    public void resolveArtifact() throws IOException
     {
-
         AetherBasedResolver resolver = new AetherBasedResolver( getTestConfig() );
 
         resolver.resolve( "org.ops4j.pax.web", "pax-web-api", "", "jar", "0.7.2" );
@@ -45,7 +42,6 @@ public class AetherTest extends TestBase
 
     private MavenConfiguration getTestConfig() throws IOException
     {
-
         Properties props = new Properties();
 
         props.setProperty( //
@@ -63,10 +59,14 @@ public class AetherTest extends TestBase
             RepositoryPolicy.CHECKSUM_POLICY_IGNORE //
             );
 
+        props.setProperty( //
+            ServiceConstants.PID + "." + ServiceConstants.PROPERTY_CERTIFICATE_CHECK, //
+            "false" //
+            );
+
         File file = Util.getTestSettings();
 
         return UnitHelp.getConfig( file, props );
-
     }
 
 }

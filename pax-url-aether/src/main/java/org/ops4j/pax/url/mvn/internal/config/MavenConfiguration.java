@@ -18,16 +18,19 @@
  */
 package org.ops4j.pax.url.mvn.internal.config;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.maven.settings.Settings;
+import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.ops4j.util.property.PropertyResolver;
+import org.sonatype.plexus.components.sec.dispatcher.model.SettingsSecurity;
 
 /**
- * Handler configuration.
+ * A configuration interface representing backend dictionary-based configuration (like ConfigurationAdmin PID).
  *
  * @author Alin Dreghiciu
  * @author Guillaume Nodet
@@ -35,49 +38,47 @@ import org.ops4j.util.property.PropertyResolver;
  */
 public interface MavenConfiguration {
 
+    /**
+     * Returns PID for properties used by this configuration. It's used as prefix for properties in
+     * associated {@link PropertyResolver}. Defaults to {@link org.ops4j.pax.url.mvn.ServiceConstants#PID}.
+     *
+     * @return
+     */
+    String getPid();
+
+    /**
+     * Whether {@link DefaultRepositorySystemSession#setOffline(boolean)} should be set to {@code true}.
+     *
+     * @return
+     */
     boolean isOffline();
 
     /**
-     * Returns true if the certificate should be checked on SSL connection, false otherwise.
+     * Returns the location of {@code settings.xml} file used. When {@code null}, no external settings are loaded.
      *
-     * @return true if the certificate should be checked
+     * @return
      */
-    Boolean getCertificateCheck();
+    File getSettingsFile();
 
     /**
-     * Returns the URL of maven settings file.
+     * Returns the location of {@code settings-security.xml} file used. When {@code null}, no external security
+     * settings are loaded.
      *
-     * @return the url to settings file
+     * @return
      */
-    URL getSettingsFileUrl();
+    File getSecuritySettingsFile();
 
     /**
-     * Returns a list of default repositories to be searched before any other repositories.
+     * <p>Global repository update policy.</p>
      *
-     * @return a list of default repositories.  List can be null or empty if there are not default repositories to be searched.
-     */
-    List<MavenRepositoryURL> getDefaultRepositories()
-        throws MalformedURLException;
-
-    /**
-     * Returns a list of repositories to be searched.
-     *
-     * @return a list of repositories. List can be null or empty if there are no repositories to be searched.
-     */
-    List<MavenRepositoryURL> getRepositories()
-        throws MalformedURLException;
-
-    /**
-     * Global repository update policy. 
-     * 
      * See {@link org.ops4j.pax.url.mvn.ServiceConstants#PROPERTY_GLOBAL_UPDATE_POLICY}
-     * 
+     *
      * @return repository update policy or null if not set
      */
     String getGlobalUpdatePolicy();
 
     /**
-     * Global repository update policy.
+     * <p>Global repository update policy.</p>
      *
      * See {@link org.ops4j.pax.url.mvn.ServiceConstants#PROPERTY_GLOBAL_CHECKSUM_POLICY}
      *
@@ -86,59 +87,75 @@ public interface MavenConfiguration {
     String getGlobalChecksumPolicy();
 
     /**
-     * Returns the url of local repository.
+     * Returns the directory for Maven local repository. Checks context propert/PID, {@code settings.xml},
+     * {@code maven.repo.local} system property and falls back to {@code ~/.m2/repository}.
+     * Local repository <em>must</em> be specified in order to resolve remote artifacts.
      *
-     * @return url of local repository. Can be null if there is no local repository.
+     * @return
      */
-    MavenRepositoryURL getLocalRepository();
+    File getLocalRepository();
 
     /**
-     * Returns true if the fallback repositories should be used instead of default ones.
-     * Default value is true.
+     * Returns the {@link MavenRepositoryURL} for Maven local repository. This is the way to get more information
+     * about the repository (for example if is it split).
+     *
+     * @return
+     */
+    MavenRepositoryURL getLocalMavenRepositoryURL();
+
+    /**
+     * Returns true if Maven Central should be added as fallback repository in addition to other configured
+     * repositories.Default value is true.
      *
      * @return true if the fallback repositories should be used
      */
-    Boolean useFallbackRepositories();
+    boolean useFallbackRepositories();
 
     /**
-     * Returns the read timeout configured in case the maven artifact is retrieved from a
-     * remote location.
+     * Returns a list of default repositories to be searched before any other repositories. These should be file: based
+     * repositories. For example Karaf's {@code system/} directory should be configured as <em>default repository</em>.
+     *
+     * @return a list of default repositories. List can be null or empty if there are not default repositories to
+     * be searched.
+     */
+    List<MavenRepositoryURL> getDefaultRepositories() throws MalformedURLException;
+
+    /**
+     * Returns a list of remote repositories to be searched. When resolving artifacts from remote repositories, locally
+     * cached version is always created in configured local repository. These repositories may be file: based, but
+     * usually external http(s): repositories are used.
+     *
+     * @return a list of remote repositories. List can be null or empty if there are no repositories to be searched.
+     */
+    List<MavenRepositoryURL> getRepositories() throws MalformedURLException;
+
+    /**
+     * Returns the generic connection/read timeout configured in case the maven artifact is retrieved from a
+     * remote location. We can configure the timeouts separately using external {@code settings.xml} as well as
+     * dedicated properties like {@link org.ops4j.pax.url.mvn.ServiceConstants#PROPERTY_SOCKET_CONNECTION_TIMEOUT}.
      *
      * @return the timeout in case artifacts are retrieved from a remote location
+     * @deprecated use dedicated PID/config/system properties or configure timeouts in {@code settings.xml}
      */
+    @Deprecated(since = "3.0")
     Integer getTimeout();
 
     /**
-     * @param url Enables the proxy server for a given URL.
+     * Returns true if the certificate should be checked on SSL connection, false otherwise.
+     *
+     * @return true if the certificate should be checked
      */
-    void enableProxy( URL url );
+    boolean getCertificateCheck();
 
     /**
-     * Returns the active proxy settings from settings.xml
-     * The fields are user, pass, host, port, nonProxyHosts, protocol.
+     * Returns a {@link PropertyResolver} backing up this configuration object.
      *
-     * @param protocols protocols to be recognized.
-     *
-     * @return the active proxy settings
+     * @return
      */
-    Map<String, Map<String, String>> getProxySettings( String... protocols );
-
-    /**
-     * Returns the mirror settings from settings.xml.
-     * The fields are id, url, mirrorOf, layout, mirrorOfLayouts.
-     *
-     * @return the mirror settings
-     */
-    Map<String, Map<String, String>> getMirrors();
-    
-    Settings getSettings();
-    
-    String getSecuritySettings();
-
     PropertyResolver getPropertyResolver();
 
     /**
-     * Returns generic property by name.
+     * Returns generic property by name and type.
      *
      * @param name
      * @param defaultValue
@@ -148,10 +165,10 @@ public interface MavenConfiguration {
     <T> T getProperty(String name, T defaultValue, Class<T> clazz);
 
     /**
-     * Returns PID for properties used by this configuration. It's used as prefix for properties in
-     * associated {@link PropertyResolver}
+     * Returns Maven {@link Settings} object with decrypted values.
+     *
      * @return
      */
-    String getPid();
+    Settings getSettings();
 
 }

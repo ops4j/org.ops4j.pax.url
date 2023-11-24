@@ -18,13 +18,12 @@
 package org.ops4j.pax.url.mvn.internal.config;
 
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
 import org.ops4j.lang.NullArgumentException;
-import org.ops4j.pax.url.mvn.internal.config.MavenRepositoryURL;
 
 public class RepositoryURLTest
 {
@@ -74,7 +73,7 @@ public class RepositoryURLTest
     public void defaultSnapshots()
         throws MalformedURLException
     {
-        assertEquals( "Default snapshot enabled", false, new MavenRepositoryURL( "file:some/dir@id=repository1" ).isSnapshotsEnabled() );
+        assertFalse("Default snapshot enabled", new MavenRepositoryURL("file:some/dir@id=repository1").isSnapshotsEnabled());
     }
 
     /**
@@ -86,7 +85,7 @@ public class RepositoryURLTest
     public void defaultReleases()
         throws MalformedURLException
     {
-        assertEquals( "Default releases enabled", true, new MavenRepositoryURL( "file:some/dir@id=repository1" ).isReleasesEnabled() );
+        assertTrue("Default releases enabled", new MavenRepositoryURL("file:some/dir@id=repository1").isReleasesEnabled());
     }
 
     /**
@@ -98,7 +97,7 @@ public class RepositoryURLTest
     public void enabledSnapshots()
         throws MalformedURLException
     {
-        assertEquals( "Snapshots enabled", true, new MavenRepositoryURL( "file:some/dir@snapshots@id=repository1" ).isSnapshotsEnabled() );
+        assertTrue("Snapshots enabled", new MavenRepositoryURL("file:some/dir@snapshots@id=repository1").isSnapshotsEnabled());
     }
 
     /**
@@ -110,7 +109,7 @@ public class RepositoryURLTest
     public void disabledReleases()
         throws MalformedURLException
     {
-        assertEquals( "Releases enabled", false, new MavenRepositoryURL( "file:some/dir@noReleases@id=repository1" ).isReleasesEnabled() );
+        assertFalse("Releases enabled", new MavenRepositoryURL("file:some/dir@noReleases@id=repository1").isReleasesEnabled());
     }
 
     /**
@@ -123,8 +122,8 @@ public class RepositoryURLTest
         throws MalformedURLException
     {
         final MavenRepositoryURL repositoryURL = new MavenRepositoryURL( "file:some/dir@noreleases@snapshots@id=repository1" );
-        assertEquals( "Releases enabled", false, repositoryURL.isReleasesEnabled() );
-        assertEquals( "Snapshots enabled", true, repositoryURL.isSnapshotsEnabled() );
+        assertFalse("Releases enabled", repositoryURL.isReleasesEnabled());
+        assertTrue("Snapshots enabled", repositoryURL.isSnapshotsEnabled());
     }
 
     /**
@@ -136,9 +135,11 @@ public class RepositoryURLTest
     public void atIncludedInUrl()
         throws MalformedURLException
     {
+        // remember NOT to call URL.equals, as this leads to DNS resolution inside
+        // java.net.URLStreamHandler.hostsEqual()!
         assertEquals( "URL",
-                      new URL( "http://user:password@somerepo/" ),
-                      new MavenRepositoryURL( "http://user:password@somerepo@id=repository1" ).getURL()
+                      URI.create( "http://user:password@somerepo/" ).toString(),
+                      new MavenRepositoryURL( "http://user:password@somerepo@id=repository1" ).getURI().toString()
         );
     }
 
@@ -147,7 +148,7 @@ public class RepositoryURLTest
         throws MalformedURLException
     {
         String spec = "file:some/dir" ;
-        assertTrue( "Computed ID", new MavenRepositoryURL( spec).getId().startsWith( "repo_" ) );
+        assertTrue( "Computed ID", new MavenRepositoryURL( spec ).getId().startsWith( "repo_" ) );
     }
 
     /**

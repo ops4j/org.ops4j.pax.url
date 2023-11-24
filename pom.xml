@@ -90,6 +90,7 @@
         <dependency.org.apache.felix.service.obr>1.0.2</dependency.org.apache.felix.service.obr>
         <dependency.org.apache.httpcomponents.core>4.4.16</dependency.org.apache.httpcomponents.core>
         <dependency.org.apache.httpcomponents.client>4.5.14</dependency.org.apache.httpcomponents.client>
+        <dependency.org.apache.logging.log4j>2.24.3</dependency.org.apache.logging.log4j>
         <dependency.org.apache.maven>3.9.10</dependency.org.apache.maven>
         <dependency.org.apache.maven.resolver>1.9.23</dependency.org.apache.maven.resolver>
         <dependency.org.apache.maven.shared.invoker>3.3.0</dependency.org.apache.maven.shared.invoker>
@@ -110,7 +111,6 @@
         <dependency.org.osgi.service.cm>1.6.1</dependency.org.osgi.service.cm>
         <dependency.org.powermock>2.0.9</dependency.org.powermock>
         <dependency.org.slf4j>1.7.36</dependency.org.slf4j>
-        <dependency.org.apache.logging.log4j>2.24.3</dependency.org.apache.logging.log4j>
     </properties>
 
     <scm>

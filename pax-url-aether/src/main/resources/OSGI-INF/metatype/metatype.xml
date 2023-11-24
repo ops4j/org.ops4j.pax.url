@@ -1,16 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0" localization="OSGI-INF/metatype/metatype">
     <OCD id="org.ops4j.pax.url.mvn" name="%mvn.name" description="%mvn.description">
-      <AD id="org.ops4j.pax.url.mvn.certificateCheck" type="Boolean" default="false" name="%certificateCheck.name" description="%certificateCheck.description"/>
+      <AD id="org.ops4j.pax.url.mvn.offline" type="Boolean" default="false" name="%offline.name" description="%offline.description"/>
       <AD id="org.ops4j.pax.url.mvn.settings" type="String" default="" name="%settings.name" description="%settings.description"/>
+      <AD id="org.ops4j.pax.url.mvn.security" type="String" default="" name="%security.name" description="%security.description"/>
+      <AD id="org.ops4j.pax.url.mvn.globalUpdatePolicy" type="String" default="daily" name="%globalUpdatePolicy.name" description="%globalUpdatePolicy.description"/>
+      <AD id="org.ops4j.pax.url.mvn.globalChecksumPolicy" type="String" default="warn" name="%globalChecksumPolicy.name" description="%globalChecksumPolicy.description"/>
+      <AD id="org.ops4j.pax.url.mvn.updateReleases" type="Boolean" default="false" name="%updateReleases.name" description="%updateReleases.description"/>
       <AD id="org.ops4j.pax.url.mvn.localRepository" type="String" default="" name="%localRepository.name" description="%localRepository.description"/>
+      <AD id="org.ops4j.pax.url.mvn.split" type="Boolean" default="false" name="%split.name" description="%split.description"/>
+      <AD id="org.ops4j.pax.url.mvn.splitLocalPrefix" type="String" default="installed" name="%splitLocalPrefix.name" description="%splitLocalPrefix.description"/>
+      <AD id="org.ops4j.pax.url.mvn.splitRemotePrefix" type="String" default="cached" name="%splitRemotePrefix.name" description="%splitRemotePrefix.description"/>
+      <AD id="org.ops4j.pax.url.mvn.splitLocal" type="Boolean" default="false" name="%splitLocal.name" description="%splitLocal.description"/>
+      <AD id="org.ops4j.pax.url.mvn.splitRemote" type="Boolean" default="false" name="%splitRemote.name" description="%splitRemote.description"/>
+      <AD id="org.ops4j.pax.url.mvn.splitReleasesPrefix" type="String" default="releases" name="%splitReleasesPrefix.name" description="%splitReleasesPrefix.description"/>
+      <AD id="org.ops4j.pax.url.mvn.splitSnapshotsPrefix" type="String" default="snapshots" name="%splitRemotePrefix.name" description="%splitRemotePrefix.description"/>
+      <AD id="org.ops4j.pax.url.mvn.splitRemoteRepository" type="Boolean" default="false" name="%splitRemoteRepository.name" description="%splitRemoteRepository.description"/>
+      <AD id="org.ops4j.pax.url.mvn.splitRemoteRepositoryLast" type="Boolean" default="false" name="%splitRemoteRepositoryLast.name" description="%splitRemoteRepositoryLast.description"/>
       <AD id="org.ops4j.pax.url.mvn.defaultRepositories" type="String" default="" name="%defaultRepositories.name" description="%defaultRepositories.description"/>
       <AD id="org.ops4j.pax.url.mvn.repositories" type="String" default="" name="%repositories.name" description="%repositories.description"/>
-      <AD id="org.ops4j.pax.url.mvn.proxySupport" type="Boolean" default="true" name="%proxySupport.name" description="%proxySupport.description"/>
-      <AD id="org.ops4j.pax.url.mvn.globalUpdatePolicy" type="String" default="daily" name="%globalUpdatePolicy.name" description="%globalUpdatePolicy.description"/>
-      <AD id="org.ops4j.pax.url.mvn.proxies" type="String" default="" name="%proxies.name" description="%proxies.description"/>
-      <AD id="org.ops4j.pax.url.mvn.security" type="String" default="" name="%security.name" description="%security.description"/>
+      <AD id="org.ops4j.pax.url.mvn.useFallbackRepositories" type="Boolean" default="true" name="%useFallbackRepositories.name" description="%useFallbackRepositories.description"/>
       <AD id="org.ops4j.pax.url.mvn.timeout" type="Integer" default="5000" name="%timeout.name" description="%timeout.description"/>
+      <AD id="org.ops4j.pax.url.mvn.socket.connectionTimeout" type="Integer" default="5000" name="%socket.connectionTimeout.name" description="%socket.connectionTimeout.description"/>
+      <AD id="org.ops4j.pax.url.mvn.socket.readTimeout" type="Integer" default="5000" name="%socket.readTimeout.name" description="%socket.readTimeout.description"/>
+      <AD id="org.ops4j.pax.url.mvn.connection.retryCount" type="Integer" default="3" name="%connection.retryCount.name" description="%connection.retryCount.description"/>
+      <AD id="org.ops4j.pax.url.mvn.certificateCheck" type="Boolean" default="false" name="%certificateCheck.name" description="%certificateCheck.description"/>
+      <AD id="org.ops4j.pax.url.mvn.useSystemProperties" type="Boolean" default="false" name="%useProxySystemProperties.name" description="%useProxySystemProperties.description"/>
     </OCD>
     <Designate pid="org.ops4j.pax.url.mvn">
         <Object ocdref="org.ops4j.pax.url.mvn"/>

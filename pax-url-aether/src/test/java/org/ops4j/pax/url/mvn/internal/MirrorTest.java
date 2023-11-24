@@ -6,9 +6,10 @@ import static org.eclipse.aether.repository.RepositoryPolicy.UPDATE_POLICY_INTER
 import static org.eclipse.aether.repository.RepositoryPolicy.UPDATE_POLICY_NEVER;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,10 +32,10 @@ import org.apache.maven.settings.building.SettingsBuildingResult;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.DefaultHandler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
-import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,7 +50,7 @@ public class MirrorTest {
     @Before
     public void startHttp() throws Exception {
         server = new Server();
-        SelectChannelConnector connector = new SelectChannelConnector();
+        ServerConnector connector = new ServerConnector(server);
         String portNumber = System.getProperty( "jetty.http.port" );
         connector.setPort( Integer.parseInt( portNumber ) );
         server.addConnector( connector );
@@ -81,7 +82,7 @@ public class MirrorTest {
     }
 
     private Settings buildSettings( String settingsPath, Repository... remotes ) {
-        Settings settings = null;
+        Settings settings;
         if( settingsPath == null ) {
             settings = new Settings();
         }
@@ -89,6 +90,7 @@ public class MirrorTest {
             DefaultSettingsBuilderFactory factory = new DefaultSettingsBuilderFactory();
             DefaultSettingsBuilder builder = factory.newInstance();
             SettingsBuildingRequest request = new DefaultSettingsBuildingRequest();
+            request.setSystemProperties(System.getProperties());
             request.setUserSettingsFile( new File( "target/test-classes", settingsPath ) );
             try {
                 SettingsBuildingResult result = builder.build( request );
@@ -105,7 +107,7 @@ public class MirrorTest {
         settings.setLocalRepository( "target/localrepo_" + UUID.randomUUID() );
         Profile centralProfile = new Profile();
         centralProfile.setId( "test" );
-        for ( Repository remote : remotes ) 
+        for ( Repository remote : remotes )
         	centralProfile.addRepository( remote );
         settings.addProfile( centralProfile );
         settings.addActiveProfile( "test" );
@@ -129,7 +131,7 @@ public class MirrorTest {
     }
 
     @Test
-    public void mirror1() throws IOException, InterruptedException {
+    public void mirror1() throws IOException {
 
         MavenConfigurationImpl config = getConfig( "settings-mirror1.xml",
             "fake", "http://google.com/repo" );
@@ -142,8 +144,8 @@ public class MirrorTest {
         Connection c = new Connection( new URL( null, "mvn:ant/ant/1.5.1", new org.ops4j.pax.url.mvn.Handler() ),
                                        new AetherBasedResolver( config ) );
         c.getInputStream();
-        assertEquals( "the artifact must be downloaded", true, new File( localRepo,
-            "ant/ant/1.5.1/ant-1.5.1.jar" ).exists() );
+        assertTrue("the artifact must be downloaded", new File(localRepo,
+                "ant/ant/1.5.1/ant-1.5.1.jar").exists());
     }
 
     @Test( expected = IOException.class )
@@ -161,7 +163,7 @@ public class MirrorTest {
     }
 
     @Test
-    public void mirror2() throws IOException, InterruptedException {
+    public void mirror2() throws IOException {
         MavenConfigurationImpl config = getConfig( "settings-mirror2.xml",
             "fake", "http://qfdqfqfqf.fra/repo" );
 
@@ -173,12 +175,12 @@ public class MirrorTest {
         Connection c = new Connection( new URL( null, "mvn:ant/ant/1.5.1", new org.ops4j.pax.url.mvn.Handler() ),
                                        new AetherBasedResolver( config ) );
         c.getInputStream();
-        assertEquals( "the artifact must be downloaded", true, new File( localRepo,
-            "ant/ant/1.5.1/ant-1.5.1.jar" ).exists() );
+        assertTrue("the artifact must be downloaded", new File(localRepo,
+                "ant/ant/1.5.1/ant-1.5.1.jar").exists());
     }
 
 	@Test
-	public void mirror3() throws IOException, InterruptedException {
+	public void mirror3() throws IOException {
 		MavenConfigurationImpl config = getConfig("settings-mirror3.xml",
 				"fake", "http://qfdqfqfqf.fra/repo");
 
@@ -190,8 +192,8 @@ public class MirrorTest {
 		Connection c = new Connection( new URL( null, "mvn:ant/ant/1.5.1", new org.ops4j.pax.url.mvn.Handler() ),
                                        new AetherBasedResolver( config ) );
 		c.getInputStream();
-		assertEquals("the artifact must be downloaded", true, new File(
-				localRepo, "ant/ant/1.5.1/ant-1.5.1.jar").exists());
+        assertTrue("the artifact must be downloaded", new File(
+                localRepo, "ant/ant/1.5.1/ant-1.5.1.jar").exists());
 	}
 
 	@Test
@@ -218,13 +220,13 @@ public class MirrorTest {
 		Connection c = new Connection( new URL( null, "mvn:ant/ant/1.5.1", new org.ops4j.pax.url.mvn.Handler() ),
                                        new AetherBasedResolver( config ) );
 		c.getInputStream();
-		assertEquals("the artifact must be downloaded", true, new File(
-				localRepo, "ant/ant/1.5.1/ant-1.5.1.jar").exists());
+        assertTrue("the artifact must be downloaded", new File(
+                localRepo, "ant/ant/1.5.1/ant-1.5.1.jar").exists());
 
 	}
-	
+
 	@Test
-	public void mirror1MultiRemotes() throws IOException, InterruptedException {
+	public void mirror1MultiRemotes() throws IOException {
 
 		Repository disabledRemote = new Repository(), enabledRemote = new Repository();
 		enabledRemote.setId( "enabled" );
@@ -245,8 +247,8 @@ public class MirrorTest {
 		Connection c = new Connection( new URL( null, "mvn:ant/ant/1.5.1", new org.ops4j.pax.url.mvn.Handler() ),
 									   new AetherBasedResolver( config ) );
 		c.getInputStream();
-		assertEquals( "the artifact must be downloaded", true, new File( localRepo,
-			"ant/ant/1.5.1/ant-1.5.1.jar" ).exists() );
+        assertTrue("the artifact must be downloaded", new File(localRepo,
+                "ant/ant/1.5.1/ant-1.5.1.jar").exists());
 	}
 
 	@Test
@@ -269,35 +271,39 @@ public class MirrorTest {
 		remote2.setReleases( remote2Policy );
 
 		@SuppressWarnings("resource")
-		List<RemoteRepository> mirrors1 = new AetherBasedResolver( getConfig( "settings-mirror1.xml", remote1, remote2 ) ).getRepositories();		
+		AetherBasedResolver aetherBasedResolver = new AetherBasedResolver(getConfig("settings-mirror1.xml", remote1, remote2));
+		List<RemoteRepository> mirrors1 = aetherBasedResolver.selectRemoteRepositories(null);
+		mirrors1 = aetherBasedResolver.assignMirrorsAndProxies(null, mirrors1);
 
 		assertNotNull( mirrors1 ) ;
 		assertEquals( 1, mirrors1.size() );
-		assertEquals( true, mirrors1.get( 0 ).getPolicy( false ).isEnabled() );
+        assertTrue(mirrors1.get(0).getPolicy(false).isEnabled());
 		assertEquals( "interval:42", mirrors1.get( 0 ).getPolicy( false ).getUpdatePolicy() );
-		assertEquals( CHECKSUM_POLICY_FAIL, mirrors1.get( 0 ).getPolicy( false ).getChecksumPolicy() );
+		assertEquals( CHECKSUM_POLICY_WARN, mirrors1.get( 0 ).getPolicy( false ).getChecksumPolicy() );
 
 		@SuppressWarnings("resource")
-		List<RemoteRepository> mirrors2 = new AetherBasedResolver( getConfig( "settings-mirror1.xml", remote2, remote1 ) ).getRepositories();		
+		List<RemoteRepository> mirrors2 = new AetherBasedResolver( getConfig( "settings-mirror1.xml", remote2, remote1 ) )
+				.selectRemoteRepositories(null);
+		mirrors2 = aetherBasedResolver.assignMirrorsAndProxies(null, mirrors2);
 
 		assertNotNull( mirrors2) ;
 		assertEquals( 1, mirrors2.size() );
-		assertEquals( true, mirrors2.get( 0 ).getPolicy( false ).isEnabled() );
+        assertTrue(mirrors2.get(0).getPolicy(false).isEnabled());
 		assertEquals( "interval:42", mirrors2.get( 0 ).getPolicy( false ).getUpdatePolicy() );
-		assertEquals( CHECKSUM_POLICY_FAIL, mirrors2.get( 0 ).getPolicy( false ).getChecksumPolicy() );
+		assertEquals( CHECKSUM_POLICY_WARN, mirrors2.get( 0 ).getPolicy( false ).getChecksumPolicy() );
 
 	}
 
 	@Test
-	public void mirrorFromSysProperty() throws IOException, InterruptedException {
+	public void mirrorFromSysProperty() throws IOException {
 
 		MavenConfigurationImpl config = getConfig("settings-no-mirror.xml", "fake", "http://qfdqfqfqf.fra/repo");
 		File localRepo = new File(config.getSettings().getLocalRepository());
 		localRepo.mkdirs();
 
-		String previous = System.getProperty(ServiceConstants.PROPERTY_MAVEN_MIRROR_URL_SYS);
+		String previous = System.getProperty(ServiceConstants.SYS_MAVEN_MIRROR_URL);
 		try {
-			System.setProperty(ServiceConstants.PROPERTY_MAVEN_MIRROR_URL_SYS, "my-mirror::http://localhost:" + System.getProperty("jetty.http.port"));
+			System.setProperty(ServiceConstants.SYS_MAVEN_MIRROR_URL, "my-mirror::http://localhost:" + System.getProperty("jetty.http.port"));
 			Properties p = new Properties();
 			MavenConfigurationImpl config2 = new MavenConfigurationImpl(new PropertiesPropertyResolver(
 					p), ServiceConstants.PID);
@@ -306,13 +312,13 @@ public class MirrorTest {
 			Connection c = new Connection(new URL(null, "mvn:ant/ant/1.5.1", new org.ops4j.pax.url.mvn.Handler()),
 					new AetherBasedResolver(config));
 			c.getInputStream();
-			assertEquals("the artifact must be downloaded", true, new File(localRepo,
-					"ant/ant/1.5.1/ant-1.5.1.jar").exists());
+            assertTrue("the artifact must be downloaded", new File(localRepo,
+                    "ant/ant/1.5.1/ant-1.5.1.jar").exists());
 
 			assertEquals("my-mirror", config.getSettings().getMirrors().get(0).getId());
 		} finally {
 			if (previous != null) {
-				System.setProperty(ServiceConstants.PROPERTY_MAVEN_MIRROR_URL_SYS, previous);
+				System.setProperty(ServiceConstants.SYS_MAVEN_MIRROR_URL, previous);
 			}
 		}
 	}

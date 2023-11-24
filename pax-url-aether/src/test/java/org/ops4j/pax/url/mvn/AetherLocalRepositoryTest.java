@@ -22,8 +22,6 @@ import java.util.Properties;
 import org.apache.maven.settings.Profile;
 import org.apache.maven.settings.Repository;
 import org.apache.maven.settings.Settings;
-import org.eclipse.aether.collection.DependencyCollectionException;
-import org.eclipse.aether.resolution.ArtifactResolutionException;
 import org.junit.Test;
 import org.ops4j.pax.url.mvn.internal.config.MavenConfigurationImpl;
 import org.ops4j.util.property.PropertiesPropertyResolver;
@@ -35,13 +33,12 @@ import org.slf4j.LoggerFactory;
  */
 public class AetherLocalRepositoryTest {
 
-    private static Logger LOG = LoggerFactory.getLogger(AetherLocalRepositoryTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AetherLocalRepositoryTest.class);
 
     @Test
-    public void resolveArtifactWithChangedLocalRepository()
-            throws DependencyCollectionException, ArtifactResolutionException, IOException {
+    public void resolveArtifactWithChangedLocalRepository() throws IOException {
         MavenConfigurationImpl config = getConfig();
-        config.getLocalRepository().getFile().getName().endsWith(".dir");
+        config.getLocalRepository().getName().endsWith(".dir");
 
         File f = File.createTempFile("aethertest", ".overriden", new File("target"));
         f.delete();
@@ -51,7 +48,7 @@ public class AetherLocalRepositoryTest {
         try {
             System.setProperty("maven.repo.local", f.getAbsolutePath());
             config = getConfig();
-            config.getLocalRepository().getFile().getName().endsWith(".overriden");
+            config.getLocalRepository().getName().endsWith(".overriden");
         } finally {
             if (previousMavenRepoLocal != null) {
                 System.setProperty("maven.repo.local", previousMavenRepoLocal);

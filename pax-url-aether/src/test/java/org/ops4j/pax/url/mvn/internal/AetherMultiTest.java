@@ -67,16 +67,21 @@ import org.slf4j.LoggerFactory;
 @PrepareForTest( {MavenRepositoryURL.class})
 //The following ignores are required to allow Logger classes to load up
 //during unit testing without errors.
-@PowerMockIgnore({"javax.xml.*",
-                  "javax.net.ssl.*",
-                  "org.xml.sax.*",
-                  "org.w3c.dom.*",
-                  "org.springframework.context.*",
-                  "org.apache.log4j.*",
-                  "javax.xml.parsers.*",
-                  "org.apache.http.ssl.*",
-                  "org.apache.http.conn.ssl.*",
-                  "com.sun.org.apache.xerces.*"})
+@PowerMockIgnore({
+        "java.lang.*",
+        "javax.crypto.*",
+        "javax.management.*",
+        "javax.xml.*",
+        "javax.net.ssl.*",
+        "org.xml.sax.*",
+        "org.w3c.dom.*",
+        "org.springframework.context.*",
+        "org.apache.log4j.*",
+        "javax.xml.parsers.*",
+        "org.apache.http.ssl.*",
+        "org.apache.http.conn.ssl.*",
+        "com.sun.org.apache.xerces.*"
+})
 public class AetherMultiTest {
 
     private static Logger LOG = LoggerFactory.getLogger( AetherMultiTest.class );
@@ -120,7 +125,7 @@ public class AetherMultiTest {
                 new AetherBasedResolver(
                         getDummyConfigRemoveRepo("repomulti_ordered"));
         List<RemoteRepository> repositories =
-                aetherBasedResolver.getRepositories();
+                aetherBasedResolver.selectRemoteRepositories(null);
         assertEquals("Expected only 2 repositories returned",
                      2, repositories.size());
         assertTrue("Expected mykar1 first",
@@ -146,25 +151,29 @@ public class AetherMultiTest {
             new AetherBasedResolver(
                 getDummyConfig("repomulti_ordered",
                                ServiceConstants.PROPERTY_DEFAULT_REPOSITORIES));
-        List<LocalRepository> repositories =
+        List<AetherBasedResolver.LocalRepositoryWithConfig> repositories =
                 aetherBasedResolver.selectDefaultRepositories();
         assertEquals("Expected only 2 repositories returned",
                      2, repositories.size());
         assertTrue("Expected mykar1 first",
                     repositories.get(0)
+                                .repository
                                 .getBasedir()
                                 .getAbsolutePath().contains("mykar1"));
         assertFalse("Didn't expect mykar2 in first url",
                      repositories.get(0)
+                                  .repository
                                   .getBasedir()
                                   .getAbsolutePath().contains("mykar2"));
 
         assertTrue("Expected mykar2 second",
                    repositories.get(1)
+                                  .repository
                                   .getBasedir()
                                   .getAbsolutePath().contains("mykar2"));
         assertFalse("Didn't expect mykar1 in second url",
                     repositories.get(1)
+                                .repository
                                 .getBasedir()
                                 .getAbsolutePath().contains("mykar1"));
         aetherBasedResolver.close();

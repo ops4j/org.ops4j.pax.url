@@ -19,7 +19,7 @@ package org.ops4j.pax.url.mvn.internal;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -36,15 +36,16 @@ import org.apache.maven.settings.building.DefaultSettingsBuildingRequest;
 import org.apache.maven.settings.building.SettingsBuildingException;
 import org.apache.maven.settings.building.SettingsBuildingRequest;
 import org.apache.maven.settings.building.SettingsBuildingResult;
-import org.eclipse.jetty.http.security.Constraint;
 import org.eclipse.jetty.security.ConstraintMapping;
 import org.eclipse.jetty.security.ConstraintSecurityHandler;
 import org.eclipse.jetty.security.HashLoginService;
 import org.eclipse.jetty.security.LoginService;
 import org.eclipse.jetty.security.authentication.BasicAuthenticator;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.ResourceHandler;
-import org.eclipse.jetty.server.nio.SelectChannelConnector;
+import org.eclipse.jetty.util.security.Constraint;
+import org.hamcrest.core.StringContains;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -54,30 +55,21 @@ import org.ops4j.pax.url.mvn.Handler;
 import org.ops4j.pax.url.mvn.ServiceConstants;
 import org.ops4j.pax.url.mvn.internal.config.MavenConfigurationImpl;
 import org.ops4j.util.property.PropertiesPropertyResolver;
+import org.sonatype.plexus.components.sec.dispatcher.DefaultSecDispatcher;
 
 public class AuthenticationTest
 {
-
     @Rule
+    @SuppressWarnings("deprecation")
     public ExpectedException thrown = ExpectedException.none();
 
     private Server server;
 
-    @SuppressWarnings( "restriction" )
     @Before
     public void startHttp() throws Exception
     {
-        /*
-         * Oracle JDK specific workaround to disable HTTP authentication caching.
-         * See http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6626700.
-         * See https://bugs.openjdk.java.net/browse/JDK-6626700
-         * 
-         * The cache would break our tests for failing authentication.
-         */
-        sun.net.www.protocol.http.AuthCacheValue.setAuthCache( new sun.net.www.protocol.http.AuthCacheImpl() );
-        
         server = new Server();
-        SelectChannelConnector connector = new SelectChannelConnector();
+        ServerConnector connector = new ServerConnector(server);
         connector.setPort( 8778 );
         server.addConnector( connector );
 
@@ -116,13 +108,13 @@ public class AuthenticationTest
     @After
     public void stopHttp() throws Exception
     {
-        System.clearProperty( PaxUrlSecDispatcher.SYSTEM_PROPERTY_SEC_LOCATION );
+        System.clearProperty( DefaultSecDispatcher.SYSTEM_PROPERTY_SEC_LOCATION );
         server.stop();
     }
 
     private Settings buildSettings( String settingsPath )
     {
-        Settings settings = null;
+        Settings settings;
         if( settingsPath == null )
         {
             settings = new Settings();
@@ -171,8 +163,7 @@ public class AuthenticationTest
     }
 
     @Test
-    public void authenticationShouldFail() throws IOException, InterruptedException
-    {
+    public void authenticationShouldFail() throws IOException {
         MavenConfigurationImpl config = getConfig( "src/test/resources/settings-auth-fail.xml" );
 
         Settings settings = config.getSettings();
@@ -183,13 +174,12 @@ public class AuthenticationTest
                                        new AetherBasedResolver( config ) );
 
         thrown.expect( IOException.class );
-        thrown.expectMessage( "status: 401 Unauthorized" );
+        thrown.expectMessage( new StringContains("status code: 401, reason phrase: Unauthorized (401)") );
         c.getInputStream();
     }
 
     @Test
-    public void authenticationShouldPass() throws IOException, InterruptedException
-    {
+    public void authenticationShouldPass() throws IOException {
         MavenConfigurationImpl config = getConfig( "src/test/resources/settings-auth-pass.xml" );
 
         Settings settings = config.getSettings();
@@ -204,8 +194,7 @@ public class AuthenticationTest
     }
     
     @Test
-    public void encryptedAuthenticationShouldPass() throws IOException, InterruptedException
-    {
+    public void encryptedAuthenticationShouldPass() throws IOException {
         MavenConfigurationImpl config = getConfig( "src/test/resources/settings-auth-encrypted.xml", "src/test/resources/settings-security.xml" );
 
         Settings settings = config.getSettings();
@@ -220,8 +209,7 @@ public class AuthenticationTest
     }
     
     @Test
-    public void encryptedAuthenticationShouldFail() throws IOException, InterruptedException
-    {
+    public void encryptedAuthenticationShouldFail() throws IOException {
         MavenConfigurationImpl config = getConfig( "src/test/resources/settings-auth-encrypted.xml" );
 
         Settings settings = config.getSettings();
@@ -232,7 +220,7 @@ public class AuthenticationTest
         Connection c = new Connection( new URL( null, "mvn:ant/ant/1.5.1", new Handler() ),
                                        new AetherBasedResolver( config ) );
         thrown.expect( IOException.class );
-        thrown.expectMessage( "status: 401 Unauthorized" );
+        thrown.expectMessage( new StringContains("status code: 401, reason phrase: Unauthorized (401)") );
         c.getInputStream();
     }    
 }

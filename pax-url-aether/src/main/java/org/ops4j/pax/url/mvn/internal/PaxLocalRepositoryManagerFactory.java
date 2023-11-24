@@ -18,28 +18,46 @@ package org.ops4j.pax.url.mvn.internal;
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.impl.RemoteRepositoryManager;
 import org.eclipse.aether.impl.UpdatePolicyAnalyzer;
-import org.eclipse.aether.internal.impl.PaxLocalRepositoryManager;
-import org.eclipse.aether.internal.impl.SimpleLocalRepositoryManagerFactory;
+import org.eclipse.aether.internal.impl.EnhancedLocalRepositoryManagerFactory;
+import org.eclipse.aether.internal.impl.LocalPathComposer;
+import org.eclipse.aether.internal.impl.LocalPathPrefixComposerFactory;
+import org.eclipse.aether.internal.impl.TrackingFileManager;
 import org.eclipse.aether.repository.LocalRepository;
 import org.eclipse.aether.repository.LocalRepositoryManager;
-import org.eclipse.aether.spi.locator.Service;
-import org.eclipse.aether.spi.locator.ServiceLocator;
+import org.eclipse.aether.repository.NoLocalRepositoryManagerException;
+import org.eclipse.aether.spi.localrepo.LocalRepositoryManagerFactory;
 
-public class PaxLocalRepositoryManagerFactory extends SimpleLocalRepositoryManagerFactory implements Service {
+public class PaxLocalRepositoryManagerFactory implements LocalRepositoryManagerFactory {
 
-    private UpdatePolicyAnalyzer updatePolicyAnalyzer;
-    private RemoteRepositoryManager remoteRepositoryManager;
+    private final LocalRepositoryManagerFactory delegate;
 
-    @Override
-    public void initService(ServiceLocator locator) {
-        updatePolicyAnalyzer = locator.getService(UpdatePolicyAnalyzer.class);
-        remoteRepositoryManager = locator.getService(RemoteRepositoryManager.class);
+    // we need three additional "services" to be available in PaxLocalRepositoryManager
+    private final UpdatePolicyAnalyzer updatePolicyAnalyzer;
+    private final RemoteRepositoryManager remoteRepositoryManager;
+    private final TrackingFileManager trackingFileManager;
+
+    public PaxLocalRepositoryManagerFactory(LocalPathComposer localPathComposer, TrackingFileManager trackingFileManager,
+            LocalPathPrefixComposerFactory localPathPrefixComposerFactory,
+            UpdatePolicyAnalyzer updatePolicyAnalyzer, RemoteRepositoryManager remoteRepositoryManager) {
+        // we can't extend org.eclipse.aether.internal.impl.EnhancedLocalRepositoryManager,
+        // so we have to delegate
+        delegate = new EnhancedLocalRepositoryManagerFactory(localPathComposer, trackingFileManager, localPathPrefixComposerFactory);
+
+        this.updatePolicyAnalyzer = updatePolicyAnalyzer;
+        this.remoteRepositoryManager = remoteRepositoryManager;
+        this.trackingFileManager = trackingFileManager;
     }
 
     @Override
-    public LocalRepositoryManager newInstance(RepositorySystemSession session, LocalRepository repository) {
-        return new PaxLocalRepositoryManager(repository.getBasedir(),
-                updatePolicyAnalyzer, remoteRepositoryManager);
+    public float getPriority() {
+        return 20.0f;
+    }
+
+    @Override
+    public LocalRepositoryManager newInstance(RepositorySystemSession repositorySystemSession, LocalRepository localRepository) throws NoLocalRepositoryManagerException {
+        LocalRepositoryManager delegate = this.delegate.newInstance(repositorySystemSession, localRepository);
+        return new PaxLocalRepositoryManager(localRepository.getBasedir(), delegate,
+                updatePolicyAnalyzer, remoteRepositoryManager, trackingFileManager);
     }
 
 }

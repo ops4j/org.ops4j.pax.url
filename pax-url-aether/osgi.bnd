@@ -1,98 +1,92 @@
-Bundle-Activator:\
-  ${bundle.namespace}.internal.Activator
+#
+# Copyright 2023 OPS4J.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
 
-Bundle-Version:\
-  ${pom.version}
+Bundle-SymbolicName: ${bundle.symbolicName}; singleton:=true
+Bundle-Version: ${pom.version}
+Bundle-Activator: ${bundle.namespace}.internal.Activator
 
-Bundle-SymbolicName:\
-  ${bundle.symbolicName}; singleton:=true  
-  
+Multi-Release: true
+
+Export-Package: ${bundle.namespace}; version="${pom.version}"
+
 Export-Service:\
-  org.osgi.service.url.URLStreamHandlerService; url.handler.protocol=mvn, \
+  org.osgi.service.url.URLStreamHandlerService; url.handler.protocol=mvn,\
   org.ops4j.pax.url.mvn.MavenResolver
 
 Import-Package:\
-  org.slf4j,\
-  javax.net.ssl,\
-  javax.xml.parsers,\
-  org.osgi.framework;version="[1.5,2)",\
-  org.osgi.service.cm;version="[1.4,2)"; resolution:=optional,\
-  org.osgi.service.annotation*; resolution:=optional,\
-  org.osgi.util.tracker;version="[1.4,2)",\
-  !javax.servlet*,\
-  !junit*,\
-  !org.junit*,\
-  !org.testng*,\
-  !com.google.inject.*,\
-  !javax.enterprise.inject.*,\
-  !javax.inject.*,\
-  !org.apache.commons.lang.*,\
-  !org.codehaus.classworlds.*,\
-  !org.codehaus.plexus.*,\
-  !org.jsoup.*,\
-  !org.eclipse.sisu.*,\
-  !java.*,\
-  sun.misc; resolution:=optional,\
-  sun.nio.ch; resolution:=optional,\
-  *
-
-Export-Package:\
-  ${bundle.namespace}; version="${pom.version}"
-
-Private-Package:\
-  ${bundle.namespace}.internal.*,\
-  org.sonatype.*,\
-  org.apache.maven.model;-split-package:=merge-first
-
-Embed-Dependency:\
-  *; scope=compile; type=!pom; inline=true
-
-Embed-Transitive: true
-
-Ignore-Package:\
-  javax.annotation.processing,\
-  javax.el,\
-  javax.enterprise.inject,\
-  javax.inject,\
-  javax.interceptor,\
-  junit.framework,\
-  org.apache.commons.httpclient,\
-  org.apache.commons.httpclient.auth,\
-  org.apache.commons.httpclient.methods,\
-  org.apache.commons.httpclient.params,\
-  org.apache.commons.httpclient.util,\
-  org.apache.commons.logging,\
-  org.codehaus.plexus,\
-  org.codehaus.plexus.classworlds.realm,\
-  org.codehaus.plexus.component.configurator,\
-  org.codehaus.plexus.component.configurator.converters.composite,\
-  org.codehaus.plexus.component.configurator.converters.lookup,\
-  org.codehaus.plexus.component.configurator.expression,\
-  org.codehaus.plexus.configuration,\
-  org.codehaus.plexus.configuration.xml,\
-  org.codehaus.plexus.logging,\
-  org.cyberneko.html,\
-  org.cyberneko.html.filters,\
-  org.eclipse.sisu,\
-  com.sun.jdmk.comm,\
-  javax.jms,\
-  javax.mail,\
-  javax.mail.internet,\
-  javax.swing,\
-  javax.swing.border,\
-  javax.swing.event,\
-  javax.swing.table,\
-  javax.swing.text,\
-  javax.swing.tree,\
-  javax.management,\
   javax.crypto,\
   javax.crypto.spec,\
-  org.apache.avalon.framework.logger,\
-  org.apache.log,\
-  org.apache.xerces.xni,\
-  org.apache.xerces.xni.parser,\
-  org.objectweb.asm,\
-  org.objectweb.asm.commons
+  javax.naming,\
+  javax.naming.directory,\
+  javax.naming.ldap,\
+  javax.net,\
+  javax.net.ssl,\
+  javax.security.auth.x500,\
+  org.ietf.jgss,\
+  org.osgi.framework;version="[1.5,2)",\
+  org.osgi.service.cm;version="[1.4,2)";resolution:=optional,\
+  org.osgi.service.url;version="[1.0,2)",\
+  org.slf4j,\
+  org.slf4j.spi,\
+  org.apache.commons.logging;resolution:=optional,\
+  !java.*,\
+  !javax.inject.*,\
+  !com.google.inject.*,\
+  !org.apache.commons.codec.*,\
+  !org.apache.commons.lang3.*,\
+  !eu.maveniverse.*,\
+  !org.apache.maven.*,\
+  !org.apache.http.*,\
+  !org.eclipse.aether.*,\
+  !org.codehaus.plexus.util.*,\
+  !org.codehaus.plexus.interpolation.*,\
+  !org.eclipse.sisu.*,\
+  !org.ops4j.lang.*,\
+  !org.ops4j.util.*,\
+  !org.sonatype.plexus.components.*,\
+  *
+
+Private-Package: ${bundle.namespace}.internal.*
+
+# only when we Private-Package the dependencies explicitly, "Import-Package: *" will analyze the class space...
+# that's the problem combining maven-bundle-plugin and maven-shade-plugin.
+# This is how I always initially check all the imports required to decide later whether some may be removed and
+# some made optional
+#Private-Package: ${bundle.namespace}.internal.*,\
+#  eu.maveniverse.*,\
+#  org.apache.maven.*,\
+#  org.apache.http.*,\
+#  org.eclipse.aether.*,\
+#  org.codehaus.plexus.util.*,\
+#  org.ops4j.lang.*,\
+#  org.ops4j.util.*,\
+#  org.sonatype.plexus.components.*
+
+Embed-Dependency:\
+  eu.maveniverse.maven.mima:*;inline=true,\
+  eu.maveniverse.maven.mima.runtime:*;inline=true,\
+  commons-codec:commons-codec;inline=true,\
+  org.apache.commons:commons-lang3;inline=true,\
+  org.ops4j.base:*;inline=true,\
+  org.apache.httpcomponents:*;inline=true,\
+  org.apache.maven:*;inline=true,\
+  org.apache.maven.resolver:*;inline=true,\
+  org.codehaus.plexus:*;inline=true
+
+Embed-Transitive: true
 
 -removeheaders:\
   Include-Resource,\
@@ -100,5 +94,4 @@ Ignore-Package:\
   Embed-Dependency,\
   TEST_REPO,\
   Embed-Transitive,\
-  Ignore-Package,\
   Require-Capability

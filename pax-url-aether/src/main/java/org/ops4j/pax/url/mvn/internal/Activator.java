@@ -25,9 +25,10 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.ops4j.pax.url.mvn.MavenResolver;
 import org.ops4j.pax.url.mvn.ServiceConstants;
-import org.ops4j.pax.url.mvn.internal.config.MavenConfiguration;
 import org.ops4j.pax.url.mvn.internal.config.MavenConfigurationImpl;
 import org.ops4j.util.property.DictionaryPropertyResolver;
+import org.ops4j.util.property.FallbackPropertyResolver;
+import org.ops4j.util.property.PropertiesPropertyResolver;
 import org.ops4j.util.property.PropertyResolver;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -44,10 +45,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Bundle activator for protocol handlers.
  */
-public class Activator extends AbstractURLStreamHandlerService
-        implements BundleActivator
+public class Activator extends AbstractURLStreamHandlerService implements BundleActivator
 {
-
     /**
      * Logger.
      */
@@ -68,12 +67,11 @@ public class Activator extends AbstractURLStreamHandlerService
     /**
      * Maven resolver.
      */
-    private final AtomicReference<MavenResolver> m_resolver = new AtomicReference<MavenResolver>();
+    private final AtomicReference<MavenResolver> m_resolver = new AtomicReference<>();
     /**
      * Managed service registration. Used for cleanup.
      */
-    private final AtomicReference<ServiceRegistration<MavenResolver>> m_resolverReg =
-            new AtomicReference<ServiceRegistration<MavenResolver>>();
+    private final AtomicReference<ServiceRegistration<MavenResolver>> m_resolverReg = new AtomicReference<>();
 
     /**
      * Registers Handler as a wrap: protocol stream handler service and as a configuration managed service if
@@ -89,7 +87,7 @@ public class Activator extends AbstractURLStreamHandlerService
         m_bundleContext = bundleContext;
         try {
             updated(null);
-        } catch (AssertionError e) {
+        } catch (IllegalArgumentException e) {
             LOG.error("Unable to load MavenConfiguration '{}' : '{}'", e.getMessage(), e.getCause() != null ? e.getCause().getMessage() : "", e);
         }
         registerManagedService();
@@ -139,7 +137,7 @@ public class Activator extends AbstractURLStreamHandlerService
      */
     private void registerHandler()
     {
-        final Dictionary<String, Object> props = new Hashtable<String, Object>();
+        final Dictionary<String, Object> props = new Hashtable<>();
         props.put( URLConstants.URL_HANDLER_PROTOCOL, ServiceConstants.PROTOCOL );
         m_handlerReg = safeRegisterService(
                 URLStreamHandlerService.class,
@@ -164,24 +162,36 @@ public class Activator extends AbstractURLStreamHandlerService
     }
 
     public void updated(Dictionary<String, ?> config) {
+        // the options are:
+        //  - no PID: bundle context properties -> system properties
+        //  - PID available: PID properties -> system properties
+        // this allows use to set "requireConfigAdminConfig" in etc/config.properties to wait for PID
+        PropertiesPropertyResolver syspropsResolver = new PropertiesPropertyResolver(System.getProperties());
+
         PropertyResolver propertyResolver;
         if (config == null) {
-            propertyResolver = new PropertyResolver() {
+            propertyResolver = new FallbackPropertyResolver(syspropsResolver) {
                 @Override
-                public String get(String propertyName) {
-                    return m_bundleContext.getProperty(propertyName);
+                protected String findProperty(String propertyName) {
+                    String value = m_bundleContext.getProperty(propertyName);
+                    if (value != null && value.trim().isEmpty()) {
+                        value = null;
+                    }
+
+                    return value;
                 }
             };
         } else {
-            propertyResolver = new DictionaryPropertyResolver(config);
+            propertyResolver = new DictionaryPropertyResolver(config, syspropsResolver);
         }
-        MavenConfiguration mavenConfig = new MavenConfigurationImpl(propertyResolver, ServiceConstants.PID);
-        if (!((MavenConfigurationImpl) mavenConfig).isValid()) {
+        MavenConfigurationImpl mavenConfig = new MavenConfigurationImpl(propertyResolver, ServiceConstants.PID);
+        if (!mavenConfig.isValid()) {
              return;
         }
+
         MavenResolver resolver = new AetherBasedResolver(mavenConfig);
         MavenResolver oldResolver = m_resolver.getAndSet( resolver );
-        Dictionary<String, Object> properties = new Hashtable<String, Object>();
+        Dictionary<String, Object> properties = new Hashtable<>();
         properties.put("configuration", config == null ? "bundlecontext" : "configadmin");
         ServiceRegistration<MavenResolver> registration = safeRegisterService(
                 MavenResolver.class,
@@ -260,7 +270,7 @@ public class Activator extends AbstractURLStreamHandlerService
          */
         static ServiceRegistration<ManagedService> registerManagedService(final Activator activator)
         {
-            final Dictionary<String, String> props = new Hashtable<String, String>();
+            final Dictionary<String, String> props = new Hashtable<>();
             props.put(Constants.SERVICE_PID, ServiceConstants.PID);
             return activator.safeRegisterService(
                     ManagedService.class,
@@ -269,7 +279,7 @@ public class Activator extends AbstractURLStreamHandlerService
                         public void updated(Dictionary<String, ?> dictionary) throws ConfigurationException {
                             try {
                                 activator.updated(dictionary);
-                            } catch (AssertionError e) {
+                            } catch (IllegalArgumentException e) {
                                 LOG.error("Unable to reload MavenConfiguration '{}' : '{}'", e.getMessage(), e.getCause() != null ? e.getCause().getMessage() : "", e);
                                 throw new ConfigurationException("", "", e.getCause());
                             }

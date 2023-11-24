@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.eclipse.aether.internal.impl;
+package org.ops4j.pax.url.mvn.internal;
 
 import java.io.File;
 import java.util.HashMap;
@@ -21,38 +21,73 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.eclipse.aether.RepositorySystemSession;
+import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.impl.RemoteRepositoryManager;
 import org.eclipse.aether.impl.UpdatePolicyAnalyzer;
+import org.eclipse.aether.internal.impl.TrackingFileManager;
+import org.eclipse.aether.metadata.Metadata;
 import org.eclipse.aether.repository.LocalArtifactRegistration;
 import org.eclipse.aether.repository.LocalArtifactRequest;
 import org.eclipse.aether.repository.LocalArtifactResult;
+import org.eclipse.aether.repository.LocalMetadataRegistration;
+import org.eclipse.aether.repository.LocalMetadataRequest;
+import org.eclipse.aether.repository.LocalMetadataResult;
+import org.eclipse.aether.repository.LocalRepository;
+import org.eclipse.aether.repository.LocalRepositoryManager;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.repository.RepositoryPolicy;
 
-public class PaxLocalRepositoryManager extends SimpleLocalRepositoryManager {
+public class PaxLocalRepositoryManager implements LocalRepositoryManager {
 
     public static final String PROPERTY_UPDATE_RELEASES = "paxUrlAether.updateReleases";
 
+    private final LocalRepositoryManager delegate;
+
     private final UpdatePolicyAnalyzer updatePolicyAnalyzer;
     private final RemoteRepositoryManager remoteRepositoryManager;
-
-    private final String trackingFilename;
     private final TrackingFileManager trackingFileManager;
 
-    public PaxLocalRepositoryManager(File basedir,
-                                     UpdatePolicyAnalyzer updatePolicyAnalyzer,
-                                     RemoteRepositoryManager remoteRepositoryManager) {
-        super(basedir, "pax-url", new DefaultLocalPathComposer());
+    private final String trackingFilename;
+
+    public PaxLocalRepositoryManager(File basedir, LocalRepositoryManager delegate,
+            UpdatePolicyAnalyzer updatePolicyAnalyzer, RemoteRepositoryManager remoteRepositoryManager, TrackingFileManager trackingFileManager) {
+        this.delegate = delegate;
+
         this.updatePolicyAnalyzer = updatePolicyAnalyzer;
         this.remoteRepositoryManager = remoteRepositoryManager;
+        this.trackingFileManager = trackingFileManager;
 
-        trackingFilename = "_pax-url-aether-remote.repositories";
-        trackingFileManager = new DefaultTrackingFileManager();
+        this.trackingFilename = "_pax-url-aether-remote.repositories";
+    }
+
+    @Override
+    public LocalRepository getRepository() {
+        return delegate.getRepository();
+    }
+
+    @Override
+    public String getPathForLocalArtifact(Artifact artifact) {
+        return delegate.getPathForLocalArtifact(artifact);
+    }
+
+    @Override
+    public String getPathForRemoteArtifact(Artifact artifact, RemoteRepository repository, String context) {
+        return delegate.getPathForRemoteArtifact(artifact, repository, context);
+    }
+
+    @Override
+    public String getPathForLocalMetadata(Metadata metadata) {
+        return delegate.getPathForLocalMetadata(metadata);
+    }
+
+    @Override
+    public String getPathForRemoteMetadata(Metadata metadata, RemoteRepository repository, String context) {
+        return delegate.getPathForRemoteMetadata(metadata, repository, context);
     }
 
     @Override
     public LocalArtifactResult find(RepositorySystemSession session, LocalArtifactRequest request) {
-        LocalArtifactResult result = super.find(session, request);
+        LocalArtifactResult result = delegate.find(session, request);
 
         if (result.isAvailable()
                 && !request.getArtifact().isSnapshot()
@@ -89,7 +124,8 @@ public class PaxLocalRepositoryManager extends SimpleLocalRepositoryManager {
 
     @Override
     public void add(RepositorySystemSession session, LocalArtifactRegistration request) {
-        super.add(session, request);
+        delegate.add(session, request);
+
         if (!request.getArtifact().isSnapshot()
                 && (Boolean) session.getConfigProperties().get(PROPERTY_UPDATE_RELEASES)) {
             String path = getPathForLocalArtifact(request.getArtifact());
@@ -97,10 +133,20 @@ public class PaxLocalRepositoryManager extends SimpleLocalRepositoryManager {
             File trackingFile = getTrackingFile(artifactFile);
             String repoId = request.getRepository() == null ? "" : request.getRepository().getId();
 
-            Map<String, String> updates = new HashMap<String, String>();
+            Map<String, String> updates = new HashMap<>();
             updates.put(artifactFile.getName() + ">" + repoId, "");
             trackingFileManager.update(trackingFile, updates);
         }
+    }
+
+    @Override
+    public LocalMetadataResult find(RepositorySystemSession session, LocalMetadataRequest request) {
+        return delegate.find(session, request);
+    }
+
+    @Override
+    public void add(RepositorySystemSession session, LocalMetadataRegistration request) {
+        delegate.add(session, request);
     }
 
     private File getTrackingFile(File artifactFile) {

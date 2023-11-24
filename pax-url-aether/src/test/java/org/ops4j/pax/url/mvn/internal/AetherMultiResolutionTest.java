@@ -43,6 +43,7 @@ public class AetherMultiResolutionTest {
 
         assertTrue(resolver.resolve("mvn:ant/ant/1.5.1-SNAPSHOT").getCanonicalPath().endsWith("r1/ant/ant/1.5.1-SNAPSHOT/ant-1.5.1-SNAPSHOT.jar"));
         assertTrue(resolver.resolve("mvn:ant/ant/1.5.2-SNAPSHOT").getCanonicalPath().endsWith("r2/ant/ant/1.5.2-SNAPSHOT/ant-1.5.2-SNAPSHOT.jar"));
+        resolver.close();
     }
 
     private MavenConfigurationImpl basicMavenConfiguration(String globalUpdatePolicy) {
@@ -55,8 +56,7 @@ public class AetherMultiResolutionTest {
         properties.setProperty("pid.globalChecksumPolicy", "ignore");
         properties.setProperty("pid.globalUpdatePolicy", globalUpdatePolicy);
         properties.setProperty("pid.connection.retryCount", "0");
-        MavenConfigurationImpl mavenConfiguration = new MavenConfigurationImpl(new PropertiesPropertyResolver(properties), "pid");
-        return mavenConfiguration;
+        return new MavenConfigurationImpl(new PropertiesPropertyResolver(properties), "pid");
     }
 
 }
