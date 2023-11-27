@@ -130,7 +130,7 @@
         <module>pax-url-cache</module>
         <module>pax-url-classpath</module>
         <module>pax-url-dir</module>
-<!--        <module>pax-url-link</module>-->
+        <module>pax-url-link</module>
 <!--        <module>pax-url-obr</module>-->
 <!--        <module>pax-url-reference</module>-->
 <!--        <module>pax-url-war</module>-->
@@ -196,16 +196,16 @@
 
             <!-- OPS4J Pax Swissbox -->
 
-<!--            <dependency>-->
-<!--                <groupId>org.ops4j.pax.swissbox</groupId>-->
-<!--                <artifactId>pax-swissbox-bnd</artifactId>-->
-<!--                <version>${dependency.swissbox.version}</version>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>org.ops4j.pax.swissbox</groupId>-->
-<!--                <artifactId>pax-swissbox-optional-jcl</artifactId>-->
-<!--                <version>${dependency.swissbox.version}</version>-->
-<!--            </dependency>-->
+            <dependency>
+                <groupId>org.ops4j.pax.swissbox</groupId>
+                <artifactId>pax-swissbox-bnd</artifactId>
+                <version>${dependency.org.ops4j.pax.swissbox}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ops4j.pax.swissbox</groupId>
+                <artifactId>pax-swissbox-optional-jcl</artifactId>
+                <version>${dependency.org.ops4j.pax.swissbox}</version>
+            </dependency>
             <dependency>
                 <groupId>org.ops4j.pax.swissbox</groupId>
                 <artifactId>pax-swissbox-property</artifactId>
