@@ -22,7 +22,9 @@ public class AbstractConnectionTest {
 				"servlet.jar",
 				"servlet-2.5.jar",
 				"servlet-api.jar",
-				"servlet-api-2.5.jar"
+				"servlet-api-2.5.jar",
+				"servlet-api-5.0.jar",
+				"servlet-api-6.0.jar"
 		};
 		
 		for (String servletName : servletJarNamesToTest) {

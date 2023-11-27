@@ -34,10 +34,10 @@ public class WarConnection
     extends AbstractConnection
 {
 
-    private static final String JAVAX_SERVLET_HTTP = "javax.servlet.http";
-	private static final String JAVAX_SERVLET = "javax.servlet";
-	private static final String JAVAX_JSP = "javax.servlet.jsp";
-	private static final String JAVAX_JSP_JSTL = "javax.servlet.jsp.jstl";
+    private static final String JAKARTA_SERVLET_HTTP = "jakarta.servlet.http";
+	private static final String JAKARTA_SERVLET = "jakarta.servlet";
+	private static final String JAKARTA_JSP = "jakarta.servlet.jsp";
+	private static final String JAKARTA_JSP_JSTL = "jakarta.servlet.jsp.jstl";
 	private static final String APACHE_JASPER = "org.apache.jasper";
 	private static final String APACHE_TAGLIBS = "org.apache.taglibs";
 	private static final String SUN_EL = "com.sun.el";
@@ -67,12 +67,12 @@ public class WarConnection
         // default import packages
         if( !instructions.containsKey( "Import-Package" ) )
         {
-            String packages = "javax.servlet,"
-                + "javax.servlet.http,"
-                + "javax.servlet.jsp; resolution:=optional,"
-                + "javax.servlet.jsp.el; resolution:=optional,"
-                + "javax.servlet.jsp.jstl.*; resolution:=optional,"
-                + "javax.*; resolution:=optional,"
+            String packages = "jakarta.servlet,"
+                + "jakarta.servlet.http,"
+                + "jakarta.servlet.jsp; resolution:=optional,"
+                + "jakarta.servlet.jsp.el; resolution:=optional,"
+                + "jakarta.servlet.jsp.jstl.*; resolution:=optional,"
+                + "jakarta.*; resolution:=optional,"
 				+ "org.apache.geronimo.components.jaspi;resolution:=optional,"
                 + "org.apache.jasper.*;resolution:=optional," //extra dependencies for JSP/JSF War Bundles
                 + "org.apache.taglibs.*;resolution:=optional,"
@@ -87,18 +87,18 @@ public class WarConnection
         	// Certain Packages are always needed and therefore should be appended.
         	String importPackages = instructions.getProperty("Import-Package");
         	
-        	if ((importPackages.contains(JAVAX_SERVLET) )|| (importPackages.contains(JAVAX_SERVLET_HTTP) )) { 
-        		//found javax.servlet
-        		//check if javax.servlet or javax.servlet.http is contained.
+        	if ((importPackages.contains(JAKARTA_SERVLET) )|| (importPackages.contains(JAKARTA_SERVLET_HTTP) )) {
+        		//found jakarta.servlet
+        		//check if jakarta.servlet or jakarta.servlet.http is contained.
         		boolean servletFound = false;
         		boolean servletHttpFound = false;
         		String[] imports = importPackages.split(",");
         		for (String importstmt : imports) {
-        			if (importstmt.contains(JAVAX_SERVLET)) {
-        				if (importstmt.length() > JAVAX_SERVLET.length() && importstmt.charAt(JAVAX_SERVLET.length()) == '.') {
-	        					//we found a javax.servlet.
-	        					//check if it is a javax.servlet.http
-	        					if (importstmt.contains(JAVAX_SERVLET_HTTP))
+        			if (importstmt.contains(JAKARTA_SERVLET)) {
+        				if (importstmt.length() > JAKARTA_SERVLET.length() && importstmt.charAt(JAKARTA_SERVLET.length()) == '.') {
+	        					//we found a jakarta.servlet.
+	        					//check if it is a jakarta.servlet.http
+	        					if (importstmt.contains(JAKARTA_SERVLET_HTTP))
 	        						servletHttpFound = true;
         				} else {
         					servletFound = true;
@@ -106,19 +106,19 @@ public class WarConnection
         			}
 				}
         		if (!servletFound) {
-        			importPackages += ","+JAVAX_SERVLET;
+        			importPackages += ","+ JAKARTA_SERVLET;
         		}
         		if (!servletHttpFound) {
-        			importPackages += ","+JAVAX_SERVLET_HTTP;
+        			importPackages += ","+ JAKARTA_SERVLET_HTTP;
         		}
         	} else { //both are missing
-        		importPackages += ","+JAVAX_SERVLET+","+JAVAX_SERVLET_HTTP;
+        		importPackages += ","+ JAKARTA_SERVLET +","+ JAKARTA_SERVLET_HTTP;
         	}
         	
-       		if (!importPackages.contains(JAVAX_JSP)) {
-       			importPackages += ","+JAVAX_JSP+";resolution:=optional";
-       			importPackages += ","+JAVAX_JSP+".el;resolution:=optional";
-        		importPackages += ","+JAVAX_JSP_JSTL+".*;resolution:=optional";
+       		if (!importPackages.contains(JAKARTA_JSP)) {
+       			importPackages += ","+ JAKARTA_JSP +";resolution:=optional";
+       			importPackages += ","+ JAKARTA_JSP +".el;resolution:=optional";
+        		importPackages += ","+ JAKARTA_JSP_JSTL +".*;resolution:=optional";
         	}
         	
         	if (!importPackages.contains(APACHE_JASPER)) {

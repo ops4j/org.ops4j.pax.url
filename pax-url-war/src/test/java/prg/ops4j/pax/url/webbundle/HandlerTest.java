@@ -48,14 +48,14 @@ public class HandlerTest
             throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException
     {
         System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
-        URL url = new URL( "webbundle:file:foo.war?Import-Package=javax.servlet.jsp; version=\"[2.0,1000.0]\",javax.servlet.jsp.tagext; version=\"[2.0,1000.0]\"&Web-ContextPath=/ct-testwar1_0" );
+        URL url = new URL( "webbundle:file:foo.war?Import-Package=jakarta.servlet.jsp; version=\"[2.0,1000.0]\",jakarta.servlet.jsp.tagext; version=\"[2.0,1000.0]\"&Web-ContextPath=/ct-testwar1_0" );
         WarConnection conn = (WarConnection) url.openConnection();
         Method mth = conn.getClass().getSuperclass().getDeclaredMethod("getInstructions");
         mth.setAccessible(true);
         Properties props = (Properties) mth.invoke(conn);
         assertNotNull( props );
         assertNotNull( props.getProperty( "Import-Package" ) );
-        assertEquals("javax.servlet.jsp; version=\"[2.0,1000.0]\",javax.servlet.jsp.tagext; version=\"[2.0,1000.0]\",javax.servlet,javax.servlet.http,org.apache.jasper.*;resolution:=optional,org.apache.taglibs.*;resolution:=optional,com.sun.el.*;resolution:=optional,org.apache.geronimo.components.jaspi;resolution:=optional", props.getProperty( "Import-Package" ));
+        assertEquals("jakarta.servlet.jsp; version=\"[2.0,1000.0]\",jakarta.servlet.jsp.tagext; version=\"[2.0,1000.0]\",jakarta.servlet,jakarta.servlet.http,org.apache.jasper.*;resolution:=optional,org.apache.taglibs.*;resolution:=optional,com.sun.el.*;resolution:=optional,org.apache.geronimo.components.jaspi;resolution:=optional", props.getProperty( "Import-Package" ));
     }
     
     /**
@@ -68,14 +68,14 @@ public class HandlerTest
             throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException
     {
         System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
-        URL url = new URL( "webbundle:file:foo.war?Import-Package=javax.servlet.jsp; version=\"[2.0,1000.0]\",javax.servlet.jsp.tagext; version=\"[2.0,1000.0]\",javax.servlet&Web-ContextPath=/ct-testwar1_0" );
+        URL url = new URL( "webbundle:file:foo.war?Import-Package=jakarta.servlet.jsp; version=\"[2.0,1000.0]\",jakarta.servlet.jsp.tagext; version=\"[2.0,1000.0]\",jakarta.servlet&Web-ContextPath=/ct-testwar1_0" );
         WarConnection conn = (WarConnection) url.openConnection();
         Method mth = conn.getClass().getSuperclass().getDeclaredMethod("getInstructions");
         mth.setAccessible(true);
         Properties props = (Properties) mth.invoke(conn);
         assertNotNull( props );
         assertNotNull( props.getProperty( "Import-Package" ) );
-        assertEquals("javax.servlet.jsp; version=\"[2.0,1000.0]\",javax.servlet.jsp.tagext; version=\"[2.0,1000.0]\",javax.servlet,javax.servlet.http,org.apache.jasper.*;resolution:=optional,org.apache.taglibs.*;resolution:=optional,com.sun.el.*;resolution:=optional,org.apache.geronimo.components.jaspi;resolution:=optional", props.getProperty( "Import-Package" ));
+        assertEquals("jakarta.servlet.jsp; version=\"[2.0,1000.0]\",jakarta.servlet.jsp.tagext; version=\"[2.0,1000.0]\",jakarta.servlet,jakarta.servlet.http,org.apache.jasper.*;resolution:=optional,org.apache.taglibs.*;resolution:=optional,com.sun.el.*;resolution:=optional,org.apache.geronimo.components.jaspi;resolution:=optional", props.getProperty( "Import-Package" ));
     }    
     
     /**
@@ -88,14 +88,14 @@ public class HandlerTest
             throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException
     {
         System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
-        URL url = new URL( "webbundle:file:foo.war?Import-Package=javax.servlet.jsp; version=\"[2.0,1000.0]\",javax.servlet.jsp.tagext; version=\"[2.0,1000.0]\",javax.servlet.http&Web-ContextPath=/ct-testwar1_0" );
+        URL url = new URL( "webbundle:file:foo.war?Import-Package=jakarta.servlet.jsp; version=\"[2.0,1000.0]\",jakarta.servlet.jsp.tagext; version=\"[2.0,1000.0]\",jakarta.servlet.http&Web-ContextPath=/ct-testwar1_0" );
         WarConnection conn = (WarConnection) url.openConnection();
         Method mth = conn.getClass().getSuperclass().getDeclaredMethod("getInstructions");
         mth.setAccessible(true);
         Properties props = (Properties) mth.invoke(conn);
         assertNotNull( props );
         assertNotNull( props.getProperty( "Import-Package" ) );
-        assertEquals("javax.servlet.jsp; version=\"[2.0,1000.0]\",javax.servlet.jsp.tagext; version=\"[2.0,1000.0]\",javax.servlet.http,javax.servlet,org.apache.jasper.*;resolution:=optional,org.apache.taglibs.*;resolution:=optional,com.sun.el.*;resolution:=optional,org.apache.geronimo.components.jaspi;resolution:=optional", props.getProperty( "Import-Package" ));
+        assertEquals("jakarta.servlet.jsp; version=\"[2.0,1000.0]\",jakarta.servlet.jsp.tagext; version=\"[2.0,1000.0]\",jakarta.servlet.http,jakarta.servlet,org.apache.jasper.*;resolution:=optional,org.apache.taglibs.*;resolution:=optional,com.sun.el.*;resolution:=optional,org.apache.geronimo.components.jaspi;resolution:=optional", props.getProperty( "Import-Package" ));
     }    
 
     /**
@@ -108,14 +108,14 @@ public class HandlerTest
             throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException
     {
         System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
-        URL url = new URL( "webbundle:file:foo.war?Import-Package=javax.servlet.jsp; version=\"[2.0,1000.0]\",javax.servlet.jsp.tagext; version=\"[2.0,1000.0]\",javax.servlet;version=\"2.5\"&Web-ContextPath=/ct-testwar1_0" );
+        URL url = new URL( "webbundle:file:foo.war?Import-Package=jakarta.servlet.jsp; version=\"[2.0,1000.0]\",jakarta.servlet.jsp.tagext; version=\"[2.0,1000.0]\",jakarta.servlet;version=\"2.5\"&Web-ContextPath=/ct-testwar1_0" );
         WarConnection conn = (WarConnection) url.openConnection();
         Method mth = conn.getClass().getSuperclass().getDeclaredMethod("getInstructions");
         mth.setAccessible(true);
         Properties props = (Properties) mth.invoke(conn);
         assertNotNull( props );
         assertNotNull( props.getProperty( "Import-Package" ) );
-        assertEquals("javax.servlet.jsp; version=\"[2.0,1000.0]\",javax.servlet.jsp.tagext; version=\"[2.0,1000.0]\",javax.servlet;version=\"2.5\",javax.servlet.http,org.apache.jasper.*;resolution:=optional,org.apache.taglibs.*;resolution:=optional,com.sun.el.*;resolution:=optional,org.apache.geronimo.components.jaspi;resolution:=optional", props.getProperty( "Import-Package" ));
+        assertEquals("jakarta.servlet.jsp; version=\"[2.0,1000.0]\",jakarta.servlet.jsp.tagext; version=\"[2.0,1000.0]\",jakarta.servlet;version=\"2.5\",jakarta.servlet.http,org.apache.jasper.*;resolution:=optional,org.apache.taglibs.*;resolution:=optional,com.sun.el.*;resolution:=optional,org.apache.geronimo.components.jaspi;resolution:=optional", props.getProperty( "Import-Package" ));
     }    
     
     
