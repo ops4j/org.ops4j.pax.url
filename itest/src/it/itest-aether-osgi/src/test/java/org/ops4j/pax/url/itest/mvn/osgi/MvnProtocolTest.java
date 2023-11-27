@@ -61,6 +61,7 @@ public class MvnProtocolTest
             systemProperty( "org.ops4j.pax.url.mvn.localRepository" ). //
             value( "target/local-repo-" + UUID.randomUUID() ), //
 
+            bundle( "file:target/bundles/pax-logging-api.jar" ), //
             bundle( "file:target/bundles/pax-url-aether.jar" ), //
             bundle( "file:target/bundles/slf4j-api.jar" ), //
             bundle( "file:target/bundles/logback-classic.jar" ), //

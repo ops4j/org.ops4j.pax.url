@@ -80,6 +80,7 @@
 
         <!-- versions of Maven dependencies -->
 
+        <dependency.biz.aQute.bndlib>6.4.1</dependency.biz.aQute.bndlib>
         <dependency.com.fasterxml.jackson.core>2.16.0</dependency.com.fasterxml.jackson.core>
         <dependency.commons-io>2.15.0</dependency.commons-io>
         <dependency.eu.maveniverse.maven.mima>2.4.2</dependency.eu.maveniverse.maven.mima>
@@ -102,6 +103,7 @@
         <dependency.org.easymock>5.2.0</dependency.org.easymock>
         <dependency.org.eclipse.jetty>11.0.18</dependency.org.eclipse.jetty>
         <dependency.org.ops4j.base>1.5.1</dependency.org.ops4j.base>
+        <dependency.org.ops4j.pax.exam>4.13.5</dependency.org.ops4j.pax.exam>
         <dependency.org.ops4j.pax.swissbox>1.8.5</dependency.org.ops4j.pax.swissbox>
         <dependency.org.osgi.core>6.0.0</dependency.org.osgi.core>
         <dependency.org.osgi.service.cm>1.6.1</dependency.org.osgi.service.cm>
@@ -109,11 +111,6 @@
         <dependency.org.slf4j>1.7.36</dependency.org.slf4j>
         <dependency.org.apache.logging.log4j>2.22.0</dependency.org.apache.logging.log4j>
 
-
-        <dependency.osgiannotation.version>6.0.0</dependency.osgiannotation.version>
-        <dependency.osgicomp.version>6.0.0</dependency.osgicomp.version>
-        <dependency.bndlib.version>6.4.1</dependency.bndlib.version>
-        <dependency.paxexam.version>4.13.5</dependency.paxexam.version>
     </properties>
 
     <scm>
@@ -135,7 +132,7 @@
         <module>pax-url-reference</module>
         <module>pax-url-war</module>
         <module>pax-url-wrap</module>
-<!--        <module>itest</module>-->
+        <module>itest</module>
     </modules>
 
     <dependencyManagement>
@@ -148,16 +145,16 @@
                 <artifactId>pax-url-commons</artifactId>
                 <version>${project.version}</version>
             </dependency>
-<!--            <dependency>-->
-<!--                <groupId>org.ops4j.pax.url</groupId>-->
-<!--                <artifactId>pax-url-classpath</artifactId>-->
-<!--                <version>${project.version}</version>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>org.ops4j.pax.url</groupId>-->
-<!--                <artifactId>pax-url-link</artifactId>-->
-<!--                <version>${project.version}</version>-->
-<!--            </dependency>-->
+            <dependency>
+                <groupId>org.ops4j.pax.url</groupId>
+                <artifactId>pax-url-classpath</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ops4j.pax.url</groupId>
+                <artifactId>pax-url-link</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
             <!-- OPS4J -->
 
@@ -183,21 +180,6 @@
                 <artifactId>ops4j-base-net</artifactId>
                 <version>${dependency.org.ops4j.base}</version>
             </dependency>
-<!--            <dependency>-->
-<!--                <groupId>org.ops4j.base</groupId>-->
-<!--                <artifactId>ops4j-base-util-xml</artifactId>-->
-<!--                <version>${dependency.base.version}</version>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>org.ops4j.base</groupId>-->
-<!--                <artifactId>ops4j-base-spi</artifactId>-->
-<!--                <version>${dependency.base.version}</version>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>org.ops4j.base</groupId>-->
-<!--                <artifactId>ops4j-base-store</artifactId>-->
-<!--                <version>${dependency.base.version}</version>-->
-<!--            </dependency>-->
 
             <!-- OPS4J Pax Swissbox -->
 
@@ -229,16 +211,6 @@
                 <artifactId>osgi.core</artifactId>
                 <version>${dependency.org.osgi.core}</version>
             </dependency>
-<!--            <dependency>-->
-<!--                <groupId>org.osgi</groupId>-->
-<!--                <artifactId>osgi.cmpn</artifactId>-->
-<!--                <version>${dependency.osgicomp.version}</version>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>org.osgi</groupId>-->
-<!--                <artifactId>org.osgi.annotation</artifactId>-->
-<!--                <version>${dependency.osgiannotation.version}</version>-->
-<!--            </dependency>-->
             <dependency>
                 <groupId>org.osgi</groupId>
                 <artifactId>org.osgi.service.cm</artifactId>
@@ -255,11 +227,11 @@
 
             <!-- BND -->
 
-<!--            <dependency>-->
-<!--                <groupId>biz.aQute.bnd</groupId>-->
-<!--                <artifactId>biz.aQute.bndlib</artifactId>-->
-<!--                <version>${dependency.bndlib.version}</version>-->
-<!--            </dependency>-->
+            <dependency>
+                <groupId>biz.aQute.bnd</groupId>
+                <artifactId>biz.aQute.bndlib</artifactId>
+                <version>${dependency.biz.aQute.bndlib}</version>
+            </dependency>
 
             <!-- Maven -->
 

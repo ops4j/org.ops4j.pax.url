@@ -58,6 +58,7 @@ public class ConfigurationTest
     {
         return options( frameworkProperty( "osgi.console" ).value( "6666" ), //
             systemProperty( "logback.configurationFile" ).value( "src/test/resources/logback.xml" ),
+            bundle( "file:target/bundles/pax-logging-api.jar" ), //
             bundle( "file:target/bundles/pax-url-aether.jar" ), //
             bundle( "file:target/bundles/pax-confman-propsloader.jar" ), //
             bundle( "file:target/bundles/org.apache.felix.configadmin.jar" ), //
