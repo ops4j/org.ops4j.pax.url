@@ -11,6 +11,7 @@ Export-Service:\
   org.osgi.service.url.URLStreamHandlerService; url.handler.protocol=wrap
 
 Import-Package:\
+  !java.*,\
   javax.net.ssl,\
   org.osgi.framework;version="[1.6,2)",\
   javax.xml.transform; resolution:=optional,\
