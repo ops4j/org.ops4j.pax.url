@@ -23,9 +23,10 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.regex.Pattern;
-import org.codehaus.jackson.JsonFactory;
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.JsonToken;
+
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
 import org.ops4j.io.ListerUtils;
 
 /**
@@ -66,7 +67,7 @@ class AssemblyDescriptorParser
         {
             throw new MalformedURLException( "Url cannot be null. Syntax " + SYNTAX );
         }
-        if( "".equals( url.trim() ) || "/".equals( url.trim() ) )
+        if(url.trim().isEmpty() || "/".equals( url.trim() ) )
         {
             throw new MalformedURLException( "Url cannot be empty. Syntax " + SYNTAX );
         }
@@ -116,12 +117,12 @@ class AssemblyDescriptorParser
         final JsonFactory jFactory = new JsonFactory();
         jFactory.enable( JsonParser.Feature.ALLOW_COMMENTS );
         
-        final JsonParser jp = jFactory.createJsonParser( url );
+        final JsonParser jp = jFactory.createParser( url );
         if( jp.nextToken() != JsonToken.START_OBJECT )
         {
             throw new IOException( String.format( "Descriptor [%s] not in JSON format", url.toExternalForm() ) );
         }
-        final Collection<Source> sources = new HashSet<Source>();
+        final Collection<Source> sources = new HashSet<>();
         try
         {
             while( jp.nextToken() != JsonToken.END_OBJECT )
@@ -147,7 +148,7 @@ class AssemblyDescriptorParser
         {
             jp.close();
         }
-        m_sources = sources.toArray( new Source[sources.size()] );
+        m_sources = sources.toArray(new Source[0]);
     }
 
     /**
@@ -162,7 +163,7 @@ class AssemblyDescriptorParser
     private Collection<Source> parseAssembly( final JsonParser jp )
         throws IOException
     {
-        final Collection<Source> sources = new HashSet<Source>();
+        final Collection<Source> sources = new HashSet<>();
 
         while( jp.nextToken() != JsonToken.END_OBJECT )
         {
@@ -193,8 +194,8 @@ class AssemblyDescriptorParser
         throws IOException
     {
         String path = null;
-        final Collection<Pattern> includes = new HashSet<Pattern>();
-        final Collection<Pattern> excludes = new HashSet<Pattern>();
+        final Collection<Pattern> includes = new HashSet<>();
+        final Collection<Pattern> excludes = new HashSet<>();
 
         while( jp.nextToken() != JsonToken.END_OBJECT )
         {
@@ -219,7 +220,7 @@ class AssemblyDescriptorParser
             throw new IOException( "Invalid descriptor file" );
         }
         return new ImmutableSource(
-            path, includes.toArray( new Pattern[includes.size()] ), excludes.toArray( new Pattern[excludes.size()] )
+            path, includes.toArray(new Pattern[0]), excludes.toArray(new Pattern[0])
         );
     }
 

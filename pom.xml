@@ -80,6 +80,7 @@
 
         <!-- versions of Maven dependencies -->
 
+        <dependency.com.fasterxml.jackson.core>2.16.0</dependency.com.fasterxml.jackson.core>
         <dependency.commons-io>2.15.0</dependency.commons-io>
         <dependency.eu.maveniverse.maven.mima>2.4.2</dependency.eu.maveniverse.maven.mima>
         <dependency.junit>4.13.2</dependency.junit>
@@ -125,7 +126,7 @@
     <modules>
         <module>pax-url-commons</module>
         <module>pax-url-aether</module>
-<!--        <module>pax-url-assembly</module>-->
+        <module>pax-url-assembly</module>
 <!--        <module>pax-url-cache</module>-->
 <!--        <module>pax-url-classpath</module>-->
 <!--        <module>pax-url-dir</module>-->
@@ -165,6 +166,11 @@
             <dependency>
                 <groupId>org.ops4j.base</groupId>
                 <artifactId>ops4j-base-lang</artifactId>
+                <version>${dependency.org.ops4j.base}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ops4j.base</groupId>
+                <artifactId>ops4j-base-io</artifactId>
                 <version>${dependency.org.ops4j.base}</version>
             </dependency>
             <dependency>
@@ -407,11 +413,11 @@
                 <version>${dependency.org.apache.httpcomponents.client}</version>
             </dependency>
 
-<!--            <dependency>-->
-<!--                <groupId>org.codehaus.jackson</groupId>-->
-<!--                <artifactId>jackson-core-asl</artifactId>-->
-<!--                <version>${dependency.jackson.version}</version>-->
-<!--            </dependency>-->
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>${dependency.com.fasterxml.jackson.core}</version>
+            </dependency>
 
             <!-- Commons -->
 

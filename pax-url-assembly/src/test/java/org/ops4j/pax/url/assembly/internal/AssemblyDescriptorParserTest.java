@@ -15,10 +15,13 @@ package org.ops4j.pax.url.assembly.internal;
 
 import java.io.File;
 import java.io.IOException;
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
 import org.junit.Test;
 import org.ops4j.io.FileUtils;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * JAVADOC

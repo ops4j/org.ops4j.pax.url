@@ -46,6 +46,8 @@
             <artifactId>pax-url-commons</artifactId>
         </dependency>
 
+        <!-- OPS4J -->
+
         <dependency>
             <groupId>org.ops4j.base</groupId>
             <artifactId>ops4j-base-lang</artifactId>
@@ -57,11 +59,6 @@
             <optional>true</optional>
         </dependency>
 
-        <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-core-asl</artifactId>
-        </dependency>
-
         <!-- Provided dependencies (not transitive) -->
 
         <dependency>
@@ -69,15 +66,19 @@
             <artifactId>osgi.core</artifactId>
             <scope>provided</scope>
         </dependency>
+
+        <!-- Other -->
+
         <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>osgi.cmpn</artifactId>
-            <scope>provided</scope>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
         </dependency>
+
+        <!-- Logging -->
+
         <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <scope>test</scope>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
         </dependency>
 
         <!-- Test dependencies -->
