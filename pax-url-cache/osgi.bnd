@@ -12,6 +12,7 @@ Export-Service:\
 
 Import-Package:\
   org.osgi.framework;version="[1.6,2)",\
+  !java.*,\
   org.osgi.service.cm;version="[1.4,2)"; resolution:=optional,\
   !org.slf4j.impl,\
   *

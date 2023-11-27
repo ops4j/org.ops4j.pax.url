@@ -127,8 +127,8 @@
         <module>pax-url-commons</module>
         <module>pax-url-aether</module>
         <module>pax-url-assembly</module>
-<!--        <module>pax-url-cache</module>-->
-<!--        <module>pax-url-classpath</module>-->
+        <module>pax-url-cache</module>
+        <module>pax-url-classpath</module>
 <!--        <module>pax-url-dir</module>-->
 <!--        <module>pax-url-link</module>-->
 <!--        <module>pax-url-obr</module>-->

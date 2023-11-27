@@ -46,20 +46,16 @@
             <artifactId>pax-url-commons</artifactId>
         </dependency>
 
-        <!-- OPS4J -->
-
         <dependency>
             <groupId>org.ops4j.base</groupId>
             <artifactId>ops4j-base-lang</artifactId>
-            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.ops4j.base</groupId>
             <artifactId>ops4j-base-io</artifactId>
-            <optional>true</optional>
         </dependency>
 
-        <!-- Provided dependencies (not transitive) -->
+        <!-- OSGi -->
 
         <dependency>
             <groupId>org.osgi</groupId>
