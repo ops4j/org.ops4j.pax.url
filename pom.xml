@@ -84,6 +84,7 @@
         <dependency.commons-io>2.15.0</dependency.commons-io>
         <dependency.eu.maveniverse.maven.mima>2.4.2</dependency.eu.maveniverse.maven.mima>
         <dependency.junit>4.13.2</dependency.junit>
+        <dependency.org.apache.felix.service.obr>1.0.2</dependency.org.apache.felix.service.obr>
         <dependency.org.apache.httpcomponents.core>4.4.16</dependency.org.apache.httpcomponents.core>
         <dependency.org.apache.httpcomponents.client>4.5.14</dependency.org.apache.httpcomponents.client>
         <dependency.org.apache.maven>3.9.5</dependency.org.apache.maven>
@@ -112,7 +113,6 @@
         <dependency.osgiannotation.version>6.0.0</dependency.osgiannotation.version>
         <dependency.osgicomp.version>6.0.0</dependency.osgicomp.version>
         <dependency.bndlib.version>6.4.1</dependency.bndlib.version>
-        <dependency.obr.version>1.0.2</dependency.obr.version>
         <dependency.paxexam.version>4.13.5</dependency.paxexam.version>
     </properties>
 
@@ -131,7 +131,7 @@
         <module>pax-url-classpath</module>
         <module>pax-url-dir</module>
         <module>pax-url-link</module>
-<!--        <module>pax-url-obr</module>-->
+        <module>pax-url-obr</module>
 <!--        <module>pax-url-reference</module>-->
 <!--        <module>pax-url-war</module>-->
 <!--        <module>pax-url-wrap</module>-->
@@ -178,6 +178,11 @@
                 <artifactId>ops4j-base-util-property</artifactId>
                 <version>${dependency.org.ops4j.base}</version>
             </dependency>
+            <dependency>
+                <groupId>org.ops4j.base</groupId>
+                <artifactId>ops4j-base-net</artifactId>
+                <version>${dependency.org.ops4j.base}</version>
+            </dependency>
 <!--            <dependency>-->
 <!--                <groupId>org.ops4j.base</groupId>-->
 <!--                <artifactId>ops4j-base-util-xml</artifactId>-->
@@ -211,11 +216,11 @@
                 <artifactId>pax-swissbox-property</artifactId>
                 <version>${dependency.org.ops4j.pax.swissbox}</version>
             </dependency>
-<!--            <dependency>-->
-<!--                <groupId>org.ops4j.pax.swissbox</groupId>-->
-<!--                <artifactId>pax-swissbox-tracker</artifactId>-->
-<!--                <version>${dependency.swissbox.version}</version>-->
-<!--            </dependency>-->
+            <dependency>
+                <groupId>org.ops4j.pax.swissbox</groupId>
+                <artifactId>pax-swissbox-tracker</artifactId>
+                <version>${dependency.org.ops4j.pax.swissbox}</version>
+            </dependency>
 
             <!-- OSGi -->
 
@@ -242,11 +247,11 @@
 
             <!-- Felix -->
 
-<!--            <dependency>-->
-<!--                <groupId>org.apache.felix</groupId>-->
-<!--                <artifactId>org.osgi.service.obr</artifactId>-->
-<!--                <version>${dependency.obr.version}</version>-->
-<!--            </dependency>-->
+            <dependency>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>org.osgi.service.obr</artifactId>
+                <version>${dependency.org.apache.felix.service.obr}</version>
+            </dependency>
 
             <!-- BND -->
 
