@@ -46,6 +46,8 @@
             <artifactId>pax-url-commons</artifactId>
         </dependency>
 
+        <!-- OPS4J -->
+
         <dependency>
             <groupId>org.ops4j.base</groupId>
             <artifactId>ops4j-base-lang</artifactId>
@@ -67,16 +69,11 @@
             <artifactId>pax-swissbox-bnd</artifactId>
         </dependency>
 
-        <!-- Provided dependencies (not transitive) -->
+        <!-- OSGi -->
 
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>osgi.core</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>osgi.cmpn</artifactId>
             <scope>provided</scope>
         </dependency>
 
@@ -90,11 +87,6 @@
         <dependency>
             <groupId>org.easymock</groupId>
             <artifactId>easymock</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
             <scope>test</scope>
         </dependency>
 

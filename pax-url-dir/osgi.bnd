@@ -13,6 +13,7 @@ Export-Service:\
 Import-Package:\
   org.osgi.service.cm;version="[1.4,2)"; resolution:=optional,\
   aQute.service.scripting; resolution:=optional,\
+  !java.*,\
   javax.xml.parsers; resolution:=optional,\
   org.osgi.service.log; resolution:=optional,\
   org.w3c.dom; resolution:=optional,\
