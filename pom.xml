@@ -51,7 +51,7 @@
         <version.plugin.maven-enforcer-plugin>3.3.0</version.plugin.maven-enforcer-plugin>
         <version.plugin.maven-invoker-plugin>3.6.1</version.plugin.maven-invoker-plugin>
         <version.plugin.maven-javadoc-plugin>3.5.0</version.plugin.maven-javadoc-plugin>
-        <version.plugin.maven-shade-plugin>3.4.1</version.plugin.maven-shade-plugin>
+        <version.plugin.maven-shade-plugin>3.5.1</version.plugin.maven-shade-plugin>
         <version.plugin.maven-site-plugin>3.12.1</version.plugin.maven-site-plugin>
         <version.plugin.maven-surefire-plugin>2.21.0</version.plugin.maven-surefire-plugin>
         <version.plugin.felix.maven-bundle-plugin>5.1.9</version.plugin.felix.maven-bundle-plugin>
