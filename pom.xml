@@ -80,7 +80,7 @@
         <dependency.maven.resolver.version>1.8.2</dependency.maven.resolver.version>
         <dependency.wagon.version>3.5.2</dependency.wagon.version>
 
-        <dependency.httpcomponents.core>4.4.10</dependency.httpcomponents.core>
+        <dependency.httpcomponents.core>4.4.16</dependency.httpcomponents.core>
         <dependency.httpcomponents.client>4.5.14</dependency.httpcomponents.client>
 
         <dependency.jackson.version>1.2.0</dependency.jackson.version>
