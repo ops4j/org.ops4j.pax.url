@@ -81,7 +81,7 @@
         <dependency.wagon.version>3.5.2</dependency.wagon.version>
 
         <dependency.httpcomponents.core>4.4.10</dependency.httpcomponents.core>
-        <dependency.httpcomponents.client>4.5.13</dependency.httpcomponents.client>
+        <dependency.httpcomponents.client>4.5.14</dependency.httpcomponents.client>
 
         <dependency.jackson.version>1.2.0</dependency.jackson.version>
         <dependency.jetty.version>7.3.1.v20110307</dependency.jetty.version>
