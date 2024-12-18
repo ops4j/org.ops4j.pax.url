@@ -57,7 +57,7 @@
         <version.plugin.maven-shade-plugin>3.4.1</version.plugin.maven-shade-plugin>
         <version.plugin.maven-site-plugin>3.12.1</version.plugin.maven-site-plugin>
         <version.plugin.maven-surefire-plugin>2.21.0</version.plugin.maven-surefire-plugin>
-        <version.plugin.felix.maven-bundle-plugin>5.1.8</version.plugin.felix.maven-bundle-plugin>
+        <version.plugin.felix.maven-bundle-plugin>5.1.9</version.plugin.felix.maven-bundle-plugin>
         <version.plugin.mojo.build-helper-maven-plugin>3.0.0</version.plugin.mojo.build-helper-maven-plugin>
         <version.plugin.mycila.license-maven-plugin>4.2</version.plugin.mycila.license-maven-plugin>
         <version.plugin.servicemix.depends-maven-plugin>1.4.0</version.plugin.servicemix.depends-maven-plugin>
