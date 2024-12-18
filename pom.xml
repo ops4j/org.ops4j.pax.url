@@ -50,7 +50,7 @@
 
         <version.plugin.maven-checkstyle-plugin>3.0.0</version.plugin.maven-checkstyle-plugin>
         <version.com.puppycrawl.tools.checkstyle>8.9</version.com.puppycrawl.tools.checkstyle>
-        <version.plugin.maven-compiler-plugin>3.11.0</version.plugin.maven-compiler-plugin>
+        <version.plugin.maven-compiler-plugin>3.12.1</version.plugin.maven-compiler-plugin>
         <version.plugin.maven-enforcer-plugin>3.3.0</version.plugin.maven-enforcer-plugin>
         <version.plugin.maven-invoker-plugin>3.5.1</version.plugin.maven-invoker-plugin>
         <version.plugin.maven-javadoc-plugin>3.5.0</version.plugin.maven-javadoc-plugin>
