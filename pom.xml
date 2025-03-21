@@ -47,7 +47,7 @@
 
         <!-- Core plugins -->
         <plugin.maven-clean-plugin>3.3.2</plugin.maven-clean-plugin>
-        <plugin.maven-compiler-plugin>3.11.0</plugin.maven-compiler-plugin>
+        <plugin.maven-compiler-plugin>3.12.1</plugin.maven-compiler-plugin>
         <plugin.maven-deploy-plugin>3.1.1</plugin.maven-deploy-plugin>
         <plugin.maven-failsafe-plugin>2.22.2</plugin.maven-failsafe-plugin>
         <plugin.maven-install-plugin>3.1.1</plugin.maven-install-plugin>
@@ -63,13 +63,13 @@
         <!-- Reporting plugins -->
         <plugin.maven-checkstyle-plugin>3.3.1</plugin.maven-checkstyle-plugin>
         <plugin.dependency.com.puppycrawl.tools.checkstyle>8.45.1</plugin.dependency.com.puppycrawl.tools.checkstyle>
-        <plugin.maven-javadoc-plugin>3.6.2</plugin.maven-javadoc-plugin>
+        <plugin.maven-javadoc-plugin>3.6.3</plugin.maven-javadoc-plugin>
         <!-- Tools -->
         <plugin.maven-antrun-plugin>3.1.0</plugin.maven-antrun-plugin>
         <plugin.maven-assembly-plugin>3.6.0</plugin.maven-assembly-plugin>
         <plugin.maven-dependency-plugin>3.6.1</plugin.maven-dependency-plugin>
         <plugin.maven-enforcer-plugin>3.4.1</plugin.maven-enforcer-plugin>
-        <plugin.maven-invoker-plugin>3.6.0</plugin.maven-invoker-plugin>
+        <plugin.maven-invoker-plugin>3.6.1</plugin.maven-invoker-plugin>
         <plugin.maven-release-plugin>3.0.1</plugin.maven-release-plugin>
         <plugin.maven-toolchains-plugin>3.1.0</plugin.maven-toolchains-plugin>
         <!-- Other plugins -->
@@ -82,7 +82,7 @@
 
         <dependency.biz.aQute.bndlib>6.4.1</dependency.biz.aQute.bndlib>
         <dependency.com.fasterxml.jackson.core>2.16.0</dependency.com.fasterxml.jackson.core>
-        <dependency.commons-io>2.15.0</dependency.commons-io>
+        <dependency.commons-io>2.18.0</dependency.commons-io>
         <dependency.eu.maveniverse.maven.mima>2.4.2</dependency.eu.maveniverse.maven.mima>
         <dependency.junit>4.13.2</dependency.junit>
         <dependency.org.apache.felix.service.obr>1.0.2</dependency.org.apache.felix.service.obr>
@@ -401,7 +401,7 @@
 <!--            <dependency>-->
 <!--                <groupId>commons-codec</groupId>-->
 <!--                <artifactId>commons-codec</artifactId>-->
-<!--                <version>1.15</version>-->
+<!--                <version>1.17.1</version>-->
 <!--            </dependency>-->
             <dependency>
                 <groupId>commons-io</groupId>
