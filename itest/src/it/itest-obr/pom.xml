@@ -87,12 +87,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.sonatype.tycho</groupId>
-            <artifactId>org.eclipse.osgi</artifactId>
-            <version>3.6.2.R36x_v20110210</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>osgi.core</artifactId>
             <scope>provided</scope>

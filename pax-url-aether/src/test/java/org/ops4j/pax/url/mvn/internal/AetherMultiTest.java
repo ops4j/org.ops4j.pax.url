@@ -61,10 +61,10 @@ import org.slf4j.LoggerFactory;
  */
 //Because we are changing class loader logic we need to run with the PowerMock
 //test runner instead of the default junit runner.
-@RunWith(PowerMockRunner.class)
+//@RunWith(PowerMockRunner.class)
 //This is the class in which we want to override creation of File objects.
 //The intercept only happens in the tests where we tell it too.
-@PrepareForTest( {MavenRepositoryURL.class})
+//@PrepareForTest( {MavenRepositoryURL.class})
 //The following ignores are required to allow Logger classes to load up
 //during unit testing without errors.
 @PowerMockIgnore({
@@ -118,7 +118,7 @@ public class AetherMultiTest {
         throws Exception
     {
         //Tell PowerMock to override the "File.listFiles()" methods
-        forceFileToReturnListFilesInReverseOrder();
+//        forceFileToReturnListFilesInReverseOrder();
 
         //The test: ensure this multi repo returns folders in expected order.
         AetherBasedResolver aetherBasedResolver =

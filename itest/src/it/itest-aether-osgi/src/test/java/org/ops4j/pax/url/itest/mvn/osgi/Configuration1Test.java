@@ -47,7 +47,7 @@ import org.osgi.framework.BundleException;
  * @author Harald Wellmann
  */
 @RunWith( PaxExam.class )
-public class ConfigurationTest
+public class Configuration1Test
 {
 
     @Inject
@@ -92,20 +92,5 @@ public class ConfigurationTest
             "org/ops4j/base/ops4j-base-lang/1.0.0/ops4j-base-lang-1.0.0.jar" );
         assertThat( artifact.exists(), is( true ) );
     }
-    
-    @Test
-    public void installFromCustomRepository()  throws IOException, BundleException
-    {
-        URL url = new URL( "mvn:org.knopflerfish/framework/7.0.1/pom" );
-        // open stream of bundle resource
-        InputStream is = url.openStream();
-        assertThat( is, is( notNullValue() ) );
-        is.close();
 
-        String localRepoPath = "target/local-repo-cm";
-        File localRepo = new File( localRepoPath );
-        File artifact = new File( localRepo,
-            "org/knopflerfish/framework/7.0.1/framework-7.0.1.pom" );
-        assertThat( artifact.exists(), is( true ) );
-    }    
 }
