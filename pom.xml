@@ -83,15 +83,14 @@
         <dependency.biz.aQute.bndlib>6.4.1</dependency.biz.aQute.bndlib>
         <dependency.com.fasterxml.jackson.core>2.18.3</dependency.com.fasterxml.jackson.core>
         <dependency.commons-io>2.18.0</dependency.commons-io>
-        <dependency.eu.maveniverse.maven.mima>2.4.2</dependency.eu.maveniverse.maven.mima>
+        <dependency.eu.maveniverse.maven.mima>2.4.22</dependency.eu.maveniverse.maven.mima>
         <dependency.junit>4.13.2</dependency.junit>
         <dependency.org.apache.felix.service.obr>1.0.2</dependency.org.apache.felix.service.obr>
         <dependency.org.apache.httpcomponents.core>4.4.16</dependency.org.apache.httpcomponents.core>
         <dependency.org.apache.httpcomponents.client>4.5.14</dependency.org.apache.httpcomponents.client>
-        <dependency.org.apache.maven>3.9.5</dependency.org.apache.maven>
-        <dependency.org.apache.maven.resolver>1.9.18</dependency.org.apache.maven.resolver>
-<!--        <dependency.org.apache.maven.resolver>2.0.0-alpha-2</dependency.org.apache.maven.resolver>-->
-        <dependency.org.apache.maven.shared.invoker>3.2.0</dependency.org.apache.maven.shared.invoker>
+        <dependency.org.apache.maven>3.9.9</dependency.org.apache.maven>
+        <dependency.org.apache.maven.resolver>1.9.22</dependency.org.apache.maven.resolver>
+        <dependency.org.apache.maven.shared.invoker>3.3.0</dependency.org.apache.maven.shared.invoker>
         <!--
             2.1.0 is ultra-slow...
             See: https://github.com/codehaus-plexus/plexus-cipher/commit/176289fcc2780668208ea089fdcacc0c7145f7b1
