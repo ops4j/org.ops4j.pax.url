@@ -282,7 +282,7 @@
                                         declare excludes for each individual dependency...
                                         that's why I decided to end with a warning like this:
                                         [INFO] Dependency-reduced POM written at: /data/sources/github.com/ops4j/org.ops4j.pax.url-3.0.x/pax-url-aether/target/dependency-reduced-pom.xml
-                                        [WARNING] context-2.4.2.jar, ops4j-base-lang-1.5.1.jar, ops4j-base-util-property-1.5.1.jar, pax-url-aether-3.0.0-SNAPSHOT.jar, standalone-shared-2.4.2.jar, standalone-static-2.4.2.jar define 1 overlapping resource:
+                                        [WARNING] context-2.4.2.jar, ops4j-base-lang-1.5.1.jar, ops4j-base-util-property-1.5.1.jar, pax-url-aether-3.0.1-SNAPSHOT.jar, standalone-shared-2.4.2.jar, standalone-static-2.4.2.jar define 1 overlapping resource:
                                         [WARNING]   - META-INF/MANIFEST.MF
                                         [WARNING] ops4j-base-lang-1.5.1.jar, ops4j-base-util-property-1.5.1.jar define 3 overlapping resources:
                                         [WARNING]   - META-INF/DEPENDENCIES.txt
