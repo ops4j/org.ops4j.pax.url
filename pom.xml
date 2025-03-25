@@ -77,6 +77,7 @@
         <plugin.mojo.build-helper-maven-plugin>3.6.0</plugin.mojo.build-helper-maven-plugin>
         <plugin.mycila.license-maven-plugin>4.6</plugin.mycila.license-maven-plugin>
         <plugin.servicemix.depends-maven-plugin>1.5.0</plugin.servicemix.depends-maven-plugin>
+        <plugin.sonatype.nexus-staging-maven-plugin>1.7.0</plugin.sonatype.nexus-staging-maven-plugin>
 
         <!-- versions of Maven dependencies -->
 
@@ -632,6 +633,11 @@
                     <groupId>org.apache.servicemix.tooling</groupId>
                     <artifactId>depends-maven-plugin</artifactId>
                     <version>${plugin.servicemix.depends-maven-plugin}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.sonatype.plugins</groupId>
+                    <artifactId>nexus-staging-maven-plugin</artifactId>
+                    <version>${plugin.sonatype.nexus-staging-maven-plugin}</version>
                 </plugin>
             </plugins>
         </pluginManagement>
