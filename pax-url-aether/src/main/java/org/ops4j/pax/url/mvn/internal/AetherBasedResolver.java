@@ -1166,7 +1166,7 @@ public class AetherBasedResolver implements MavenResolver {
             } else {
                 local = new File(System.getProperty("user.home"), ".m2/repository");
             }
-            localRepository = new LocalRepository(local, "simple");
+            localRepository = new LocalRepository(local, "pax-url");
         }
         return localRepository;
     }
