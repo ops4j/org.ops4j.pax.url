@@ -62,14 +62,14 @@
         <!-- Reporting plugins -->
         <plugin.maven-checkstyle-plugin>3.6.0</plugin.maven-checkstyle-plugin>
         <plugin.dependency.com.puppycrawl.tools.checkstyle>8.45.1</plugin.dependency.com.puppycrawl.tools.checkstyle>
-        <plugin.maven-javadoc-plugin>3.6.3</plugin.maven-javadoc-plugin>
+        <plugin.maven-javadoc-plugin>3.11.2</plugin.maven-javadoc-plugin>
         <!-- Tools -->
         <plugin.maven-antrun-plugin>3.1.0</plugin.maven-antrun-plugin>
         <plugin.maven-assembly-plugin>3.7.1</plugin.maven-assembly-plugin>
         <plugin.maven-dependency-plugin>3.8.1</plugin.maven-dependency-plugin>
         <plugin.maven-enforcer-plugin>3.5.0</plugin.maven-enforcer-plugin>
         <plugin.maven-invoker-plugin>3.9.0</plugin.maven-invoker-plugin>
-        <plugin.maven-release-plugin>3.0.1</plugin.maven-release-plugin>
+        <plugin.maven-release-plugin>3.1.1</plugin.maven-release-plugin>
         <plugin.maven-toolchains-plugin>3.2.0</plugin.maven-toolchains-plugin>
         <!-- Other plugins -->
         <plugin.felix.maven-bundle-plugin>5.1.9</plugin.felix.maven-bundle-plugin>
@@ -664,8 +664,20 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                            <goal>test-javadoc</goal>
+                        </goals>
+                    </execution>
+                </executions>
                 <configuration>
                     <doclint>none</doclint>
+                    <additionalOptions>
+                        <additionalOption>-Xdoclint:none</additionalOption>
+                    </additionalOptions>
                 </configuration>
             </plugin>
             <!-- Tools -->
