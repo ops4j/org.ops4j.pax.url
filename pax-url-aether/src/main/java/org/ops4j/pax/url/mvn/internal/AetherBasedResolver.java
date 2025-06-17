@@ -1091,11 +1091,6 @@ public class AetherBasedResolver implements MavenResolver {
         return session;
     }
 
-    /**
-     * @see "org.eclipse.aether.internal.impl.DefaultUpdateCheckManager#SESSION_CHECKS"
-     */
-    private static final String SESSION_CHECKS = "updateCheckManager.checks";
-
     private void releaseSession(RepositorySystemSession session) {
         LocalRepository repo = session.getLocalRepository();
         Deque<RepositorySystemSession> deque = sessions.get(repo);
@@ -1103,8 +1098,8 @@ public class AetherBasedResolver implements MavenResolver {
             sessions.putIfAbsent(repo, new ConcurrentLinkedDeque<RepositorySystemSession>());
             deque = sessions.get(repo);
         }
-        // we can't unset SESSION_CHECKS because it is an object and not a String
-        // therefore copy the systemSession and unset the data
+        // we can't unset org.eclipse.aether.internal.impl.DefaultUpdateCheckManager#SESSION_CHECKS
+        // because it is an object and not a String therefore copy the systemSession and unset the data
         if (session instanceof DefaultRepositorySystemSession) {
             ((DefaultRepositorySystemSession) session).setData(null);
         } else {
