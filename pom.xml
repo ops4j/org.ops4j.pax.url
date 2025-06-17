@@ -40,7 +40,6 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
 
-        <release-paxurl-altGitURL>scm:git:https://github.com/ops4j/org.ops4j.pax.url.git</release-paxurl-altGitURL>
         <wiki.url>https://ops4j1.jira.com/wiki/spaces/paxurl/overview</wiki.url>
 
         <!-- versions of Maven plugins -->
@@ -116,7 +115,7 @@
 
     <scm>
         <connection>scm:git:https://github.com/ops4j/org.ops4j.pax.url.git</connection>
-        <developerConnection>${release-paxurl-altGitURL}</developerConnection>
+        <developerConnection>scm:git:git@github.com:ops4j/org.ops4j.pax.url.git</developerConnection>
         <url>https://github.com/ops4j/org.ops4j.pax.url/tree/master</url>
         <tag>HEAD</tag>
     </scm>
