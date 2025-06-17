@@ -82,8 +82,8 @@
         <!-- versions of Maven dependencies -->
 
         <dependency.biz.aQute.bndlib>6.4.1</dependency.biz.aQute.bndlib>
-        <dependency.com.fasterxml.jackson.core>2.18.3</dependency.com.fasterxml.jackson.core>
-        <dependency.commons-io>2.18.0</dependency.commons-io>
+        <dependency.com.fasterxml.jackson.core>2.19.1</dependency.com.fasterxml.jackson.core>
+        <dependency.commons-io>2.19.0</dependency.commons-io>
         <dependency.eu.maveniverse.maven.mima>2.4.29</dependency.eu.maveniverse.maven.mima>
         <dependency.junit>4.13.2</dependency.junit>
         <dependency.org.apache.felix.service.obr>1.0.2</dependency.org.apache.felix.service.obr>
@@ -97,10 +97,10 @@
             See: https://github.com/codehaus-plexus/plexus-cipher/commit/176289fcc2780668208ea089fdcacc0c7145f7b1
         -->
         <dependency.org.codehaus.plexus.plexus-cipher>2.0</dependency.org.codehaus.plexus.plexus-cipher>
-        <dependency.org.codehaus.plexus.plexus-interpolation>1.27</dependency.org.codehaus.plexus.plexus-interpolation>
+        <dependency.org.codehaus.plexus.plexus-interpolation>1.28</dependency.org.codehaus.plexus.plexus-interpolation>
         <dependency.org.codehaus.plexus.plexus-sec-dispatcher>2.0</dependency.org.codehaus.plexus.plexus-sec-dispatcher>
         <dependency.org.codehaus.plexus.plexus-utils>3.6.0</dependency.org.codehaus.plexus.plexus-utils>
-        <dependency.org.easymock>5.5.0</dependency.org.easymock>
+        <dependency.org.easymock>5.6.0</dependency.org.easymock>
         <dependency.org.eclipse.jetty>11.0.25</dependency.org.eclipse.jetty>
         <dependency.org.ops4j.base>1.5.1</dependency.org.ops4j.base>
         <dependency.org.ops4j.pax.exam>4.13.5</dependency.org.ops4j.pax.exam>
