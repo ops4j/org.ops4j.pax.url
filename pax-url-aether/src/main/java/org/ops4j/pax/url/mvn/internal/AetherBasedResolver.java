@@ -1103,11 +1103,11 @@ public class AetherBasedResolver implements MavenResolver {
             sessions.putIfAbsent(repo, new ConcurrentLinkedDeque<RepositorySystemSession>());
             deque = sessions.get(repo);
         }
+        // we can't unset SESSION_CHECKS because it is an object and not a String
+        // therefore copy the systemSession and unset the data
         if (session instanceof DefaultRepositorySystemSession) {
             ((DefaultRepositorySystemSession) session).setData(null);
         } else {
-            // we can't unset SESSION_CHECKS because it is an object and not a String
-            // therefore copy the systemSession and unset the data
             session = new DefaultRepositorySystemSession(session).setCache(null);
         }
 
