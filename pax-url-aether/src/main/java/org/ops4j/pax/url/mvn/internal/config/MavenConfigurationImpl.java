@@ -271,7 +271,6 @@ public class MavenConfigurationImpl implements MavenConfiguration {
                     return file;
                 }
             }
-            LOGGER.warn("Location {} is not accessible (incorrect value for option \"{}\")", path, option);
         }
         return null;
     }

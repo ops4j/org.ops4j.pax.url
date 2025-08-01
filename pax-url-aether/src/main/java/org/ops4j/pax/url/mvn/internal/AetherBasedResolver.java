@@ -884,7 +884,6 @@ public class AetherBasedResolver implements MavenResolver {
      */
     private void selectDefaultRepositories(List<LocalRepositoryWithConfig> list, MavenRepositoryURL parentRepo, File parentDir) {
         if (!parentDir.isDirectory()) {
-            LOG.warn("Repository marked with @multi does not resolve to a directory: {}", parentDir);
             return;
         }
 
