@@ -109,7 +109,7 @@
         <dependency.org.osgi.service.cm>1.6.1</dependency.org.osgi.service.cm>
         <dependency.org.powermock>2.0.9</dependency.org.powermock>
         <dependency.org.slf4j>2.0.17</dependency.org.slf4j>
-        <dependency.org.apache.logging.log4j>2.24.3</dependency.org.apache.logging.log4j>
+        <dependency.org.apache.logging.log4j>2.25.3</dependency.org.apache.logging.log4j>
 
     </properties>
 
