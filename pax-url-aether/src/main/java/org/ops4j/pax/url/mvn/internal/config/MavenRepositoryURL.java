@@ -18,6 +18,7 @@
 package org.ops4j.pax.url.mvn.internal.config;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -410,11 +411,15 @@ public class MavenRepositoryURL
                     password = null;
                 }
                 // because user may have encoded ':' as '%3A', we'll always decode it ONCE
-                m_username = URLDecoder.decode(username, StandardCharsets.UTF_8);
-                if (password != null) {
-                    m_password = URLDecoder.decode(password, StandardCharsets.UTF_8).toCharArray();
-                } else {
-                    m_password = null;
+                try {
+                    m_username = URLDecoder.decode(username, StandardCharsets.UTF_8.name());
+                    if (password != null) {
+                        m_password = URLDecoder.decode(password, StandardCharsets.UTF_8.name()).toCharArray();
+                    } else {
+                        m_password = null;
+                    }
+                } catch (UnsupportedEncodingException e) {
+                    throw new RuntimeException(e.getMessage(), e);
                 }
             }
         } else {

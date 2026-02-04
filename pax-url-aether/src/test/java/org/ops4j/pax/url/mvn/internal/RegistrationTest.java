@@ -41,7 +41,7 @@ public class RegistrationTest {
         properties.setProperty("org.ops4j.pax.url.mvn.localRepository", "target/repository");
 
         BundleContext context = createMock(BundleContext.class);
-        expect(context.getProperty(anyObject(String.class))).andAnswer(new IAnswer<>() {
+        expect(context.getProperty(anyObject(String.class))).andAnswer(new IAnswer<String>() {
             @Override
             public String answer() throws Throwable {
                 String key = (String) getCurrentArguments()[0];
@@ -75,7 +75,7 @@ public class RegistrationTest {
         properties.setProperty("org.ops4j.pax.url.mvn.settings", malformedSettings.getAbsolutePath());
 
         BundleContext context = createMock(BundleContext.class);
-        expect(context.getProperty(anyObject(String.class))).andAnswer(new IAnswer<>() {
+        expect(context.getProperty(anyObject(String.class))).andAnswer(new IAnswer<String>() {
             @Override
             public String answer() {
                 String key = (String) getCurrentArguments()[0];
@@ -128,7 +128,7 @@ public class RegistrationTest {
         properties.setProperty("org.ops4j.pax.url.mvn.requireConfigAdminConfig", "true");
 
         BundleContext context = createMock(BundleContext.class);
-        expect(context.getProperty(anyObject(String.class))).andAnswer(new IAnswer<>() {
+        expect(context.getProperty(anyObject(String.class))).andAnswer(new IAnswer<String>() {
             @Override
             public String answer() {
                 String key = (String) getCurrentArguments()[0];

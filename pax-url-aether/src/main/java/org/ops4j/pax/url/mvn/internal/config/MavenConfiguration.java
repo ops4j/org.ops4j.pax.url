@@ -137,7 +137,7 @@ public interface MavenConfiguration {
      * @return the timeout in case artifacts are retrieved from a remote location
      * @deprecated use dedicated PID/config/system properties or configure timeouts in {@code settings.xml}
      */
-    @Deprecated(since = "3.0")
+    @Deprecated
     Integer getTimeout();
 
     /**

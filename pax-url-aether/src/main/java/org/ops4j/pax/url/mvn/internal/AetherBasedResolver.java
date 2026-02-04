@@ -17,6 +17,7 @@
 package org.ops4j.pax.url.mvn.internal;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -626,8 +627,8 @@ public class AetherBasedResolver implements MavenResolver {
                 }
             }
             if (merged) {
-                mr.getVersioning().getVersions().sort(VERSION_COMPARATOR);
-                mr.getVersioning().getSnapshotVersions().sort(SNAPSHOT_VERSION_COMPARATOR);
+                Collections.sort(mr.getVersioning().getVersions(), VERSION_COMPARATOR);
+                Collections.sort(mr.getVersioning().getSnapshotVersions(), SNAPSHOT_VERSION_COMPARATOR);
                 File tmpFile = Files.createTempFile("mvn-", ".tmp").toFile();
                 try (FileOutputStream fos = new FileOutputStream(tmpFile)) {
                     new MetadataXpp3Writer().write(fos, mr);
@@ -1055,11 +1056,16 @@ public class AetherBasedResolver implements MavenResolver {
      * @return The alphabetically sorted list of files, or an empty list if parent.listFiles() returns null.
      */
     private static File[] getSortedChildDirectories(File parent) {
-        File[] files = parent.listFiles(File::isDirectory);
+        File[] files = parent.listFiles(new FileFilter() {
+            @Override
+            public boolean accept(File pathname) {
+                return pathname.isDirectory();
+            }
+        });
         if (files == null) {
             return new File[0];
         }
-        Arrays.sort(files, new Comparator<>() {
+        Arrays.sort(files, new Comparator<File>() {
             @Override
             public int compare(File o1, File o2) {
                 return o1.getName().compareTo(o2.getName());
@@ -1148,7 +1154,7 @@ public class AetherBasedResolver implements MavenResolver {
             LocalRepository repo = session.getLocalRepository();
             Deque<RepositorySystemSession> deque = sessions.get(repo);
             if (deque == null) {
-                sessions.putIfAbsent(repo, new ConcurrentLinkedDeque<>());
+                sessions.putIfAbsent(repo, new ConcurrentLinkedDeque<RepositorySystemSession>());
                 deque = sessions.get(repo);
             }
             session.getData().set(SESSION_CHECKS, null);
@@ -1411,7 +1417,7 @@ public class AetherBasedResolver implements MavenResolver {
         }
     }
 
-    private static final Comparator<String> VERSION_COMPARATOR = new Comparator<>() {
+    private static final Comparator<String> VERSION_COMPARATOR = new Comparator<String>() {
         @Override
         public int compare(String v1, String v2) {
             try {
@@ -1424,7 +1430,7 @@ public class AetherBasedResolver implements MavenResolver {
         }
     };
 
-    private static final Comparator<SnapshotVersion> SNAPSHOT_VERSION_COMPARATOR = new Comparator<>() {
+    private static final Comparator<SnapshotVersion> SNAPSHOT_VERSION_COMPARATOR = new Comparator<SnapshotVersion>() {
         @Override
         public int compare(SnapshotVersion o1, SnapshotVersion o2) {
             int c = VERSION_COMPARATOR.compare(o1.getVersion(), o2.getVersion());

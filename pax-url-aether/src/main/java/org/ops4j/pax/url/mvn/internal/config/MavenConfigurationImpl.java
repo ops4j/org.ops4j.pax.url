@@ -64,6 +64,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonatype.plexus.components.cipher.DefaultPlexusCipher;
 import org.sonatype.plexus.components.sec.dispatcher.DefaultSecDispatcher;
+import org.sonatype.plexus.components.sec.dispatcher.PasswordDecryptor;
 
 /**
  * Service Configuration implementation.
@@ -153,7 +154,7 @@ public class MavenConfigurationImpl implements MavenConfiguration {
             DefaultPlexusCipher plexusCipher = new DefaultPlexusCipher();
             DefaultSecDispatcher secDispatcher = new DefaultSecDispatcher(
                     plexusCipher,
-                    Collections.emptyMap(),
+                    Collections.<String, PasswordDecryptor>emptyMap(),
                     securitySettingsFile.getAbsolutePath());
 
             decrypter = new DefaultSettingsDecrypter(secDispatcher);
@@ -427,8 +428,8 @@ public class MavenConfigurationImpl implements MavenConfiguration {
 
         // see eu.maveniverse.maven.mima.runtime.shared.StandaloneRuntimeSupport.convertToSettingsProfile()
         List<Profile> settingsProfiles = settings.getProfiles();
-        List<org.apache.maven.model.Profile> profiles = new ArrayList<>(settingsProfiles.size());
-        settingsProfiles.forEach(p -> {
+        final List<org.apache.maven.model.Profile> profiles = new ArrayList<>(settingsProfiles.size());
+        for (Profile p : settingsProfiles) {
             org.apache.maven.model.Profile mp = new org.apache.maven.model.Profile();
             mp.setSource(org.apache.maven.model.Profile.SOURCE_SETTINGS);
             mp.setId(p.getId());
@@ -470,12 +471,12 @@ public class MavenConfigurationImpl implements MavenConfiguration {
             // skip other profile data, because we care only about activation here
 
             profiles.add(mp);
-        });
+        }
 
         DefaultProfileActivationContext context = new DefaultProfileActivationContext();
         context.setActiveProfileIds(settings.getActiveProfiles());
         // we can't specify it via settings.xml - it's for `-P-xxx` mvn invocation
-        context.setInactiveProfileIds(Collections.emptyList());
+        context.setInactiveProfileIds(Collections.<String>emptyList());
 
         // we need properties, but we have only PropertyResolver. It delegates to PID and BundleContext
         // properties, but let's stick to system properties only
@@ -489,7 +490,9 @@ public class MavenConfigurationImpl implements MavenConfiguration {
         };
         List<org.apache.maven.model.Profile> activeProfiles = selector.getActiveProfiles(profiles, context, problemCollector);
         Set<String> profileNames = new LinkedHashSet<>();
-        activeProfiles.forEach(ap -> profileNames.add(ap.getId()));
+        for (org.apache.maven.model.Profile ap : activeProfiles) {
+            profileNames.add(ap.getId());
+        }
 
         return profileNames;
     }
