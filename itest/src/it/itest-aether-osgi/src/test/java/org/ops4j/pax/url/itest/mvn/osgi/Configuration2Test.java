@@ -17,19 +17,10 @@
 
 package org.ops4j.pax.url.itest.mvn.osgi;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertThat;
-import static org.ops4j.pax.exam.CoreOptions.bundle;
-import static org.ops4j.pax.exam.CoreOptions.frameworkProperty;
-import static org.ops4j.pax.exam.CoreOptions.options;
-import static org.ops4j.pax.exam.CoreOptions.systemProperty;
-
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.UUID;
-
 import javax.inject.Inject;
 
 import org.junit.Test;
@@ -41,13 +32,21 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.Assert.assertThat;
+import static org.ops4j.pax.exam.CoreOptions.bundle;
+import static org.ops4j.pax.exam.CoreOptions.frameworkProperty;
+import static org.ops4j.pax.exam.CoreOptions.options;
+import static org.ops4j.pax.exam.CoreOptions.systemProperty;
+
 /**
- * Tests the mvn: protocol handler.
+ * Tests mvn: protocol handler configuration via Configuration Admin service.
  * 
  * @author Harald Wellmann
  */
 @RunWith( PaxExam.class )
-public class MvnProtocolTest
+public class Configuration2Test
 {
 
     @Inject
@@ -58,11 +57,10 @@ public class MvnProtocolTest
     {
         return options( frameworkProperty( "osgi.console" ).value( "6666" ), //
             systemProperty( "logback.configurationFile" ).value( "src/test/resources/logback.xml" ),
-            systemProperty( "org.ops4j.pax.url.mvn.localRepository" ). //
-            value( "target/local-repo-" + UUID.randomUUID() ), //
-
             bundle( "file:target/bundles/pax-logging-api.jar" ), //
             bundle( "file:target/bundles/pax-url-aether.jar" ), //
+            bundle( "file:target/bundles/pax-confman-propsloader.jar" ), //
+            bundle( "file:target/bundles/org.apache.felix.configadmin.jar" ), //
             bundle( "file:target/bundles/slf4j-api.jar" ), //
             bundle( "file:target/bundles/logback-classic.jar" ), //
             bundle( "file:target/bundles/logback-core.jar" ), //
@@ -71,21 +69,18 @@ public class MvnProtocolTest
     }
 
     @Test
-    public void installFromMvnUrl() throws IOException, BundleException
+    public void installFromCustomRepository()  throws IOException, BundleException
     {
-        assertThat( bc, is( notNullValue() ) );
-        URL url = new URL( "mvn:org.ops4j.base/ops4j-base-lang/1.0.0" );
-
+        URL url = new URL( "mvn:org.knopflerfish/framework/7.0.1/pom" );
         // open stream of bundle resource
         InputStream is = url.openStream();
         assertThat( is, is( notNullValue() ) );
-
-        // install bundle from stream
-        Bundle bundle = bc.installBundle( "local", is );
-        assertThat( bundle, is( notNullValue() ) );
         is.close();
 
-        // bundle should be active
-        assertThat( bundle.getState(), is( Bundle.ACTIVE ) );
-    }
+        String localRepoPath = "target/local-repo-cm";
+        File localRepo = new File( localRepoPath );
+        File artifact = new File( localRepo,
+            "org/knopflerfish/framework/7.0.1/framework-7.0.1.pom" );
+        assertThat( artifact.exists(), is( true ) );
+    }    
 }

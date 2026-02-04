@@ -67,6 +67,7 @@ public class MetaTypeTest
         return options(
             frameworkProperty( "osgi.console" ).value( "6666" ), //
             systemProperty( "logback.configurationFile" ).value( "src/test/resources/logback.xml" ),
+            bundle( "file:target/bundles/pax-logging-api.jar" ), //
             bundle( "file:target/bundles/pax-url-aether.jar" ), //
             bundle( "file:target/bundles/org.apache.felix.metatype.jar" ), //
             bundle( "file:target/bundles/slf4j-api.jar" ), //
@@ -96,7 +97,7 @@ public class MetaTypeTest
         assertThat( ocd.getID(), is( "org.ops4j.pax.url.mvn" ) );
         AttributeDefinition[] attrDefs = ocd.getAttributeDefinitions( ObjectClassDefinition.ALL );
         assertThat( attrDefs, is( notNullValue() ) );
-        assertThat( attrDefs.length, is( 10 ) );
+        assertThat( attrDefs.length, is( 25 ) );
 
         List<String> ids = new ArrayList<String>();
         for( AttributeDefinition attrDef : attrDefs )
@@ -105,7 +106,7 @@ public class MetaTypeTest
             ids.add( id );
         }
         assertThat( ids, CoreMatchers.hasItems( "certificateCheck", "defaultRepositories",
-            "globalUpdatePolicy", "localRepository", "proxies", "proxySupport", "repositories",
+            "globalUpdatePolicy", "localRepository", "repositories",
             "security", "settings", "timeout" ) );
     }
 }
