@@ -23,6 +23,7 @@
 	<parent>
 		<groupId>org.ops4j.pax</groupId>
 		<artifactId>url</artifactId>
+		<!-- stay with 2.6.16 for test deployment using old Sonatype plugin -->
 		<version>2.6.16</version>
 		<relativePath />
 	</parent>
