@@ -82,7 +82,7 @@
         <!-- versions of Maven dependencies -->
 
         <dependency.biz.aQute.bndlib>6.4.1</dependency.biz.aQute.bndlib>
-        <dependency.com.fasterxml.jackson.core>2.21.0</dependency.com.fasterxml.jackson.core>
+        <dependency.com.fasterxml.jackson.core>2.21.1</dependency.com.fasterxml.jackson.core>
         <dependency.commons-io>2.21.0</dependency.commons-io>
         <dependency.eu.maveniverse.maven.mima>2.4.39</dependency.eu.maveniverse.maven.mima>
         <dependency.junit>4.13.2</dependency.junit>
