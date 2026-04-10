@@ -89,7 +89,7 @@
         <dependency.org.apache.felix.service.obr>1.0.2</dependency.org.apache.felix.service.obr>
         <dependency.org.apache.httpcomponents.core>4.4.16</dependency.org.apache.httpcomponents.core>
         <dependency.org.apache.httpcomponents.client>4.5.14</dependency.org.apache.httpcomponents.client>
-        <dependency.org.apache.logging.log4j>2.25.3</dependency.org.apache.logging.log4j>
+        <dependency.org.apache.logging.log4j>2.25.4</dependency.org.apache.logging.log4j>
         <dependency.org.apache.maven>3.9.12</dependency.org.apache.maven>
         <dependency.org.apache.maven.resolver>1.9.25</dependency.org.apache.maven.resolver>
         <dependency.org.apache.maven.shared.invoker>3.3.0</dependency.org.apache.maven.shared.invoker>
