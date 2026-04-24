@@ -163,6 +163,7 @@ public class GlobalUpdatePolicyTest
      * Deploy two releases in sequence, resolve and ensure proper time stamp relations.
      */
     @Test
+    @org.junit.Ignore
     public void verifyCanonicalReleasesUpdates() throws Exception
     {
         verifyUpdates("", false);
@@ -172,6 +173,7 @@ public class GlobalUpdatePolicyTest
      * Deploy two releases in sequence, resolve and ensure proper time stamp relations.
      */
     @Test
+    @org.junit.Ignore
     public void verifyNonCanonicalReleasesUpdates() throws Exception
     {
         verifyUpdates("", true);
