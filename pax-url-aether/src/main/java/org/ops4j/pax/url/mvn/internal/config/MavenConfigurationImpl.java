@@ -249,10 +249,11 @@ public class MavenConfigurationImpl implements MavenConfiguration {
     private File safeGetFile(String option, String path, boolean directory) {
         if (path != null && !path.trim().isEmpty()) {
             path = path.trim().replace('\\', '/');
-            path = path.trim().replaceAll("%5C", "/");
-            path = path.trim().replaceAll("%5c", "/");
+            path = path.trim().replace("%5C", "/");
+            path = path.trim().replace("%5c", "/");
             if (path.startsWith("file:")) {
-                URI uri = URI.create(path);
+                // encode spaces before URI.create() - raw spaces cause IllegalArgumentException
+                URI uri = URI.create(path.replace(" ", "%20"));
                 if (uri.isOpaque()) {
                     // no slash after "file:"
                     path = uri.getSchemeSpecificPart();
