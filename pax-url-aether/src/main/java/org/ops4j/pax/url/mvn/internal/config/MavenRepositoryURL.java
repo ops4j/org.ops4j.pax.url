@@ -377,7 +377,10 @@ public class MavenRepositoryURL
         }
         String spec = urlBuilder.toString().trim();
         spec = spec.replaceAll("\\\\", "/");
-        spec = spec.replaceAll("%5C", "/");
+        spec = spec.replace("%5C", "/");
+        // encode spaces before creating the URI - raw spaces are illegal in URIs and would cause
+        // URI.create() to throw an IllegalArgumentException for paths like "file:/C:/Program Files/repo"
+        spec = spec.replace(" ", "%20");
         if (!spec.endsWith("/")) {
             spec += "/";
         }
@@ -455,7 +458,7 @@ public class MavenRepositoryURL
                 // path)
                 // the anti-slash character is not a valid character for uri.
                 spec = spec.replaceAll( "\\\\", "/" );
-                spec = spec.replaceAll( " ", "%20" );
+                spec = spec.replace(" ", "%20" );
                 URI uri = new URI( spec );
                 String path = uri.getPath();
                 if( path == null )
