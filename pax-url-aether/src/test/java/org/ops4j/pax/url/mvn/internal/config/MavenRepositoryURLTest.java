@@ -54,6 +54,10 @@ public class MavenRepositoryURLTest
         File expected = new File( "répositories /répository1/" );
         assertEquals( expected, mavenRepo.getFile() );
 
+        spec = "file:r%C3%A9positories /r%C3%A9pository1";
+        mavenRepo = new MavenRepositoryURL( spec + "@id=repository1" );
+        expected = new File( "répositories /répository1/" );
+        assertEquals( expected, mavenRepo.getFile() );
     }
 
 }
