@@ -286,7 +286,7 @@ public class MavenRepositoryURL
                 try {
                     name = segments[ i ].split( "=" )[1].trim();
                 } catch (Exception e) {
-                    LOG.warn( "Problem with segment " + segments[i] + " in " + repositorySpec );
+                    LOG.warn( "Problem with segment " + segments[i] + " in " + maskUserInfo( repositorySpec ) );
                 }
             }
             else if( segment.startsWith( ServiceConstants.OPTION_RELEASES_UPDATE + "=" ) )
@@ -294,7 +294,7 @@ public class MavenRepositoryURL
                 try {
                     updateReleases = segments[ i ].split( "=" )[1].trim();
                 } catch (Exception e) {
-                    LOG.warn( "Problem with segment " + segments[i] + " in " + repositorySpec );
+                    LOG.warn( "Problem with segment " + segments[i] + " in " + maskUserInfo( repositorySpec ) );
                 }
             }
             else if( segment.startsWith( ServiceConstants.OPTION_SNAPSHOTS_UPDATE + "=" ) )
@@ -302,7 +302,7 @@ public class MavenRepositoryURL
                 try {
                     updateSnapshots = segments[ i ].split( "=" )[1].trim();
                 } catch (Exception e) {
-                    LOG.warn( "Problem with segment " + segments[i] + " in " + repositorySpec );
+                    LOG.warn( "Problem with segment " + segments[i] + " in " + maskUserInfo( repositorySpec ) );
                 }
             }
             else if( segment.startsWith( ServiceConstants.OPTION_UPDATE + "=" ) )
@@ -310,7 +310,7 @@ public class MavenRepositoryURL
                 try {
                     update = segments[ i ].split( "=" )[1].trim();
                 } catch (Exception e) {
-                    LOG.warn( "Problem with segment " + segments[i] + " in " + repositorySpec );
+                    LOG.warn( "Problem with segment " + segments[i] + " in " + maskUserInfo( repositorySpec ) );
                 }
             }
             else if( segment.startsWith( ServiceConstants.OPTION_RELEASES_CHECKSUM + "=" ) )
@@ -318,7 +318,7 @@ public class MavenRepositoryURL
                 try {
                     checksumReleases = segments[ i ].split( "=" )[1].trim();
                 } catch (Exception e) {
-                    LOG.warn( "Problem with segment " + segments[i] + " in " + repositorySpec );
+                    LOG.warn( "Problem with segment " + segments[i] + " in " + maskUserInfo( repositorySpec ) );
                 }
             }
             else if( segment.startsWith( ServiceConstants.OPTION_SNAPSHOTS_CHECKSUM + "=" ) )
@@ -326,7 +326,7 @@ public class MavenRepositoryURL
                 try {
                     checksumSnapshots = segments[ i ].split( "=" )[1].trim();
                 } catch (Exception e) {
-                    LOG.warn( "Problem with segment " + segments[i] + " in " + repositorySpec );
+                    LOG.warn( "Problem with segment " + segments[i] + " in " + maskUserInfo( repositorySpec ) );
                 }
             }
             else if( segment.startsWith( ServiceConstants.OPTION_CHECKSUM + "=" ) )
@@ -334,7 +334,7 @@ public class MavenRepositoryURL
                 try {
                     checksum = segments[ i ].split( "=" )[1].trim();
                 } catch (Exception e) {
-                    LOG.warn( "Problem with segment " + segments[i] + " in " + repositorySpec );
+                    LOG.warn( "Problem with segment " + segments[i] + " in " + maskUserInfo( repositorySpec ) );
                 }
             }
             else if( segment.startsWith( ServiceConstants.OPTION_SPLIT_LOCAL_PREFIX + "=" ) )
@@ -342,7 +342,7 @@ public class MavenRepositoryURL
                 try {
                     splitLocalPrefix = segments[ i ].split( "=" )[1].trim();
                 } catch (Exception e) {
-                    LOG.warn( "Problem with segment " + segments[i] + " in " + repositorySpec );
+                    LOG.warn( "Problem with segment " + segments[i] + " in " + maskUserInfo( repositorySpec ) );
                 }
             }
             else if( segment.startsWith( ServiceConstants.OPTION_SPLIT_REMOTE_PREFIX + "=" ) )
@@ -350,7 +350,7 @@ public class MavenRepositoryURL
                 try {
                     splitRemotePrefix = segments[ i ].split( "=" )[1].trim();
                 } catch (Exception e) {
-                    LOG.warn( "Problem with segment " + segments[i] + " in " + repositorySpec );
+                    LOG.warn( "Problem with segment " + segments[i] + " in " + maskUserInfo( repositorySpec ) );
                 }
             }
             else if( segment.startsWith( ServiceConstants.OPTION_SPLIT_RELEASES_PREFIX + "=" ) )
@@ -358,7 +358,7 @@ public class MavenRepositoryURL
                 try {
                     splitReleasesPrefix = segments[ i ].split( "=" )[1].trim();
                 } catch (Exception e) {
-                    LOG.warn( "Problem with segment " + segments[i] + " in " + repositorySpec );
+                    LOG.warn( "Problem with segment " + segments[i] + " in " + maskUserInfo( repositorySpec ) );
                 }
             }
             else if( segment.startsWith( ServiceConstants.OPTION_SPLIT_SNAPSHOTS_PREFIX + "=" ) )
@@ -366,7 +366,7 @@ public class MavenRepositoryURL
                 try {
                     splitSnapshotsPrefix = segments[ i ].split( "=" )[1].trim();
                 } catch (Exception e) {
-                    LOG.warn( "Problem with segment " + segments[i] + " in " + repositorySpec );
+                    LOG.warn( "Problem with segment " + segments[i] + " in " + maskUserInfo( repositorySpec ) );
                 }
             }
             else
@@ -387,19 +387,25 @@ public class MavenRepositoryURL
         if (!spec.endsWith("/")) {
             spec += "/";
         }
-        m_repositoryURI = URI.create(spec);
+        final String maskedSpec = maskUserInfo(spec);
+        try {
+            m_repositoryURI = new URI(spec);
+        } catch (URISyntaxException e) {
+            // neither e.getMessage() nor e as cause: both quote the spec, password included
+            throw new IllegalArgumentException("Invalid repository spec " + maskedSpec + ": " + e.getReason());
+        }
 
         String credentials = m_repositoryURI.getRawUserInfo();
         if (credentials != null) {
             LOG.warn("Repository spec \"{}\" contains user information." +
-                    " It is recommended to specify server credentials in external settings.xml file.", spec);
+                    " It is recommended to specify server credentials in external settings.xml file.", maskedSpec);
 
             // ":" is not a specification defined user:password separator, but we will use it. If there are more
             // ":" characters, we can't effectively determine what is the user name and what is the password
             int colon = credentials.indexOf(':');
             if (colon != -1 && credentials.indexOf(':', colon + 1) != -1) {
                 LOG.warn("Multiple ':' separators found in user info part of {}." +
-                        " Can't determine user credential. Please encode non-separator ':' using '%3A'.", spec);
+                        " Can't determine user credential. Please encode non-separator ':' using '%3A'.", maskedSpec);
                 m_username = null;
                 m_password = null;
             } else {
@@ -434,7 +440,7 @@ public class MavenRepositoryURL
         m_releasesEnabled = releasesEnabled;
         m_multi = multi;
         if (name == null) {
-            String warn = "Repository spec " + spec + " does not contain an identifier. Give your repository a name, for example: " + repositorySpec + "@id=MyName";
+            String warn = "Repository spec " + maskedSpec + " does not contain an identifier. Give your repository a name, for example: " + maskUserInfo( repositorySpec ) + "@id=MyName";
             LOG.warn( warn );
             name = "repo_" + spec.hashCode();
         }
@@ -654,7 +660,37 @@ public class MavenRepositoryURL
 
     @Override
     public String toString() {
-        return m_repositoryURI.toString() + " {id=" + m_id + "}";
+        return maskUserInfo(m_repositoryURI.toString()) + " {id=" + m_id + "}";
+    }
+
+    /**
+     * Masks the user information of a repository URL, or everything between "://" and the last '@' when {@link URI}
+     * finds no host. A password of digits followed by an unencoded '/' parses as a port, and is not masked.
+     *
+     * @param url repository URL, with or without options
+     *
+     * @return the URL with its user information replaced by {@code ***}
+     */
+    static String maskUserInfo(final String url) {
+        try {
+            final URI uri = new URI(url);
+            if (uri.getRawUserInfo() != null) {
+                final int start = url.indexOf("//") + 2;
+                return url.substring(0, start) + "***" + url.substring(start + uri.getRawUserInfo().length());
+            }
+            if (uri.getRawAuthority() == null || uri.getHost() != null) {
+                return url;
+            }
+        } catch (URISyntaxException e) {
+            // masked below
+        }
+        final int start = url.indexOf("://");
+        final int at = url.lastIndexOf('@');
+        // "///": an empty authority, such as file:///C:/Program Files/, has no user information
+        if (start == -1 || at < start || url.startsWith("/", start + 3)) {
+            return url;
+        }
+        return url.substring(0, start + 3) + "***" + url.substring(at);
     }
 
 }
