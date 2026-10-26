@@ -22,6 +22,7 @@ import java.net.URI;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class MavenRepositoryURLTest
 {
@@ -73,6 +74,66 @@ public class MavenRepositoryURLTest
         mavenRepo = new MavenRepositoryURL( spec + "@id=repository1" );
         expected = new File( "répositories /répository1/" );
         assertEquals( expected, mavenRepo.getFile() );
+    }
+
+    @Test
+    public void testCredentialsAreMasked() throws MalformedURLException
+    {
+        MavenRepositoryURL mavenRepo = new MavenRepositoryURL( "https://user:secret@repo.example.com/maven2@id=repository1" );
+        assertEquals( "https://***@repo.example.com/maven2/ {id=repository1}", mavenRepo.toString() );
+        assertEquals( URI.create( "https://user:secret@repo.example.com/maven2/" ), mavenRepo.getURI() );
+
+        mavenRepo = new MavenRepositoryURL( "https://user%40example.com:secret@repo.example.com/maven2@id=repository1" );
+        assertEquals( "https://***@repo.example.com/maven2/ {id=repository1}", mavenRepo.toString() );
+
+        mavenRepo = new MavenRepositoryURL( "https://user:p/ss@repo.example.com/maven2@id=repository1" );
+        assertEquals( "https://***@repo.example.com/maven2/ {id=repository1}", mavenRepo.toString() );
+
+        mavenRepo = new MavenRepositoryURL( "https://repo.example.com/maven2@snapshots@id=repository1" );
+        assertEquals( "https://repo.example.com/maven2/ {id=repository1}", mavenRepo.toString() );
+    }
+
+    @Test
+    public void testInvalidSpecIsMasked() throws MalformedURLException
+    {
+        try
+        {
+            new MavenRepositoryURL( "https://user:p%zz@repo.example.com/maven2@id=repository1" );
+            fail( "IllegalArgumentException expected" );
+        }
+        catch( IllegalArgumentException e )
+        {
+            assertEquals( "Invalid repository spec https://***@repo.example.com/maven2/: Malformed escape pair", e.getMessage() );
+        }
+    }
+
+    @Test
+    public void testMaskUserInfo()
+    {
+        assertEquals( "https://***@repo.example.com/maven2/", MavenRepositoryURL.maskUserInfo( "https://user:secret@repo.example.com/maven2/" ) );
+        assertEquals( "https://***@repo.example.com:8443/maven2/", MavenRepositoryURL.maskUserInfo( "https://user@repo.example.com:8443/maven2/" ) );
+        assertEquals( "https://***@repo.example.com/maven2/", MavenRepositoryURL.maskUserInfo( "https://user:p@ss@repo.example.com/maven2/" ) );
+        assertEquals( "https://***@repo.example.com/maven2/", MavenRepositoryURL.maskUserInfo( "https://user:p/ss@repo.example.com/maven2/" ) );
+        assertEquals( "https://***@repo.example.com/maven2/", MavenRepositoryURL.maskUserInfo( "https://user:p?ss@repo.example.com/maven2/" ) );
+        assertEquals( "https://***@repo.example.com/maven2/", MavenRepositoryURL.maskUserInfo( "https://user:p#ss@repo.example.com/maven2/" ) );
+        assertEquals( "https://***@[::1]:8443/maven2/?key=value", MavenRepositoryURL.maskUserInfo( "https://user:secret@[::1]:8443/maven2/?key=value" ) );
+        assertEquals( "https://***@repo.example.com/maven2/", MavenRepositoryURL.maskUserInfo( "https://user:p%40ss@repo.example.com/maven2/" ) );
+        assertEquals( "https://***@repo.example.com/content/@scope/", MavenRepositoryURL.maskUserInfo( "https://user:secret@repo.example.com/content/@scope/" ) );
+        assertEquals( "https://***@repo.example.com/maven2@snapshots@id=repository1", MavenRepositoryURL.maskUserInfo( "https://user:secret@repo.example.com/maven2@snapshots@id=repository1" ) );
+        assertEquals( "https://***@repo.example.com/maven2/", MavenRepositoryURL.maskUserInfo( "https://me@example.com:secret@repo.example.com/maven2/" ) );
+        assertEquals( "ftp://***@repo.example.com/maven2/", MavenRepositoryURL.maskUserInfo( "ftp://user:secret@repo.example.com/maven2/" ) );
+        assertEquals( "file://***@uncshare/c:/users/repository/", MavenRepositoryURL.maskUserInfo( "file://user:secret@uncshare/c:/users/repository/" ) );
+        assertEquals( "file://***@uncshare/c:\\users\\repository\\", MavenRepositoryURL.maskUserInfo( "file://user:secret@uncshare/c:\\users\\repository\\" ) );
+
+        assertEquals( "https://repo.example.com/maven2/", MavenRepositoryURL.maskUserInfo( "https://repo.example.com/maven2/" ) );
+        assertEquals( "https://repo.example.com/maven2@snapshots@id=repository1", MavenRepositoryURL.maskUserInfo( "https://repo.example.com/maven2@snapshots@id=repository1" ) );
+        assertEquals( "https://repo.example.com/content/@scope/", MavenRepositoryURL.maskUserInfo( "https://repo.example.com/content/@scope/" ) );
+        assertEquals( "https://repo.example.com/maven2/?user=a@b", MavenRepositoryURL.maskUserInfo( "https://repo.example.com/maven2/?user=a@b" ) );
+        assertEquals( "file:///C:/Users/john@corp/repository/", MavenRepositoryURL.maskUserInfo( "file:///C:/Users/john@corp/repository/" ) );
+        assertEquals( "file:repository1/", MavenRepositoryURL.maskUserInfo( "file:repository1/" ) );
+        assertEquals( "file://uncshare/c:\\users\\repository\\", MavenRepositoryURL.maskUserInfo( "file://uncshare/c:\\users\\repository\\" ) );
+        assertEquals( "file:///C:/Program Files/repository@snapshots", MavenRepositoryURL.maskUserInfo( "file:///C:/Program Files/repository@snapshots" ) );
+        assertEquals( "file:///C:\\Users\\john@corp\\repository@snapshots", MavenRepositoryURL.maskUserInfo( "file:///C:\\Users\\john@corp\\repository@snapshots" ) );
     }
 
 }
